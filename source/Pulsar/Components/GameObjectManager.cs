@@ -8,10 +8,14 @@ namespace Pulsar.Components
     {
         #region Fields
 
+        private Dictionary<ulong, GameObject> objectsMap = new Dictionary<ulong, GameObject>();
+
+        #endregion
+
+        #region Event
+
         public event EventHandler<GameObjectEventArgs> GameObjectAdded;
         public event EventHandler<GameObjectEventArgs> GameObjectRemoved;
-
-        private Dictionary<ulong, GameObject> objectsMap = new Dictionary<ulong, GameObject>();
 
         #endregion
 

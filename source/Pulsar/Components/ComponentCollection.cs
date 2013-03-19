@@ -12,6 +12,13 @@ namespace Pulsar.Components
 
         #endregion
 
+        #region Event
+
+        public event EventHandler<ComponentEventArgs> ComponentAdded;
+        public event EventHandler<ComponentEventArgs> ComponentRemoved;
+
+        #endregion
+
         #region Methods
 
         public virtual void AddComponent(Component compo, bool overwrite)
@@ -34,6 +41,10 @@ namespace Pulsar.Components
             if (!this.componentsMap.ContainsKey(compoType))
             {
                 this.componentsMap.Add(compoType, compo);
+                if (this.ComponentAdded != null)
+                {
+                    this.ComponentAdded(this, new ComponentEventArgs(compo));
+                }
             }
         }
 
@@ -49,8 +60,17 @@ namespace Pulsar.Components
             if (compo != null)
             {
                 compo.Parent = null;
+                bool result = this.componentsMap.Remove(compoType);
 
-                return this.componentsMap.Remove(compoType);
+                if (result)
+                {
+                    if (this.ComponentRemoved != null)
+                    {
+                        this.ComponentRemoved(this, new ComponentEventArgs(compo));
+                    }
+                }
+
+                return result;
             }
 
             return false;
