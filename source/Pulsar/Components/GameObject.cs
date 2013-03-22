@@ -9,23 +9,25 @@ namespace Pulsar.Components
         #region Fields
 
         private ulong id;
+        private GameObjectManager owner;
 
         #endregion
 
         #region Constructor
 
-        public GameObject(ulong id)
+        public GameObject(ulong id, GameObjectManager owner)
         {
             this.id = id;
+            this.owner = owner;
         }
 
         #endregion
 
         #region Methods
 
-        public override void AddComponent(Component compo, bool overwrite)
+        public override void Add(Component compo, bool overwrite)
         {
-            base.AddComponent(compo, overwrite);
+            base.Add(compo, overwrite);
 
             compo.Parent = this;
         }
@@ -37,6 +39,11 @@ namespace Pulsar.Components
         public ulong ID
         {
             get { return this.id; }
+        }
+
+        public GameObjectManager Owner
+        {
+            get { return this.owner; }
         }
 
         #endregion
