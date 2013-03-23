@@ -18,6 +18,8 @@ namespace Pulsar.Components
 
         public event EventHandler<GameObjectEventArgs> GameObjectAdded;
         public event EventHandler<GameObjectEventArgs> GameObjectRemoved;
+        public event EventHandler<ComponentEventArgs> ComponentAdded;
+        public event EventHandler<ComponentEventArgs> ComponentRemoved;
 
         #endregion
 
@@ -148,11 +150,19 @@ namespace Pulsar.Components
         private void OnComponentAdded(object sender, ComponentEventArgs e)
         {
             this.AddComponent(e.Component);
+            if (this.ComponentAdded != null)
+            {
+                this.ComponentAdded(this, e);
+            }
         }
 
         private void OnComponentRemoved(object sender, ComponentEventArgs e)
         {
             this.RemoveComponent(e.Component);
+            if (this.ComponentRemoved != null)
+            {
+                this.ComponentRemoved(this, e);
+            }
         }
 
         #endregion
