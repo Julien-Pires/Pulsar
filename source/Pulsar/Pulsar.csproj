@@ -75,6 +75,8 @@
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentCollection.cs" />
     <Compile Include="Components\ComponentEventArgs.cs" />
+    <Compile Include="Components\ComponentHandler.cs" />
+    <Compile Include="Components\ComponentHandlerSystem.cs" />
     <Compile Include="Components\GameObject.cs" />
     <Compile Include="Components\GameObjectEventArgs.cs" />
     <Compile Include="Components\GameObjectManager.cs" />

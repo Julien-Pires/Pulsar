@@ -1,10 +1,11 @@
 ﻿using System;
 
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Pulsar.Components
 {
-    public class ComponentCollection
+    public class ComponentCollection : ICollection<Component>
     {
         #region Fields
 
@@ -12,9 +13,21 @@ namespace Pulsar.Components
 
         #endregion
 
+        #region Event
+
+        public event EventHandler<ComponentEventArgs> ComponentAdded;
+        public event EventHandler<ComponentEventArgs> ComponentRemoved;
+
+        #endregion
+
         #region Methods
 
-        public virtual void AddComponent(Component compo, bool overwrite)
+        public virtual void Add(Component compo)
+        {
+            this.Add(compo, false);
+        }
+
+        public virtual void Add(Component compo, bool overwrite)
         {
             Type compoType = compo.GetType();
             if (this.componentsMap.ContainsKey(compoType))
@@ -34,7 +47,56 @@ namespace Pulsar.Components
             if (!this.componentsMap.ContainsKey(compoType))
             {
                 this.componentsMap.Add(compoType, compo);
+                if (this.ComponentAdded != null)
+                {
+                    this.ComponentAdded(this, new ComponentEventArgs(compo));
+                }
             }
+        }
+
+        public virtual void RemoveNow(Type type)
+        {
+            Component compo;
+            this.componentsMap.TryGetValue(type, out compo);
+            if (compo == null)
+            {
+                throw new Exception(string.Format("Failed to remove a component, {0} not found", compo));
+            }
+
+            bool result = this.componentsMap.Remove(type);
+            if (result)
+            {
+                compo.Parent = null;
+                if (this.ComponentRemoved != null)
+                {
+                    this.ComponentRemoved(this, new ComponentEventArgs(compo));
+                }
+            }
+        }
+
+        public virtual void RemoveNow<T>() where T : Component
+        {
+            this.RemoveNow(typeof(T));
+        }
+
+        public virtual void RemoveNow(Component compo)
+        {
+            if (compo.Parent != this)
+            {
+                throw new Exception("Failed to remove a component, parents game object don't match");
+            }
+
+            this.RemoveNow(compo.GetType());
+        }
+
+        public virtual bool Remove(Component compo)
+        {
+            if (compo.Parent != this)
+            {
+                throw new Exception("Failed to remove a component, parents game object don't match");
+            }
+
+            return this.Remove(compo.GetType());
         }
 
         public virtual bool Remove<T>() where T : Component
@@ -46,17 +108,23 @@ namespace Pulsar.Components
         {
             Component compo;
             this.componentsMap.TryGetValue(compoType, out compo);
-            if (compo != null)
+            if (compo == null)
             {
-                compo.Parent = null;
-
-                return this.componentsMap.Remove(compoType);
+                throw new Exception(string.Format("Failed to remove a component, {0} not found", compoType));
             }
 
-            return false;
+            return compo.Parent.Owner.AddToPendingList(compo);
         }
 
-        public T Find<T>() where T : Component
+        public virtual void Clear()
+        {
+            foreach (Component compo in this.componentsMap.Values)
+            {
+                this.RemoveNow(compo.GetType());
+            }
+        }
+
+        public virtual T Find<T>() where T : Component
         {
             Component compo;
             this.componentsMap.TryGetValue(typeof(T), out compo);
@@ -74,14 +142,48 @@ namespace Pulsar.Components
             return castCompo;
         }
 
-        public bool Contains<T>() where T : Component
+        public virtual bool Contains<T>() where T : Component
         {
             return this.Contains(typeof(T));
         }
 
-        public bool Contains(Type t)
+        public virtual bool Contains(Type t)
         {
             return this.componentsMap.ContainsKey(t);
+        }
+
+        public virtual bool Contains(Component compo)
+        {
+            return this.Contains(compo.GetType());
+        }
+
+        public virtual IEnumerator<Component> GetEnumerator()
+        {
+            return this.componentsMap.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.componentsMap.Values.GetEnumerator();
+        }
+
+        public virtual void CopyTo(Component[] compoArr, int startIndex)
+        {
+            this.componentsMap.Values.CopyTo(compoArr, startIndex);
+        }
+
+        #endregion
+
+        #region Properties
+        
+        public int Count
+        {
+            get { return this.componentsMap.Count; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return false; }
         }
 
         #endregion
