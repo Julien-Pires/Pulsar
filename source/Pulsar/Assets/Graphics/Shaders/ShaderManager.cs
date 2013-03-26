@@ -10,7 +10,7 @@ namespace Pulsar.Assets.Graphics.Shaders
     /// <summary>
     /// Class used to load Shader
     /// </summary>
-    public sealed class ShaderManager : Singleton<ShaderManager>, IAssetManager<Shader>
+    public sealed class ShaderManager : Singleton<ShaderManager>, IAssetManager
     {
         #region Fields
 
@@ -46,11 +46,17 @@ namespace Pulsar.Assets.Graphics.Shaders
             Shader shader = result.Resource;
             if (result.Created)
             {
-                Effect fx = AssetStorageManager.Instance.Content.Load<Effect>(effect);
+                AssetStorage usedStorage = AssetStorageManager.Instance.GetStorage(storage);
+                Effect fx = usedStorage.ResourceManager.Load<Effect>(effect);
                 shader.SetEffect(fx);
             }
 
             return shader;
+        }
+
+        public bool Unload(string name, string storage)
+        {
+            return this.assetGroup.Unload(name, storage);
         }
 
         /// <summary>
@@ -60,7 +66,7 @@ namespace Pulsar.Assets.Graphics.Shaders
         /// <param name="parameter">Additional parameter to create the shader, in this case 
         /// the methods wait a Type instance describing the concrete type to instantiate</param>
         /// <returns>Return a new shader</returns>
-        public Shader CreateInstance(string name, object parameter = null)
+        public Asset CreateInstance(string name, object parameter = null)
         {
             if (parameter != null)
             {

@@ -61,8 +61,10 @@
   <ItemGroup>
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Assets\AssetGroup.cs" />
-    <Compile Include="Assets\AssetManager.cs" />
+    <Compile Include="Assets\AssetStorageEventArgs.cs" />
+    <Compile Include="Assets\IAssetManager.cs" />
     <Compile Include="Assets\AssetStorage.cs" />
+    <Compile Include="Assets\AssetStorageManager.cs" />
     <Compile Include="Assets\Graphics\Materials\Material.cs" />
     <Compile Include="Assets\Graphics\Materials\MaterialManager.cs" />
     <Compile Include="Assets\Graphics\Materials\Texture.cs" />

@@ -11,7 +11,7 @@ namespace Pulsar.Assets.Graphics.Materials
     /// <summary>
     /// Class used to load Texture
     /// </summary>
-    public sealed class TextureManager : Singleton<TextureManager>, IAssetManager<Texture>
+    public sealed class TextureManager : Singleton<TextureManager>, IAssetManager
     {
         #region Fields
 
@@ -68,7 +68,8 @@ namespace Pulsar.Assets.Graphics.Materials
 
             if (result.Created)
             {
-                Texture2D image = AssetStorageManager.Instance.Content.Load<Texture2D>(file);
+                AssetStorage usedStorage = AssetStorageManager.Instance.GetStorage(storage);
+                Texture2D image = usedStorage.ResourceManager.Load<Texture2D>(file);
                 tex.Image = image;
                 tex.File = file;
             }
@@ -94,13 +95,18 @@ namespace Pulsar.Assets.Graphics.Materials
             return tex;
         }
 
+        public bool Unload(string name, string storage)
+        {
+            return this.assetGroup.Unload(name, storage);
+        }
+
         /// <summary>
         /// Create a new Texture class instance
         /// </summary>
         /// <param name="name">Texture name</param>
         /// <param name="parameter">Addtional parameter for loading the instance</param>
         /// <returns>Return a new instance</returns>
-        public Texture CreateInstance(string name, object parameter = null)
+        public Asset CreateInstance(string name, object parameter = null)
         {
             return new Texture(this, name);
         }

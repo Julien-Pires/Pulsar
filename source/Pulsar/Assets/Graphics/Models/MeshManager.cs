@@ -17,7 +17,7 @@ namespace Pulsar.Assets.Graphics.Models
     /// <summary>
     /// Class used to load Mesh
     /// </summary>
-    public sealed class MeshManager : Singleton<MeshManager>, IAssetManager<Mesh>
+    public sealed class MeshManager : Singleton<MeshManager>, IAssetManager
     {
         #region Fields
 
@@ -67,11 +67,17 @@ namespace Pulsar.Assets.Graphics.Models
 
             if (result.Created)
             {
-                Model model = AssetStorageManager.Instance.Content.Load<Model>(file);
+                AssetStorage usedStorage = AssetStorageManager.Instance.GetStorage(storage);
+                Model model = usedStorage.ResourceManager.Load<Model>(file);
                 this.ProcessModel(mesh, model, storage);
             }
 
             return mesh;
+        }
+
+        public bool Unload(string name, string storage)
+        {
+            return this.assetGroup.Unload(name, storage);
         }
 
         /// <summary>
@@ -80,7 +86,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="name">Name of the mesh</param>
         /// <param name="parameter">Additional parameter to create the mesh</param>
         /// <returns>Return a new mesh</returns>
-        public Mesh CreateInstance(string name, object parameter = null)
+        public Asset CreateInstance(string name, object parameter = null)
         {
             return new Mesh(name);
         }

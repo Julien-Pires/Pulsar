@@ -43,31 +43,19 @@ namespace Pulsar.Assets
     }
 
     /// <summary>
-    /// Interface defining a group of asset
-    /// </summary>
-    /// <typeparam name="T">Type of asset managed by the AssetGroup</typeparam>
-    public interface IAssetGroup<out T> where T : Asset
-    {
-    }
-
-    /// <summary>
     /// Represents a group of asset (eg: Texture, Material, Mesh, ...)
     /// An asset group keep track of all the asset for a specific type of asset
     /// and across all storage
     /// </summary>
     /// <typeparam name="T">Type of asset managed by the AssetGroup</typeparam>
-    public sealed class AssetGroup<T> : IAssetGroup<T> where T : Asset
+    public sealed class AssetGroup<T> where T : Asset
     {
         #region Fields
 
-        public const string ContentDirectory = "content\\";
-
-        protected string group;
-        protected IAssetManager<T> concreteManager = null;
-        protected ContentManager content = null;
-        protected Dictionary<string, AssetPtr<T>> assetMap = new Dictionary<string, AssetPtr<T>>();
-        protected Dictionary<string, Dictionary<string, AssetPtr<T>>> assetStorageMap =
-            new Dictionary<string, Dictionary<string, AssetPtr<T>>>();
+        private string name;
+        private IAssetManager concreteManager = null;
+        private Dictionary<string, Dictionary<string, T>> assetStorageMap =
+            new Dictionary<string, Dictionary<string, T>>();
 
         #endregion
 
@@ -78,10 +66,13 @@ namespace Pulsar.Assets
         /// </summary>
         /// <param name="name">Name of the group</param>
         /// <param name="manager">Asset manager for a specific type of asset</param>
-        public AssetGroup(string name, IAssetManager<T> manager)
+        public AssetGroup(string name, IAssetManager manager)
         {
-            this.group = name;
+            this.name = name;
             this.concreteManager = manager;
+
+            AssetStorageManager.Instance.StorageCreated += this.OnStorageCreated;
+            AssetStorageManager.Instance.StorageDestroyed += this.OnStorageDestroyed;
         }
 
         #endregion
@@ -102,6 +93,23 @@ namespace Pulsar.Assets
             return res;
         }
 
+        public bool Unload(string name, string storage)
+        {
+            bool result = AssetStorageManager.Instance.RemoveResourceInStorage(name, storage);
+            if (result)
+            {
+                Dictionary<string, T> storageMap;
+                this.assetStorageMap.TryGetValue(storage, out storageMap);
+                if (storageMap == null)
+                {
+                    throw new Exception(string.Format("No storage {0} found in this asset group", name));
+                }
+                storageMap.Remove(name);
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Create or find an asset in a storage
         /// </summary>
@@ -114,14 +122,14 @@ namespace Pulsar.Assets
             AssetSearchResult<T> result;
             bool create = false;
 
-            AssetPtr<T> resPtr = this.GetByName(name, storage);
-            if (resPtr == null)
+            T res = this.GetByName(name, storage);
+            if (res == null)
             {
-                resPtr = this.Create(name, storage, parameter);
+                res = this.Create(name, storage, parameter);
                 create = true;
             }
 
-            result = new AssetSearchResult<T>(resPtr.Resource, create);
+            result = new AssetSearchResult<T>(res, create);
 
             return result;
         }
@@ -133,17 +141,18 @@ namespace Pulsar.Assets
         /// <param name="storage">Storage in which the asset will be stored</param>
         /// <param name="parameter">Addition parameter for the asset creation</param>
         /// <returns>Return a new asset</returns>
-        private AssetPtr<T> Create(string name, string storage, object parameter = null)
+        private T Create(string name, string storage, object parameter = null)
         {
-            AssetPtr<T> resPtr = new AssetPtr<T>(
-                this.concreteManager.CreateInstance(name, parameter)
-            );
+            T res = this.concreteManager.CreateInstance(name, parameter) as T;
+            if (res == null)
+            {
+                throw new Exception(string.Format("CreateInstance method doesn't return a {0} instance", typeof(T)));
+            }
 
-            this.AddIntern(resPtr, storage);
-            AssetStorageManager.Instance.AddResourceInStorage(resPtr, storage);
-            resPtr.AddRef();
+            this.AddIntern(res, storage);
+            AssetStorageManager.Instance.AddResourceInStorage(res, storage);
 
-            return resPtr;
+            return res;
         }
 
         /// <summary>
@@ -151,18 +160,17 @@ namespace Pulsar.Assets
         /// </summary>
         /// <param name="res">Asset to add</param>
         /// <param name="storage">Storage in which the asset will be stored</param>
-        private void AddIntern(AssetPtr<T> res, string storage)
+        private void AddIntern(T res, string storage)
         {
-            Dictionary<string, AssetPtr<T>> map = null;
+            Dictionary<string, T> map = null;
             this.assetStorageMap.TryGetValue(storage, out map);
             if (map == null)
             {
-                map = new Dictionary<string, AssetPtr<T>>();
+                map = new Dictionary<string, T>();
                 this.assetStorageMap.Add(storage, map);
             }
 
             map.Add(res.Name, res);
-            this.assetMap.Add(res.Name, res);
         }
 
         /// <summary>
@@ -171,17 +179,49 @@ namespace Pulsar.Assets
         /// <param name="name">Name of the asset</param>
         /// <param name="storage">Storage in which to look for</param>
         /// <returns>Return an asset if the storage contains one withe the same name, otherwise null</returns>
-        private AssetPtr<T> GetByName(string name, string storage)
+        private T GetByName(string name, string storage)
         {
             if (string.IsNullOrEmpty(name))
             {
                 throw new Exception("Asset name is null or empty");
             }
+            Dictionary<string, T> storageMap;
+            this.assetStorageMap.TryGetValue(storage, out storageMap);
+            if (storageMap == null)
+            {
+                return null;
+            }
 
-            AssetPtr<T> res = null;
-            this.assetMap.TryGetValue(name, out res);
+            T res = null;
+            storageMap.TryGetValue(name, out res);
 
             return res;
+        }
+
+        private void OnStorageCreated(object sender, AssetStorageEventArgs e)
+        {
+            AssetStorage storage = e.Storage;
+            if (this.assetStorageMap.ContainsKey(storage.Name))
+            {
+                return;
+            }
+
+            Dictionary<string, T> storageMap = new Dictionary<string, T>();
+            this.assetStorageMap.Add(storage.Name, storageMap);
+        }
+
+        private void OnStorageDestroyed(object sender, AssetStorageEventArgs e)
+        {
+            AssetStorage storage = e.Storage;
+            Dictionary<string, T> assetMap;
+            this.assetStorageMap.TryGetValue(storage.Name, out assetMap);
+            if (assetMap == null)
+            {
+                return;
+            }
+
+            assetMap.Clear();
+            this.assetStorageMap.Remove(storage.Name);
         }
 
         #endregion

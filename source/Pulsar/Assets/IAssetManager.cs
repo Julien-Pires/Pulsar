@@ -11,7 +11,7 @@ namespace Pulsar.Assets
     /// Interface defining a manager of asset
     /// </summary>
     /// <typeparam name="T">Type of managed asset</typeparam>
-    public interface IAssetManager<out T> where T : Asset
+    public interface IAssetManager
     {
         #region Methods
 
@@ -21,7 +21,7 @@ namespace Pulsar.Assets
         /// <param name="name">Name of the asset</param>
         /// <param name="parameter">Additional parameter</param>
         /// <returns>Return a new instance of an asset</returns>
-        T CreateInstance(string name, object parameter = null);
+        Asset CreateInstance(string name, object parameter = null);
 
         #endregion
     }

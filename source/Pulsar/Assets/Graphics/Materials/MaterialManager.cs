@@ -7,11 +7,11 @@ namespace Pulsar.Assets.Graphics.Materials
     /// <summary>
     /// Class used to load material
     /// </summary>
-    public sealed class MaterialManager : Singleton<MaterialManager>, IAssetManager<Material>
+    public sealed class MaterialManager : Singleton<MaterialManager>, IAssetManager
     {
         #region Fields
 
-        private const string defaultMaterialName = "DefaultMaterial_PangolinSystem";
+        private const string defaultMaterialName = "PulsarSystem_DefaultMaterial";
         private readonly AssetGroup<Material> assetGroup = null;
 
         #endregion
@@ -125,13 +125,18 @@ namespace Pulsar.Assets.Graphics.Materials
             mat.DiffuseMap = diffTex;
         }
 
+        public bool Unload(string name, string storage)
+        {
+            return this.assetGroup.Unload(name, storage);
+        }
+
         /// <summary>
         /// Create a new empty material instance
         /// </summary>
         /// <param name="name">Material name</param>
         /// <param name="parameter">Additional parameter for loading the instance</param>
         /// <returns>Return a new instance of Material class</returns>
-        public Material CreateInstance(string name, object parameter = null)
+        public Asset CreateInstance(string name, object parameter = null)
         {
             return new Material(this, name);
         }

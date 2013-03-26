@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Assets;
 using Pulsar.Assets.Graphics.Shaders;
 
 namespace Pulsar.Graphics.Rendering.RenderPass
@@ -31,7 +32,7 @@ namespace Pulsar.Graphics.Rendering.RenderPass
         {
             this.renderer = renderer;
             this.shader = (GBufferShader)ShaderManager.Instance.LoadShader("GBufferPass", 
-                "Default", GBufferShader.ShaderFile, typeof(GBufferShader));
+                AssetStorageManager.Instance.System.Name, GBufferShader.ShaderFile, typeof(GBufferShader));
         }
 
         #endregion

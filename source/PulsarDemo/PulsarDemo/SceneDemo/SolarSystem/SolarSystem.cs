@@ -16,6 +16,7 @@ namespace Pulsar.SceneDemo.SolarSystem
     {
         #region Fields
 
+        private readonly AssetStorage storage;
         private readonly int planetCount;
         private const string modelsFolder = "models/Planets/";
         private readonly string[] planetsModel = { "Mercure/mercure", "Venus/venus", "Earth/earth", "Mars/mars", 
@@ -34,6 +35,7 @@ namespace Pulsar.SceneDemo.SolarSystem
 
         public SolarSystem(Root r, ContentManager cntMngr)
         {
+            this.storage = AssetStorageManager.Instance.CreateStorage("Default", "Content");
             this.graph = r.CreateSceneGraph("Solar System");
             this.planetCount = this.planetsModel.Length;
         }
