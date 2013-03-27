@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Struct containing bounding volume data(AABB, sphere, ...)

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets;
 using Pulsar.Assets.Graphics.Shaders;
+using Pulsar.Graphics.Graph;
 
 namespace Pulsar.Graphics.Rendering.RenderPass
 {
@@ -18,7 +19,7 @@ namespace Pulsar.Graphics.Rendering.RenderPass
         #region Fields
 
         private GBufferShader shader = null;
-        private GraphicsRenderer renderer = null;
+        private Renderer renderer = null;
 
         #endregion
 
@@ -28,7 +29,7 @@ namespace Pulsar.Graphics.Rendering.RenderPass
         /// Constructor of GBufferPass class
         /// </summary>
         /// <param name="renderer"></param>
-        internal GBufferPass(GraphicsRenderer renderer)
+        internal GBufferPass(Renderer renderer)
         {
             this.renderer = renderer;
             this.shader = (GBufferShader)ShaderManager.Instance.LoadShader("GBufferPass", 

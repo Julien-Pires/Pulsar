@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
-namespace Pulsar.Graphics
+using Pulsar.Graphics.Rendering;
+
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Class describing a scene graph
@@ -16,7 +18,7 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        private GraphicsRenderer renderer = null;
+        private Renderer renderer = null;
         private CameraManager camManager = new CameraManager();
         private RenderQueue queue = new RenderQueue();
         private GeometryBatchManager batchManager = new GeometryBatchManager();
@@ -34,7 +36,7 @@ namespace Pulsar.Graphics
         /// Constructor of the SceneGraph class
         /// </summary>
         /// <param name="renderer">GraphicsRenderer instance</param>
-        internal SceneGraph(GraphicsRenderer renderer)
+        internal SceneGraph(Renderer renderer)
         {
             this.renderer = renderer;
 

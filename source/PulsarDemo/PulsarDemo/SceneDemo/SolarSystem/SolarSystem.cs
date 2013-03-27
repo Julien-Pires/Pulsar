@@ -9,8 +9,9 @@ using Microsoft.Xna.Framework.Content;
 
 using Pulsar.Assets;
 using Pulsar.Graphics;
+using Pulsar.Graphics.Graph;
 
-namespace Pulsar.SceneDemo.SolarSystem
+namespace PulsarDemo.SceneDemo.SolarSystem
 {
     public sealed class SolarSystem : ISceneDemo
     {

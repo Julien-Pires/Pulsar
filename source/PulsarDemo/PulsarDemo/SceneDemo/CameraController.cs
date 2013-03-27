@@ -7,8 +7,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 using Pulsar.Graphics;
+using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.Rendering;
 
-namespace Pulsar.SceneDemo
+namespace PulsarDemo.SceneDemo
 {
     public enum CameraStyle { FREE, ORBIT };
 

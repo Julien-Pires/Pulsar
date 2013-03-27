@@ -9,8 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets.Graphics.Models;
 using Pulsar.Assets.Graphics.Materials;
+using Pulsar.Graphics.Rendering;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Class representing a part of an Entity

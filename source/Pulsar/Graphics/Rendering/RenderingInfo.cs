@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.Rendering
 {
     /// <summary>
     /// Class containing all information about a geometry object

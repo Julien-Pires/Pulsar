@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Define a Transform node

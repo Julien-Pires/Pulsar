@@ -2,7 +2,7 @@
 
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Helpers
+namespace Pulsar.Mathematic
 {
     /// <summary>
     /// Extension class for the Matrix class

@@ -8,8 +8,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets.Graphics.Models;
+using Pulsar.Graphics.Debugger;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// An Entity represent a complete mesh object in the 3D scene. 

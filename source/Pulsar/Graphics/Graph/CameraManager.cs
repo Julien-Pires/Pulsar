@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Camera manager used to keep track of all the cameras

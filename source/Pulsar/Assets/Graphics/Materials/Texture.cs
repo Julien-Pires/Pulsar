@@ -3,6 +3,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Game;
 using Pulsar.Core;
 
 namespace Pulsar.Assets.Graphics.Materials

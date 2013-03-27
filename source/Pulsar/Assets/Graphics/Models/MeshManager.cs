@@ -7,8 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets;
 using Pulsar.Assets.Graphics.Materials;
-
 using Pulsar.Graphics;
+using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.Rendering;
 
 using PangoTexture = Pulsar.Assets.Graphics.Materials.Texture;
 

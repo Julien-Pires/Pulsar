@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 using Pulsar;
 
-namespace Pulsar.SceneDemo
+namespace PulsarDemo.SceneDemo
 {
     public sealed class Input : Singleton<Input>
     {

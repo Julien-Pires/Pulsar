@@ -5,14 +5,15 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Graphics.Graph;
 using Pulsar.Graphics.Rendering.RenderPass;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.Rendering
 {
     /// <summary>
     /// GraphicsRenderer is used to do operations on graphic device
     /// </summary>
-    internal sealed class GraphicsRenderer
+    internal sealed class Renderer
     {
         #region Fields
 
@@ -36,7 +37,7 @@ namespace Pulsar.Graphics
         /// Constructor of the GraphicsRenderer class
         /// </summary>
         /// <param name="gDevice">Graphic device used by this instance</param>
-        internal GraphicsRenderer(GraphicsDevice gDevice)
+        internal Renderer(GraphicsDevice gDevice)
         {
             this.graphicDevice = gDevice;
             this.gBufferPass = new GBufferPass(this);
@@ -74,7 +75,7 @@ namespace Pulsar.Graphics
         /// <param name="instanceCount">Total of instance</param>
         private DynamicVertexBuffer CreateInstanceBuffer(Matrix[] transforms, int instanceCount)
         {
-            DynamicVertexBuffer dynamicBuffer = new DynamicVertexBuffer(this.graphicDevice, GraphicsRenderer.instanceVertexDeclaration,
+            DynamicVertexBuffer dynamicBuffer = new DynamicVertexBuffer(this.graphicDevice, Renderer.instanceVertexDeclaration,
                 transforms.Length, BufferUsage.WriteOnly);
 
             dynamicBuffer.SetData(transforms, 0, instanceCount, SetDataOptions.Discard);

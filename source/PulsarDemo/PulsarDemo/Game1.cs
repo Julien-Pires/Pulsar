@@ -9,14 +9,15 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
+using Pulsar.Game;
 using Pulsar.Core;
 using Pulsar.Graphics;
 using Pulsar.Assets;
 
-using Pulsar.SceneDemo;
-using Pulsar.SceneDemo.SolarSystem;
+using PulsarDemo.SceneDemo;
+using PulsarDemo.SceneDemo.SolarSystem;
 
-namespace Pulsar
+namespace PulsarDemo
 {
     /// <summary>
     /// This is the main type for your game

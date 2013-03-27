@@ -2,6 +2,9 @@
 
 using System.Collections.Generic;
 
+using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.Rendering;
+
 namespace Pulsar.Graphics
 {
     /// <summary>

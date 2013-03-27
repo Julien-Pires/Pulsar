@@ -1,6 +1,6 @@
 using System;
 
-namespace Pulsar
+namespace PulsarDemo
 {
 #if WINDOWS || XBOX
     static class Program

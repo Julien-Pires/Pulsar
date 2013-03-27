@@ -7,12 +7,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Pulsar.Core
+namespace Pulsar.Game
 {
     /// <summary>
     /// Game class containing update and render loop
     /// </summary>
-    public class GameApplication : Game
+    public class GameApplication : Microsoft.Xna.Framework.Game
     {
         #region Fields
 

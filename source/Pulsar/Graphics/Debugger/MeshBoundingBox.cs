@@ -5,11 +5,14 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Game;
 using Pulsar.Core;
 using Pulsar.Assets.Graphics.Models;
 using Pulsar.Assets.Graphics.Materials;
+using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.Rendering;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.Debugger
 {
     /// <summary>
     /// Class to create an draw a bounding box

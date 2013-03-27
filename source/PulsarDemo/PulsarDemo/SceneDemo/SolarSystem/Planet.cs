@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 using Pulsar.Graphics;
+using Pulsar.Graphics.Graph;
 
-namespace Pulsar.SceneDemo.SolarSystem
+namespace PulsarDemo.SceneDemo.SolarSystem
 {
     public class Planet
     {

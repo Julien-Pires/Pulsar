@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.Rendering;
+
 namespace Pulsar.Graphics
 {
     /// <summary>
@@ -17,7 +20,7 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        private GraphicsRenderer renderer = null;
+        private Renderer renderer = null;
         private ContentManager content = null;
         private Dictionary<string, SceneGraph> scenes = new Dictionary<string, SceneGraph>();
 
@@ -33,7 +36,7 @@ namespace Pulsar.Graphics
         public Root(GraphicsDevice gDevice, ContentManager content)
         {
             this.content = content;
-            this.renderer = new GraphicsRenderer(gDevice);
+            this.renderer = new Renderer(gDevice);
         }
 
         #endregion

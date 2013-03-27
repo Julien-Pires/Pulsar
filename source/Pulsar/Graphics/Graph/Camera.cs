@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Helpers;
+using Pulsar.Mathematic;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Determine the type of projection to be used by a camera

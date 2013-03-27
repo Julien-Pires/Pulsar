@@ -2,7 +2,7 @@
 
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.SceneDemo
+namespace PulsarDemo.SceneDemo
 {
     public interface ISceneDemo
     {

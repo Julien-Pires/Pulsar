@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Content;
 
+using Pulsar.Game;
 using Pulsar.Core;
 
 namespace Pulsar.Assets

@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Graphics;
+using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.Rendering;
 using Pulsar.Assets.Graphics.Materials;
 
 namespace Pulsar.Assets.Graphics.Models
