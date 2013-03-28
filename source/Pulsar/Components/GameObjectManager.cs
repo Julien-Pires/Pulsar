@@ -55,10 +55,8 @@ namespace Pulsar.Components
             {
                 foreach (Component compo in obj)
                 {
-                    if (!this.componentsList.Contains(compo))
-                    {
-                        this.componentsList.Add(compo);
-                    }
+                    ComponentEventArgs e = new ComponentEventArgs(compo);
+                    this.OnComponentAdded(this, e);
                 }
             }
 
