@@ -15,10 +15,9 @@ namespace Pulsar.Components
 
         #region Constructor
 
-        public GameObject(ulong id, GameObjectManager owner)
+        public GameObject(ulong id)
         {
             this.id = id;
-            this.owner = owner;
         }
 
         #endregion
@@ -44,6 +43,7 @@ namespace Pulsar.Components
         public GameObjectManager Owner
         {
             get { return this.owner; }
+            internal set { this.owner = value; }
         }
 
         #endregion
