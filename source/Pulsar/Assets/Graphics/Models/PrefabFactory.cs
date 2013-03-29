@@ -136,7 +136,7 @@ namespace Pulsar.Assets.Graphics.Models
                 verticesCount, BufferUsage.WriteOnly);
             iBuffer.SetData<int>(indices);
 
-            RenderingInfo renderInfo = this.CreateRenderInfo(vBuffer, iBuffer, 12, verticesCount);
+            RenderingInfo renderInfo = this.CreateRenderInfo(vBuffer, iBuffer, 12, verticesCount, 0, 0);
             BoundingData bounds = this.ComputeBoundingVolume(vec3List);
             string name = width + "x" + height + "x" + depth + "_box";
             Mesh box = this.CreateSimpleMesh(name, renderInfo, bounds);
@@ -174,7 +174,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="vertexOffset">Offset in the vertex array</param>
         /// <returns>Return new rendering information</returns>
         private RenderingInfo CreateRenderInfo(VertexBuffer vBuffer, IndexBuffer iBuffer, int triangleCount, 
-            int vertices, int startIdx = 0, int vertexOffset = 0)
+            int vertices, int startIdx, int vertexOffset)
         {
             RenderingInfo renderInfo = new RenderingInfo()
             {

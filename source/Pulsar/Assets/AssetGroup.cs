@@ -86,7 +86,7 @@ namespace Pulsar.Assets
         /// <param name="storage">Storage in which the asset will be stored</param>
         /// <param name="parameter">Additional parameter for the asset creation</param>
         /// <returns>Return an existing asset if the storage has one, otherwise a new</returns>
-        public AssetSearchResult<T> Load(string name, string storage, object parameter = null)
+        public AssetSearchResult<T> Load(string name, string storage, params object[] parameter)
         {
             AssetSearchResult<T> res = this.CreateOrFind(name, storage, parameter);
 
@@ -117,7 +117,7 @@ namespace Pulsar.Assets
         /// <param name="storage">Storae in which the asset will be stored</param>
         /// <param name="parameter">Additional parameter for the asset creation</param>
         /// <returns>Return an existing asset if the storage has one, otherwise a new</returns>
-        private AssetSearchResult<T> CreateOrFind(string name, string storage, object parameter = null)
+        private AssetSearchResult<T> CreateOrFind(string name, string storage, params object[] parameter)
         {
             AssetSearchResult<T> result;
             bool create = false;
@@ -141,7 +141,7 @@ namespace Pulsar.Assets
         /// <param name="storage">Storage in which the asset will be stored</param>
         /// <param name="parameter">Addition parameter for the asset creation</param>
         /// <returns>Return a new asset</returns>
-        private T Create(string name, string storage, object parameter = null)
+        private T Create(string name, string storage, params object[] parameter)
         {
             T res = this.concreteManager.CreateInstance(name, parameter) as T;
             if (res == null)

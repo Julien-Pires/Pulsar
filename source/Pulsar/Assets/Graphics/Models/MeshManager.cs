@@ -87,7 +87,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="name">Name of the mesh</param>
         /// <param name="parameter">Additional parameter to create the mesh</param>
         /// <returns>Return a new mesh</returns>
-        public Asset CreateInstance(string name, object parameter = null)
+        public Asset CreateInstance(string name, params object[] parameter)
         {
             return new Mesh(name);
         }
@@ -101,8 +101,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="mat">Material of the sub mesh</param>
         /// <param name="boneIdx">Index of the bone</param>
         /// <returns>Returns a new sub mesh</returns>
-        private SubMesh CreateSubMesh(string name, RenderingInfo renderInf, BoundingData bounds, Material mat,
-            int boneIdx = -1)
+        private SubMesh CreateSubMesh(string name, RenderingInfo renderInf, BoundingData bounds, Material mat, int boneIdx)
         {
             SubMesh sub = new SubMesh()
             {

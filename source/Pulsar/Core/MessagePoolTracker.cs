@@ -29,7 +29,7 @@ namespace Pulsar.Core
         /// <param name="capacity">Capacity of the pool</param>
         public MessagePoolTracker(int capacity)
         {
-            this.pool = new Pool<T>(capacity);
+            this.pool = new Pool<T>(capacity, null, null, null);
         }
 
         #endregion
