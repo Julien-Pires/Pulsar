@@ -62,8 +62,7 @@ namespace Pulsar.Core
         /// <param name="createFunc">Function used to create a new instance</param>
         /// <param name="initCallback">Method used to initialize new instance</param>
         /// <param name="disposeCallback">Method used to dispose instance</param>
-        public Pool(int capacity, Func<T> createFunc = null, Action<T> initCallback = null,
-            Action<T> disposeCallback = null)
+        public Pool(int capacity, Func<T> createFunc, Action<T> initCallback, Action<T> disposeCallback)
         {
             if (capacity >= 0)
             {

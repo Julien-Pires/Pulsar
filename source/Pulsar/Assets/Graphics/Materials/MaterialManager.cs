@@ -70,8 +70,7 @@ namespace Pulsar.Assets.Graphics.Materials
         /// <param name="normalMap">Normal map used by the material</param>
         /// <param name="specular">Specular map used by the material</param>
         /// <returns>Return an existing instance of the material if the storage has one, otherwise a new instance</returns>
-        public Material LoadWithTexture(string name, string storage, Texture diffuse = null, Texture normalMap = null, 
-            Texture specular = null)
+        public Material LoadWithTexture(string name, string storage, Texture diffuse, Texture normalMap, Texture specular)
         {
             AssetSearchResult<Material> result = this.assetGroup.Load(name, storage);
             Material mat = result.Resource;
@@ -95,8 +94,7 @@ namespace Pulsar.Assets.Graphics.Materials
         /// <param name="normalMap">Normal map used by the material</param>
         /// <param name="specular">Specular map used by the material</param>
         /// <returns>Return an existing instance of the material if the storage has one, otherwise a new instance</returns>
-        public Material LoadFromFile(string name, string storage, string diffuseMap = null, string normalMap = null,
-            string specularMap = null)
+        public Material LoadFromFile(string name, string storage, string diffuseMap, string normalMap, string specularMap)
         {
             AssetSearchResult<Material> result = this.assetGroup.Load(name, storage);
             Material mat = result.Resource;
@@ -136,7 +134,7 @@ namespace Pulsar.Assets.Graphics.Materials
         /// <param name="name">Material name</param>
         /// <param name="parameter">Additional parameter for loading the instance</param>
         /// <returns>Return a new instance of Material class</returns>
-        public Asset CreateInstance(string name, object parameter = null)
+        public Asset CreateInstance(string name, params object[] parameter)
         {
             return new Material(this, name);
         }

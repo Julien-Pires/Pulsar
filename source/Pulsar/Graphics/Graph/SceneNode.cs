@@ -32,7 +32,7 @@ namespace Pulsar.Graphics.Graph
             : base(string.Empty)
         {
             this.owner = scene;
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Pulsar.Graphics.Graph
             : base(name)
         {
             this.owner = scene;
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         #endregion
@@ -65,7 +65,7 @@ namespace Pulsar.Graphics.Graph
             this.movablesList.Add(movObj);
             movObj.AttachParent(this);
 
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Pulsar.Graphics.Graph
             this.movablesByName.Remove(name);
             this.movablesList.Remove(movObj);
 
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>

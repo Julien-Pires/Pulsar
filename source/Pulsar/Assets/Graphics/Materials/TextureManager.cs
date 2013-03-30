@@ -106,7 +106,7 @@ namespace Pulsar.Assets.Graphics.Materials
         /// <param name="name">Texture name</param>
         /// <param name="parameter">Addtional parameter for loading the instance</param>
         /// <returns>Return a new instance</returns>
-        public Asset CreateInstance(string name, object parameter = null)
+        public Asset CreateInstance(string name, params object[] parameter)
         {
             return new Texture(this, name);
         }

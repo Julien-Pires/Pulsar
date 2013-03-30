@@ -45,7 +45,7 @@ namespace Pulsar.Graphics.Graph
         {
             this.name = name;
 
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         #endregion
@@ -100,7 +100,7 @@ namespace Pulsar.Graphics.Graph
         {
             this.position = newPos;
 
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="v">Translation vector</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
-        public virtual void Translate(Vector3 v, TransformSpace space = TransformSpace.Local)
+        public virtual void Translate(Vector3 v, TransformSpace space)
         {
             switch (space)
             {
@@ -128,7 +128,7 @@ namespace Pulsar.Graphics.Graph
                     break;
             }
 
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="angle">Angle of the yaw</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
-        public virtual void Yaw(float angle, TransformSpace space = TransformSpace.Local)
+        public virtual void Yaw(float angle, TransformSpace space)
         {
             this.Rotate(angle, Vector3.UnitY, space);
         }
@@ -146,7 +146,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="angle">Angle of the pitch</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
-        public virtual void Pitch(float angle, TransformSpace space = TransformSpace.Local)
+        public virtual void Pitch(float angle, TransformSpace space)
         {
             this.Rotate(angle, Vector3.UnitX, space);
         }
@@ -156,7 +156,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="angle">Angle of the roll</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
-        public virtual void Roll(float angle, TransformSpace space = TransformSpace.Local)
+        public virtual void Roll(float angle, TransformSpace space)
         {
             this.Rotate(angle, Vector3.UnitZ, space);
         }
@@ -168,7 +168,7 @@ namespace Pulsar.Graphics.Graph
         /// <param name="angle">Angle of the rotation</param>
         /// <param name="axis">Axis used to perform the rotation</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
-        public virtual void Rotate(float angle, Vector3 axis, TransformSpace space = TransformSpace.Local)
+        public virtual void Rotate(float angle, Vector3 axis, TransformSpace space)
         {
             Quaternion q = Quaternion.CreateFromAxisAngle(axis, angle);
 
@@ -197,7 +197,7 @@ namespace Pulsar.Graphics.Graph
                     break;
             }
 
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Pulsar.Graphics.Graph
             this.scale.X *= x;
             this.scale.Y *= y;
             this.scale.Z *= z;
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
@@ -230,14 +230,14 @@ namespace Pulsar.Graphics.Graph
         public virtual void DoScale(Vector3 v)
         {
             this.scale *= v;
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
         /// Indicate that this node need to be updated
         /// </summary>
         /// <param name="forceParentUpdate">If true the parent have to update this node</param>
-        protected virtual void NeedUpdate(bool forceParentUpdate = false)
+        protected virtual void NeedUpdate(bool forceParentUpdate)
         {
             this.needUpdateTransform = true;
             this.needUpdateChild = true;
@@ -257,7 +257,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="child">Child node to update</param>
         /// <param name="forceParentUpdate">If true the parent have to update this node</param>
-        protected virtual void RequestUpdate(Node child, bool forceParentUpdate = false)
+        protected virtual void RequestUpdate(Node child, bool forceParentUpdate)
         {
             this.childldrensToUpdate.Add(child);
 
@@ -400,7 +400,7 @@ namespace Pulsar.Graphics.Graph
             set
             {
                 this.position = value;
-                this.NeedUpdate();
+                this.NeedUpdate(false);
             }
         }
 
@@ -413,7 +413,7 @@ namespace Pulsar.Graphics.Graph
             set
             {
                 this.scale = value;
-                this.NeedUpdate();
+                this.NeedUpdate(false);
             }
         }
 
@@ -426,7 +426,7 @@ namespace Pulsar.Graphics.Graph
             set
             {
                 this.orientation = value;
-                this.NeedUpdate();
+                this.NeedUpdate(false);
             }
         }
 

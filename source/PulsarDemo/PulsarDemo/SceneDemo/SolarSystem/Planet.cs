@@ -44,7 +44,7 @@ namespace PulsarDemo.SceneDemo.SolarSystem
 
         internal void Update()
         {
-            this.node.Yaw(MathHelper.ToRadians(1.0f));
+            this.node.Yaw(MathHelper.ToRadians(1.0f), TransformSpace.Local);
         }
 
         private void InitializeNode()
