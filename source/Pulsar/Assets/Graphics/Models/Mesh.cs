@@ -151,7 +151,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         /// <param name="renderInfo">Rendering information of the submesh</param>
         /// <param name="bounds">Bounding volume data of the submesh</param>
-        internal void AddSubMesh(RenderingInfo renderInfo, BoundingData bounds)
+        public void AddSubMesh(RenderingInfo renderInfo, BoundingData bounds)
         {
             SubMesh sub = new SubMesh();
             sub.RenderInfo = renderInfo;
