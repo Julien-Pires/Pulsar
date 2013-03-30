@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{6e976dd2-40a8-44f2-a661-5e1604a8a6e7}</ProjectGuid>
+    <ProjectGuid>{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">Xbox 360</Platform>
@@ -41,7 +41,12 @@
     <DefineConstants>DEBUG;TRACE;XBOX;XBOX360</DefineConstants>
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PulsarRuntime\PulsarRuntime Xbox 360.csproj">
+      <Project>{7E857BC8-D357-43E1-91C3-863EB2D19B49}</Project>
+      <Name>PulsarRuntime Xbox 360</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Assets\AssetGroup.cs" />
@@ -74,7 +79,6 @@
     <Compile Include="Core\MessagePoolTracker.cs" />
     <Compile Include="Core\Pool.cs" />
     <Compile Include="Graphics\BaseEffect.cs" />
-    <Compile Include="Graphics\Graph\BoundingData.cs" />
     <Compile Include="Graphics\Graph\Camera.cs" />
     <Compile Include="Graphics\Graph\CameraManager.cs" />
     <Compile Include="Graphics\Graph\Entity.cs" />
@@ -85,7 +89,6 @@
     <Compile Include="Graphics\Graph\IMovable.cs" />
     <Compile Include="Graphics\IRenderable.cs" />
     <Compile Include="Graphics\Debugger\MeshBoundingBox.cs" />
-    <Compile Include="Graphics\MeshData.cs" />
     <Compile Include="Graphics\Graph\Node.cs" />
     <Compile Include="Graphics\Rendering\RenderingInfo.cs" />
     <Compile Include="Graphics\Rendering\RenderPass\GBufferPass.cs" />

@@ -2,10 +2,7 @@
 
 using System.Collections.Generic;
 
-using Pulsar.Graphics.Graph;
-using Pulsar.Graphics.Rendering;
-
-namespace Pulsar.Graphics
+namespace PulsarRuntime.Graphics
 {
     /// <summary>
     /// Contains additional data about a sub mesh

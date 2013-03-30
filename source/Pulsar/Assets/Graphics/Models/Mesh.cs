@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using PulsarRuntime.Graphics;
+
 using Pulsar.Graphics;
 using Pulsar.Graphics.Graph;
 using Pulsar.Graphics.Rendering;
