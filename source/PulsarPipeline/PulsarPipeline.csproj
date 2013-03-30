@@ -57,9 +57,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pulsar\Pulsar.csproj">
-      <Project>{84b6c4fa-0776-4dc6-8b5d-d47b01419e2b}</Project>
-      <Name>Pulsar</Name>
+    <ProjectReference Include="..\PulsarRuntime\PulsarRuntime.csproj">
+      <Project>{266852a9-b8d8-48d3-8533-0a6e981894a1}</Project>
+      <Name>PulsarRuntime</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

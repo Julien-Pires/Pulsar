@@ -10,8 +10,7 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
-using Pulsar.Graphics;
-using Pulsar.Graphics.Graph;
+using PulsarRuntime.Graphics;
 
 namespace Pulsar
 {
