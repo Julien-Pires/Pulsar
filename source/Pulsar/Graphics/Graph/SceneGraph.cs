@@ -24,7 +24,6 @@ namespace Pulsar.Graphics.Graph
         private GeometryBatchManager batchManager = new GeometryBatchManager();
         private SceneNode root = null;
         private Dictionary<string, SceneNode> nodesMap = new Dictionary<string, SceneNode>();
-        private List<SceneNode> allNodes = new List<SceneNode>();
         private Dictionary<string, IMovable> movablesMap = new Dictionary<string, IMovable>();
         private EntityFactory entityFactory = new EntityFactory();
 
@@ -123,9 +122,7 @@ namespace Pulsar.Graphics.Graph
         internal SceneNode CreateNode(string name)
         {
             SceneNode node;
-
             this.nodesMap.TryGetValue(name, out node);
-
             if (node != null)
             {
                 throw new Exception(string.Format("A node named {0} already exists in this scene graph", name));
@@ -135,6 +132,11 @@ namespace Pulsar.Graphics.Graph
             this.nodesMap.Add(name, node);
 
             return node;
+        }
+
+        internal bool RemoveNode(string name)
+        {
+            return this.nodesMap.Remove(name);
         }
 
         #endregion

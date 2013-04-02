@@ -59,8 +59,14 @@ namespace Pulsar.Graphics.Graph
         /// <returns>Returns an instance of SceneNode class wich is a child of this scene node</returns>
         public virtual Node CreateChild(string name)
         {
-            Node child = this.CreateChildIntern(name);
+            Node child;
+            this.childrensMap.TryGetValue(name, out child);
+            if(child != null)
+            {
+                throw new Exception(string.Format("A child with the name {0} already exist", name));
+            }
 
+            child = this.CreateChildIntern(name);
             child.parent = this;
             this.childrensMap.Add(name, child);
             this.childrensList.Add(child);
@@ -75,14 +81,22 @@ namespace Pulsar.Graphics.Graph
         /// <returns>Returns true if the child is removed, otherwise false</returns>
         public virtual bool RemoveChild(string name)
         {
-            if (!this.childrensMap.ContainsKey(name))
-                return true;
-
-            Node child = this.childrensMap[name];
+            Node child;
+            this.childrensMap.TryGetValue(name, out child);
+            if (child == null)
+            {
+                return false;
+            }
+            if (!this.RemoveChildIntern(name))
+            {
+                return false;
+            }
 
             child.parent = null;
+            this.childrensMap.Remove(name);
+            this.childrensList.Remove(child);
 
-            return this.childrensMap.Remove(name);
+            return true;
         }
 
         /// <summary>
@@ -91,6 +105,8 @@ namespace Pulsar.Graphics.Graph
         /// <param name="name">Name of the child</param>
         /// <returns>Return a new child node</returns>
         protected abstract Node CreateChildIntern(string name);
+
+        protected abstract bool RemoveChildIntern(string name);
 
         /// <summary>
         /// Set a new position for this scene node

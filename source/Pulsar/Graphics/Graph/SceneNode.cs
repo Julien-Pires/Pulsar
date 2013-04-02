@@ -96,6 +96,11 @@ namespace Pulsar.Graphics.Graph
             return this.owner.CreateNode(name);
         }
 
+        protected override bool RemoveChildIntern(string name)
+        {
+            return this.owner.RemoveNode(name);
+        }
+
         /// <summary>
         /// Create a child node
         /// </summary>
