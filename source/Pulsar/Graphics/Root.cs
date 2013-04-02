@@ -21,7 +21,6 @@ namespace Pulsar.Graphics
         #region Fields
 
         private Renderer renderer = null;
-        private ContentManager content = null;
         private Dictionary<string, SceneGraph> scenes = new Dictionary<string, SceneGraph>();
 
         #endregion
@@ -33,9 +32,8 @@ namespace Pulsar.Graphics
         /// </summary>
         /// <param name="gDevice">Graphic device used by the rendering system</param>
         /// <param name="content">Content manager used by the entire system</param>
-        public Root(GraphicsDevice gDevice, ContentManager content)
+        public Root(GraphicsDevice gDevice)
         {
-            this.content = content;
             this.renderer = new Renderer(gDevice);
         }
 
