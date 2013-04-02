@@ -78,7 +78,6 @@
     <Compile Include="Core\Message.cs" />
     <Compile Include="Core\MessagePoolTracker.cs" />
     <Compile Include="Core\Pool.cs" />
-    <Compile Include="Graphics\BaseEffect.cs" />
     <Compile Include="Graphics\Graph\Camera.cs" />
     <Compile Include="Graphics\Graph\CameraManager.cs" />
     <Compile Include="Graphics\Graph\Entity.cs" />
