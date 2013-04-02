@@ -50,7 +50,7 @@ namespace PulsarDemo
         /// </summary>
         protected override void LoadContent()
         {
-            this.graphSystem = new Root(this.gDeviceMngr.GraphicsDevice, Content);
+            this.graphSystem = new Root(this.gDeviceMngr.GraphicsDevice);
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             this.inHandler = Input.Instance;

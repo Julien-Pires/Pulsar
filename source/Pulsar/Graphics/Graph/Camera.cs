@@ -595,7 +595,7 @@ namespace Pulsar.Graphics.Graph
         /// <summary>
         /// Get a boolean indicating if this object is visible
         /// </summary>
-        public virtual bool IsVisible
+        public virtual bool IsRendered
         {
             get { return false; }
         }

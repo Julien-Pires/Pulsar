@@ -242,9 +242,9 @@ namespace Pulsar.Graphics.Graph
         public bool Visible { get; set; }
 
         /// <summary>
-        /// Get a boolean to enable rendering for this entity
+        /// Get a boolean indicating if this entity is rendered
         /// </summary>
-        public bool IsVisible
+        public bool IsRendered
         {
             get 
             {
