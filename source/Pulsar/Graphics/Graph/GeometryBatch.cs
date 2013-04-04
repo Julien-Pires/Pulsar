@@ -23,7 +23,6 @@ namespace Pulsar.Graphics.Graph
         private List<IRenderable> instances = new List<IRenderable>();
         private RenderingInfo renderInfo = null;
         private Material material = null;
-        private BaseEffect effect = null;
         private Matrix[] transforms;
 
         #endregion

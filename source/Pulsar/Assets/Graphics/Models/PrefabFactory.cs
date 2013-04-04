@@ -199,7 +199,7 @@ namespace Pulsar.Assets.Graphics.Models
         private BoundingData ComputeBoundingVolume(Vector3[] vertices)
         {
             BoundingData bounds = new BoundingData();
-            bounds.AxisAlignedBoundingBox = BoundingBox.CreateFromPoints(vertices);
+            bounds.BoundingBox = BoundingBox.CreateFromPoints(vertices);
             bounds.BoundingSphere = BoundingSphere.CreateFromPoints(vertices);
 
             return bounds;

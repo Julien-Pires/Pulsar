@@ -106,7 +106,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         public BoundingBox AxisAlignedBoundingBox
         {
-            get { return this.bounds.AxisAlignedBoundingBox; }
+            get { return this.bounds.BoundingBox; }
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         public BoundingBox AxisAlignedBoundingBox
         {
-            get { return this.bounds.AxisAlignedBoundingBox; }
+            get { return this.bounds.BoundingBox; }
         }
 
         /// <summary>

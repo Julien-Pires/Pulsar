@@ -289,7 +289,7 @@ namespace Pulsar.Graphics.Graph
         {
             movObj.NotifyCurrentCamera(cam);
 
-            if (movObj.IsVisible)
+            if (movObj.IsRendered)
             {
                 movObj.UpdateRenderQueue(this);
             }

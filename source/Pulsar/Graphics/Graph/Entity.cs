@@ -30,7 +30,7 @@ namespace Pulsar.Graphics.Graph
         private string name = string.Empty;
         private Mesh mesh = null;
         private SceneNode parent = null;
-        private BoundingBox boundingBox;
+        private BoundingVolume bounds = new BoundingVolume();
         private List<SubEntity> subEntities = new List<SubEntity>();
 
         #endregion
@@ -43,6 +43,7 @@ namespace Pulsar.Graphics.Graph
         internal Entity()
         {
             this.Visible = true;
+            this.bounds.Type = BoundingType.AABB;
         }
 
         /// <summary>
@@ -66,6 +67,7 @@ namespace Pulsar.Graphics.Graph
         {
             this.CreateSubEntities();
 
+            this.bounds.InitialBox = this.mesh.AxisAlignedBoundingBox;
             this.bonesTransform = this.mesh.Bones;
             this.bonesCount = this.bonesTransform.Length;
         }
@@ -77,7 +79,7 @@ namespace Pulsar.Graphics.Graph
         {
             this.subEntities.Clear();
             this.bonesTransform = null;
-            this.boundingBox = new BoundingBox();
+            this.bounds.InitialBox = new BoundingBox();
         }
 
         /// <summary>
@@ -108,7 +110,7 @@ namespace Pulsar.Graphics.Graph
             SpeedFrustum frustCull = cam.FastFrustum;
             this.UpdateBounds();
 
-            this.isRendered = frustCull.Interesects(ref this.boundingBox);
+            this.isRendered = this.bounds.FrustumIntersect(ref frustCull);
         }
 
         /// <summary>
@@ -148,7 +150,8 @@ namespace Pulsar.Graphics.Graph
                     this.meshAABB = new MeshBoundingBox();
                 }
 
-                this.meshAABB.UpdateBox(ref this.boundingBox);
+                BoundingBox aabb = this.bounds.Box;
+                this.meshAABB.UpdateBox(ref aabb);
                 queue.AddRenderable(this.meshAABB);
             }
         }
@@ -174,13 +177,8 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         private void UpdateBounds()
         {
-            BoundingBox meshBox = this.mesh.AxisAlignedBoundingBox;
-            Vector3 min, max;
-            this.parent.ApplyScaleTrans(ref meshBox.Min, out min);
-            this.parent.ApplyScaleTrans(ref meshBox.Max, out max);
-
-            this.boundingBox.Min = min;
-            this.boundingBox.Max = max;
+            Matrix transform = this.parent.FullTransform;
+            this.bounds.Update(ref transform);
         }
 
         #endregion
@@ -216,7 +214,7 @@ namespace Pulsar.Graphics.Graph
             {
                 this.UpdateBounds();
 
-                return this.boundingBox;
+                return this.bounds.Box;
             }
         }
 
@@ -242,9 +240,9 @@ namespace Pulsar.Graphics.Graph
         public bool Visible { get; set; }
 
         /// <summary>
-        /// Get a boolean to enable rendering for this entity
+        /// Get a boolean indicating if this entity is rendered
         /// </summary>
-        public bool IsVisible
+        public bool IsRendered
         {
             get 
             {
