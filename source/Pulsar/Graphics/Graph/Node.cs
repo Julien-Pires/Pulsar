@@ -21,6 +21,7 @@ namespace Pulsar.Graphics.Graph
         protected bool needParentUpdate = true;
         protected bool needUpdateChild = false;
         protected bool parentAskedForUpdate = false;
+        protected Matrix scaleOrientTransform = Matrix.Identity;
         protected Matrix fullTransform = Matrix.Identity;
         protected Quaternion orientation = Quaternion.Identity;
         protected Vector3 scale = Vector3.One;
@@ -345,6 +346,17 @@ namespace Pulsar.Graphics.Graph
             this.needParentUpdate = false;
         }
 
+        private void UpdateTransform()
+        {
+            if (this.needUpdateTransform)
+            {
+                this.scaleOrientTransform = Matrix.CreateScale(this.fullScale) * Matrix.CreateFromQuaternion(this.fullOrientation);
+                this.fullTransform = this.scaleOrientTransform * Matrix.CreateTranslation(this.fullPosition);
+
+                this.needUpdateTransform = false;
+            }
+        }
+
         /// <summary>
         /// Apply the transform matrix of this node to a vector
         /// </summary>
@@ -362,7 +374,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="pos">Origin vector</param>
         /// <param name="result">Result vector</param>
-        public void ApplyScaleTrans(ref Vector3 pos, out Vector3 result)
+        public void ApplyScalePos(ref Vector3 pos, out Vector3 result)
         {
             Vector3.Multiply(ref pos, ref this.fullScale, out result);
             Vector3.Add(ref result, ref this.fullPosition, out result);
@@ -395,15 +407,19 @@ namespace Pulsar.Graphics.Graph
         {
             get
             {
-                if (this.needUpdateTransform)
-                {
-                    this.fullTransform = Matrix.CreateScale(this.fullScale) * Matrix.CreateFromQuaternion(this.fullOrientation) *
-                        Matrix.CreateTranslation(this.fullPosition);
-
-                    this.needUpdateTransform = false;
-                }
+                this.UpdateTransform();
 
                 return this.fullTransform;
+            }
+        }
+
+        public virtual Matrix ScaleOrientationTransform
+        {
+            get
+            {
+                this.UpdateTransform();
+
+                return this.scaleOrientTransform;
             }
         }
 

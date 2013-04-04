@@ -14,7 +14,7 @@ namespace PulsarRuntime.Graphics
         /// <summary>
         /// Axis Aligned Bounding Box
         /// </summary>
-        public BoundingBox AxisAlignedBoundingBox;
+        public BoundingBox BoundingBox;
 
         /// <summary>
         /// Bounding sphere

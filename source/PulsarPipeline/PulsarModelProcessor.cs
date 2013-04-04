@@ -115,13 +115,13 @@ namespace Pulsar
                 BoundingData bound = subs[i];
 
                 modelS = BoundingSphere.CreateMerged(modelS, bound.BoundingSphere);
-                modelB = BoundingBox.CreateMerged(modelB, bound.AxisAlignedBoundingBox);
+                modelB = BoundingBox.CreateMerged(modelB, bound.BoundingBox);
             }
 
             BoundingData modelBounds = new BoundingData();
 
             modelBounds.BoundingSphere = modelS;
-            modelBounds.AxisAlignedBoundingBox = modelB;
+            modelBounds.BoundingBox = modelB;
             modelBounding.ModelBounding = modelBounds;
         }
 
@@ -145,7 +145,7 @@ namespace Pulsar
                         b = BoundingBox.CreateFromPoints(geo.Vertices.Positions);
 
                         BoundingData subBound = new BoundingData();
-                        subBound.AxisAlignedBoundingBox = b;
+                        subBound.BoundingBox = b;
                         subBound.BoundingSphere = s;
                         modelBounding.AddSubBounding(subBound);
                     }
@@ -156,7 +156,7 @@ namespace Pulsar
                     b = BoundingBox.CreateFromPoints(mesh.Positions);
 
                     BoundingData subBound = new BoundingData();
-                    subBound.AxisAlignedBoundingBox = b;
+                    subBound.BoundingBox = b;
                     subBound.BoundingSphere = s;
                     modelBounding.AddSubBounding(subBound);
                 }
