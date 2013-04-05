@@ -175,7 +175,7 @@ namespace Pulsar.Graphics.Graph
         {
             Material material = renderable.Material;
 
-            if (material.IsSolid)
+            if (!material.IsTransparent)
             {
                 this.solids.Add(renderable);
             }
