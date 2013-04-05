@@ -9,6 +9,7 @@ using PulsarRuntime.Graphics;
 
 using Pulsar.Assets;
 using Pulsar.Assets.Graphics.Materials;
+using Pulsar.Game;
 using Pulsar.Graphics;
 using Pulsar.Graphics.Graph;
 using Pulsar.Graphics.Rendering;
@@ -52,6 +53,10 @@ namespace Pulsar.Assets.Graphics.Models
         {
             AssetSearchResult<Mesh> result = this.assetGroup.Load(name, storage);
             Mesh mesh = result.Resource;
+            mesh.VBuffer = new VertexBuffer(GameApplication.GameGraphicsDevice, typeof(VertexPositionNormalTexture), 0,
+                BufferUsage.WriteOnly);
+            mesh.IBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
+                BufferUsage.WriteOnly);
 
             return mesh;
         }

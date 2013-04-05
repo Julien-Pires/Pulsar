@@ -127,8 +127,10 @@ namespace Pulsar.Assets.Graphics.Models
     {
         #region Fields
 
-        protected List<SubMesh> subMeshes = new List<SubMesh>();
-        protected BoundingData bounds;
+        private List<SubMesh> subMeshes = new List<SubMesh>();
+        private BoundingData bounds;
+        private VertexBuffer vBuffer;
+        private IndexBuffer iBuffer;
 
         #endregion
 
@@ -153,6 +155,15 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="bounds">Bounding volume data of the submesh</param>
         public void AddSubMesh(RenderingInfo renderInfo, BoundingData bounds)
         {
+            if (renderInfo.VBuffer != this.vBuffer)
+            {
+                throw new Exception("Failed to add new submesh, buffer are different from mesh buffer's");
+            }
+            if (renderInfo.IBuffer != this.iBuffer)
+            {
+                throw new Exception("Failed to add new submesh, buffer are different from mesh buffer's");
+            }
+
             SubMesh sub = new SubMesh();
             sub.RenderInfo = renderInfo;
             sub.BoundingVolume = bounds;
@@ -210,12 +221,20 @@ namespace Pulsar.Assets.Graphics.Models
         /// <summary>
         /// Get the vertex buffer of the mesh
         /// </summary>
-        public VertexBuffer VBuffer { get; internal set; }
+        public VertexBuffer VBuffer
+        {
+            get { return this.VBuffer; }
+            internal set { this.vBuffer = value; }
+        }
 
         /// <summary>
         /// Get the index buffer of the mesh
         /// </summary>
-        public IndexBuffer IBuffer { get; internal set; }
+        public IndexBuffer IBuffer
+        {
+            get { return this.iBuffer; }
+            internal set { this.iBuffer = value; }
+        }
 
         #endregion
     }
