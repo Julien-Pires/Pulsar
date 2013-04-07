@@ -169,8 +169,8 @@ namespace Pulsar.Assets.Graphics.Models
             sub.BoundingVolume = bounds;
             sub.ID = SubMesh.GetID();
 
-            BoundingBox.CreateMerged(ref this.bounds.AxisAlignedBoundingBox, ref bounds.AxisAlignedBoundingBox, 
-                out this.bounds.AxisAlignedBoundingBox);
+            BoundingBox.CreateMerged(ref this.bounds.BoundingBox, ref bounds.BoundingBox,
+                out this.bounds.BoundingBox);
             BoundingSphere.CreateMerged(ref this.bounds.BoundingSphere, ref bounds.BoundingSphere,
                 out this.bounds.BoundingSphere);
             this.VerticesCount += renderInfo.VertexCount;
