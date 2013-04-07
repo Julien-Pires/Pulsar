@@ -127,8 +127,10 @@ namespace Pulsar.Assets.Graphics.Models
     {
         #region Fields
 
-        protected List<SubMesh> subMeshes = new List<SubMesh>();
-        protected BoundingData bounds;
+        private List<SubMesh> subMeshes = new List<SubMesh>();
+        private BoundingData bounds;
+        private VertexBuffer vBuffer;
+        private IndexBuffer iBuffer;
 
         #endregion
 
@@ -151,12 +153,28 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         /// <param name="renderInfo">Rendering information of the submesh</param>
         /// <param name="bounds">Bounding volume data of the submesh</param>
-        internal void AddSubMesh(RenderingInfo renderInfo, BoundingData bounds)
+        public void AddSubMesh(RenderingInfo renderInfo, BoundingData bounds)
         {
+            if (renderInfo.VBuffer != this.vBuffer)
+            {
+                throw new Exception("Failed to add new submesh, buffer are different from mesh buffer's");
+            }
+            if (renderInfo.IBuffer != this.iBuffer)
+            {
+                throw new Exception("Failed to add new submesh, buffer are different from mesh buffer's");
+            }
+
             SubMesh sub = new SubMesh();
             sub.RenderInfo = renderInfo;
             sub.BoundingVolume = bounds;
             sub.ID = SubMesh.GetID();
+
+            BoundingBox.CreateMerged(ref this.bounds.AxisAlignedBoundingBox, ref bounds.AxisAlignedBoundingBox, 
+                out this.bounds.AxisAlignedBoundingBox);
+            BoundingSphere.CreateMerged(ref this.bounds.BoundingSphere, ref bounds.BoundingSphere,
+                out this.bounds.BoundingSphere);
+            this.VerticesCount += renderInfo.VertexCount;
+            this.PrimitiveCount += renderInfo.TriangleCount;
             this.subMeshes.Add(sub);
         }
 
@@ -168,6 +186,8 @@ namespace Pulsar.Assets.Graphics.Models
         /// Get the total of vertices for this mesh
         /// </summary>
         public int VerticesCount { get; internal set; }
+
+        public int PrimitiveCount { get; internal set; }
 
         /// <summary>
         /// Get the list of sub mesh
@@ -210,12 +230,20 @@ namespace Pulsar.Assets.Graphics.Models
         /// <summary>
         /// Get the vertex buffer of the mesh
         /// </summary>
-        public VertexBuffer VBuffer { get; internal set; }
+        public VertexBuffer VBuffer
+        {
+            get { return this.VBuffer; }
+            internal set { this.vBuffer = value; }
+        }
 
         /// <summary>
         /// Get the index buffer of the mesh
         /// </summary>
-        public IndexBuffer IBuffer { get; internal set; }
+        public IndexBuffer IBuffer
+        {
+            get { return this.iBuffer; }
+            internal set { this.iBuffer = value; }
+        }
 
         #endregion
     }

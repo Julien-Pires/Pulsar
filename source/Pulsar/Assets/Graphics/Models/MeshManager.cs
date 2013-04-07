@@ -9,6 +9,7 @@ using PulsarRuntime.Graphics;
 
 using Pulsar.Assets;
 using Pulsar.Assets.Graphics.Materials;
+using Pulsar.Game;
 using Pulsar.Graphics;
 using Pulsar.Graphics.Graph;
 using Pulsar.Graphics.Rendering;
@@ -52,6 +53,10 @@ namespace Pulsar.Assets.Graphics.Models
         {
             AssetSearchResult<Mesh> result = this.assetGroup.Load(name, storage);
             Mesh mesh = result.Resource;
+            mesh.VBuffer = new VertexBuffer(GameApplication.GameGraphicsDevice, typeof(VertexPositionNormalTexture), 0,
+                BufferUsage.WriteOnly);
+            mesh.IBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
+                BufferUsage.WriteOnly);
 
             return mesh;
         }
@@ -118,34 +123,6 @@ namespace Pulsar.Assets.Graphics.Models
         }
 
         /// <summary>
-        /// Create a new material
-        /// </summary>
-        /// <param name="name">Name of the material</param>
-        /// <param name="storage">Storage in which the material will be stored</param>
-        /// <param name="fx">Effect instance from which to extract material informations</param>
-        /// <param name="texturesName">Dictionnary containing the name of the textures</param>
-        /// <returns>Return a new material</returns>
-        private Material CreateMaterial(string name, string storage, Effect fx, Dictionary<string, string> texturesName)
-        {
-            PangoTexture diffuse = null;
-            PangoTexture specular = null;
-            PangoTexture normal = null;
-            EffectParameter fxParam = null;
-            Texture2D tex = null;
-
-            fxParam = fx.Parameters["Texture"];
-            if (fxParam != null)
-            {
-                tex = fxParam.GetValueTexture2D();
-                diffuse = TextureManager.Instance.Load(texturesName["Texture"], storage, tex);
-            }
-
-            Material mat = MaterialManager.Instance.LoadWithTexture(name, storage, diffuse, specular, normal);
-
-            return mat;
-        }
-
-        /// <summary>
         /// Create rendering information
         /// </summary>
         /// <param name="id">ID of the rendering batch</param>
@@ -181,13 +158,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="storage">Storage in which data will be stored</param>
         private void ProcessModel(Mesh mesh, Model model, string storage)
         {
-            Matrix[] bones = new Matrix[model.Bones.Count];
-            model.CopyAbsoluteBoneTransformsTo(bones);
-
             MeshData data = (MeshData)model.Tag;
-            mesh.Bones = bones;
-            mesh.BoundingVolume = data.BoundingVolume;
-
             List<SubMesh> subList = mesh.SubMeshes;
             for (int i = 0; i < model.Meshes.Count; i++)
             {
@@ -203,13 +174,22 @@ namespace Pulsar.Assets.Graphics.Models
                         part.VertexOffset, part.PrimitiveCount, part.StartIndex);
 
                     string materialName = mesh.Name + @"/" + currMesh.Name + "_material";
-                    Material mat = this.CreateMaterial(materialName, storage, part.Effect, subData.TexturesName);
+                    Material mat = MaterialManager.Instance.CreateMaterial(materialName, storage, part.Effect, subData.TexturesName);
 
                     SubMesh sub = this.CreateSubMesh(currMesh.Name, renderInf, subData.BoundingVolume, mat,
                         currMesh.ParentBone.Index);
                     subList.Add(sub);
-                    mesh.VerticesCount += renderInf.VertexCount;
                 }
+            }
+
+            Matrix[] bones = new Matrix[model.Bones.Count];
+            model.CopyAbsoluteBoneTransformsTo(bones);
+            mesh.Bones = bones;
+            mesh.BoundingVolume = data.BoundingVolume;
+            if (model.Meshes.Count > 0)
+            {
+                mesh.VBuffer = model.Meshes[0].MeshParts[0].VertexBuffer;
+                mesh.IBuffer = model.Meshes[0].MeshParts[0].IndexBuffer;
             }
         }
 

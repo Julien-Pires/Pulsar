@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Core;
@@ -88,7 +89,7 @@ namespace Pulsar.Assets.Graphics.Materials
 
             if (result.Created)
             {
-                Texture2D image = Texture.CreateMissingTexture();
+                Texture2D image = Texture.CreateMissingTexture(256, 0x8, Color.Blue, Color.White);
                 tex.Image = image;
             }
 

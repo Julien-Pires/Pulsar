@@ -2,6 +2,8 @@
 
 using System.Collections.Generic;
 
+using Microsoft.Xna.Framework.Graphics;
+
 namespace Pulsar.Assets.Graphics.Materials
 {
     /// <summary>
@@ -121,6 +123,34 @@ namespace Pulsar.Assets.Graphics.Materials
             Texture diffTex = texMngr.Load(diffuse, storage, diffuse);
 
             mat.DiffuseMap = diffTex;
+        }
+
+        /// <summary>
+        /// Create a new material from an effect and a map of texture name
+        /// </summary>
+        /// <param name="name">Name of the material</param>
+        /// <param name="storage">Storage in which the material will be stored</param>
+        /// <param name="fx">Effect instance from which to extract material informations</param>
+        /// <param name="texturesName">Dictionnary containing the name of the textures</param>
+        /// <returns>Return a new material</returns>
+        internal Material CreateMaterial(string name, string storage, Effect fx, Dictionary<string, string> texturesName)
+        {
+            Texture diffuse = null;
+            Texture specular = null;
+            Texture normal = null;
+            EffectParameter fxParam = null;
+            Texture2D tex = null;
+
+            fxParam = fx.Parameters["Texture"];
+            if (fxParam != null)
+            {
+                tex = fxParam.GetValueTexture2D();
+                diffuse = TextureManager.Instance.Load(texturesName["Texture"], storage, tex);
+            }
+
+            Material mat = this.LoadWithTexture(name, storage, diffuse, specular, normal);
+
+            return mat;
         }
 
         public bool Unload(string name, string storage)

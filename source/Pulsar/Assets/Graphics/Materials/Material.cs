@@ -26,7 +26,6 @@ namespace Pulsar.Assets.Graphics.Materials
         internal Material(MaterialManager owner, string name) : base(name) 
         {
             this.assetManager = owner;
-            this.IsSolid = true;
         }
 
         #endregion
@@ -42,11 +41,6 @@ namespace Pulsar.Assets.Graphics.Materials
         /// Get or set a boolean to draw in wireframe mode
         /// </summary>
         public bool WireFrame { get; set; }
-
-        /// <summary>
-        /// Get or set a boolean indicating this material is solid
-        /// </summary>
-        public bool IsSolid { get; set; }
 
         /// <summary>
         /// Get or set a boolean indicating this material is transparent
