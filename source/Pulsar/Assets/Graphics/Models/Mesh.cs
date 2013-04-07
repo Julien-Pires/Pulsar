@@ -168,6 +168,13 @@ namespace Pulsar.Assets.Graphics.Models
             sub.RenderInfo = renderInfo;
             sub.BoundingVolume = bounds;
             sub.ID = SubMesh.GetID();
+
+            BoundingBox.CreateMerged(ref this.bounds.AxisAlignedBoundingBox, ref bounds.AxisAlignedBoundingBox, 
+                out this.bounds.AxisAlignedBoundingBox);
+            BoundingSphere.CreateMerged(ref this.bounds.BoundingSphere, ref bounds.BoundingSphere,
+                out this.bounds.BoundingSphere);
+            this.VerticesCount += renderInfo.VertexCount;
+            this.PrimitiveCount += renderInfo.TriangleCount;
             this.subMeshes.Add(sub);
         }
 
@@ -179,6 +186,8 @@ namespace Pulsar.Assets.Graphics.Models
         /// Get the total of vertices for this mesh
         /// </summary>
         public int VerticesCount { get; internal set; }
+
+        public int PrimitiveCount { get; internal set; }
 
         /// <summary>
         /// Get the list of sub mesh
