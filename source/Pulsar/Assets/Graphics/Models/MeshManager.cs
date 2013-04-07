@@ -158,13 +158,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="storage">Storage in which data will be stored</param>
         private void ProcessModel(Mesh mesh, Model model, string storage)
         {
-            Matrix[] bones = new Matrix[model.Bones.Count];
-            model.CopyAbsoluteBoneTransformsTo(bones);
-
             MeshData data = (MeshData)model.Tag;
-            mesh.Bones = bones;
-            mesh.BoundingVolume = data.BoundingVolume;
-
             List<SubMesh> subList = mesh.SubMeshes;
             for (int i = 0; i < model.Meshes.Count; i++)
             {
@@ -185,8 +179,17 @@ namespace Pulsar.Assets.Graphics.Models
                     SubMesh sub = this.CreateSubMesh(currMesh.Name, renderInf, subData.BoundingVolume, mat,
                         currMesh.ParentBone.Index);
                     subList.Add(sub);
-                    mesh.VerticesCount += renderInf.VertexCount;
                 }
+            }
+
+            Matrix[] bones = new Matrix[model.Bones.Count];
+            model.CopyAbsoluteBoneTransformsTo(bones);
+            mesh.Bones = bones;
+            mesh.BoundingVolume = data.BoundingVolume;
+            if (model.Meshes.Count > 0)
+            {
+                mesh.VBuffer = model.Meshes[0].MeshParts[0].VertexBuffer;
+                mesh.IBuffer = model.Meshes[0].MeshParts[0].IndexBuffer;
             }
         }
 
