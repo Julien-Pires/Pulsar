@@ -15,10 +15,6 @@ namespace Pulsar.Assets.Graphics.Materials
     {
         #region Fields
 
-        private static readonly int missingSize = 256;
-        private static readonly int missingStripSize = 0x8;
-        private static readonly Color missingColor = Color.Blue;
-
         private int width;
         private int height;
         private Texture2D tex2D = null;
@@ -60,29 +56,29 @@ namespace Pulsar.Assets.Graphics.Materials
         /// Create a checkerboard texture
         /// </summary>
         /// <returns>Return a new texture</returns>
-        public static Texture2D CreateMissingTexture()
+        public static Texture2D CreateMissingTexture(int size, int stripSize, Color odd, Color even)
         {
-            Color[] texMap = new Color[Texture.missingSize * Texture.missingSize];
+            Color[] texMap = new Color[size * size];
 
-            for (int x = 0; x < Texture.missingSize; x++)
+            for (int x = 0; x < size; x++)
             {
-                for (int y = 0; y < Texture.missingSize; y++)
+                for (int y = 0; y < size; y++)
                 {
-                    bool hasColor = (((x & Texture.missingStripSize) == 0) ^ ((y & Texture.missingStripSize) == 0));
-                    int idx = (x * Texture.missingSize) + y;
+                    bool hasColor = (((x & stripSize) == 0) ^ ((y & stripSize) == 0));
+                    int idx = (x * size) + y;
 
                     if (hasColor)
                     {
-                        texMap[idx] = Texture.missingColor;
+                        texMap[idx] = odd;
                     }
                     else
                     {
-                        texMap[idx] = Color.White;
+                        texMap[idx] = even;
                     }
                 }
             }
 
-            Texture2D tex2D = new Texture2D(GameApplication.GameGraphicsDevice, Texture.missingSize, Texture.missingSize);
+            Texture2D tex2D = new Texture2D(GameApplication.GameGraphicsDevice, size, size);
             tex2D.SetData<Color>(texMap);
 
             return tex2D;
