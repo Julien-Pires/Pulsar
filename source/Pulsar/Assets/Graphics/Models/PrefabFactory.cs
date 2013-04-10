@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using PulsarRuntime.Graphics;
+
 using Pulsar.Game;
 using Pulsar.Core;
 using Pulsar.Graphics;
@@ -127,37 +129,15 @@ namespace Pulsar.Assets.Graphics.Models
                 indices[i] = i;
             }
 
-            VertexBuffer vBuffer = null;
-            IndexBuffer iBuffer = null;
-            vBuffer = new VertexBuffer(GameApplication.GameGraphicsDevice, typeof(VertexPositionNormalTexture), 
-                verticesCount, BufferUsage.WriteOnly);
+            string name = width + "x" + height + "x" + depth + "_box";
+            Mesh mesh = MeshManager.Instance.LoadEmpty(name, "Default");
+            VertexBuffer vBuffer = mesh.VBuffer;
+            IndexBuffer iBuffer = mesh.IBuffer;
             vBuffer.SetData<VertexPositionNormalTexture>(vertices);
-            iBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits, 
-                verticesCount, BufferUsage.WriteOnly);
             iBuffer.SetData<int>(indices);
 
-            RenderingInfo renderInfo = this.CreateRenderInfo(vBuffer, iBuffer, 12, verticesCount);
+            RenderingInfo renderInfo = this.CreateRenderInfo(vBuffer, iBuffer, 12, verticesCount, 0, 0);
             BoundingData bounds = this.ComputeBoundingVolume(vec3List);
-            string name = width + "x" + height + "x" + depth + "_box";
-            Mesh box = this.CreateSimpleMesh(name, renderInfo, bounds);
-
-            return box;
-        }
-
-        /// <summary>
-        /// Create a mesh made of one sub mesh
-        /// </summary>
-        /// <param name="name">Name of the mesh</param>
-        /// <param name="renderInfo">Rendering information of the sub mesh</param>
-        /// <param name="bounds">Bounding volume of the sub mesh</param>
-        /// <returns>Return a new mesh</returns>
-        private Mesh CreateSimpleMesh(string name, RenderingInfo renderInfo, BoundingData bounds)
-        {
-            Mesh mesh = MeshManager.Instance.LoadEmpty(name, "Default");
-            mesh.BoundingVolume = bounds;
-            mesh.VBuffer = renderInfo.VBuffer;
-            mesh.IBuffer = renderInfo.IBuffer;
-            mesh.VerticesCount = renderInfo.VertexCount;
             mesh.AddSubMesh(renderInfo, bounds);
 
             return mesh;
@@ -174,7 +154,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="vertexOffset">Offset in the vertex array</param>
         /// <returns>Return new rendering information</returns>
         private RenderingInfo CreateRenderInfo(VertexBuffer vBuffer, IndexBuffer iBuffer, int triangleCount, 
-            int vertices, int startIdx = 0, int vertexOffset = 0)
+            int vertices, int startIdx, int vertexOffset)
         {
             RenderingInfo renderInfo = new RenderingInfo()
             {
@@ -197,7 +177,7 @@ namespace Pulsar.Assets.Graphics.Models
         private BoundingData ComputeBoundingVolume(Vector3[] vertices)
         {
             BoundingData bounds = new BoundingData();
-            bounds.AxisAlignedBoundingBox = BoundingBox.CreateFromPoints(vertices);
+            bounds.BoundingBox = BoundingBox.CreateFromPoints(vertices);
             bounds.BoundingSphere = BoundingSphere.CreateFromPoints(vertices);
 
             return bounds;

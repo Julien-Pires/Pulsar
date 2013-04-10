@@ -40,7 +40,7 @@ namespace Pulsar.Assets.Graphics.Shaders
         /// <param name="effect">Name of the effect associated to the shader</param>
         /// <param name="shaderType">Concrete shader type to instantiate</param>
         /// <returns>Return an existing shader instance if the storage has one, otherwise a new instance</returns>
-        public Shader LoadShader(string name, string storage, string effect, Type shaderType = null)
+        public Shader LoadShader(string name, string storage, string effect, Type shaderType)
         {
             AssetSearchResult<Shader> result = this.assetGroup.Load(name, storage, shaderType);
             Shader shader = result.Resource;
@@ -66,11 +66,11 @@ namespace Pulsar.Assets.Graphics.Shaders
         /// <param name="parameter">Additional parameter to create the shader, in this case 
         /// the methods wait a Type instance describing the concrete type to instantiate</param>
         /// <returns>Return a new shader</returns>
-        public Asset CreateInstance(string name, object parameter = null)
+        public Asset CreateInstance(string name, params object[] parameter)
         {
-            if (parameter != null)
+            if ((parameter != null) && (parameter.Length > 0))
             {
-                Type type = parameter as Type;
+                Type type = parameter[0] as Type;
                 if (type == null)
                 {
                     throw new ArgumentException("Failed to create instance, parameter is not of Type instance");

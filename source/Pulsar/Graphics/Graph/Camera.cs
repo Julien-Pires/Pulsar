@@ -92,7 +92,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="useFixed">Boolean indicating the uses or not of a fixed vector</param>
         /// <param name="fixedAxis">Fixed vector for yaw</param>
-        public virtual void UseFixedYaw(bool useFixed, Vector3? fixedAxis = null)
+        public virtual void UseFixedYaw(bool useFixed, Vector3? fixedAxis)
         {
             fixedAxis = fixedAxis ?? Vector3.UnitY;
             this.useFixedYaw = useFixed;
@@ -595,7 +595,7 @@ namespace Pulsar.Graphics.Graph
         /// <summary>
         /// Get a boolean indicating if this object is visible
         /// </summary>
-        public virtual bool IsVisible
+        public virtual bool IsRendered
         {
             get { return false; }
         }

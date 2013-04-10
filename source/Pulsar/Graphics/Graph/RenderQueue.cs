@@ -175,7 +175,7 @@ namespace Pulsar.Graphics.Graph
         {
             Material material = renderable.Material;
 
-            if (material.IsSolid)
+            if (!material.IsTransparent)
             {
                 this.solids.Add(renderable);
             }
@@ -289,7 +289,7 @@ namespace Pulsar.Graphics.Graph
         {
             movObj.NotifyCurrentCamera(cam);
 
-            if (movObj.IsVisible)
+            if (movObj.IsRendered)
             {
                 movObj.UpdateRenderQueue(this);
             }

@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Core;
@@ -88,7 +89,7 @@ namespace Pulsar.Assets.Graphics.Materials
 
             if (result.Created)
             {
-                Texture2D image = Texture.CreateMissingTexture();
+                Texture2D image = Texture.CreateMissingTexture(256, 0x8, Color.Blue, Color.White);
                 tex.Image = image;
             }
 
@@ -106,7 +107,7 @@ namespace Pulsar.Assets.Graphics.Materials
         /// <param name="name">Texture name</param>
         /// <param name="parameter">Addtional parameter for loading the instance</param>
         /// <returns>Return a new instance</returns>
-        public Asset CreateInstance(string name, object parameter = null)
+        public Asset CreateInstance(string name, params object[] parameter)
         {
             return new Texture(this, name);
         }

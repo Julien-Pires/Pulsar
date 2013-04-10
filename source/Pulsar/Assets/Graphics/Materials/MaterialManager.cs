@@ -2,6 +2,8 @@
 
 using System.Collections.Generic;
 
+using Microsoft.Xna.Framework.Graphics;
+
 namespace Pulsar.Assets.Graphics.Materials
 {
     /// <summary>
@@ -70,8 +72,7 @@ namespace Pulsar.Assets.Graphics.Materials
         /// <param name="normalMap">Normal map used by the material</param>
         /// <param name="specular">Specular map used by the material</param>
         /// <returns>Return an existing instance of the material if the storage has one, otherwise a new instance</returns>
-        public Material LoadWithTexture(string name, string storage, Texture diffuse = null, Texture normalMap = null, 
-            Texture specular = null)
+        public Material LoadWithTexture(string name, string storage, Texture diffuse, Texture normalMap, Texture specular)
         {
             AssetSearchResult<Material> result = this.assetGroup.Load(name, storage);
             Material mat = result.Resource;
@@ -95,8 +96,7 @@ namespace Pulsar.Assets.Graphics.Materials
         /// <param name="normalMap">Normal map used by the material</param>
         /// <param name="specular">Specular map used by the material</param>
         /// <returns>Return an existing instance of the material if the storage has one, otherwise a new instance</returns>
-        public Material LoadFromFile(string name, string storage, string diffuseMap = null, string normalMap = null,
-            string specularMap = null)
+        public Material LoadFromFile(string name, string storage, string diffuseMap, string normalMap, string specularMap)
         {
             AssetSearchResult<Material> result = this.assetGroup.Load(name, storage);
             Material mat = result.Resource;
@@ -125,6 +125,34 @@ namespace Pulsar.Assets.Graphics.Materials
             mat.DiffuseMap = diffTex;
         }
 
+        /// <summary>
+        /// Create a new material from an effect and a map of texture name
+        /// </summary>
+        /// <param name="name">Name of the material</param>
+        /// <param name="storage">Storage in which the material will be stored</param>
+        /// <param name="fx">Effect instance from which to extract material informations</param>
+        /// <param name="texturesName">Dictionnary containing the name of the textures</param>
+        /// <returns>Return a new material</returns>
+        internal Material CreateMaterial(string name, string storage, Effect fx, Dictionary<string, string> texturesName)
+        {
+            Texture diffuse = null;
+            Texture specular = null;
+            Texture normal = null;
+            EffectParameter fxParam = null;
+            Texture2D tex = null;
+
+            fxParam = fx.Parameters["Texture"];
+            if (fxParam != null)
+            {
+                tex = fxParam.GetValueTexture2D();
+                diffuse = TextureManager.Instance.Load(texturesName["Texture"], storage, tex);
+            }
+
+            Material mat = this.LoadWithTexture(name, storage, diffuse, specular, normal);
+
+            return mat;
+        }
+
         public bool Unload(string name, string storage)
         {
             return this.assetGroup.Unload(name, storage);
@@ -136,7 +164,7 @@ namespace Pulsar.Assets.Graphics.Materials
         /// <param name="name">Material name</param>
         /// <param name="parameter">Additional parameter for loading the instance</param>
         /// <returns>Return a new instance of Material class</returns>
-        public Asset CreateInstance(string name, object parameter = null)
+        public Asset CreateInstance(string name, params object[] parameter)
         {
             return new Material(this, name);
         }

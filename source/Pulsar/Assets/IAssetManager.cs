@@ -21,7 +21,7 @@ namespace Pulsar.Assets
         /// <param name="name">Name of the asset</param>
         /// <param name="parameter">Additional parameter</param>
         /// <returns>Return a new instance of an asset</returns>
-        Asset CreateInstance(string name, object parameter = null);
+        Asset CreateInstance(string name, params object[] parameter);
 
         #endregion
     }

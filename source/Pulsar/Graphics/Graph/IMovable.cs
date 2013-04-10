@@ -61,7 +61,7 @@ namespace Pulsar.Graphics.Graph
         /// <summary>
         /// Get a boolean indicating if this object will be draw
         /// </summary>
-        bool IsVisible { get; }
+        bool IsRendered { get; }
 
         /// <summary>
         /// Get a boolean indicating if this object is visible

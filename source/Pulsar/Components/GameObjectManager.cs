@@ -50,14 +50,13 @@ namespace Pulsar.Components
             }
 
             this.objectsMap.Add(obj.ID, obj);
+            obj.Owner = this;
             if (obj.Count > 0)
             {
                 foreach (Component compo in obj)
                 {
-                    if (!this.componentsList.Contains(compo))
-                    {
-                        this.componentsList.Add(compo);
-                    }
+                    ComponentEventArgs e = new ComponentEventArgs(compo);
+                    this.OnComponentAdded(this, e);
                 }
             }
 
@@ -105,6 +104,7 @@ namespace Pulsar.Components
 
             if (result)
             {
+                go.Owner = null;
                 go.ComponentAdded -= this.OnComponentAdded;
                 go.ComponentRemoved -= this.OnComponentRemoved;
 

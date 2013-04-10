@@ -58,7 +58,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="b">Bounding box to test intersection with</param>
         /// <returns>Return true if they interesect, otherwise false</returns>
-        public bool Interesects(ref BoundingBox b)
+        public bool Intersects(ref BoundingBox b)
         {
             Vector3 v;
 

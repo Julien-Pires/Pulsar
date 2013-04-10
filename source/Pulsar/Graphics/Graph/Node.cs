@@ -21,6 +21,7 @@ namespace Pulsar.Graphics.Graph
         protected bool needParentUpdate = true;
         protected bool needUpdateChild = false;
         protected bool parentAskedForUpdate = false;
+        protected Matrix scaleOrientTransform = Matrix.Identity;
         protected Matrix fullTransform = Matrix.Identity;
         protected Quaternion orientation = Quaternion.Identity;
         protected Vector3 scale = Vector3.One;
@@ -45,7 +46,7 @@ namespace Pulsar.Graphics.Graph
         {
             this.name = name;
 
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         #endregion
@@ -59,8 +60,14 @@ namespace Pulsar.Graphics.Graph
         /// <returns>Returns an instance of SceneNode class wich is a child of this scene node</returns>
         public virtual Node CreateChild(string name)
         {
-            Node child = this.CreateChildIntern(name);
+            Node child;
+            this.childrensMap.TryGetValue(name, out child);
+            if(child != null)
+            {
+                throw new Exception(string.Format("A child with the name {0} already exist", name));
+            }
 
+            child = this.CreateChildIntern(name);
             child.parent = this;
             this.childrensMap.Add(name, child);
             this.childrensList.Add(child);
@@ -75,14 +82,22 @@ namespace Pulsar.Graphics.Graph
         /// <returns>Returns true if the child is removed, otherwise false</returns>
         public virtual bool RemoveChild(string name)
         {
-            if (!this.childrensMap.ContainsKey(name))
-                return true;
-
-            Node child = this.childrensMap[name];
+            Node child;
+            this.childrensMap.TryGetValue(name, out child);
+            if (child == null)
+            {
+                return false;
+            }
+            if (!this.RemoveChildIntern(name))
+            {
+                return false;
+            }
 
             child.parent = null;
+            this.childrensMap.Remove(name);
+            this.childrensList.Remove(child);
 
-            return this.childrensMap.Remove(name);
+            return true;
         }
 
         /// <summary>
@@ -92,6 +107,8 @@ namespace Pulsar.Graphics.Graph
         /// <returns>Return a new child node</returns>
         protected abstract Node CreateChildIntern(string name);
 
+        protected abstract bool RemoveChildIntern(string name);
+
         /// <summary>
         /// Set a new position for this scene node
         /// </summary>
@@ -100,7 +117,7 @@ namespace Pulsar.Graphics.Graph
         {
             this.position = newPos;
 
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
@@ -108,7 +125,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="v">Translation vector</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
-        public virtual void Translate(Vector3 v, TransformSpace space = TransformSpace.Local)
+        public virtual void Translate(Vector3 v, TransformSpace space)
         {
             switch (space)
             {
@@ -128,7 +145,7 @@ namespace Pulsar.Graphics.Graph
                     break;
             }
 
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
@@ -136,7 +153,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="angle">Angle of the yaw</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
-        public virtual void Yaw(float angle, TransformSpace space = TransformSpace.Local)
+        public virtual void Yaw(float angle, TransformSpace space)
         {
             this.Rotate(angle, Vector3.UnitY, space);
         }
@@ -146,7 +163,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="angle">Angle of the pitch</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
-        public virtual void Pitch(float angle, TransformSpace space = TransformSpace.Local)
+        public virtual void Pitch(float angle, TransformSpace space)
         {
             this.Rotate(angle, Vector3.UnitX, space);
         }
@@ -156,7 +173,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="angle">Angle of the roll</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
-        public virtual void Roll(float angle, TransformSpace space = TransformSpace.Local)
+        public virtual void Roll(float angle, TransformSpace space)
         {
             this.Rotate(angle, Vector3.UnitZ, space);
         }
@@ -168,7 +185,7 @@ namespace Pulsar.Graphics.Graph
         /// <param name="angle">Angle of the rotation</param>
         /// <param name="axis">Axis used to perform the rotation</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
-        public virtual void Rotate(float angle, Vector3 axis, TransformSpace space = TransformSpace.Local)
+        public virtual void Rotate(float angle, Vector3 axis, TransformSpace space)
         {
             Quaternion q = Quaternion.CreateFromAxisAngle(axis, angle);
 
@@ -197,7 +214,7 @@ namespace Pulsar.Graphics.Graph
                     break;
             }
 
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
@@ -220,7 +237,7 @@ namespace Pulsar.Graphics.Graph
             this.scale.X *= x;
             this.scale.Y *= y;
             this.scale.Z *= z;
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
@@ -230,14 +247,14 @@ namespace Pulsar.Graphics.Graph
         public virtual void DoScale(Vector3 v)
         {
             this.scale *= v;
-            this.NeedUpdate();
+            this.NeedUpdate(false);
         }
 
         /// <summary>
         /// Indicate that this node need to be updated
         /// </summary>
         /// <param name="forceParentUpdate">If true the parent have to update this node</param>
-        protected virtual void NeedUpdate(bool forceParentUpdate = false)
+        protected virtual void NeedUpdate(bool forceParentUpdate)
         {
             this.needUpdateTransform = true;
             this.needUpdateChild = true;
@@ -257,7 +274,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="child">Child node to update</param>
         /// <param name="forceParentUpdate">If true the parent have to update this node</param>
-        protected virtual void RequestUpdate(Node child, bool forceParentUpdate = false)
+        protected virtual void RequestUpdate(Node child, bool forceParentUpdate)
         {
             this.childldrensToUpdate.Add(child);
 
@@ -329,6 +346,17 @@ namespace Pulsar.Graphics.Graph
             this.needParentUpdate = false;
         }
 
+        private void UpdateTransform()
+        {
+            if (this.needUpdateTransform)
+            {
+                this.scaleOrientTransform = Matrix.CreateScale(this.fullScale) * Matrix.CreateFromQuaternion(this.fullOrientation);
+                this.fullTransform = this.scaleOrientTransform * Matrix.CreateTranslation(this.fullPosition);
+
+                this.needUpdateTransform = false;
+            }
+        }
+
         /// <summary>
         /// Apply the transform matrix of this node to a vector
         /// </summary>
@@ -346,7 +374,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         /// <param name="pos">Origin vector</param>
         /// <param name="result">Result vector</param>
-        public void ApplyScaleTrans(ref Vector3 pos, out Vector3 result)
+        public void ApplyScalePos(ref Vector3 pos, out Vector3 result)
         {
             Vector3.Multiply(ref pos, ref this.fullScale, out result);
             Vector3.Add(ref result, ref this.fullPosition, out result);
@@ -379,15 +407,19 @@ namespace Pulsar.Graphics.Graph
         {
             get
             {
-                if (this.needUpdateTransform)
-                {
-                    this.fullTransform = Matrix.CreateScale(this.fullScale) * Matrix.CreateFromQuaternion(this.fullOrientation) *
-                        Matrix.CreateTranslation(this.fullPosition);
-
-                    this.needUpdateTransform = false;
-                }
+                this.UpdateTransform();
 
                 return this.fullTransform;
+            }
+        }
+
+        public virtual Matrix ScaleOrientationTransform
+        {
+            get
+            {
+                this.UpdateTransform();
+
+                return this.scaleOrientTransform;
             }
         }
 
@@ -400,7 +432,7 @@ namespace Pulsar.Graphics.Graph
             set
             {
                 this.position = value;
-                this.NeedUpdate();
+                this.NeedUpdate(false);
             }
         }
 
@@ -413,7 +445,7 @@ namespace Pulsar.Graphics.Graph
             set
             {
                 this.scale = value;
-                this.NeedUpdate();
+                this.NeedUpdate(false);
             }
         }
 
@@ -426,7 +458,7 @@ namespace Pulsar.Graphics.Graph
             set
             {
                 this.orientation = value;
-                this.NeedUpdate();
+                this.NeedUpdate(false);
             }
         }
 
