@@ -120,8 +120,9 @@
       <XnaReferenceType>Content</XnaReferenceType>
     </ProjectReference>
     <ProjectReference Include="..\PulsarDemoContent\PulsarDemoContent.contentproj">
-      <Name>PulsarDemoContent</Name>
+      <Name>PulsarDemoContent %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
+      <Project>{D8810C17-E17E-4875-85B2-40225B128F8C}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

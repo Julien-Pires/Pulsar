@@ -54,6 +54,9 @@ namespace PulsarDemo.SceneDemo
         {
             float diffX = this.previousMouse.X - this.currentMouse.X;
             float diffY = this.previousMouse.Y - this.currentMouse.Y;
+#if XBOX
+            diffPos = new Vector2();
+#endif
             diffPos.X = diffX;
             diffPos.Y = diffY;
         }
