@@ -92,8 +92,8 @@
     <Compile Include="Graphics\SceneGraph\CameraManager.cs" />
     <Compile Include="Graphics\SceneGraph\Entity.cs" />
     <Compile Include="Graphics\SceneGraph\EntityFactory.cs" />
-    <Compile Include="Graphics\SceneGraph\GeometryBatch.cs" />
     <Compile Include="Graphics\SceneGraph\IMovable.cs" />
+    <Compile Include="Graphics\SceneGraph\InstanceBatch.cs" />
     <Compile Include="Graphics\SceneGraph\RenderQueue.cs" />
     <Compile Include="Graphics\SceneGraph\SceneNode.cs" />
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />

@@ -95,7 +95,7 @@
     <Compile Include="Graphics\SceneGraph\Entity.cs" />
     <Compile Include="Graphics\SceneGraph\EntityFactory.cs" />
     <Compile Include="Graphics\Factory.cs" />
-    <Compile Include="Graphics\SceneGraph\GeometryBatch.cs" />
+    <Compile Include="Graphics\SceneGraph\InstanceBatch.cs" />
     <Compile Include="Graphics\Rendering\Renderer.cs" />
     <Compile Include="Graphics\SceneGraph\IMovable.cs" />
     <Compile Include="Graphics\IRenderable.cs" />
