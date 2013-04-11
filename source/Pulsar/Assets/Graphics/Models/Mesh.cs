@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using PulsarRuntime.Graphics;
 
 using Pulsar.Graphics;
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 using Pulsar.Graphics.Rendering;
 using Pulsar.Assets.Graphics.Materials;
 

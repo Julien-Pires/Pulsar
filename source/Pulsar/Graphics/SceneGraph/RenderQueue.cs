@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using Pulsar.Assets.Graphics.Materials;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// List of render queue ID

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 using Pulsar.Graphics.Rendering.RenderPass;
 
 namespace Pulsar.Graphics.Rendering
@@ -145,7 +145,7 @@ namespace Pulsar.Graphics.Rendering
         /// Draw a geometry batch
         /// </summary>
         /// <param name="batch">Geometry batch to draw</param>
-        internal void RenderInstancedGeometry(GeometryBatch batch)
+        internal void RenderInstancedGeometry(InstanceBatch batch)
         {
             if (batch.InstanceCount == 0)
                 return;

@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Content;
 
 using Pulsar.Assets;
 using Pulsar.Graphics;
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 
 namespace PulsarDemo.SceneDemo.SolarSystem
 {
@@ -27,7 +27,7 @@ namespace PulsarDemo.SceneDemo.SolarSystem
         private readonly float[] planetSize = { 4880.0f, 12100.0f, 12756.0f, 6792.0f, 142984.0f, 120536.0f, 49532.0f };
 
         private CameraController camCtrl = null;
-        private SceneGraph graph = null;
+        private SceneTree graph = null;
         private List<Planet> planets = new List<Planet>();
 
         #endregion

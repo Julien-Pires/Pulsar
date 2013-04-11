@@ -10,7 +10,7 @@ using PulsarRuntime.Graphics;
 using Pulsar.Game;
 using Pulsar.Core;
 using Pulsar.Graphics;
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 using Pulsar.Graphics.Rendering;
 
 namespace Pulsar.Assets.Graphics.Models

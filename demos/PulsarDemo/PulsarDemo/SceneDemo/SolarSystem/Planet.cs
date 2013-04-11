@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 using Pulsar.Graphics;
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 
 namespace PulsarDemo.SceneDemo.SolarSystem
 {

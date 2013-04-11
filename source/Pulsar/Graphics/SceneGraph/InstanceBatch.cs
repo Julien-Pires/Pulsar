@@ -8,12 +8,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Pulsar.Assets.Graphics.Materials;
 using Pulsar.Graphics.Rendering;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Geometry batch for instancing one mesh
     /// </summary>
-    internal sealed class GeometryBatch : IRenderable
+    internal sealed class InstanceBatch : IRenderable
     {
         #region Fields
 
@@ -196,12 +196,12 @@ namespace Pulsar.Graphics.Graph
     /// <summary>
     /// Manager for the geometry batch
     /// </summary>
-    internal sealed class GeometryBatchManager
+    internal sealed class InstanceBatchManager
     {
         #region Fields
 
-        private Dictionary<int, List<GeometryBatch>> batchByRenderQueue = new Dictionary<int, List<GeometryBatch>>();
-        private List<GeometryBatch> batchs = new List<GeometryBatch>();
+        private Dictionary<int, List<InstanceBatch>> batchByRenderQueue = new Dictionary<int, List<InstanceBatch>>();
+        private List<InstanceBatch> batchs = new List<InstanceBatch>();
 
         #endregion
 
@@ -229,7 +229,7 @@ namespace Pulsar.Graphics.Graph
             for (int i = 0; i < unsortedInstance.Count; i++)
             {
                 LazyBatchInfo inf = unsortedInstance[i];
-                GeometryBatch batch = this.GetGeometryBatch(inf.QueueID, inf.BatchID);
+                InstanceBatch batch = this.GetGeometryBatch(inf.QueueID, inf.BatchID);
                 List<IRenderable> instances = inf.LazyInstances;
 
                 for (int j = 0; j < instances.Count; j++)
@@ -250,25 +250,25 @@ namespace Pulsar.Graphics.Graph
         /// <param name="queueID">Queue id of the batch</param>
         /// <param name="batchID">ID of the batch</param>
         /// <returns>Return a geometry batch instance</returns>
-        private GeometryBatch GetGeometryBatch(int queueID, uint batchID)
+        private InstanceBatch GetGeometryBatch(int queueID, uint batchID)
         {
             if (!this.batchByRenderQueue.ContainsKey(queueID))
             {
-                this.batchByRenderQueue.Add(queueID, new List<GeometryBatch>());
+                this.batchByRenderQueue.Add(queueID, new List<InstanceBatch>());
             }
 
-            List<GeometryBatch> batchList = this.batchByRenderQueue[queueID];
+            List<InstanceBatch> batchList = this.batchByRenderQueue[queueID];
 
             for (int i = 0; i < batchList.Count; i++)
             {
-                GeometryBatch batch = batchList[i];
+                InstanceBatch batch = batchList[i];
                 uint id = batch.BatchID;
 
                 if (id == batchID)
                     return batch;
             }
 
-            GeometryBatch newBatch = new GeometryBatch();
+            InstanceBatch newBatch = new InstanceBatch();
 
             batchList.Add(newBatch);
             this.batchs.Add(newBatch);

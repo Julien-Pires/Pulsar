@@ -9,19 +9,19 @@ using Microsoft.Xna.Framework.Content;
 
 using Pulsar.Graphics.Rendering;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Class describing a scene graph
     /// </summary>
-    public sealed class SceneGraph
+    public sealed class SceneTree
     {
         #region Fields
 
         private Renderer renderer = null;
         private CameraManager camManager = new CameraManager();
         private RenderQueue queue = new RenderQueue();
-        private GeometryBatchManager batchManager = new GeometryBatchManager();
+        private InstanceBatchManager batchManager = new InstanceBatchManager();
         private SceneNode root = null;
         private Dictionary<string, SceneNode> nodesMap = new Dictionary<string, SceneNode>();
         private Dictionary<string, IMovable> movablesMap = new Dictionary<string, IMovable>();
@@ -35,7 +35,7 @@ namespace Pulsar.Graphics.Graph
         /// Constructor of the SceneGraph class
         /// </summary>
         /// <param name="renderer">GraphicsRenderer instance</param>
-        internal SceneGraph(Renderer renderer)
+        internal SceneTree(Renderer renderer)
         {
             this.renderer = renderer;
 

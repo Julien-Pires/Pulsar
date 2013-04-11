@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics
 {
     /// <summary>
     /// Enum defining space used to perform transform operation relative to

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets.Graphics.Models;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Factory to create Entity

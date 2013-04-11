@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets;
 using Pulsar.Assets.Graphics.Shaders;
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics.Rendering.RenderPass
 {
@@ -82,7 +82,7 @@ namespace Pulsar.Graphics.Rendering.RenderPass
             for (int i = 0; i < geometries.Count; i++)
             {
                 IRenderable geoInstance = geometries[i];
-                GeometryBatch instancingBatch = geoInstance as GeometryBatch;
+                InstanceBatch instancingBatch = geoInstance as InstanceBatch;
                 if (instancingBatch == null)
                 {
                     this.shader.UseDefaultTechnique();

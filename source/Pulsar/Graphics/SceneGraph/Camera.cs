@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Mathematic;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Determine the type of projection to be used by a camera
