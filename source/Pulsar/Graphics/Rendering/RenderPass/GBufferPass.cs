@@ -82,7 +82,7 @@ namespace Pulsar.Graphics.Rendering.RenderPass
             for (int i = 0; i < geometries.Count; i++)
             {
                 IRenderable geoInstance = geometries[i];
-                GeometryBatch instancingBatch = geoInstance as GeometryBatch;
+                InstanceBatch instancingBatch = geoInstance as InstanceBatch;
                 if (instancingBatch == null)
                 {
                     this.shader.UseDefaultTechnique();

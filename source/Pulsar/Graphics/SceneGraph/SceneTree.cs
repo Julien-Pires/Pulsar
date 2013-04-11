@@ -21,7 +21,7 @@ namespace Pulsar.Graphics.SceneGraph
         private Renderer renderer = null;
         private CameraManager camManager = new CameraManager();
         private RenderQueue queue = new RenderQueue();
-        private GeometryBatchManager batchManager = new GeometryBatchManager();
+        private InstanceBatchManager batchManager = new InstanceBatchManager();
         private SceneNode root = null;
         private Dictionary<string, SceneNode> nodesMap = new Dictionary<string, SceneNode>();
         private Dictionary<string, IMovable> movablesMap = new Dictionary<string, IMovable>();

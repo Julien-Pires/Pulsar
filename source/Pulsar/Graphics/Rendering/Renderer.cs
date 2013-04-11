@@ -145,7 +145,7 @@ namespace Pulsar.Graphics.Rendering
         /// Draw a geometry batch
         /// </summary>
         /// <param name="batch">Geometry batch to draw</param>
-        internal void RenderInstancedGeometry(GeometryBatch batch)
+        internal void RenderInstancedGeometry(InstanceBatch batch)
         {
             if (batch.InstanceCount == 0)
                 return;
