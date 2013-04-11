@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pulsar.Assets.Graphics.Materials;
 using Pulsar.Graphics.Rendering;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Geometry batch for instancing one mesh

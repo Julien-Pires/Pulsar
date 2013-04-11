@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Interface defining a movable object in the scene graph

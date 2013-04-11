@@ -2,7 +2,7 @@
 
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics
 {
     /// <summary>
     /// Contain frustum data to compute fast intersection test

@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-using Pulsar.Graphics.Graph;
-
 namespace Pulsar.Graphics
 {
     public enum BoundingType { AABB, Sphere };

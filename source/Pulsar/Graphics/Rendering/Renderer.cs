@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 using Pulsar.Graphics.Rendering.RenderPass;
 
 namespace Pulsar.Graphics.Rendering

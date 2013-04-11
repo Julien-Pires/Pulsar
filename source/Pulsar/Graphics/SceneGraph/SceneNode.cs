@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Define a Transform node
@@ -15,7 +15,7 @@ namespace Pulsar.Graphics.Graph
     {
         #region Fields
 
-        private SceneGraph owner = null;
+        private SceneTree owner = null;
         private BoundingBox boundingBox = new BoundingBox();
         private Dictionary<string, IMovable> movablesByName = new Dictionary<string, IMovable>();
         private List<IMovable> movablesList = new List<IMovable>();
@@ -28,7 +28,7 @@ namespace Pulsar.Graphics.Graph
         /// Constructor of SceneNode class
         /// </summary>
         /// <param name="scene">SceneGraph which contain this node</param>
-        internal SceneNode(SceneGraph scene)
+        internal SceneNode(SceneTree scene)
             : base(string.Empty)
         {
             this.owner = scene;
@@ -38,7 +38,7 @@ namespace Pulsar.Graphics.Graph
         /// <summary>
         /// Constructor of the SceneNode class
         /// </summary>
-        internal SceneNode(SceneGraph scene, string name) 
+        internal SceneNode(SceneTree scene, string name) 
             : base(name)
         {
             this.owner = scene;

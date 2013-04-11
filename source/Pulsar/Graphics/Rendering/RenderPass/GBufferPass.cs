@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets;
 using Pulsar.Assets.Graphics.Shaders;
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics.Rendering.RenderPass
 {

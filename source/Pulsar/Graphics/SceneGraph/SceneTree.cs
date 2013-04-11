@@ -9,12 +9,12 @@ using Microsoft.Xna.Framework.Content;
 
 using Pulsar.Graphics.Rendering;
 
-namespace Pulsar.Graphics.Graph
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Class describing a scene graph
     /// </summary>
-    public sealed class SceneGraph
+    public sealed class SceneTree
     {
         #region Fields
 
@@ -35,7 +35,7 @@ namespace Pulsar.Graphics.Graph
         /// Constructor of the SceneGraph class
         /// </summary>
         /// <param name="renderer">GraphicsRenderer instance</param>
-        internal SceneGraph(Renderer renderer)
+        internal SceneTree(Renderer renderer)
         {
             this.renderer = renderer;
 

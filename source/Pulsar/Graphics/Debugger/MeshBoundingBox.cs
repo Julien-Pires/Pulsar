@@ -9,7 +9,7 @@ using Pulsar.Game;
 using Pulsar.Core;
 using Pulsar.Assets.Graphics.Models;
 using Pulsar.Assets.Graphics.Materials;
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 using Pulsar.Graphics.Rendering;
 
 namespace Pulsar.Graphics.Debugger
