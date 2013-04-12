@@ -10,19 +10,11 @@ namespace Pulsar.Components
     {
         #region Fields
 
-        protected bool isInitialized;
         protected ComponentHandlerSystem owner;
+        protected Type[] componentTypes;
 
+        private bool isInitialized;
         private bool isDisposed;
-
-        #endregion
-
-        #region Constructors
-
-        public ComponentHandler(ComponentHandlerSystem owner)
-        {
-            this.owner = owner;
-        }
 
         #endregion
 
@@ -46,7 +38,6 @@ namespace Pulsar.Components
                 {
                     this.owner.Remove(this);
                 }
-                this.owner = null;
                 this.isDisposed = true;
             }
         }
@@ -67,6 +58,11 @@ namespace Pulsar.Components
             internal set { this.owner = value; }
         }
 
+        public Type[] ComponentTypes
+        {
+            get { return this.componentTypes; }
+        }
+
         public bool IsDisposed
         {
             get { return this.isDisposed; }
@@ -79,7 +75,7 @@ namespace Pulsar.Components
 
         public virtual bool IsEnabled
         {
-            get { return this.isInitialized; }
+            get { return this.isInitialized && !this.isDisposed; }
         }
 
         #endregion
