@@ -79,20 +79,7 @@ namespace Pulsar.Components
 
         public bool Remove(ComponentHandler hnd)
         {
-            ComponentHandler foundHnd;
-            this.handlersMap.TryGetValue(hnd.GetType(), out foundHnd);
-            if (foundHnd != hnd)
-            {
-                return false;
-            }
-
-            bool result = this.handlersMap.Remove(hnd.GetType());
-            if (result)
-            {
-                hnd.Owner = null;
-            }
-
-            return result;
+            return this.Remove(hnd.GetType());
         }
 
         public bool Remove<T>() where T : ComponentHandler
