@@ -11,6 +11,7 @@ namespace Pulsar.Components
         #region Fields
 
         protected ComponentHandlerSystem owner;
+        protected Type[] componentTypes;
 
         private bool isInitialized;
         private bool isDisposed;
@@ -55,6 +56,11 @@ namespace Pulsar.Components
         {
             get { return this.owner; }
             internal set { this.owner = value; }
+        }
+
+        public Type[] ComponentTypes
+        {
+            get { return this.componentTypes; }
         }
 
         public bool IsDisposed

@@ -6,13 +6,16 @@ using Microsoft.Xna.Framework;
 
 namespace Pulsar.Components
 {
+    using HandlersTypeMap = System.Collections.Generic.Dictionary<System.Type, Pulsar.Components.ComponentHandler>;
+
     public sealed class ComponentHandlerSystem : IDisposable
     {
         #region Fields
 
         private bool isDisposed;
         private GameObjectManager goManager;
-        private Dictionary<Type, ComponentHandler> handlersMap = new Dictionary<Type, ComponentHandler>();
+        private HandlersTypeMap handlersMap = new HandlersTypeMap();
+        private Dictionary<Type, HandlersTypeMap> handlersMapByComponent = new Dictionary<Type, HandlersTypeMap>();
 
         #endregion
 
@@ -68,13 +71,87 @@ namespace Pulsar.Components
                     return;
                 }
             }
-            if(this.handlersMap.ContainsKey(hnd.GetType()))
+
+            Type handlerType = hnd.GetType();
+            if (this.handlersMap.ContainsKey(handlerType))
             {
                 throw new Exception(string.Format("This system of component handler already have a handler of type {0}", hnd));
             }
-
-            this.handlersMap.Add(hnd.GetType(), hnd);
+            this.handlersMap.Add(handlerType, hnd);
+            this.AddComponentListener(hnd);
             hnd.Owner = this;
+        }
+
+        private void AddComponentListener(ComponentHandler hnd)
+        {
+            Type[] allCompoTypes = hnd.ComponentTypes;
+            if (allCompoTypes != null)
+            {
+                for (int i = 0; i < allCompoTypes.Length; i++)
+                {
+                    Type compoType = allCompoTypes[i];
+                    if (!compoType.IsSubclassOf(typeof(Component)))
+                    {
+                        throw new Exception("The type provided by ComponentHandler instance doesn't inherit Component class");
+                    }
+                    this.AddComponentListener(compoType, hnd);
+                }
+            }
+            else
+            {
+                this.AddComponentListener(typeof(Component), hnd);
+            }
+        }
+
+        private void AddComponentListener(Type compoType, ComponentHandler hnd)
+        {
+            HandlersTypeMap map;
+            this.handlersMapByComponent.TryGetValue(compoType, out map);
+            if (map == null)
+            {
+                map = new HandlersTypeMap();
+                this.handlersMapByComponent.Add(compoType, map);
+            }
+
+            Type handlerType = hnd.GetType();
+            if (!map.ContainsKey(handlerType))
+            {
+                map.Add(handlerType, hnd);
+            }
+        }
+
+        private bool RemoveComponentListener(ComponentHandler hnd)
+        {
+            bool result = true;
+            Type handlerType = hnd.GetType();
+            Type[] allCompoTypes = hnd.ComponentTypes;
+            if (allCompoTypes != null)
+            {
+                for (int i = 0; i < allCompoTypes.Length; i++)
+                {
+                    Type compoType = allCompoTypes[i];
+                    result &= this.RemoveComponentListener(compoType, hnd);
+                }
+            }
+            else
+            {
+                Type compoType = typeof(Component);
+                result &= this.RemoveComponentListener(compoType, hnd);   
+            }
+
+            return result;
+        }
+
+        private bool RemoveComponentListener(Type compoType, ComponentHandler hnd)
+        {
+            HandlersTypeMap map;
+            this.handlersMapByComponent.TryGetValue(compoType, out map);
+            if (map != null)
+            {
+                return map.Remove(hnd.GetType());
+            }
+
+            return false;
         }
 
         public bool Remove(ComponentHandler hnd)
@@ -99,6 +176,7 @@ namespace Pulsar.Components
             bool result = this.handlersMap.Remove(type);
             if (result)
             {
+                this.RemoveComponentListener(hnd);
                 hnd.Owner = null;
             }
 
@@ -118,17 +196,51 @@ namespace Pulsar.Components
 
         private void OnComponentAdded(object sender, ComponentEventArgs e)
         {
-            foreach (ComponentHandler hnd in this.handlersMap.Values)
+            Component component = e.Component;
+            Type compoType = typeof(Component);
+            HandlersTypeMap map;
+            this.handlersMapByComponent.TryGetValue(compoType, out map);
+            if (map != null)
             {
-                hnd.Register(e.Component);
+                foreach (ComponentHandler hnd in map.Values)
+                {
+                    hnd.Register(component);
+                }
+            }
+
+            compoType = component.GetType();
+            this.handlersMapByComponent.TryGetValue(compoType, out map);
+            if (map != null)
+            {
+                foreach (ComponentHandler hnd in map.Values)
+                {
+                    hnd.Register(component);
+                }
             }
         }
 
         private void OnComponentRemoved(object sender, ComponentEventArgs e)
         {
-            foreach (ComponentHandler hnd in this.handlersMap.Values)
+            Component component = e.Component;
+            Type compoType = typeof(Component);
+            HandlersTypeMap map;
+            this.handlersMapByComponent.TryGetValue(compoType, out map);
+            if (map != null)
             {
-                hnd.Unregister(e.Component);
+                foreach (ComponentHandler hnd in map.Values)
+                {
+                    hnd.Unregister(component);
+                }
+            }
+
+            compoType = component.GetType();
+            this.handlersMapByComponent.TryGetValue(compoType, out map);
+            if (map != null)
+            {
+                foreach (ComponentHandler hnd in map.Values)
+                {
+                    hnd.Unregister(component);
+                }
             }
         }
 
