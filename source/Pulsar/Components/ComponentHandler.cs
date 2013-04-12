@@ -10,9 +10,9 @@ namespace Pulsar.Components
     {
         #region Fields
 
-        protected bool isInitialized;
         protected ComponentHandlerSystem owner;
 
+        private bool isInitialized;
         private bool isDisposed;
 
         #endregion
@@ -46,7 +46,6 @@ namespace Pulsar.Components
                 {
                     this.owner.Remove(this);
                 }
-                this.owner = null;
                 this.isDisposed = true;
             }
         }
