@@ -17,15 +17,6 @@ namespace Pulsar.Components
 
         #endregion
 
-        #region Constructors
-
-        public ComponentHandler(ComponentHandlerSystem owner)
-        {
-            this.owner = owner;
-        }
-
-        #endregion
-
         #region Methods
 
         public virtual void Initialize()
@@ -78,7 +69,7 @@ namespace Pulsar.Components
 
         public virtual bool IsEnabled
         {
-            get { return this.isInitialized; }
+            get { return this.isInitialized && !this.isDisposed; }
         }
 
         #endregion
