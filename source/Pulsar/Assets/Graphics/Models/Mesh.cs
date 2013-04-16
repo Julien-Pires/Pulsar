@@ -23,7 +23,7 @@ namespace Pulsar.Assets.Graphics.Models
 
         private bool useIndexes;
         private List<SubMesh> subMeshes = new List<SubMesh>();
-        private Dictionary<string, ushort> subMeshNamesMap = new Dictionary<string, ushort>();
+        private Dictionary<string, int> subMeshNamesMap = new Dictionary<string, int>();
         private BoundingData bounds;
         private VertexBuffer vBuffer;
         private IndexBuffer iBuffer;
@@ -64,6 +64,33 @@ namespace Pulsar.Assets.Graphics.Models
             return sub;
         }
 
+        public void RemoveSubMesh(int index)
+        {
+            this.subMeshes.RemoveAt(index);
+            foreach (KeyValuePair<string, int> mapKvp in this.subMeshNamesMap)
+            {
+                if (mapKvp.Value == index)
+                {
+                    this.subMeshNamesMap.Remove(mapKvp.Key);
+                }
+                else
+                {
+                    if (mapKvp.Value > index)
+                    {
+                        this.subMeshNamesMap[mapKvp.Key] = mapKvp.Value + 1;
+                    }
+                }
+            }
+
+            this.ComputeData();
+        }
+
+        public void RemoveSubMesh(string name)
+        {
+            int idx = this.GetSubMeshIndex(name);
+            this.RemoveSubMesh(idx);
+        }
+
         public SubMesh GetSubMesh(int index)
         {
             return this.subMeshes[index];
@@ -71,13 +98,20 @@ namespace Pulsar.Assets.Graphics.Models
 
         public SubMesh GetSubMesh(string name)
         {
-            ushort idx;
+            int idx = this.GetSubMeshIndex(name);
+            
+            return this.GetSubMesh(idx);
+        }
+
+        private int GetSubMeshIndex(string name)
+        {
+            int idx;
             if (!this.subMeshNamesMap.TryGetValue(name, out idx))
             {
                 throw new Exception(string.Format("No submesh with a name {0} exists", name));
             }
 
-            return this.GetSubMesh(idx);
+            return idx;
         }
 
         private void ApplyChanges()
