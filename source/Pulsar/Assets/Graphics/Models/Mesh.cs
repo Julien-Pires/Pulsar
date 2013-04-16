@@ -64,6 +64,22 @@ namespace Pulsar.Assets.Graphics.Models
             return sub;
         }
 
+        public SubMesh GetSubMesh(int index)
+        {
+            return this.subMeshes[index];
+        }
+
+        public SubMesh GetSubMesh(string name)
+        {
+            ushort idx;
+            if (!this.subMeshNamesMap.TryGetValue(name, out idx))
+            {
+                throw new Exception(string.Format("No submesh with a name {0} exists", name));
+            }
+
+            return this.GetSubMesh(idx);
+        }
+
         private void ApplyChanges()
         {
             for (int i = 0; i < this.subMeshes.Count; i++)
@@ -95,6 +111,11 @@ namespace Pulsar.Assets.Graphics.Models
         public int VerticesCount { get; internal set; }
 
         public int PrimitiveCount { get; internal set; }
+
+        public int SubMeshCount
+        {
+            get { return this.subMeshes.Count; }
+        }
 
         /// <summary>
         /// Get the list of sub mesh
