@@ -10,6 +10,8 @@ using Pulsar.Graphics.Rendering;
 
 namespace Pulsar.Graphics.SceneGraph
 {
+    using InstanceBatchMap = System.Collections.Generic.Dictionary<uint, Pulsar.Graphics.SceneGraph.InstanceBatch>;
+
     /// <summary>
     /// Geometry batch for instancing one mesh
     /// </summary>
@@ -200,7 +202,7 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
-        private Dictionary<int, List<InstanceBatch>> batchByRenderQueue = new Dictionary<int, List<InstanceBatch>>();
+        private Dictionary<int, InstanceBatchMap> batchByRenderQueue = new Dictionary<int, InstanceBatchMap>();
         private List<InstanceBatch> batchs = new List<InstanceBatch>();
 
         #endregion
@@ -254,26 +256,22 @@ namespace Pulsar.Graphics.SceneGraph
         {
             if (!this.batchByRenderQueue.ContainsKey(queueID))
             {
-                this.batchByRenderQueue.Add(queueID, new List<InstanceBatch>());
+                this.batchByRenderQueue.Add(queueID, new InstanceBatchMap());
             }
 
-            List<InstanceBatch> batchList = this.batchByRenderQueue[queueID];
-
-            for (int i = 0; i < batchList.Count; i++)
+            InstanceBatchMap map = this.batchByRenderQueue[queueID];
+            InstanceBatch batch;
+            map.TryGetValue(batchID, out batch);
+            if (batch != null)
             {
-                InstanceBatch batch = batchList[i];
-                uint id = batch.BatchID;
-
-                if (id == batchID)
-                    return batch;
+                return batch;
             }
 
-            InstanceBatch newBatch = new InstanceBatch();
+            batch = new InstanceBatch();
+            map.Add(batchID, batch);
+            this.batchs.Add(batch);
 
-            batchList.Add(newBatch);
-            this.batchs.Add(newBatch);
-
-            return newBatch;
+            return batch;
         }
 
         #endregion
