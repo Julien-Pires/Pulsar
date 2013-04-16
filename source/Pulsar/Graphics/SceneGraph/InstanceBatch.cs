@@ -226,13 +226,12 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="queue">Render queue to update</param>
         internal void UpdateRenderQueue(RenderQueue queue)
         {
-            List<LazyBatchInfo> unsortedInstance = queue.LazyInstances;
+            IEnumerable<LazyBatchInfo> unsortedInstance = queue.LazyInstances;
 
-            for (int i = 0; i < unsortedInstance.Count; i++)
+            foreach(LazyBatchInfo lazy in unsortedInstance)
             {
-                LazyBatchInfo inf = unsortedInstance[i];
-                InstanceBatch batch = this.GetGeometryBatch(inf.QueueID, inf.BatchID);
-                List<IRenderable> instances = inf.LazyInstances;
+                InstanceBatch batch = this.GetGeometryBatch(lazy.QueueID, lazy.BatchID);
+                List<IRenderable> instances = lazy.LazyInstances;
 
                 for (int j = 0; j < instances.Count; j++)
                 {

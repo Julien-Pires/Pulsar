@@ -51,9 +51,8 @@ namespace Pulsar.Graphics.SceneGraph
     internal sealed class LazyRenderQueue
     {
         #region Fields
-
-        private List<LazyBatchInfo> lazyInstances = new List<LazyBatchInfo>();
-        private Dictionary<ulong, int> indexList = new Dictionary<ulong, int>();
+        
+        private Dictionary<ulong, LazyBatchInfo> lazyBatchMap = new Dictionary<ulong, LazyBatchInfo>();
 
         #endregion
 
@@ -64,9 +63,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         internal void Clear()
         {
-            for (int i = 0; i < this.lazyInstances.Count; i++)
+            foreach(KeyValuePair<ulong, LazyBatchInfo> lazy in this.lazyBatchMap)
             {
-                this.lazyInstances[i].Clear();
+                lazy.Value.Clear();
             }
         }
 
@@ -79,25 +78,17 @@ namespace Pulsar.Graphics.SceneGraph
         internal LazyBatchInfo GetBatchInfo(int queueID, uint batchID)
         {
             ulong key = this.GetKey(queueID, batchID);
-            int idx;
-            LazyBatchInfo inf = null;
-
-            if (!this.indexList.ContainsKey(key))
+            LazyBatchInfo inf;
+            this.lazyBatchMap.TryGetValue(key, out inf);
+            if (inf == null)
             {
                 inf = new LazyBatchInfo();
                 inf.QueueID = queueID;
                 inf.BatchID = batchID;
-                this.lazyInstances.Add(inf);
-
-                idx = this.lazyInstances.Count - 1;
-                this.indexList.Add(key, idx);
-            }
-            else
-            {
-                idx = this.indexList[key];
+                this.lazyBatchMap.Add(key, inf);
             }
 
-            return this.lazyInstances[idx];
+            return inf;
         }
 
         /// <summary>
@@ -121,9 +112,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Get all instancing group
         /// </summary>
-        internal List<LazyBatchInfo> LazyInstances
+        internal IEnumerable<LazyBatchInfo> LazyInstances
         {
-            get { return this.lazyInstances; }
+            get { return this.lazyBatchMap.Values; }
         }
 
         #endregion
@@ -342,7 +333,7 @@ namespace Pulsar.Graphics.SceneGraph
             get { return this.queueGroups; }
         }
 
-        internal List<LazyBatchInfo> LazyInstances
+        internal IEnumerable<LazyBatchInfo> LazyInstances
         {
             get { return this.lazyQueue.LazyInstances; }
         }
