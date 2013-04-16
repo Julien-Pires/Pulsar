@@ -64,7 +64,7 @@ namespace Pulsar.Assets.Graphics.Models
             return sub;
         }
 
-        public void ApplyChanges()
+        private void ApplyChanges()
         {
             for (int i = 0; i < this.subMeshes.Count; i++)
             {
