@@ -89,7 +89,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <summary>
         /// Get the material attached to this sub mesh
         /// </summary>
-        public Material Material { get; internal set; }
+        public Material Material { get; set; }
 
         /// <summary>
         /// Get or set the bounding volume data
