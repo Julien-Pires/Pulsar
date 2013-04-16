@@ -135,10 +135,12 @@ namespace Pulsar.Assets.Graphics.Models
             IndexBuffer iBuffer = mesh.IBuffer;
             vBuffer.SetData<VertexPositionNormalTexture>(vertices);
             iBuffer.SetData<int>(indices);
+            mesh.UseIndexes = true;
 
             BoundingData bounds = this.ComputeBoundingVolume(vec3List);
             SubMesh sub = mesh.CreateSubMesh();
-            sub.SetRenderingInfo(PrimitiveType.TriangleList, 0, verticesCount, 0);
+            sub.SetRenderingInfo(PrimitiveType.TriangleList, 0, (verticesCount / 3), verticesCount, 0);
+            sub.BoundingVolume = bounds;
 
             return mesh;
         }

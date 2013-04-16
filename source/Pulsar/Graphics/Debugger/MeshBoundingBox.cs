@@ -68,14 +68,14 @@ namespace Pulsar.Graphics.Debugger
 
             this.renderInfo = new RenderingInfo()
             {
-                ID = this.id,
+                id = this.id,
                 Primitive = PrimitiveType.LineList,
-                VBuffer = this.vBuffer,
-                IBuffer = this.iBuffer,
-                VertexCount = MeshBoundingBox.verticesCount,
-                TriangleCount = MeshBoundingBox.primitiveCount,
-                StartIndex = 0,
-                VertexOffset = 0
+                vBuffer = this.vBuffer,
+                iBuffer = this.iBuffer,
+                vertexCount = MeshBoundingBox.verticesCount,
+                triangleCount = MeshBoundingBox.primitiveCount,
+                startIndex = 0,
+                vertexOffset = 0
             };
 
             this.material = MaterialManager.Instance.LoadDefault();

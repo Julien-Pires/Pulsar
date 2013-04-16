@@ -56,7 +56,7 @@ namespace Pulsar.Graphics.SceneGraph
 
             this.material = renderable.Material;
             this.renderInfo = renderable.RenderInfo;
-            this.batchID = this.renderInfo.ID;
+            this.batchID = this.renderInfo.id;
         }
 
         /// <summary>

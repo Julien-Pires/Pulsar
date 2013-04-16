@@ -53,7 +53,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public uint BatchID
         {
-            get { return this.subMesh.RenderInfo.ID; }
+            get { return this.subMesh.RenderInfo.id; }
         }
 
         /// <summary>

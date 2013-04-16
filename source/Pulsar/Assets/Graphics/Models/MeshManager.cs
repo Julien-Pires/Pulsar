@@ -110,12 +110,20 @@ namespace Pulsar.Assets.Graphics.Models
             MeshData data = (MeshData)model.Tag;
             Matrix[] bones = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(bones);
+            mesh.UseIndexes = true;
             mesh.Bones = bones;
             mesh.BoundingVolume = data.BoundingVolume;
             if (model.Meshes.Count > 0)
             {
                 mesh.VBuffer = model.Meshes[0].MeshParts[0].VertexBuffer;
                 mesh.IBuffer = model.Meshes[0].MeshParts[0].IndexBuffer;
+            }
+            else
+            {
+                mesh.VBuffer = new VertexBuffer(GameApplication.GameGraphicsDevice, typeof(VertexPositionNormalTexture), 0,
+                BufferUsage.WriteOnly);
+                mesh.IBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
+                    BufferUsage.WriteOnly);
             }
 
             for (int i = 0; i < model.Meshes.Count; i++)
@@ -130,7 +138,7 @@ namespace Pulsar.Assets.Graphics.Models
                     string materialName = mesh.Name + @"/" + currMesh.Name + "_material";
                     Material mat = MaterialManager.Instance.CreateMaterial(materialName, storage, part.Effect, subData.TexturesName);
                     SubMesh sub = mesh.CreateSubMesh(currMesh.Name);
-                    sub.SetRenderingInfo(PrimitiveType.TriangleList, part.VertexOffset, part.NumVertices, part.StartIndex);
+                    sub.SetRenderingInfo(PrimitiveType.TriangleList, part.StartIndex, part.PrimitiveCount, part.NumVertices, part.VertexOffset);
                     sub.Material = mat;
                     sub.BoneIndex = currMesh.ParentBone.Index;
                     sub.BoundingVolume = subData.BoundingVolume;

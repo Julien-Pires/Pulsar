@@ -33,9 +33,9 @@ namespace Pulsar.Assets.Graphics.Models
         internal SubMesh(Mesh parent)
         {
             this.parent = parent;
-            this.renderData.UseIndexes = this.parent.UseIndexes;
-            this.renderData.VBuffer = this.parent.VBuffer;
-            this.renderData.IBuffer = this.parent.IBuffer;
+            this.renderData.useIndexes = this.parent.UseIndexes;
+            this.renderData.vBuffer = this.parent.VBuffer;
+            this.renderData.iBuffer = this.parent.IBuffer;
         }
 
         #endregion
@@ -53,29 +53,26 @@ namespace Pulsar.Assets.Graphics.Models
             return SubMesh.uniqueID;
         }
 
-        public void SetRenderingInfo(PrimitiveType pType, int vertexOffset, int vertexCount, int startIndex)
+        public void SetRenderingInfo(PrimitiveType pType, int startIdx, int primitiveCount, int numVertices, int vertexOffset)
         {
-            int vCount = vertexCount;
-            if (this.renderData.UseIndexes)
-            {
-                int indexCount = this.renderData.IBuffer.IndexCount;
-                vCount = indexCount - startIndex;
-            }
+            this.renderData.Primitive = pType;
+            this.renderData.startIndex = startIdx;
+            this.renderData.triangleCount = primitiveCount;
+            this.renderData.vertexCount = numVertices;
+            this.renderData.vertexOffset = vertexOffset;
+            this.parent.ComputeData();
+        }
 
-            int primitiveCount = 0;
-            switch (pType)
-            {
-                case PrimitiveType.LineList: primitiveCount = vertexCount / 2;
-                    break;
-                case PrimitiveType.LineStrip: primitiveCount = vertexCount - 1;
-                    break;
-                case PrimitiveType.TriangleList: primitiveCount = vertexCount / 3;
-                    break;
-                case PrimitiveType.TriangleStrip: primitiveCount = vertexCount - 2;
-                    break;
-            }
+        public void SetBoundingVolume(BoundingBox aabb, BoundingSphere sphere)
+        {
+            this.bounds.BoundingBox = aabb;
+            this.bounds.BoundingSphere = sphere;
+        }
 
-
+        public void SetBoundingVolume(ref BoundingBox aabb, ref BoundingSphere sphere)
+        {
+            this.bounds.BoundingBox = aabb;
+            this.bounds.BoundingSphere = sphere;
         }
 
         #endregion
@@ -94,7 +91,7 @@ namespace Pulsar.Assets.Graphics.Models
                 this.id = value;
                 if (this.RenderInfo != null)
                 {
-                    this.RenderInfo.ID = value;
+                    this.RenderInfo.id = value;
                 }
             }
         }
@@ -120,7 +117,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <summary>
         /// Get or set the bounding volume data
         /// </summary>
-        public BoundingData BoundingVolume
+        internal BoundingData BoundingVolume
         {
             get { return this.bounds; }
             set { this.bounds = value; }

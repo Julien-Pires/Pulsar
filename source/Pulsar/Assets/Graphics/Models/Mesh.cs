@@ -21,6 +21,7 @@ namespace Pulsar.Assets.Graphics.Models
     {
         #region Fields
 
+        private bool useIndexes;
         private List<SubMesh> subMeshes = new List<SubMesh>();
         private Dictionary<string, ushort> subMeshNamesMap = new Dictionary<string, ushort>();
         private BoundingData bounds;
@@ -68,8 +69,19 @@ namespace Pulsar.Assets.Graphics.Models
             for (int i = 0; i < this.subMeshes.Count; i++)
             {
                 RenderingInfo renderData = this.subMeshes[i].RenderInfo;
-                renderData.UseIndexes = this.UseIndexes;
-                renderData.IBuffer = this.iBuffer;
+                renderData.useIndexes = this.UseIndexes;
+                renderData.iBuffer = this.iBuffer;
+            }
+        }
+
+        internal void ComputeData()
+        {
+            this.VerticesCount = this.vBuffer.VertexCount;
+            this.PrimitiveCount = 0;
+            for (int i = 0; i < this.subMeshes.Count; i++)
+            {
+                SubMesh sub = this.subMeshes[i];
+                this.PrimitiveCount += sub.RenderInfo.triangleCount;
             }
         }
 
@@ -122,14 +134,22 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         public Matrix[] Bones { get; internal set; }
 
-        public bool UseIndexes { get; set; }
+        public bool UseIndexes 
+        {
+            get { return this.useIndexes; }
+            set
+            {
+                this.useIndexes = value;
+                this.ApplyChanges();
+            }
+        }
 
         /// <summary>
         /// Get the vertex buffer of the mesh
         /// </summary>
         public VertexBuffer VBuffer
         {
-            get { return this.VBuffer; }
+            get { return this.vBuffer; }
             internal set { this.vBuffer = value; }
         }
 

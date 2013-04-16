@@ -133,10 +133,10 @@ namespace Pulsar.Graphics.Rendering
         internal void RenderGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
-            this.graphicDevice.SetVertexBuffer(renderInfo.VBuffer, renderInfo.VertexOffset);
-            this.graphicDevice.Indices = renderInfo.IBuffer;
-            this.graphicDevice.DrawIndexedPrimitives(renderInfo.Primitive, 0, 0, renderInfo.VertexCount,
-                renderInfo.StartIndex, renderInfo.TriangleCount);
+            this.graphicDevice.SetVertexBuffer(renderInfo.vBuffer, renderInfo.vertexOffset);
+            this.graphicDevice.Indices = renderInfo.iBuffer;
+            this.graphicDevice.DrawIndexedPrimitives(renderInfo.Primitive, 0, 0, renderInfo.vertexCount,
+                renderInfo.startIndex, renderInfo.triangleCount);
 
             this.UnsetBuffers();
         }
@@ -153,11 +153,11 @@ namespace Pulsar.Graphics.Rendering
             RenderingInfo info = batch.RenderInfo;
             DynamicVertexBuffer dynamicBuffer = this.CreateInstanceBuffer(batch.InstanceTransforms, batch.InstanceCount);
             this.graphicDevice.SetVertexBuffers(
-                new VertexBufferBinding(info.VBuffer, info.VertexOffset, 0),
+                new VertexBufferBinding(info.vBuffer, info.vertexOffset, 0),
                 new VertexBufferBinding(dynamicBuffer, 0, 1)
             );
-            this.graphicDevice.Indices = info.IBuffer;
-            this.graphicDevice.DrawInstancedPrimitives(info.Primitive, 0, 0, info.VertexCount, info.StartIndex, info.TriangleCount,
+            this.graphicDevice.Indices = info.iBuffer;
+            this.graphicDevice.DrawInstancedPrimitives(info.Primitive, 0, 0, info.vertexCount, info.startIndex, info.triangleCount,
                 batch.InstanceCount);
 
             this.UnsetBuffers();
