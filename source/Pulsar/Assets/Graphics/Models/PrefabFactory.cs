@@ -136,37 +136,11 @@ namespace Pulsar.Assets.Graphics.Models
             vBuffer.SetData<VertexPositionNormalTexture>(vertices);
             iBuffer.SetData<int>(indices);
 
-            RenderingInfo renderInfo = this.CreateRenderInfo(vBuffer, iBuffer, 12, verticesCount, 0, 0);
             BoundingData bounds = this.ComputeBoundingVolume(vec3List);
-            mesh.AddSubMesh(renderInfo, bounds);
+            SubMesh sub = mesh.CreateSubMesh();
+            sub.SetRenderingInfo(PrimitiveType.TriangleList, 0, verticesCount, 0);
 
             return mesh;
-        }
-
-        /// <summary>
-        /// Create rendering information
-        /// </summary>
-        /// <param name="vBuffer">Vertexbuffer for the rendering</param>
-        /// <param name="iBuffer">IndexBuffer for the rendering</param>
-        /// <param name="triangleCount">Numbers of polygon drawn</param>
-        /// <param name="vertices">Numbers of vertices</param>
-        /// <param name="startIdx">Starting index in the vertex array</param>
-        /// <param name="vertexOffset">Offset in the vertex array</param>
-        /// <returns>Return new rendering information</returns>
-        private RenderingInfo CreateRenderInfo(VertexBuffer vBuffer, IndexBuffer iBuffer, int triangleCount, 
-            int vertices, int startIdx, int vertexOffset)
-        {
-            RenderingInfo renderInfo = new RenderingInfo()
-            {
-                VBuffer = vBuffer,
-                IBuffer = iBuffer,
-                TriangleCount = triangleCount,
-                VertexCount = vertices,
-                StartIndex = startIdx,
-                VertexOffset = vertexOffset
-            };
-
-            return renderInfo;
         }
 
         /// <summary>

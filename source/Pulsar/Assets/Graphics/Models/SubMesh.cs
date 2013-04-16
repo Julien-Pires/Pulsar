@@ -22,14 +22,20 @@ namespace Pulsar.Assets.Graphics.Models
         private static uint uniqueID = uint.MinValue;
 
         private uint id;
+        private Mesh parent;
         private BoundingData bounds;
+        private RenderingInfo renderData = new RenderingInfo();
 
         #endregion
 
         #region Constructors
 
-        internal SubMesh()
+        internal SubMesh(Mesh parent)
         {
+            this.parent = parent;
+            this.renderData.UseIndexes = this.parent.UseIndexes;
+            this.renderData.VBuffer = this.parent.VBuffer;
+            this.renderData.IBuffer = this.parent.IBuffer;
         }
 
         #endregion
@@ -45,6 +51,31 @@ namespace Pulsar.Assets.Graphics.Models
             SubMesh.uniqueID++;
 
             return SubMesh.uniqueID;
+        }
+
+        public void SetRenderingInfo(PrimitiveType pType, int vertexOffset, int vertexCount, int startIndex)
+        {
+            int vCount = vertexCount;
+            if (this.renderData.UseIndexes)
+            {
+                int indexCount = this.renderData.IBuffer.IndexCount;
+                vCount = indexCount - startIndex;
+            }
+
+            int primitiveCount = 0;
+            switch (pType)
+            {
+                case PrimitiveType.LineList: primitiveCount = vertexCount / 2;
+                    break;
+                case PrimitiveType.LineStrip: primitiveCount = vertexCount - 1;
+                    break;
+                case PrimitiveType.TriangleList: primitiveCount = vertexCount / 3;
+                    break;
+                case PrimitiveType.TriangleStrip: primitiveCount = vertexCount - 2;
+                    break;
+            }
+
+
         }
 
         #endregion
@@ -74,14 +105,12 @@ namespace Pulsar.Assets.Graphics.Models
         public int BoneIndex { get; internal set; }
 
         /// <summary>
-        /// Get the name of this sub mesh
-        /// </summary>
-        public string Name { get; internal set; }
-
-        /// <summary>
         /// Get the information to render this sub mesh
         /// </summary>
-        public RenderingInfo RenderInfo { get; internal set; }
+        internal RenderingInfo RenderInfo 
+        {
+            get { return this.renderData; }  
+        }
 
         /// <summary>
         /// Get the material attached to this sub mesh
@@ -91,7 +120,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <summary>
         /// Get or set the bounding volume data
         /// </summary>
-        internal BoundingData BoundingVolume
+        public BoundingData BoundingVolume
         {
             get { return this.bounds; }
             set { this.bounds = value; }

@@ -45,6 +45,8 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public int VertexCount = 0;
 
+        public bool UseIndexes = false;
+
         /// <summary>
         /// Vertex buffer for this instance
         /// </summary>

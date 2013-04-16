@@ -22,6 +22,7 @@ namespace Pulsar.Assets.Graphics.Models
         #region Fields
 
         private List<SubMesh> subMeshes = new List<SubMesh>();
+        private Dictionary<string, ushort> subMeshNamesMap = new Dictionary<string, ushort>();
         private BoundingData bounds;
         private VertexBuffer vBuffer;
         private IndexBuffer iBuffer;
@@ -42,34 +43,34 @@ namespace Pulsar.Assets.Graphics.Models
 
         #region Methods
 
-        /// <summary>
-        /// Create and add a sub mesh to this mesh instance
-        /// </summary>
-        /// <param name="renderInfo">Rendering information of the submesh</param>
-        /// <param name="bounds">Bounding volume data of the submesh</param>
-        public void AddSubMesh(RenderingInfo renderInfo, BoundingData bounds)
+        public SubMesh CreateSubMesh()
         {
-            if (renderInfo.VBuffer != this.vBuffer)
-            {
-                throw new Exception("Failed to add new submesh, buffer are different from mesh buffer's");
-            }
-            if (renderInfo.IBuffer != this.iBuffer)
-            {
-                throw new Exception("Failed to add new submesh, buffer are different from mesh buffer's");
-            }
-
-            SubMesh sub = new SubMesh();
-            sub.RenderInfo = renderInfo;
-            sub.BoundingVolume = bounds;
-            sub.ID = SubMesh.GetID();
-
-            BoundingBox.CreateMerged(ref this.bounds.BoundingBox, ref bounds.BoundingBox,
-                out this.bounds.BoundingBox);
-            BoundingSphere.CreateMerged(ref this.bounds.BoundingSphere, ref bounds.BoundingSphere,
-                out this.bounds.BoundingSphere);
-            this.VerticesCount += renderInfo.VertexCount;
-            this.PrimitiveCount += renderInfo.TriangleCount;
+            SubMesh sub = new SubMesh(this);
             this.subMeshes.Add(sub);
+
+            return sub;
+        }
+
+        public SubMesh CreateSubMesh(string name)
+        {
+            if (this.subMeshNamesMap.ContainsKey(name))
+            {
+                throw new Exception(string.Format("A submesh with the name {0} already exists", name));
+            }
+            SubMesh sub = this.CreateSubMesh();
+            this.subMeshNamesMap.Add(name, (ushort)(this.subMeshes.Count - 1));
+
+            return sub;
+        }
+
+        public void ApplyChanges()
+        {
+            for (int i = 0; i < this.subMeshes.Count; i++)
+            {
+                RenderingInfo renderData = this.subMeshes[i].RenderInfo;
+                renderData.UseIndexes = this.UseIndexes;
+                renderData.IBuffer = this.iBuffer;
+            }
         }
 
         #endregion
@@ -120,6 +121,8 @@ namespace Pulsar.Assets.Graphics.Models
         /// Get the bones of the sub mesh
         /// </summary>
         public Matrix[] Bones { get; internal set; }
+
+        public bool UseIndexes { get; set; }
 
         /// <summary>
         /// Get the vertex buffer of the mesh
