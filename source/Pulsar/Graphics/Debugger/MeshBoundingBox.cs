@@ -26,7 +26,6 @@ namespace Pulsar.Graphics.Debugger
         private const int verticesCount = 24;
         private const int primitiveCount = 12;
 
-        private uint id;
         private DynamicVertexBuffer vBuffer = null;
         private IndexBuffer iBuffer = null;
         private RenderingInfo renderInfo = null;
@@ -55,7 +54,6 @@ namespace Pulsar.Graphics.Debugger
         /// </summary>
         private void InitBuffers()
         {
-            this.id = SubMesh.GetID();
             for (int i = 0; i < MeshBoundingBox.verticesCount; i++)
             {
                 indices[i] = i;
@@ -65,17 +63,13 @@ namespace Pulsar.Graphics.Debugger
             this.iBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits,
                 MeshBoundingBox.verticesCount, BufferUsage.WriteOnly);
             this.iBuffer.SetData<int>(this.indices);
-
             this.renderInfo = new RenderingInfo()
             {
-                id = this.id,
                 Primitive = PrimitiveType.LineList,
                 vBuffer = this.vBuffer,
                 iBuffer = this.iBuffer,
                 vertexCount = MeshBoundingBox.verticesCount,
-                triangleCount = MeshBoundingBox.primitiveCount,
-                startIndex = 0,
-                vertexOffset = 0
+                triangleCount = MeshBoundingBox.primitiveCount
             };
 
             this.material = MaterialManager.Instance.LoadDefault();
@@ -153,7 +147,7 @@ namespace Pulsar.Graphics.Debugger
         /// </summary>
         public uint BatchID 
         {
-            get { return this.id; } 
+            get { return this.renderInfo.id; } 
         }
 
         /// <summary>

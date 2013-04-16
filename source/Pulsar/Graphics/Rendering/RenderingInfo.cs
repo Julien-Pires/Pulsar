@@ -15,6 +15,8 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
 
+        private static uint idCounter = uint.MinValue;
+
         /// <summary>
         /// ID of the rendering information
         /// </summary>
@@ -63,6 +65,8 @@ namespace Pulsar.Graphics.Rendering
 
         internal RenderingInfo()
         {
+            this.id = RenderingInfo.idCounter;
+            RenderingInfo.idCounter++;
         }
 
         #endregion

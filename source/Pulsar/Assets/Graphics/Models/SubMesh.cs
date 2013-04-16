@@ -19,9 +19,6 @@ namespace Pulsar.Assets.Graphics.Models
     {
         #region Fields
 
-        private static uint uniqueID = uint.MinValue;
-
-        private uint id;
         private Mesh parent;
         private BoundingData bounds;
         private RenderingInfo renderData = new RenderingInfo();
@@ -41,17 +38,6 @@ namespace Pulsar.Assets.Graphics.Models
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Create a unique ID for a SubMesh
-        /// </summary>
-        /// <returns>Return an uint wich represents an ID</returns>
-        internal static uint GetID()
-        {
-            SubMesh.uniqueID++;
-
-            return SubMesh.uniqueID;
-        }
 
         public void SetRenderingInfo(PrimitiveType pType, int startIdx, int primitiveCount, int numVertices, int vertexOffset)
         {
@@ -84,16 +70,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         public uint ID
         {
-            get { return this.id; }
-
-            internal set
-            {
-                this.id = value;
-                if (this.RenderInfo != null)
-                {
-                    this.RenderInfo.id = value;
-                }
-            }
+            get { return this.renderData.id; }
         }
 
         /// <summary>

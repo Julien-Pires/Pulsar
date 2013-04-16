@@ -133,8 +133,6 @@ namespace Pulsar.Assets.Graphics.Models
                 {
                     ModelMeshPart part = currMesh.MeshParts[j];
                     SubMeshData subData = data.SubMeshData[i];
-
-                    uint id = SubMesh.GetID();
                     string materialName = mesh.Name + @"/" + currMesh.Name + "_material";
                     Material mat = MaterialManager.Instance.CreateMaterial(materialName, storage, part.Effect, subData.TexturesName);
                     SubMesh sub = mesh.CreateSubMesh(currMesh.Name);
