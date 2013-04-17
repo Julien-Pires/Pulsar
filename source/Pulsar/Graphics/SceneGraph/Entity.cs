@@ -132,15 +132,7 @@ namespace Pulsar.Graphics.SceneGraph
             for (int i = 0; i < this.subEntities.Count; i++)
             {
                 SubEntity sub = this.subEntities[i];
-
-                if (sub.UseInstancing)
-                {
-                    queue.AddInstancedRenderable(sub);
-                }
-                else
-                {
-                    queue.AddRenderable(sub);
-                }
+                queue.AddRenderable(sub);
             }
 
             if (this.RenderAABB)

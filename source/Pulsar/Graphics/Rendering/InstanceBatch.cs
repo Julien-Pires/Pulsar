@@ -11,19 +11,39 @@ using Pulsar.Graphics.Rendering;
 namespace Pulsar.Graphics.Rendering
 {
     /// <summary>
-    /// Geometry batch for instancing one mesh
+    /// Instance batch for instancing one mesh
     /// </summary>
-    internal sealed class InstanceBatch : IRenderable
+    internal sealed class InstanceBatch
     {
         #region Fields
 
-        private uint batchID;
-        private int renderGroupID;
+        private static VertexDeclaration instanceVertexDeclaration = new VertexDeclaration
+        (
+            new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 0),
+            new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1),
+            new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 2),
+            new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 3)
+        );
+
+        private uint id;
+        private int renderQueueId;
         private bool renderInfoInit = false;
         private List<IRenderable> instances = new List<IRenderable>();
         private RenderingInfo renderInfo = null;
         private Material material = null;
         private Matrix[] transforms;
+        private DynamicVertexBuffer transformsBuffer;
+
+        #endregion
+
+        #region Constructor
+
+        internal InstanceBatch(GraphicsDevice gDevice, uint id, int queueId)
+        {
+            this.transformsBuffer = new DynamicVertexBuffer(gDevice, instanceVertexDeclaration, 0, BufferUsage.WriteOnly);
+            this.id = id;
+            this.renderQueueId = queueId;
+        }
 
         #endregion
 
@@ -52,11 +72,14 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         private void ExtractRenderingInfo()
         {
-            IRenderable renderable = this.instances[0];
+            if (!this.renderInfoInit)
+            {
+                IRenderable renderable = this.instances[0];
 
-            this.material = renderable.Material;
-            this.renderInfo = renderable.RenderInfo;
-            this.batchID = this.renderInfo.id;
+                this.material = renderable.Material;
+                this.renderInfo = renderable.RenderInfo;
+                this.renderInfoInit = true;
+            }
         }
 
         /// <summary>
@@ -78,6 +101,7 @@ namespace Pulsar.Graphics.Rendering
             {
                 this.transforms[i] = this.instances[i].Transform;
             }
+            this.transformsBuffer.SetData<Matrix>(this.transforms, 0, this.instances.Count, SetDataOptions.Discard);
         }
 
         #endregion
@@ -87,9 +111,19 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Get the ID of this geometry batch
         /// </summary>
-        public uint BatchID
+        public uint ID
         {
-            get { return this.batchID; }
+            get { return this.id; }
+        }
+
+        internal DynamicVertexBuffer Buffer
+        {
+            get
+            {
+                this.UpdateTransforms();
+
+                return this.transformsBuffer;
+            }
         }
 
         /// <summary>
@@ -114,44 +148,11 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Get the name of this batch
-        /// </summary>
-        public string Name 
-        {
-            get { return string.Empty; }
-        }
-
-        /// <summary>
-        /// Get or set a boolean indicating if this renderable use instancing
-        /// </summary>
-        public bool UseInstancing 
-        {
-            get { return true; }
-            set { throw new NotImplementedException(); }
-        }
-
-        /// <summary>
         /// Get the ID of the render queue used by this batch
         /// </summary>
         public int RenderQueueID 
         {
-            get { return this.renderGroupID; }
-        }
-
-        /// <summary>
-        /// Get the local transform of this batch
-        /// </summary>
-        public Matrix LocalTransform 
-        {
-            get { return Matrix.Identity; }
-        }
-
-        /// <summary>
-        /// Get the full transform of this batch
-        /// </summary>
-        public Matrix Transform
-        {
-            get { return Matrix.Identity; }
+            get { return this.renderQueueId; }
         }
 
         /// <summary>
@@ -161,12 +162,7 @@ namespace Pulsar.Graphics.Rendering
         {
             get 
             {
-                if (!this.renderInfoInit)
-                {
-                    this.ExtractRenderingInfo();
-
-                    this.renderInfoInit = true;
-                }
+                this.ExtractRenderingInfo();
 
                 return this.renderInfo; 
             }
@@ -179,12 +175,7 @@ namespace Pulsar.Graphics.Rendering
         {
             get
             {
-                if (!this.renderInfoInit)
-                {
-                    this.ExtractRenderingInfo();
-
-                    this.renderInfoInit = true;
-                }
+                this.ExtractRenderingInfo();
 
                 return this.material;
             }
@@ -192,6 +183,4 @@ namespace Pulsar.Graphics.Rendering
 
         #endregion
     }
-
-
 }

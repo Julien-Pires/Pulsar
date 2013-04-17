@@ -6,8 +6,6 @@ using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics.Rendering
 {
-    using InstanceBatchMap = System.Collections.Generic.Dictionary<uint, Pulsar.Graphics.Rendering.InstanceBatch>;
-
     /// <summary>
     /// Manager for the geometry batch
     /// </summary>
@@ -15,8 +13,18 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
 
-        private Dictionary<int, InstanceBatchMap> batchByRenderQueue = new Dictionary<int, InstanceBatchMap>();
+        private Renderer owner;
+        private Dictionary<uint, InstanceBatch>[] batchByQueue = new Dictionary<uint, InstanceBatch>[(int)RenderQueueGroupID.Count];
         private List<InstanceBatch> batchs = new List<InstanceBatch>();
+
+        #endregion
+
+        #region Constructors
+
+        internal InstanceBatchManager(Renderer owner)
+        {
+            this.owner = owner;
+        }
 
         #endregion
 
@@ -33,57 +41,49 @@ namespace Pulsar.Graphics.Rendering
             }
         }
 
-        /// <summary>
-        /// Update the render queue with geometry batchs
-        /// </summary>
-        /// <param name="queue">Render queue to update</param>
-        internal void UpdateRenderQueue(RenderQueue queue)
+        internal void AddDrawable(IRenderable renderable)
         {
-            IEnumerable<LazyBatchInfo> unsortedInstance = queue.LazyInstances;
-
-            foreach (LazyBatchInfo lazy in unsortedInstance)
-            {
-                InstanceBatch batch = this.GetGeometryBatch(lazy.QueueID, lazy.BatchID);
-                List<IRenderable> instances = lazy.LazyInstances;
-
-                for (int j = 0; j < instances.Count; j++)
-                {
-                    batch.AddDrawable(instances[j]);
-                }
-            }
-
-            for (int i = 0; i < this.batchs.Count; i++)
-            {
-                queue.AddRenderable(this.batchs[i]);
-            }
+            InstanceBatch batch = this.GetInstanceBatch(renderable.BatchID, renderable.RenderQueueID);
+            batch.AddDrawable(renderable);
         }
 
-        /// <summary>
-        /// Get a geometry batch
-        /// </summary>
-        /// <param name="queueID">Queue id of the batch</param>
-        /// <param name="batchID">ID of the batch</param>
-        /// <returns>Return a geometry batch instance</returns>
-        private InstanceBatch GetGeometryBatch(int queueID, uint batchID)
+        internal IEnumerable<InstanceBatch> GetBatchList(int queueId)
         {
-            if (!this.batchByRenderQueue.ContainsKey(queueID))
+            Dictionary<uint, InstanceBatch> map = this.batchByQueue[queueId];
+            if (map == null)
             {
-                this.batchByRenderQueue.Add(queueID, new InstanceBatchMap());
+                map = this.AddNewMap(queueId);
             }
 
-            InstanceBatchMap map = this.batchByRenderQueue[queueID];
+            return map.Values;
+        }
+
+        private InstanceBatch GetInstanceBatch(uint id, int queueId)
+        {
+            Dictionary<uint, InstanceBatch> map = this.batchByQueue[queueId];
+            if (map == null)
+            {
+                map = this.AddNewMap(queueId);
+            }
+
             InstanceBatch batch;
-            map.TryGetValue(batchID, out batch);
-            if (batch != null)
+            map.TryGetValue(id, out batch);
+            if (batch == null)
             {
-                return batch;
+                batch = new InstanceBatch(this.owner.GraphicsDevice, id, queueId);
+                map.Add(id, batch);
+                this.batchs.Add(batch);
             }
-
-            batch = new InstanceBatch();
-            map.Add(batchID, batch);
-            this.batchs.Add(batch);
 
             return batch;
+        }
+
+        private Dictionary<uint, InstanceBatch> AddNewMap(int queueId)
+        {
+            Dictionary<uint, InstanceBatch> map = new Dictionary<uint, InstanceBatch>();
+            this.batchByQueue[queueId] = map;
+
+            return map;
         }
 
         #endregion
