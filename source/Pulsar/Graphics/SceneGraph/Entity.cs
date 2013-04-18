@@ -148,6 +148,18 @@ namespace Pulsar.Graphics.SceneGraph
             }
         }
 
+        public SubEntity GetSubEntity(int index)
+        {
+            return this.subEntities[index];
+        }
+
+        public SubEntity GetSubEntity(string name)
+        {
+            int index = this.mesh.GetSubMeshIndex(name);
+
+            return this.GetSubEntity(index);
+        }
+
         /// <summary>
         /// Create all the sub-entities for this Entity
         /// </summary>

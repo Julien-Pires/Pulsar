@@ -103,7 +103,7 @@ namespace Pulsar.Assets.Graphics.Models
             return this.GetSubMesh(idx);
         }
 
-        private int GetSubMeshIndex(string name)
+        public int GetSubMeshIndex(string name)
         {
             int idx;
             if (!this.subMeshNamesMap.TryGetValue(name, out idx))
