@@ -19,32 +19,46 @@ namespace Pulsar.Assets.Graphics.Models
     {
         #region Fields
 
-        private static uint uniqueID = uint.MinValue;
-
-        private uint id;
+        private Mesh parent;
         private BoundingData bounds;
+        private RenderingInfo renderData = new RenderingInfo();
 
         #endregion
 
         #region Constructors
 
-        internal SubMesh()
+        internal SubMesh(Mesh parent)
         {
+            this.parent = parent;
+            this.renderData.useIndexes = this.parent.UseIndexes;
+            this.renderData.vBuffer = this.parent.VBuffer;
+            this.renderData.iBuffer = this.parent.IBuffer;
         }
 
         #endregion
 
         #region Methods
 
-        /// <summary>
-        /// Create a unique ID for a SubMesh
-        /// </summary>
-        /// <returns>Return an uint wich represents an ID</returns>
-        internal static uint GetID()
+        public void SetRenderingInfo(PrimitiveType pType, int startIdx, int primitiveCount, int numVertices, int vertexOffset)
         {
-            SubMesh.uniqueID++;
+            this.renderData.Primitive = pType;
+            this.renderData.startIndex = startIdx;
+            this.renderData.triangleCount = primitiveCount;
+            this.renderData.vertexCount = numVertices;
+            this.renderData.vertexOffset = vertexOffset;
+            this.parent.ComputeData();
+        }
 
-            return SubMesh.uniqueID;
+        public void SetBoundingVolume(BoundingBox aabb, BoundingSphere sphere)
+        {
+            this.bounds.BoundingBox = aabb;
+            this.bounds.BoundingSphere = sphere;
+        }
+
+        public void SetBoundingVolume(ref BoundingBox aabb, ref BoundingSphere sphere)
+        {
+            this.bounds.BoundingBox = aabb;
+            this.bounds.BoundingSphere = sphere;
         }
 
         #endregion
@@ -56,16 +70,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         public uint ID
         {
-            get { return this.id; }
-
-            internal set
-            {
-                this.id = value;
-                if (this.RenderInfo != null)
-                {
-                    this.RenderInfo.ID = value;
-                }
-            }
+            get { return this.renderData.id; }
         }
 
         /// <summary>
@@ -74,19 +79,17 @@ namespace Pulsar.Assets.Graphics.Models
         public int BoneIndex { get; internal set; }
 
         /// <summary>
-        /// Get the name of this sub mesh
-        /// </summary>
-        public string Name { get; internal set; }
-
-        /// <summary>
         /// Get the information to render this sub mesh
         /// </summary>
-        public RenderingInfo RenderInfo { get; internal set; }
+        internal RenderingInfo RenderInfo 
+        {
+            get { return this.renderData; }  
+        }
 
         /// <summary>
         /// Get the material attached to this sub mesh
         /// </summary>
-        public Material Material { get; internal set; }
+        public Material Material { get; set; }
 
         /// <summary>
         /// Get or set the bounding volume data

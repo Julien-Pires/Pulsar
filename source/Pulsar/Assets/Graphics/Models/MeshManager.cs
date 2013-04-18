@@ -100,57 +100,6 @@ namespace Pulsar.Assets.Graphics.Models
         }
 
         /// <summary>
-        /// Create a new sub mesh
-        /// </summary>
-        /// <param name="name">Name of the sub mesh</param>
-        /// <param name="renderInf">Rendering informations of the sub mesh</param>
-        /// <param name="bounds">Bounding volume of the sub mesh</param>
-        /// <param name="mat">Material of the sub mesh</param>
-        /// <param name="boneIdx">Index of the bone</param>
-        /// <returns>Returns a new sub mesh</returns>
-        private SubMesh CreateSubMesh(string name, RenderingInfo renderInf, BoundingData bounds, Material mat, int boneIdx)
-        {
-            SubMesh sub = new SubMesh()
-            {
-                Name = name,
-                RenderInfo = renderInf,
-                Material = mat,
-                BoundingVolume = bounds,
-                BoneIndex = boneIdx
-            };
-
-            return sub;
-        }
-
-        /// <summary>
-        /// Create rendering information
-        /// </summary>
-        /// <param name="id">ID of the rendering batch</param>
-        /// <param name="vBuffer">VertexBuffer for the rendering</param>
-        /// <param name="iBuffer">IndexBuffer for the rendering</param>
-        /// <param name="vertexCount">Number of vertex for the rendering</param>
-        /// <param name="vertexOffset">Offset for the vertx buffer</param>
-        /// <param name="polyCount">Number of polygon drawn by the rendering</param>
-        /// <param name="startIdx">Starting index in the vertex buffer</param>
-        /// <returns>Return new rendering information</returns>
-        private RenderingInfo CreateRenderingInfo(uint id, VertexBuffer vBuffer, IndexBuffer iBuffer, int vertexCount, 
-            int vertexOffset, int polyCount, int startIdx)
-        {
-            RenderingInfo renderInf = new RenderingInfo()
-            {
-                ID = id,
-                VBuffer = vBuffer,
-                IBuffer = iBuffer,
-                VertexCount = vertexCount,
-                VertexOffset = vertexOffset,
-                TriangleCount = polyCount,
-                StartIndex = startIdx
-            };
-
-            return renderInf;
-        }
-
-        /// <summary>
         /// Convert a XNA model instance to a mesh instance
         /// </summary>
         /// <param name="mesh">Instance of a mesh to receive all the model information</param>
@@ -159,37 +108,39 @@ namespace Pulsar.Assets.Graphics.Models
         private void ProcessModel(Mesh mesh, Model model, string storage)
         {
             MeshData data = (MeshData)model.Tag;
-            List<SubMesh> subList = mesh.SubMeshes;
-            for (int i = 0; i < model.Meshes.Count; i++)
-            {
-                ModelMesh currMesh = model.Meshes[i];
-
-                for (int j = 0; j < currMesh.MeshParts.Count; j++)
-                {
-                    ModelMeshPart part = currMesh.MeshParts[j];
-                    SubMeshData subData = data.SubMeshData[i];
-
-                    uint id = SubMesh.GetID();
-                    RenderingInfo renderInf = this.CreateRenderingInfo(id, part.VertexBuffer, part.IndexBuffer, part.NumVertices,
-                        part.VertexOffset, part.PrimitiveCount, part.StartIndex);
-
-                    string materialName = mesh.Name + @"/" + currMesh.Name + "_material";
-                    Material mat = MaterialManager.Instance.CreateMaterial(materialName, storage, part.Effect, subData.TexturesName);
-
-                    SubMesh sub = this.CreateSubMesh(currMesh.Name, renderInf, subData.BoundingVolume, mat,
-                        currMesh.ParentBone.Index);
-                    subList.Add(sub);
-                }
-            }
-
             Matrix[] bones = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(bones);
+            mesh.UseIndexes = true;
             mesh.Bones = bones;
             mesh.BoundingVolume = data.BoundingVolume;
             if (model.Meshes.Count > 0)
             {
                 mesh.VBuffer = model.Meshes[0].MeshParts[0].VertexBuffer;
                 mesh.IBuffer = model.Meshes[0].MeshParts[0].IndexBuffer;
+            }
+            else
+            {
+                mesh.VBuffer = new VertexBuffer(GameApplication.GameGraphicsDevice, typeof(VertexPositionNormalTexture), 0,
+                BufferUsage.WriteOnly);
+                mesh.IBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
+                    BufferUsage.WriteOnly);
+            }
+
+            for (int i = 0; i < model.Meshes.Count; i++)
+            {
+                ModelMesh currMesh = model.Meshes[i];
+                for (int j = 0; j < currMesh.MeshParts.Count; j++)
+                {
+                    ModelMeshPart part = currMesh.MeshParts[j];
+                    SubMeshData subData = data.SubMeshData[i];
+                    string materialName = mesh.Name + @"/" + currMesh.Name + "_material";
+                    Material mat = MaterialManager.Instance.CreateMaterial(materialName, storage, part.Effect, subData.TexturesName);
+                    SubMesh sub = mesh.CreateSubMesh(currMesh.Name);
+                    sub.SetRenderingInfo(PrimitiveType.TriangleList, part.StartIndex, part.PrimitiveCount, part.NumVertices, part.VertexOffset);
+                    sub.Material = mat;
+                    sub.BoneIndex = currMesh.ParentBone.Index;
+                    sub.BoundingVolume = subData.BoundingVolume;
+                }
             }
         }
 

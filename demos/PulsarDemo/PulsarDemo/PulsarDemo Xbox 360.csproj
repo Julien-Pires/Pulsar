@@ -84,8 +84,12 @@
     <Reference Include="Microsoft.Xna.Framework.Video" />
     <Reference Include="Microsoft.Xna.Framework.Xact" />
     <Reference Include="mscorlib" />
-    <Reference Include="Pulsar" />
-    <Reference Include="PulsarRuntime" />
+    <Reference Include="Pulsar">
+      <HintPath>lib\xbox360\d\Pulsar.dll</HintPath>
+    </Reference>
+    <Reference Include="PulsarRuntime">
+      <HintPath>lib\xbox360\d\PulsarRuntime.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />

@@ -21,7 +21,6 @@ namespace Pulsar.Graphics.SceneGraph
         private Renderer renderer = null;
         private CameraManager camManager = new CameraManager();
         private RenderQueue queue = new RenderQueue();
-        private InstanceBatchManager batchManager = new InstanceBatchManager();
         private SceneNode root = null;
         private Dictionary<string, SceneNode> nodesMap = new Dictionary<string, SceneNode>();
         private Dictionary<string, IMovable> movablesMap = new Dictionary<string, IMovable>();
@@ -38,7 +37,6 @@ namespace Pulsar.Graphics.SceneGraph
         internal SceneTree(Renderer renderer)
         {
             this.renderer = renderer;
-
             this.root = this.CreateNode("Root");
         }
 
@@ -59,7 +57,6 @@ namespace Pulsar.Graphics.SceneGraph
             if (cam != null)
             {
                 this.FindVisibleObjects(cam);
-                this.PrepareBatch();
             }
 
             this.renderer.Render(this.queue, this.camManager.Current);
@@ -79,15 +76,6 @@ namespace Pulsar.Graphics.SceneGraph
         private void Clean()
         {
             this.queue.Clear();
-            this.batchManager.Reset();
-        }
-
-        /// <summary>
-        /// Prepare the batch in order to be added in the render queue
-        /// </summary>
-        private void PrepareBatch()
-        {
-            this.batchManager.UpdateRenderQueue(this.queue);
         }
 
         /// <summary>

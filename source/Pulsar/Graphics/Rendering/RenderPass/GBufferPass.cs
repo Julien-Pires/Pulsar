@@ -68,9 +68,14 @@ namespace Pulsar.Graphics.Rendering.RenderPass
         {
             List<IRenderable> solids = group.SolidList;
             List<IRenderable> transparents = group.TransparentList;
-
             this.RenderObjects(solids);
             this.RenderObjects(transparents);
+
+            IEnumerable<InstanceBatch> instances = this.renderer.InstancingManager.GetBatchList(group.ID);
+            foreach (InstanceBatch b in instances)
+            {
+                this.RenderInstancedObjects(b);
+            }
         }
 
         /// <summary>
@@ -79,11 +84,11 @@ namespace Pulsar.Graphics.Rendering.RenderPass
         /// <param name="geometries">List of renderable objects</param>
         private void RenderObjects(List<IRenderable> geometries)
         {
+            InstanceBatchManager instancingMngr = this.renderer.InstancingManager;
             for (int i = 0; i < geometries.Count; i++)
             {
                 IRenderable geoInstance = geometries[i];
-                InstanceBatch instancingBatch = geoInstance as InstanceBatch;
-                if (instancingBatch == null)
+                if (!geoInstance.UseInstancing)
                 {
                     this.shader.UseDefaultTechnique();
                     this.shader.SetRenderable(geoInstance.Transform, geoInstance.Material);
@@ -92,12 +97,17 @@ namespace Pulsar.Graphics.Rendering.RenderPass
                 }
                 else
                 {
-                    this.shader.UseInstancingTechnique();
-                    this.shader.SetRenderable(Matrix.Identity, instancingBatch.Material);
-                    this.shader.Apply();
-                    this.renderer.RenderInstancedGeometry(instancingBatch);
+                    instancingMngr.AddDrawable(geoInstance);
                 }
             }
+        }
+
+        private void RenderInstancedObjects(InstanceBatch batch)
+        {
+            this.shader.UseInstancingTechnique();
+            this.shader.SetRenderable(Matrix.Identity, batch.Material);
+            this.shader.Apply();
+            this.renderer.RenderInstancedGeometry(batch);
         }
 
         #endregion

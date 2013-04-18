@@ -82,6 +82,8 @@
     <Compile Include="Graphics\BoundingVolume.cs" />
     <Compile Include="Graphics\Factory.cs" />
     <Compile Include="Graphics\Node.cs" />
+    <Compile Include="Graphics\Rendering\InstanceBatch.cs" />
+    <Compile Include="Graphics\Rendering\InstanceBatchManager.cs" />
     <Compile Include="Graphics\Rendering\Renderer.cs" />
     <Compile Include="Graphics\IRenderable.cs" />
     <Compile Include="Graphics\Debugger\MeshBoundingBox.cs" />
@@ -94,7 +96,6 @@
     <Compile Include="Graphics\SceneGraph\Entity.cs" />
     <Compile Include="Graphics\SceneGraph\EntityFactory.cs" />
     <Compile Include="Graphics\SceneGraph\IMovable.cs" />
-    <Compile Include="Graphics\SceneGraph\InstanceBatch.cs" />
     <Compile Include="Graphics\SceneGraph\RenderQueue.cs" />
     <Compile Include="Graphics\SceneGraph\SceneNode.cs" />
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />

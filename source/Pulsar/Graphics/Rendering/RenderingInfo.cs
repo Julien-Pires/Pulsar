@@ -15,45 +15,59 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
 
+        private static uint idCounter = uint.MinValue;
+
         /// <summary>
         /// ID of the rendering information
         /// </summary>
-        public uint ID = uint.MinValue;
+        internal uint id = uint.MinValue;
 
         /// <summary>
         /// Primitive type
         /// </summary>
-        public PrimitiveType Primitive = PrimitiveType.TriangleList;
+        internal PrimitiveType Primitive = PrimitiveType.TriangleList;
 
         /// <summary>
         /// Offset in the vertex buffer for this instance
         /// </summary>
-        public int VertexOffset = 0;
+        internal int vertexOffset = 0;
 
         /// <summary>
         /// Get the starting index in the vertex buffer
         /// </summary>
-        public int StartIndex = 0;
+        internal int startIndex = 0;
 
         /// <summary>
         /// Total of triangle for this instance
         /// </summary>
-        public int TriangleCount = 0;
+        internal int triangleCount = 0;
 
         /// <summary>
         /// Total of vertex for this instance
         /// </summary>
-        public int VertexCount = 0;
+        internal int vertexCount = 0;
+
+        internal bool useIndexes = false;
 
         /// <summary>
         /// Vertex buffer for this instance
         /// </summary>
-        public VertexBuffer VBuffer = null;
+        internal VertexBuffer vBuffer = null;
 
         /// <summary>
         /// Index buffer for this instance
         /// </summary>
-        public IndexBuffer IBuffer = null;
+        internal IndexBuffer iBuffer = null;
+
+        #endregion
+
+        #region Constructors
+
+        internal RenderingInfo()
+        {
+            this.id = RenderingInfo.idCounter;
+            RenderingInfo.idCounter++;
+        }
 
         #endregion
 
@@ -65,13 +79,47 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="other">Rendering info instance receiving all data of this instance</param>
         public void CopyTo(RenderingInfo other)
         {
-            other.VBuffer = this.VBuffer;
-            other.IBuffer = this.IBuffer;
+            other.vBuffer = this.vBuffer;
+            other.iBuffer = this.iBuffer;
             other.Primitive = this.Primitive;
-            other.StartIndex = this.StartIndex;
-            other.TriangleCount = this.TriangleCount;
-            other.VertexOffset = this.VertexOffset;
-            other.VertexCount = this.VertexCount;
+            other.startIndex = this.startIndex;
+            other.triangleCount = this.triangleCount;
+            other.vertexOffset = this.vertexOffset;
+            other.vertexCount = this.vertexCount;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public uint ID
+        {
+            get { return this.id; }
+        }
+
+        public PrimitiveType PrimitiveType
+        {
+            get { return this.Primitive; }
+        }
+
+        public int VertexOffset
+        {
+            get { return this.vertexOffset; }
+        }
+
+        public int StartIndex
+        {
+            get { return this.startIndex; }
+        }
+
+        public int PrimitiveCount
+        {
+            get { return this.triangleCount; }
+        }
+
+        public int VertexCount
+        {
+            get { return this.vertexCount; }
         }
 
         #endregion

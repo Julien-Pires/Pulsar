@@ -40,9 +40,8 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL">
       <Private>False</Private>
     </Reference>
-    <Reference Include="PulsarPipeline, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\x86\Debug\PulsarPipeline.dll</HintPath>
+    <Reference Include="PulsarPipeline">
+      <HintPath>lib\x86\d\PulsarPipeline.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

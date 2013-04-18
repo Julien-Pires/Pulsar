@@ -91,12 +91,13 @@
     <Compile Include="Core\MessagePoolTracker.cs" />
     <Compile Include="Core\Pool.cs" />
     <Compile Include="Graphics\BoundingVolume.cs" />
+    <Compile Include="Graphics\Rendering\InstanceBatchManager.cs" />
     <Compile Include="Graphics\SceneGraph\Camera.cs" />
     <Compile Include="Graphics\SceneGraph\CameraManager.cs" />
     <Compile Include="Graphics\SceneGraph\Entity.cs" />
     <Compile Include="Graphics\SceneGraph\EntityFactory.cs" />
     <Compile Include="Graphics\Factory.cs" />
-    <Compile Include="Graphics\SceneGraph\InstanceBatch.cs" />
+    <Compile Include="Graphics\Rendering\InstanceBatch.cs" />
     <Compile Include="Graphics\Rendering\Renderer.cs" />
     <Compile Include="Graphics\SceneGraph\IMovable.cs" />
     <Compile Include="Graphics\IRenderable.cs" />

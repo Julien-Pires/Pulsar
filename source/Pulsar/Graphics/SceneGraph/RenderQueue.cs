@@ -18,118 +18,6 @@ namespace Pulsar.Graphics.SceneGraph
     }
 
     /// <summary>
-    /// Represents a group of instancing object identified by a batch ID and queue ID
-    /// </summary>
-    internal class LazyBatchInfo
-    {
-        #region Fields
-
-        public int QueueID;
-
-        public uint BatchID;
-
-        public List<IRenderable> LazyInstances = new List<IRenderable>();
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Clear the list of renderable object
-        /// </summary>
-        internal void Clear()
-        {
-            this.LazyInstances.Clear();
-        }
-
-        #endregion
-    }
-
-    /// <summary>
-    /// Keep track of all instancing groups
-    /// </summary>
-    internal sealed class LazyRenderQueue
-    {
-        #region Fields
-
-        private List<LazyBatchInfo> lazyInstances = new List<LazyBatchInfo>();
-        private Dictionary<ulong, int> indexList = new Dictionary<ulong, int>();
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Clear all the list of instancing groups
-        /// </summary>
-        internal void Clear()
-        {
-            for (int i = 0; i < this.lazyInstances.Count; i++)
-            {
-                this.lazyInstances[i].Clear();
-            }
-        }
-
-        /// <summary>
-        /// Find an instancing group by its ID and queue ID
-        /// </summary>
-        /// <param name="queueID">Queue ID of the group</param>
-        /// <param name="batchID">ID of the batch</param>
-        /// <returns></returns>
-        internal LazyBatchInfo GetBatchInfo(int queueID, uint batchID)
-        {
-            ulong key = this.GetKey(queueID, batchID);
-            int idx;
-            LazyBatchInfo inf = null;
-
-            if (!this.indexList.ContainsKey(key))
-            {
-                inf = new LazyBatchInfo();
-                inf.QueueID = queueID;
-                inf.BatchID = batchID;
-                this.lazyInstances.Add(inf);
-
-                idx = this.lazyInstances.Count - 1;
-                this.indexList.Add(key, idx);
-            }
-            else
-            {
-                idx = this.indexList[key];
-            }
-
-            return this.lazyInstances[idx];
-        }
-
-        /// <summary>
-        /// Compute a unique key for a specific queue and batch
-        /// </summary>
-        /// <param name="queueID">Queue ID of the group</param>
-        /// <param name="batchID">ID of the batch</param>
-        /// <returns></returns>
-        private ulong GetKey(int queueID, uint batchID)
-        {
-            ulong key = queueID > batchID ? (uint)batchID | ((ulong)queueID << 32) :
-                                            (uint)queueID | ((ulong)batchID << 32);
-
-            return key;
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Get all instancing group
-        /// </summary>
-        internal List<LazyBatchInfo> LazyInstances
-        {
-            get { return this.lazyInstances; }
-        }
-
-        #endregion
-    }
-
-    /// <summary>
     /// Class describing a group of the render queue
     /// This class do distinction between solids objects and transparents
     /// </summary>
@@ -224,24 +112,10 @@ namespace Pulsar.Graphics.SceneGraph
         #region Fields
 
         private RenderQueueGroup[] queueGroups = new RenderQueueGroup[(int)RenderQueueGroupID.Count];
-        private LazyRenderQueue lazyQueue = new LazyRenderQueue();
 
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Add a IRenderable using instancing in the render queue
-        /// </summary>
-        /// <param name="renderable">IRenderable instance</param>
-        internal void AddInstancedRenderable(IRenderable renderable)
-        {
-            uint batchID = renderable.BatchID;
-            int queueID = renderable.RenderQueueID;
-            LazyBatchInfo inf = this.lazyQueue.GetBatchInfo(queueID, batchID);
-
-            inf.LazyInstances.Add(renderable);
-        }
 
         /// <summary>
         /// Add a IRenderable in the render queue
@@ -276,8 +150,6 @@ namespace Pulsar.Graphics.SceneGraph
                 if(group != null)
                     group.Clear();
             }
-
-            this.lazyQueue.Clear();
         }
 
         /// <summary>
@@ -340,11 +212,6 @@ namespace Pulsar.Graphics.SceneGraph
         internal RenderQueueGroup[] QueueGroupList
         {
             get { return this.queueGroups; }
-        }
-
-        internal List<LazyBatchInfo> LazyInstances
-        {
-            get { return this.lazyQueue.LazyInstances; }
         }
 
         #endregion

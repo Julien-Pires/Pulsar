@@ -132,15 +132,7 @@ namespace Pulsar.Graphics.SceneGraph
             for (int i = 0; i < this.subEntities.Count; i++)
             {
                 SubEntity sub = this.subEntities[i];
-
-                if (sub.UseInstancing)
-                {
-                    queue.AddInstancedRenderable(sub);
-                }
-                else
-                {
-                    queue.AddRenderable(sub);
-                }
+                queue.AddRenderable(sub);
             }
 
             if (this.RenderAABB)
@@ -154,6 +146,18 @@ namespace Pulsar.Graphics.SceneGraph
                 this.meshAABB.UpdateBox(ref aabb);
                 queue.AddRenderable(this.meshAABB);
             }
+        }
+
+        public SubEntity GetSubEntity(int index)
+        {
+            return this.subEntities[index];
+        }
+
+        public SubEntity GetSubEntity(string name)
+        {
+            int index = this.mesh.GetSubMeshIndex(name);
+
+            return this.GetSubEntity(index);
         }
 
         /// <summary>
