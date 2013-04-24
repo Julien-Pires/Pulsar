@@ -55,6 +55,10 @@ namespace Pulsar.Assets.Graphics.Materials
         /// <summary>
         /// Create a checkerboard texture
         /// </summary>
+        /// <param name="size">Size of the texture</param>
+        /// <param name="stripSize">Size of the stripe</param>
+        /// <param name="odd">Odd color</param>
+        /// <param name="even">Even color</param>
         /// <returns>Return a new texture</returns>
         public static Texture2D CreateMissingTexture(int size, int stripSize, Color odd, Color even)
         {

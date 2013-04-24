@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 namespace Pulsar.Components
 {
+    /// <summary>
+    /// Manager of all game objects.
+    /// GameObjectManager is responsible for dispatching component event for game objects contained
+    /// in this manager.
+    /// </summary>
     public sealed class GameObjectManager
     {
         #region Fields
@@ -16,15 +21,33 @@ namespace Pulsar.Components
 
         #region Event
 
+        /// <summary>
+        /// Occurs when a game object is added
+        /// </summary>
         public event EventHandler<GameObjectEventArgs> GameObjectAdded;
+
+        /// <summary>
+        /// Occurs when a game object is removed
+        /// </summary>
         public event EventHandler<GameObjectEventArgs> GameObjectRemoved;
+
+        /// <summary>
+        /// Occurs when a component is added to a game object in this manager
+        /// </summary>
         public event EventHandler<ComponentEventArgs> ComponentAdded;
+
+        /// <summary>
+        /// Occurs when a component is removed from a game object in this manager
+        /// </summary>
         public event EventHandler<ComponentEventArgs> ComponentRemoved;
 
         #endregion
 
         #region Methods
 
+        /// <summary>
+        /// Update the game object manager
+        /// </summary>
         public void Update()
         {
             if (this.pendingDeletion.Count > 0)
@@ -42,6 +65,10 @@ namespace Pulsar.Components
             }
         }
 
+        /// <summary>
+        /// Add a game object
+        /// </summary>
+        /// <param name="obj">Game object to add</param>
         public void Add(GameObject obj)
         {
             if (this.objectsMap.ContainsKey(obj.ID))
@@ -68,6 +95,11 @@ namespace Pulsar.Components
             }
         }
 
+        /// <summary>
+        /// Remove game object. Components of the game object are removed immediately
+        /// </summary>
+        /// <param name="id">Id of the game object to remove</param>
+        /// <returns>Return true if the game object is removed successfully otherwise false</returns>
         public bool RemoveNow(ulong id)
         {
             GameObject obj;
@@ -81,6 +113,11 @@ namespace Pulsar.Components
             return this.RemoveGameObject(obj);
         }
 
+        /// <summary>
+        /// Remove a game object. The components aren't removed immediately but at the next frame
+        /// </summary>
+        /// <param name="id">Id of the game object to remove</param>
+        /// <returns>Return true if the game object is removed successfully otherwise false</returns>
         public bool Remove(ulong id)
         {
             GameObject obj;
@@ -98,6 +135,11 @@ namespace Pulsar.Components
             return this.RemoveGameObject(obj);
         }
 
+        /// <summary>
+        /// Remove a game object
+        /// </summary>
+        /// <param name="go">Game object to remove</param>
+        /// <returns>Return true if the game object is removed successfully otherwise false</returns>
         private bool RemoveGameObject(GameObject go)
         {
             bool result = this.objectsMap.Remove(go.ID);
@@ -117,6 +159,10 @@ namespace Pulsar.Components
             return result;
         }
 
+        /// <summary>
+        /// Add a component
+        /// </summary>
+        /// <param name="compo">Component to add</param>
         internal void AddComponent(Component compo)
         {
             if (this.componentsList.Contains(compo))
@@ -126,6 +172,11 @@ namespace Pulsar.Components
             this.componentsList.Add(compo);
         }
 
+        /// <summary>
+        /// Remove a component
+        /// </summary>
+        /// <param name="compo">Component to remove</param>
+        /// <returns>Returns true if the component is removed successfully otherwise false</returns>
         internal bool RemoveComponent(Component compo)
         {
             if (this.componentsList.Contains(compo))
@@ -136,6 +187,11 @@ namespace Pulsar.Components
             return this.componentsList.Remove(compo);
         }
 
+        /// <summary>
+        /// Add a component to the waiting list for deletion
+        /// </summary>
+        /// <param name="compo">Component to add</param>
+        /// <returns>Returns true if the component is added successfully otherwise false</returns>
         internal bool AddToPendingList(Component compo)
         {
             if (this.pendingDeletion.Contains(compo))
@@ -147,6 +203,11 @@ namespace Pulsar.Components
             return true;
         }
 
+        /// <summary>
+        /// Called when a component is added to a game object managed by this instance
+        /// </summary>
+        /// <param name="sender">Sender of the event</param>
+        /// <param name="e">Argument of the event</param>
         private void OnComponentAdded(object sender, ComponentEventArgs e)
         {
             this.AddComponent(e.Component);
@@ -156,6 +217,11 @@ namespace Pulsar.Components
             }
         }
 
+        /// <summary>
+        /// Called when a component is removed from a game object managed by this instance
+        /// </summary>
+        /// <param name="sender">Sender of the event</param>
+        /// <param name="e">Argument of the event</param>
         private void OnComponentRemoved(object sender, ComponentEventArgs e)
         {
             this.RemoveComponent(e.Component);

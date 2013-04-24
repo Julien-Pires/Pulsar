@@ -28,6 +28,8 @@ namespace Pulsar.Assets
         /// Constructor of AssetStorage class
         /// </summary>
         /// <param name="name">Name of the storage</param>
+        /// <param name="path">Directory containg assets</param>
+        /// <param name="services">Services provider</param>
         internal AssetStorage(string name, string path, IServiceProvider services)
         {
             this.name = name;
@@ -39,6 +41,9 @@ namespace Pulsar.Assets
 
         #region Methods
 
+        /// <summary>
+        /// Delete all ressources hold by this storage
+        /// </summary>
         public void Dispose()
         {
             this.assetMap.Clear();
@@ -100,6 +105,9 @@ namespace Pulsar.Assets
             get { return this.name; }
         }
 
+        /// <summary>
+        /// Get the ContentManager used by this storage
+        /// </summary>
         internal ContentManager ResourceManager
         {
             get { return this.resourceManager; }

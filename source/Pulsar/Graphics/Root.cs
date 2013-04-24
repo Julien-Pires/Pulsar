@@ -31,7 +31,6 @@ namespace Pulsar.Graphics
         /// Constructor of the Root class
         /// </summary>
         /// <param name="gDevice">Graphic device used by the rendering system</param>
-        /// <param name="content">Content manager used by the entire system</param>
         public Root(GraphicsDevice gDevice)
         {
             this.renderer = new Renderer(gDevice);

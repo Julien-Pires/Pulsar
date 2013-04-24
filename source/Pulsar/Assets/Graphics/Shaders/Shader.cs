@@ -22,8 +22,8 @@ namespace Pulsar.Assets.Graphics.Shaders
         /// <summary>
         /// Constructor of the Shader class
         /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="name"></param>
+        /// <param name="owner">Creator of this instance</param>
+        /// <param name="name">Name of the shader</param>
         protected internal Shader(ShaderManager owner, string name)
             : base(name)
         {

@@ -15,6 +15,9 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
 
+        /// <summary>
+        /// Id counter
+        /// </summary>
         private static uint idCounter = uint.MinValue;
 
         /// <summary>
@@ -47,6 +50,9 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         internal int vertexCount = 0;
 
+        /// <summary>
+        /// Indicates if an index buffer is used
+        /// </summary>
         internal bool useIndexes = false;
 
         /// <summary>
@@ -63,6 +69,9 @@ namespace Pulsar.Graphics.Rendering
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of RenderingInfo class
+        /// </summary>
         internal RenderingInfo()
         {
             this.id = RenderingInfo.idCounter;
@@ -92,31 +101,49 @@ namespace Pulsar.Graphics.Rendering
 
         #region Properties
 
+        /// <summary>
+        /// Get the Id
+        /// </summary>
         public uint ID
         {
             get { return this.id; }
         }
 
+        /// <summary>
+        /// Get the primitive type used for rendering
+        /// </summary>
         public PrimitiveType PrimitiveType
         {
             get { return this.Primitive; }
         }
 
+        /// <summary>
+        /// Get the vertex offset
+        /// </summary>
         public int VertexOffset
         {
             get { return this.vertexOffset; }
         }
 
+        /// <summary>
+        /// Get the start index
+        /// </summary>
         public int StartIndex
         {
             get { return this.startIndex; }
         }
 
+        /// <summary>
+        /// Get the number of primitive
+        /// </summary>
         public int PrimitiveCount
         {
             get { return this.triangleCount; }
         }
 
+        /// <summary>
+        /// Get the number of vertex
+        /// </summary>
         public int VertexCount
         {
             get { return this.vertexCount; }

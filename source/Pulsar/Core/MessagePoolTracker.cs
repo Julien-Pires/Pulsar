@@ -11,7 +11,7 @@ namespace Pulsar.Core
     /// This can be used, for example, in component system where you need to send many message 
     /// and free them all at once when they have been processed by the mediator and handlers
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type of message managed by this pool</typeparam>
     public sealed class MessagePoolTracker<T> where T : Message, new()
     {
         #region Fields

@@ -54,6 +54,12 @@ namespace Pulsar.Assets.Graphics.Shaders
             return shader;
         }
 
+        /// <summary>
+        /// Unload a shader
+        /// </summary>
+        /// <param name="name">Name of the shader</param>
+        /// <param name="storage">Storage in which the shader is stored</param>
+        /// <returns>Returns true if the shader is unloaded successfully otherwise false</returns>
         public bool Unload(string name, string storage)
         {
             return this.assetGroup.Unload(name, storage);

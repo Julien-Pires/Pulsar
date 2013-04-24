@@ -83,6 +83,12 @@ namespace Pulsar.Assets.Graphics.Models
             return mesh;
         }
 
+        /// <summary>
+        /// Unload a mesh
+        /// </summary>
+        /// <param name="name">Name of the mesh to unload</param>
+        /// <param name="storage">Storage in which the mesh is stored</param>
+        /// <returns>Returns true if the mesh is unloaded successfully otherwise false</returns>
         public bool Unload(string name, string storage)
         {
             return this.assetGroup.Unload(name, storage);

@@ -8,6 +8,11 @@ namespace Pulsar.Components
 {
     using HandlersTypeMap = System.Collections.Generic.Dictionary<System.Type, Pulsar.Components.ComponentHandler>;
 
+    /// <summary>
+    /// A ComponentHandlerSystem is the master system for all ComponentHandler. This class is 
+    /// responsible for intializing, updating and disposing ComponentHandler. 
+    /// ComponentHandlerSystem listens to the add/remove event concerning component to dispatch them.
+    /// </summary>
     public sealed class ComponentHandlerSystem : IDisposable
     {
         #region Fields
@@ -21,6 +26,10 @@ namespace Pulsar.Components
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of ComponentHandlerSystem class
+        /// </summary>
+        /// <param name="goMngr">Associated game object manager</param>
         public ComponentHandlerSystem(GameObjectManager goMngr)
         {
             this.goManager = goMngr;
@@ -32,6 +41,9 @@ namespace Pulsar.Components
 
         #region Methods
 
+        /// <summary>
+        /// Initialize this instance
+        /// </summary>
         public void Initialize()
         {
             foreach (ComponentHandler hnd in this.handlersMap.Values)
@@ -40,6 +52,9 @@ namespace Pulsar.Components
             }
         }
 
+        /// <summary>
+        /// Dispose this instance
+        /// </summary>
         public void Dispose()
         {
             foreach (ComponentHandler hnd in this.handlersMap.Values)
@@ -55,6 +70,10 @@ namespace Pulsar.Components
             this.isDisposed = true;
         }
 
+        /// <summary>
+        /// Add a ComponentHandler
+        /// </summary>
+        /// <param name="hnd">ComponentHandler to add</param>
         public void Add(ComponentHandler hnd)
         {
             if (hnd.Owner != null)
@@ -82,6 +101,10 @@ namespace Pulsar.Components
             hnd.Owner = this;
         }
 
+        /// <summary>
+        /// Add a component handler to listen for add component event
+        /// </summary>
+        /// <param name="hnd">ComponentHandler listening</param>
         private void AddComponentListener(ComponentHandler hnd)
         {
             Type[] allCompoTypes = hnd.ComponentTypes;
@@ -103,6 +126,11 @@ namespace Pulsar.Components
             }
         }
 
+        /// <summary>
+        /// Add a ComponentHandler to listen for add component event
+        /// </summary>
+        /// <param name="compoType">Type of component to listen for</param>
+        /// <param name="hnd">ComponentHandler listening</param>
         private void AddComponentListener(Type compoType, ComponentHandler hnd)
         {
             HandlersTypeMap map;
@@ -120,6 +148,11 @@ namespace Pulsar.Components
             }
         }
 
+        /// <summary>
+        /// Remove a ComponentHandler listener
+        /// </summary>
+        /// <param name="hnd">ComponentHandler which want to stop to listen</param>
+        /// <returns>Return true if the ComponentHandler stops to listen otherwise false</returns>
         private bool RemoveComponentListener(ComponentHandler hnd)
         {
             bool result = true;
@@ -142,6 +175,12 @@ namespace Pulsar.Components
             return result;
         }
 
+        /// <summary>
+        /// Remove a ComponentHandler listener for a specific component type
+        /// </summary>
+        /// <param name="compoType">Component type</param>
+        /// <param name="hnd">ComponentHandler which want to stop to listen</param>
+        /// <returns>Return true if the ComponentHandler stops to listen otherwise false</returns>
         private bool RemoveComponentListener(Type compoType, ComponentHandler hnd)
         {
             HandlersTypeMap map;
@@ -154,16 +193,31 @@ namespace Pulsar.Components
             return false;
         }
 
+        /// <summary>
+        /// Remove a ComponentHandler from this system
+        /// </summary>
+        /// <param name="hnd">ComponentHandler to remove</param>
+        /// <returns>Return true if the ComponentHandler is removed successfully otherwise false</returns>
         public bool Remove(ComponentHandler hnd)
         {
             return this.Remove(hnd.GetType());
         }
 
+        /// <summary>
+        /// Remove a ComponentHandler from this system
+        /// </summary>
+        /// <typeparam name="T">Type of ComponentHandler to remove</typeparam>
+        /// <returns>Return true if the ComponentHandler is removed successfully otherwise false</returns>
         public bool Remove<T>() where T : ComponentHandler
         {
             return this.Remove(typeof(T));
         }
 
+        /// <summary>
+        /// Remove a ComponentHandler from this system
+        /// </summary>
+        /// <param name="type">Type of ComponentHandler to remove</param>
+        /// <returns>Return true if the ComponentHandler is removed successfully otherwise false</returns>
         public bool Remove(Type type)
         {
             ComponentHandler hnd;
@@ -183,6 +237,10 @@ namespace Pulsar.Components
             return result;
         }
 
+        /// <summary>
+        /// Update all ComponentHandler
+        /// </summary>
+        /// <param name="time">Elapsed time since the last frame</param>
         public void Tick(GameTime time)
         {
             foreach (ComponentHandler hnd in this.handlersMap.Values)
@@ -194,6 +252,11 @@ namespace Pulsar.Components
             }
         }
 
+        /// <summary>
+        /// Called when a component is added to the associated game object manager
+        /// </summary>
+        /// <param name="sender">Sender of the event</param>
+        /// <param name="e">Argument for the event</param>
         private void OnComponentAdded(object sender, ComponentEventArgs e)
         {
             Component component = e.Component;
@@ -219,6 +282,11 @@ namespace Pulsar.Components
             }
         }
 
+        /// <summary>
+        /// Called when a component is removed to the associated game object manager
+        /// </summary>
+        /// <param name="sender">Sender of the event</param>
+        /// <param name="e">Argument for the event</param>
         private void OnComponentRemoved(object sender, ComponentEventArgs e)
         {
             Component component = e.Component;
@@ -248,6 +316,9 @@ namespace Pulsar.Components
 
         #region Properties
 
+        /// <summary>
+        /// Get a value indicating if this instance is disposed
+        /// </summary>
         public bool IsDisposed
         {
             get { return this.isDisposed; }
