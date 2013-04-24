@@ -107,6 +107,11 @@ namespace Pulsar.Graphics
         /// <returns>Return a new child node</returns>
         protected abstract Node CreateChildIntern(string name);
 
+        /// <summary>
+        /// Internal method to remove a child node
+        /// </summary>
+        /// <param name="name">Name of the child</param>
+        /// <returns>Return true if the child is removed successfully otherwise false</returns>
         protected abstract bool RemoveChildIntern(string name);
 
         /// <summary>
@@ -346,6 +351,9 @@ namespace Pulsar.Graphics
             this.needParentUpdate = false;
         }
 
+        /// <summary>
+        /// Update the transform matrix
+        /// </summary>
         private void UpdateTransform()
         {
             if (this.needUpdateTransform)
@@ -413,6 +421,9 @@ namespace Pulsar.Graphics
             }
         }
 
+        /// <summary>
+        /// Get the Scale-Orientation transform matrix
+        /// </summary>
         public virtual Matrix ScaleOrientationTransform
         {
             get

@@ -35,7 +35,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <summary>
         /// Constructor of the mesh class
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">Name of the mesh</param>
         internal Mesh(string name) : base(name) 
         {
         }
@@ -44,6 +44,10 @@ namespace Pulsar.Assets.Graphics.Models
 
         #region Methods
 
+        /// <summary>
+        /// Create a submesh
+        /// </summary>
+        /// <returns>Returns a new submesh</returns>
         public SubMesh CreateSubMesh()
         {
             SubMesh sub = new SubMesh(this);
@@ -52,6 +56,11 @@ namespace Pulsar.Assets.Graphics.Models
             return sub;
         }
 
+        /// <summary>
+        /// Create a submesh with a name associated
+        /// </summary>
+        /// <param name="name">Name of the submesh</param>
+        /// <returns>Returns a new submesh</returns>
         public SubMesh CreateSubMesh(string name)
         {
             if (this.subMeshNamesMap.ContainsKey(name))
@@ -64,6 +73,10 @@ namespace Pulsar.Assets.Graphics.Models
             return sub;
         }
 
+        /// <summary>
+        /// Remove a submesh
+        /// </summary>
+        /// <param name="index">Index of the submesh to remove</param>
         public void RemoveSubMesh(int index)
         {
             this.subMeshes.RemoveAt(index);
@@ -85,17 +98,31 @@ namespace Pulsar.Assets.Graphics.Models
             this.ComputeData();
         }
 
+        /// <summary>
+        /// Remove a submesh with a specific name
+        /// </summary>
+        /// <param name="name">Name of the submesh to remove</param>
         public void RemoveSubMesh(string name)
         {
             int idx = this.GetSubMeshIndex(name);
             this.RemoveSubMesh(idx);
         }
 
+        /// <summary>
+        /// Get a submesh
+        /// </summary>
+        /// <param name="index">Index of the submesh</param>
+        /// <returns>Returns a submesh instance</returns>
         public SubMesh GetSubMesh(int index)
         {
             return this.subMeshes[index];
         }
 
+        /// <summary>
+        /// Get a submesh with a specific name
+        /// </summary>
+        /// <param name="name">Name of the submesh</param>
+        /// <returns>Returns a submesh instance</returns>
         public SubMesh GetSubMesh(string name)
         {
             int idx = this.GetSubMeshIndex(name);
@@ -103,6 +130,11 @@ namespace Pulsar.Assets.Graphics.Models
             return this.GetSubMesh(idx);
         }
 
+        /// <summary>
+        /// Get the index of a named submesh
+        /// </summary>
+        /// <param name="name">Name of the submesh</param>
+        /// <returns>Returns the index</returns>
         public int GetSubMeshIndex(string name)
         {
             int idx;
@@ -114,6 +146,9 @@ namespace Pulsar.Assets.Graphics.Models
             return idx;
         }
 
+        /// <summary>
+        /// Propagate changes to all child submesh
+        /// </summary>
         private void ApplyChanges()
         {
             for (int i = 0; i < this.subMeshes.Count; i++)
@@ -124,6 +159,9 @@ namespace Pulsar.Assets.Graphics.Models
             }
         }
 
+        /// <summary>
+        /// Update mesh data, can be called by childs submesh to notify changes on them
+        /// </summary>
         internal void ComputeData()
         {
             this.VerticesCount = this.vBuffer.VertexCount;
@@ -140,12 +178,18 @@ namespace Pulsar.Assets.Graphics.Models
         #region Properties
 
         /// <summary>
-        /// Get the total of vertices for this mesh
+        /// Get the number of vertices
         /// </summary>
         public int VerticesCount { get; internal set; }
 
+        /// <summary>
+        /// Get the number of primitive
+        /// </summary>
         public int PrimitiveCount { get; internal set; }
 
+        /// <summary>
+        /// Get the number of submesh
+        /// </summary>
         public int SubMeshCount
         {
             get { return this.subMeshes.Count; }
@@ -189,6 +233,9 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         public Matrix[] Bones { get; internal set; }
 
+        /// <summary>
+        /// Get or set a boolean to enable index buffer
+        /// </summary>
         public bool UseIndexes 
         {
             get { return this.useIndexes; }

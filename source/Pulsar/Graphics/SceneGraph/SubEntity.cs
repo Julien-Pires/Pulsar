@@ -34,6 +34,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Constructor of the SubEntity class
         /// </summary>
+        /// <param name="name">Name of the sub entity</param>
         /// <param name="parent">Parent Entity</param>
         /// <param name="sub">ModelMeshPart associated to this SubEntity</param>
         internal SubEntity(string name, Entity parent, SubMesh sub)

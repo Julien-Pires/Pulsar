@@ -22,6 +22,9 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of CameraManager class
+        /// </summary>
         internal CameraManager()
         {
         }

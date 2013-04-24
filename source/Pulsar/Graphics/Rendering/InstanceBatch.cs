@@ -38,6 +38,12 @@ namespace Pulsar.Graphics.Rendering
 
         #region Constructor
 
+        /// <summary>
+        /// Constructor of InstanceBatch class
+        /// </summary>
+        /// <param name="gDevice">Graphic device</param>
+        /// <param name="id">Id of the batch</param>
+        /// <param name="queueId">Queue Id of the batch</param>
         internal InstanceBatch(GraphicsDevice gDevice, uint id, int queueId)
         {
             this.transformsBuffer = new DynamicVertexBuffer(gDevice, instanceVertexDeclaration, 0, BufferUsage.WriteOnly);
@@ -116,6 +122,9 @@ namespace Pulsar.Graphics.Rendering
             get { return this.id; }
         }
 
+        /// <summary>
+        /// Get the vertex buffer
+        /// </summary>
         internal DynamicVertexBuffer Buffer
         {
             get

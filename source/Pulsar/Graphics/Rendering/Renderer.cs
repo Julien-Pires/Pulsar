@@ -129,11 +129,17 @@ namespace Pulsar.Graphics.Rendering
 
         #region Properties
 
+        /// <summary>
+        /// Get the graphic device used by this renderer
+        /// </summary>
         internal GraphicsDevice GraphicsDevice
         {
             get { return this.graphicDevice; }
         }
 
+        /// <summary>
+        /// Get the InstanceBatch manager
+        /// </summary>
         internal InstanceBatchManager InstancingManager
         {
             get { return this.instancingManager; }

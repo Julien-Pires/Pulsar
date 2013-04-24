@@ -122,6 +122,11 @@ namespace Pulsar.Graphics.SceneGraph
             return node;
         }
 
+        /// <summary>
+        /// Remove a node
+        /// </summary>
+        /// <param name="name">Name of the node</param>
+        /// <returns>Returns true if the node is removed successfully otherwise false</returns>
         internal bool RemoveNode(string name)
         {
             return this.nodesMap.Remove(name);

@@ -96,6 +96,12 @@ namespace Pulsar.Assets.Graphics.Materials
             return tex;
         }
 
+        /// <summary>
+        /// Unload a texture in a specific storage
+        /// </summary>
+        /// <param name="name">Name of the texture</param>
+        /// <param name="storage">Storage in which the texture is stored</param>
+        /// <returns>Returns true if the texture is unload successfully otherwise false</returns>
         public bool Unload(string name, string storage)
         {
             return this.assetGroup.Unload(name, storage);

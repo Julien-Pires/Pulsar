@@ -161,6 +161,7 @@ namespace Pulsar.Core
         /// <summary>
         /// Process the message queue
         /// </summary>
+        /// <param name="maxProcessTime">Max time for processing the queue</param>
         public void Tick(long maxProcessTime)
         {
             long currentTime = Stopwatch.GetTimestamp();

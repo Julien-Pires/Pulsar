@@ -27,6 +27,10 @@ namespace Pulsar.Assets.Graphics.Models
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of SubMesh class
+        /// </summary>
+        /// <param name="parent">Parent of the submesh</param>
         internal SubMesh(Mesh parent)
         {
             this.parent = parent;
@@ -39,6 +43,14 @@ namespace Pulsar.Assets.Graphics.Models
 
         #region Methods
 
+        /// <summary>
+        /// Set rendering data
+        /// </summary>
+        /// <param name="pType">Ordering type for vertex rendering</param>
+        /// <param name="startIdx">First index to use when accessing index buffer</param>
+        /// <param name="primitiveCount">Number of primitive to render</param>
+        /// <param name="numVertices">Number of vertices used during the draw call</param>
+        /// <param name="vertexOffset">Offset from the beginning of the vertex buffer</param>
         public void SetRenderingInfo(PrimitiveType pType, int startIdx, int primitiveCount, int numVertices, int vertexOffset)
         {
             this.renderData.Primitive = pType;
@@ -49,12 +61,22 @@ namespace Pulsar.Assets.Graphics.Models
             this.parent.ComputeData();
         }
 
+        /// <summary>
+        /// Set bounding volumes
+        /// </summary>
+        /// <param name="aabb">AABB for this submesh</param>
+        /// <param name="sphere">Bounding sphere for this submesh</param>
         public void SetBoundingVolume(BoundingBox aabb, BoundingSphere sphere)
         {
             this.bounds.BoundingBox = aabb;
             this.bounds.BoundingSphere = sphere;
         }
 
+        /// <summary>
+        /// Set bounding volumes
+        /// </summary>
+        /// <param name="aabb">AABB for this submesh</param>
+        /// <param name="sphere">Bounding sphere for this submesh</param>
         public void SetBoundingVolume(ref BoundingBox aabb, ref BoundingSphere sphere)
         {
             this.bounds.BoundingBox = aabb;
@@ -87,7 +109,7 @@ namespace Pulsar.Assets.Graphics.Models
         }
 
         /// <summary>
-        /// Get the material attached to this sub mesh
+        /// Get or set the material attached to this sub mesh
         /// </summary>
         public Material Material { get; set; }
 

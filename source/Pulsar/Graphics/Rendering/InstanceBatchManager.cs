@@ -21,6 +21,10 @@ namespace Pulsar.Graphics.Rendering
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of InstanceBatchManager class
+        /// </summary>
+        /// <param name="owner"></param>
         internal InstanceBatchManager(Renderer owner)
         {
             this.owner = owner;
@@ -41,12 +45,21 @@ namespace Pulsar.Graphics.Rendering
             }
         }
 
+        /// <summary>
+        /// Add a renderable object to a batch
+        /// </summary>
+        /// <param name="renderable">Renderable object to add</param>
         internal void AddDrawable(IRenderable renderable)
         {
             InstanceBatch batch = this.GetInstanceBatch(renderable.BatchID, renderable.RenderQueueID);
             batch.AddDrawable(renderable);
         }
 
+        /// <summary>
+        /// Get an enumerator for all batchs
+        /// </summary>
+        /// <param name="queueId">Queue Id</param>
+        /// <returns>Return an enumerator of InstanceBatch</returns>
         internal IEnumerable<InstanceBatch> GetBatchList(int queueId)
         {
             Dictionary<uint, InstanceBatch> map = this.batchByQueue[queueId];
@@ -58,6 +71,12 @@ namespace Pulsar.Graphics.Rendering
             return map.Values;
         }
 
+        /// <summary>
+        /// Get an InstanceBatch
+        /// </summary>
+        /// <param name="id">Id of the batch</param>
+        /// <param name="queueId">Queue Id</param>
+        /// <returns>Return an InstanceBatch instance</returns>
         private InstanceBatch GetInstanceBatch(uint id, int queueId)
         {
             Dictionary<uint, InstanceBatch> map = this.batchByQueue[queueId];
@@ -78,6 +97,11 @@ namespace Pulsar.Graphics.Rendering
             return batch;
         }
 
+        /// <summary>
+        /// Add new InstanceBatch map for a specific queue
+        /// </summary>
+        /// <param name="queueId">Queue Id</param>
+        /// <returns>Return the new map</returns>
         private Dictionary<uint, InstanceBatch> AddNewMap(int queueId)
         {
             Dictionary<uint, InstanceBatch> map = new Dictionary<uint, InstanceBatch>();

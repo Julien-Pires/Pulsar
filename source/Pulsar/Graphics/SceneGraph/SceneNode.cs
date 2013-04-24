@@ -27,7 +27,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Constructor of SceneNode class
         /// </summary>
-        /// <param name="scene">SceneGraph which contain this node</param>
+        /// <param name="scene">SceneGraph which contains this node</param>
         internal SceneNode(SceneTree scene)
             : base(string.Empty)
         {
@@ -38,6 +38,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Constructor of the SceneNode class
         /// </summary>
+        /// <param name="scene">SceneGraph which contains this node</param>
+        /// <param name="name">Name of this node</param>
         internal SceneNode(SceneTree scene, string name) 
             : base(name)
         {
@@ -96,6 +98,11 @@ namespace Pulsar.Graphics.SceneGraph
             return this.owner.CreateNode(name);
         }
 
+        /// <summary>
+        /// Remove a child by calling remove node methods of the scene graph
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         protected override bool RemoveChildIntern(string name)
         {
             return this.owner.RemoveNode(name);
