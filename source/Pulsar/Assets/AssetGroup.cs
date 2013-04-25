@@ -93,6 +93,12 @@ namespace Pulsar.Assets
             return res;
         }
 
+        /// <summary>
+        /// Unload an asset from a storage
+        /// </summary>
+        /// <param name="name">Name of the asset</param>
+        /// <param name="storage">Storage in wich the asset is stored</param>
+        /// <returns>Returns true if the asset is unloaded successfully otherwise false</returns>
         public bool Unload(string name, string storage)
         {
             bool result = AssetStorageManager.Instance.RemoveResourceInStorage(name, storage);
@@ -198,6 +204,11 @@ namespace Pulsar.Assets
             return res;
         }
 
+        /// <summary>
+        /// Called when a storage is created
+        /// </summary>
+        /// <param name="sender">Object triggering the storage created event</param>
+        /// <param name="e">Additional data from the event</param>
         private void OnStorageCreated(object sender, AssetStorageEventArgs e)
         {
             AssetStorage storage = e.Storage;
@@ -210,6 +221,11 @@ namespace Pulsar.Assets
             this.assetStorageMap.Add(storage.Name, storageMap);
         }
 
+        /// <summary>
+        /// Called when a storage is destroyed
+        /// </summary>
+        /// <param name="sender">Object triggering the storage destroyed event</param>
+        /// <param name="e">Additional data from the event</param>
         private void OnStorageDestroyed(object sender, AssetStorageEventArgs e)
         {
             AssetStorage storage = e.Storage;

@@ -9,7 +9,7 @@ using Pulsar.Game;
 using Pulsar.Core;
 using Pulsar.Assets.Graphics.Models;
 using Pulsar.Assets.Graphics.Materials;
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 using Pulsar.Graphics.Rendering;
 
 namespace Pulsar.Graphics.Debugger
@@ -26,7 +26,6 @@ namespace Pulsar.Graphics.Debugger
         private const int verticesCount = 24;
         private const int primitiveCount = 12;
 
-        private uint id;
         private DynamicVertexBuffer vBuffer = null;
         private IndexBuffer iBuffer = null;
         private RenderingInfo renderInfo = null;
@@ -55,7 +54,6 @@ namespace Pulsar.Graphics.Debugger
         /// </summary>
         private void InitBuffers()
         {
-            this.id = SubMesh.GetID();
             for (int i = 0; i < MeshBoundingBox.verticesCount; i++)
             {
                 indices[i] = i;
@@ -65,17 +63,13 @@ namespace Pulsar.Graphics.Debugger
             this.iBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits,
                 MeshBoundingBox.verticesCount, BufferUsage.WriteOnly);
             this.iBuffer.SetData<int>(this.indices);
-
             this.renderInfo = new RenderingInfo()
             {
-                ID = this.id,
                 Primitive = PrimitiveType.LineList,
-                VBuffer = this.vBuffer,
-                IBuffer = this.iBuffer,
-                VertexCount = MeshBoundingBox.verticesCount,
-                TriangleCount = MeshBoundingBox.primitiveCount,
-                StartIndex = 0,
-                VertexOffset = 0
+                vBuffer = this.vBuffer,
+                iBuffer = this.iBuffer,
+                vertexCount = MeshBoundingBox.verticesCount,
+                triangleCount = MeshBoundingBox.primitiveCount
             };
 
             this.material = MaterialManager.Instance.LoadDefault();
@@ -95,34 +89,34 @@ namespace Pulsar.Graphics.Debugger
             Vector3 maxOpposite = box.Max - (xOffset + zOffset);
 
             //// Top
-            this.vertices[0] = new VertexPositionNormalTexture(box.Min, Vector3.UnitY, Vector2.Zero);
-            this.vertices[1] = new VertexPositionNormalTexture(box.Min + xOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[2] = new VertexPositionNormalTexture(box.Min, Vector3.UnitY, Vector2.Zero);
-            this.vertices[3] = new VertexPositionNormalTexture(box.Min + zOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[4] = new VertexPositionNormalTexture(minOpposite, Vector3.UnitY, Vector2.Zero);
-            this.vertices[5] = new VertexPositionNormalTexture(box.Min + xOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[6] = new VertexPositionNormalTexture(minOpposite, Vector3.UnitY, Vector2.Zero);
-            this.vertices[7] = new VertexPositionNormalTexture(box.Min + zOffset, Vector3.UnitY, Vector2.Zero);
+            this.vertices[0].Position = box.Min;
+            this.vertices[1].Position = box.Min + xOffset;
+            this.vertices[2].Position = box.Min;
+            this.vertices[3].Position = box.Min + zOffset;
+            this.vertices[4].Position = minOpposite;
+            this.vertices[5].Position = box.Min + xOffset;
+            this.vertices[6].Position = minOpposite;
+            this.vertices[7].Position = box.Min + zOffset;
 
             //// Bottom
-            this.vertices[8] = new VertexPositionNormalTexture(box.Max, Vector3.UnitY, Vector2.Zero);
-            this.vertices[9] = new VertexPositionNormalTexture(box.Max - xOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[10] = new VertexPositionNormalTexture(box.Max, Vector3.UnitY, Vector2.Zero);
-            this.vertices[11] = new VertexPositionNormalTexture(box.Max - zOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[12] = new VertexPositionNormalTexture(maxOpposite, Vector3.UnitY, Vector2.Zero);
-            this.vertices[13] = new VertexPositionNormalTexture(box.Max - xOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[14] = new VertexPositionNormalTexture(maxOpposite, Vector3.UnitY, Vector2.Zero);
-            this.vertices[15] = new VertexPositionNormalTexture(box.Max - zOffset, Vector3.UnitY, Vector2.Zero);
+            this.vertices[8].Position = box.Max;
+            this.vertices[9].Position = box.Max - xOffset;
+            this.vertices[10].Position = box.Max;
+            this.vertices[11].Position = box.Max - zOffset;
+            this.vertices[12].Position = maxOpposite;
+            this.vertices[13].Position = box.Max - xOffset;
+            this.vertices[14].Position = maxOpposite;
+            this.vertices[15].Position = box.Max - zOffset;
 
             //// Sides
-            this.vertices[16] = new VertexPositionNormalTexture(box.Min, Vector3.UnitY, Vector2.Zero);
-            this.vertices[17] = new VertexPositionNormalTexture(box.Min + yOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[18] = new VertexPositionNormalTexture(box.Min + xOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[19] = new VertexPositionNormalTexture((box.Min + xOffset) + yOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[20] = new VertexPositionNormalTexture(box.Max, Vector3.UnitY, Vector2.Zero);
-            this.vertices[21] = new VertexPositionNormalTexture(box.Max - yOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[22] = new VertexPositionNormalTexture(box.Max - xOffset, Vector3.UnitY, Vector2.Zero);
-            this.vertices[23] = new VertexPositionNormalTexture((box.Max - xOffset) - yOffset, Vector3.UnitY, Vector2.Zero);
+            this.vertices[16].Position = box.Min;
+            this.vertices[17].Position = box.Min + yOffset;
+            this.vertices[18].Position = box.Min + xOffset;
+            this.vertices[19].Position = (box.Min + xOffset) + yOffset;
+            this.vertices[20].Position = box.Max;
+            this.vertices[21].Position = box.Max - yOffset;
+            this.vertices[22].Position = box.Max - xOffset;
+            this.vertices[23].Position = (box.Max - xOffset) - yOffset;
             
             this.vBuffer.SetData<VertexPositionNormalTexture>(this.vertices);
         }
@@ -153,7 +147,7 @@ namespace Pulsar.Graphics.Debugger
         /// </summary>
         public uint BatchID 
         {
-            get { return this.id; } 
+            get { return this.renderInfo.id; } 
         }
 
         /// <summary>

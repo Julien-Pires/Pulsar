@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Graphics.Graph;
+using Pulsar.Graphics.SceneGraph;
 using Pulsar.Graphics.Rendering;
 
 namespace Pulsar.Graphics
@@ -21,7 +21,7 @@ namespace Pulsar.Graphics
         #region Fields
 
         private Renderer renderer = null;
-        private Dictionary<string, SceneGraph> scenes = new Dictionary<string, SceneGraph>();
+        private Dictionary<string, SceneTree> scenes = new Dictionary<string, SceneTree>();
 
         #endregion
 
@@ -31,7 +31,6 @@ namespace Pulsar.Graphics
         /// Constructor of the Root class
         /// </summary>
         /// <param name="gDevice">Graphic device used by the rendering system</param>
-        /// <param name="content">Content manager used by the entire system</param>
         public Root(GraphicsDevice gDevice)
         {
             this.renderer = new Renderer(gDevice);
@@ -46,9 +45,9 @@ namespace Pulsar.Graphics
         /// </summary>
         /// <param name="name">Name of the scene graph</param>
         /// <returns>Returns an instance of SceneGraph class</returns>
-        public SceneGraph CreateSceneGraph(string name)
+        public SceneTree CreateSceneGraph(string name)
         {
-            SceneGraph graph = new SceneGraph(this.renderer);
+            SceneTree graph = new SceneTree(this.renderer);
             
             scenes.Add(name, graph);
 
@@ -60,7 +59,7 @@ namespace Pulsar.Graphics
         /// </summary>
         /// <param name="name">Name of the scene graph</param>
         /// <returns>Returns an instance of SceneGraph</returns>
-        public SceneGraph GetScene(string name)
+        public SceneTree GetScene(string name)
         {
             if (!this.scenes.ContainsKey(name))
                 return null;

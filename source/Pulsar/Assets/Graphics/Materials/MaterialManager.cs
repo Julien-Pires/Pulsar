@@ -115,7 +115,7 @@ namespace Pulsar.Assets.Graphics.Materials
         /// <param name="mat">Material instance to fill with textures</param>
         /// <param name="storage">Storage to stock the material instance</param>
         /// <param name="diffuse">Diffuse texture used by the material</param>
-        /// <param name="normalMap">Normal map used by the material</param>
+        /// <param name="normal">Normal map used by the material</param>
         /// <param name="specular">Specular map used by the material</param>
         private void FillMaterial(Material mat, string storage, string diffuse, string normal, string specular)
         {
@@ -153,6 +153,12 @@ namespace Pulsar.Assets.Graphics.Materials
             return mat;
         }
 
+        /// <summary>
+        /// Unload a material
+        /// </summary>
+        /// <param name="name">Name of the material to unload</param>
+        /// <param name="storage">Storage in which the material is stored</param>
+        /// <returns>Return true if the material is unload successfully otherwise false</returns>
         public bool Unload(string name, string storage)
         {
             return this.assetGroup.Unload(name, storage);

@@ -43,10 +43,10 @@ namespace Pulsar.Core
         /// </summary>
         /// <param name="s">Sender of the message</param>
         /// <param name="ti">Time at wich the message was sent</param>
-        public virtual void Recycle(object s, GameTime ti)
+        public virtual void Recycle(object obj, GameTime time)
         {
-            this.sender = s;
-            this.time = ti;
+            this.sender = obj;
+            this.time = time;
         }
 
         #endregion

@@ -23,7 +23,7 @@ namespace Pulsar.Assets
         /// <summary>
         /// Constructor of Asset class
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">Name of the asset</param>
         protected Asset(string name)
         {
             this.ID = Asset.uniqueID;

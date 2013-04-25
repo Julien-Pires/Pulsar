@@ -24,7 +24,14 @@ namespace Pulsar.Assets
 
         #region Events
 
+        /// <summary>
+        /// Event triggered when a storage is created
+        /// </summary>
         public event EventHandler<AssetStorageEventArgs> StorageCreated;
+
+        /// <summary>
+        /// Event triggered when a storage is destroyed
+        /// </summary>
         public event EventHandler<AssetStorageEventArgs> StorageDestroyed;
 
         #endregion
@@ -48,6 +55,7 @@ namespace Pulsar.Assets
         /// Create a new asset storage
         /// </summary>
         /// <param name="name">Name of the storage</param>
+        /// <param name="path">Directory containing assets</param>
         /// <returns>Return a new storage</returns>
         public AssetStorage CreateStorage(string name, string path)
         {
@@ -136,6 +144,12 @@ namespace Pulsar.Assets
             store.AddAsset(res);
         }
 
+        /// <summary>
+        /// Remove an asset in a specific storage
+        /// </summary>
+        /// <param name="name">Name of the asset</param>
+        /// <param name="storage">Storage in which the asset is stored</param>
+        /// <returns></returns>
         internal bool RemoveResourceInStorage(string name, string storage)
         {
             AssetStorage store;
