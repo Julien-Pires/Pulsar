@@ -112,6 +112,10 @@
     <Compile Include="Graphics\SceneGraph\SceneNode.cs" />
     <Compile Include="Graphics\SpeedFrustum.cs" />
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
+    <Compile Include="Input\GamePad.cs" />
+    <Compile Include="Input\IPeripheric.cs" />
+    <Compile Include="Input\Keyboard.cs" />
+    <Compile Include="Input\Mouse.cs" />
     <Compile Include="Mathematic\MatrixHelpers.cs" />
     <Compile Include="Mathematic\QuaternionHelpers.cs" />
     <Compile Include="Mathematic\Vector3Helpers.cs" />
@@ -124,6 +128,7 @@
       <Name>PulsarRuntime</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--
