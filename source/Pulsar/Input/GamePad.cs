@@ -15,6 +15,10 @@ namespace Pulsar.Input
         private PlayerIndex gamePadIndex;
         private GamePadState previousState;
         private GamePadState currentState;
+        private Vector2 thumbRightDelta = Vector2.Zero;
+        private Vector2 thumbLeftDelta = Vector2.Zero;
+        private float triggerRightDelta = 0.0f;
+        private float triggerLeftDelta = 0.0f;
 
         #endregion
 
@@ -61,6 +65,14 @@ namespace Pulsar.Input
                     }
                 }
             }
+
+            if (this.currentState.IsConnected)
+            {
+                this.thumbRightDelta = Vector2.Subtract(this.currentState.ThumbSticks.Right, this.previousState.ThumbSticks.Right);
+                this.thumbLeftDelta = Vector2.Subtract(this.currentState.ThumbSticks.Left, this.previousState.ThumbSticks.Left);
+                this.triggerRightDelta = this.currentState.Triggers.Right - this.previousState.Triggers.Right;
+                this.triggerLeftDelta = this.currentState.Triggers.Left - this.previousState.Triggers.Left;
+            }
         }
 
         public bool IsJustPressed(Buttons button)
@@ -81,6 +93,55 @@ namespace Pulsar.Input
         public bool IsUp(Buttons button)
         {
             return this.currentState.IsButtonUp(button);
+        }
+
+        #endregion
+
+        #region Properties
+
+        public Vector2 ThumbLeftPosition
+        {
+            get { return this.currentState.ThumbSticks.Left; }
+        }
+
+        public Vector2 ThumbRightPosition
+        {
+            get { return this.currentState.ThumbSticks.Right; }
+        }
+
+        public Vector2 ThumbLeftDelta
+        {
+            get { return this.thumbLeftDelta; }
+        }
+
+        public Vector2 ThumbRightDelta
+        {
+            get { return this.thumbRightDelta; }
+        }
+
+        public float LeftTrigger
+        {
+            get { return this.currentState.Triggers.Left; }
+        }
+
+        public float RightTrigger
+        {
+            get { return this.currentState.Triggers.Right; }
+        }
+
+        public float LeftTriggerDelta
+        {
+            get { return this.triggerLeftDelta; }
+        }
+
+        public float RightTriggerDelta
+        {
+            get { return this.triggerRightDelta; }
+        }
+
+        public bool IsConnected
+        {
+            get { return this.currentState.IsConnected; }
         }
 
         #endregion
