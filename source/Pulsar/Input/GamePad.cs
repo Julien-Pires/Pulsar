@@ -18,6 +18,13 @@ namespace Pulsar.Input
 
         #endregion
 
+        #region Event
+
+        public event EventHandler<GamePadEventArgs> Connected;
+        public event EventHandler<GamePadEventArgs> Disconnected;
+
+        #endregion
+
         #region Constructors
 
         internal GamePad(PlayerIndex index)
@@ -33,6 +40,27 @@ namespace Pulsar.Input
         {
             this.previousState = this.currentState;
             this.currentState = XnaGamePad.GetState(this.gamePadIndex);
+
+            if (!this.previousState.IsConnected)
+            {
+                if (this.currentState.IsConnected)
+                {
+                    if (this.Connected != null)
+                    {
+                        this.Connected(this, new GamePadEventArgs(this));
+                    }
+                }
+            }
+            else
+            {
+                if (!this.currentState.IsConnected)
+                {
+                    if (this.Disconnected != null)
+                    {
+                        this.Disconnected(this, new GamePadEventArgs(this));
+                    }
+                }
+            }
         }
 
         public bool IsJustPressed(Buttons button)
