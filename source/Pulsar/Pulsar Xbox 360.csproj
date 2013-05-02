@@ -102,6 +102,7 @@
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
     <Compile Include="Graphics\SpeedFrustum.cs" />
     <Compile Include="Input\GamePad.cs" />
+    <Compile Include="Input\GamePadEventArgs.cs" />
     <Compile Include="Input\IPeripheric.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\Mouse.cs" />

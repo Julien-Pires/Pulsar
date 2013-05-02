@@ -68,10 +68,15 @@ namespace Pulsar.Input
 
             if (this.currentState.IsConnected)
             {
-                this.thumbRightDelta = Vector2.Subtract(this.currentState.ThumbSticks.Right, this.previousState.ThumbSticks.Right);
-                this.thumbLeftDelta = Vector2.Subtract(this.currentState.ThumbSticks.Left, this.previousState.ThumbSticks.Left);
-                this.triggerRightDelta = this.currentState.Triggers.Right - this.previousState.Triggers.Right;
-                this.triggerLeftDelta = this.currentState.Triggers.Left - this.previousState.Triggers.Left;
+                GamePadThumbSticks prevThumb = this.previousState.ThumbSticks;
+                GamePadThumbSticks currThumb = this.currentState.ThumbSticks;
+                this.thumbRightDelta = Vector2.Subtract(currThumb.Right, prevThumb.Right);
+                this.thumbLeftDelta = Vector2.Subtract(currThumb.Left, prevThumb.Left);
+
+                GamePadTriggers prevTrigger = this.previousState.Triggers;
+                GamePadTriggers currTrigger = this.currentState.Triggers;
+                this.triggerRightDelta = currTrigger.Right - prevTrigger.Right;
+                this.triggerLeftDelta = currTrigger.Left - prevTrigger.Left;
             }
         }
 
