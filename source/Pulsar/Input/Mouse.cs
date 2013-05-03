@@ -9,114 +9,116 @@ using XnaMouse = Microsoft.Xna.Framework.Input.Mouse;
 
 namespace Pulsar.Input
 {
-    public enum MouseButton { Left, Right, Middle, XButton1, XButton2 }
+    public enum MouseButtons { Left, Right, Middle, XButton1, XButton2 }
 
-    public class Mouse : IPeripheric
+    public enum MouseAnalogButtons { MouseX, MouseY, MouseWheel }
+
+    public static class Mouse
     {
         #region Fields
 
-        private MouseState previousState;
-        private MouseState currentState;
-        private float wheelDelta = 0.0f;
-        private Vector2 previousPosition = Vector2.Zero;
-        private Vector2 currentPosition = Vector2.Zero;
-        private Vector2 positionDelta = Vector2.Zero;
+        private static MouseState previousState;
+        private static MouseState currentState;
+        private static float wheelDelta = 0.0f;
+        private static Vector2 previousPosition = Vector2.Zero;
+        private static Vector2 currentPosition = Vector2.Zero;
+        private static Vector2 positionDelta = Vector2.Zero;
 
         #endregion
         
         #region Methods
 
-        internal void Update()
+        internal static void Update()
         {
-            this.previousState = this.currentState;
-            this.currentState = XnaMouse.GetState();
+            Mouse.previousState = Mouse.currentState;
+            Mouse.currentState = XnaMouse.GetState();
 
-            this.previousPosition = new Vector2(this.previousState.X, this.previousState.Y);
-            this.currentPosition = new Vector2(this.currentState.X, this.currentState.Y);
-            Vector2.Subtract(ref this.previousPosition, ref this.currentPosition, out this.positionDelta);
-            this.wheelDelta = this.currentState.ScrollWheelValue - this.previousState.ScrollWheelValue;
+            Mouse.previousPosition = new Vector2(Mouse.previousState.X, Mouse.previousState.Y);
+            Mouse.currentPosition = new Vector2(Mouse.currentState.X, Mouse.currentState.Y);
+            Vector2.Subtract(ref Mouse.previousPosition, ref Mouse.currentPosition, out Mouse.positionDelta);
+            Mouse.wheelDelta = Mouse.currentState.ScrollWheelValue - Mouse.previousState.ScrollWheelValue;
         }
 
-        public bool IsJustPressed(MouseButton btn)
+        public static bool IsPressed(MouseButtons btn)
         {
             switch (btn)
             {
-                case MouseButton.Left: return (this.previousState.LeftButton == ButtonState.Released) &&
-                    (this.currentState.LeftButton == ButtonState.Pressed);
+                case MouseButtons.Left: return (Mouse.previousState.LeftButton == ButtonState.Released) &&
+                    (Mouse.currentState.LeftButton == ButtonState.Pressed);
                     break;
-                case MouseButton.Right: return (this.previousState.RightButton == ButtonState.Released) &&
-                    (this.currentState.RightButton == ButtonState.Pressed);
+                case MouseButtons.Right: return (Mouse.previousState.RightButton == ButtonState.Released) &&
+                    (Mouse.currentState.RightButton == ButtonState.Pressed);
                     break;
-                case MouseButton.Middle: return (this.previousState.MiddleButton == ButtonState.Released) &&
-                    (this.currentState.MiddleButton == ButtonState.Pressed);
+                case MouseButtons.Middle: return (Mouse.previousState.MiddleButton == ButtonState.Released) &&
+                    (Mouse.currentState.MiddleButton == ButtonState.Pressed);
                     break;
-                case MouseButton.XButton1: return (this.previousState.XButton1 == ButtonState.Released) &&
-                    (this.currentState.XButton1 == ButtonState.Pressed);
+                case MouseButtons.XButton1: return (Mouse.previousState.XButton1 == ButtonState.Released) &&
+                    (Mouse.currentState.XButton1 == ButtonState.Pressed);
                     break;
-                case MouseButton.XButton2: return (this.previousState.XButton2 == ButtonState.Released) &&
-                    (this.currentState.XButton2 == ButtonState.Pressed);
+                case MouseButtons.XButton2: return (Mouse.previousState.XButton2 == ButtonState.Released) &&
+                    (Mouse.currentState.XButton2 == ButtonState.Pressed);
                     break;
             }
 
             return false;
         }
 
-        public bool IsJustReleased(MouseButton btn)
+        public static bool IsReleased(MouseButtons btn)
         {
             switch (btn)
             {
-                case MouseButton.Left: return (this.previousState.LeftButton == ButtonState.Pressed) &&
-                    (this.currentState.LeftButton == ButtonState.Released);
+                case MouseButtons.Left: return (Mouse.previousState.LeftButton == ButtonState.Pressed) &&
+                    (Mouse.currentState.LeftButton == ButtonState.Released);
                     break;
-                case MouseButton.Right: return (this.previousState.RightButton == ButtonState.Pressed) &&
-                    (this.currentState.RightButton == ButtonState.Released);
+                case MouseButtons.Right: return (Mouse.previousState.RightButton == ButtonState.Pressed) &&
+                    (Mouse.currentState.RightButton == ButtonState.Released);
                     break;
-                case MouseButton.Middle: return (this.previousState.MiddleButton == ButtonState.Pressed) &&
-                    (this.currentState.MiddleButton == ButtonState.Released);
+                case MouseButtons.Middle: return (Mouse.previousState.MiddleButton == ButtonState.Pressed) &&
+                    (Mouse.currentState.MiddleButton == ButtonState.Released);
                     break;
-                case MouseButton.XButton1: return (this.previousState.XButton1 == ButtonState.Pressed) &&
-                    (this.currentState.XButton1 == ButtonState.Released);
+                case MouseButtons.XButton1: return (Mouse.previousState.XButton1 == ButtonState.Pressed) &&
+                    (Mouse.currentState.XButton1 == ButtonState.Released);
                     break;
-                case MouseButton.XButton2: return (this.previousState.XButton2 == ButtonState.Pressed) &&
-                    (this.currentState.XButton2 == ButtonState.Released);
+                case MouseButtons.XButton2: return (Mouse.previousState.XButton2 == ButtonState.Pressed) &&
+                    (Mouse.currentState.XButton2 == ButtonState.Released);
                     break;
             }
 
             return false;
         }
 
-        public bool IsDown(MouseButton btn)
+        public static bool IsDown(MouseButtons btn)
         {
             switch (btn)
             {
-                case MouseButton.Left: return this.currentState.LeftButton == ButtonState.Pressed;
+                case MouseButtons.Left: return Mouse.currentState.LeftButton == ButtonState.Pressed;
                     break;
-                case MouseButton.Right: return this.currentState.RightButton == ButtonState.Pressed;
+                case MouseButtons.Right: return Mouse.currentState.RightButton == ButtonState.Pressed;
                     break;
-                case MouseButton.Middle: return this.currentState.MiddleButton == ButtonState.Pressed;
+                case MouseButtons.Middle: return Mouse.currentState.MiddleButton == ButtonState.Pressed;
                     break;
-                case MouseButton.XButton1: return this.currentState.XButton1 == ButtonState.Pressed;
+                case MouseButtons.XButton1: return Mouse.currentState.XButton1 == ButtonState.Pressed;
                     break;
-                case MouseButton.XButton2: return this.currentState.XButton2 == ButtonState.Pressed;
+                case MouseButtons.XButton2: return Mouse.currentState.XButton2 == ButtonState.Pressed;
                     break;
             }
 
             return false;
         }
 
-        public bool IsUp(MouseButton btn)
+        public static bool IsUp(MouseButtons btn)
         {
             switch (btn)
             {
-                case MouseButton.Left: return this.currentState.LeftButton == ButtonState.Released;
+                case MouseButtons.Left: return Mouse.currentState.LeftButton == ButtonState.Released;
                     break;
-                case MouseButton.Right: return this.currentState.RightButton == ButtonState.Released;
+                case MouseButtons.Right: return Mouse.currentState.RightButton == ButtonState.Released;
                     break;
-                case MouseButton.Middle: return this.currentState.MiddleButton == ButtonState.Released;
+                case MouseButtons.Middle: return Mouse.currentState.MiddleButton == ButtonState.Released;
                     break;
-                case MouseButton.XButton1: return this.currentState.XButton1 == ButtonState.Released;
+                case MouseButtons.XButton1: return Mouse.currentState.XButton1 == ButtonState.Released;
                     break;
-                case MouseButton.XButton2: return this.currentState.XButton2 == ButtonState.Released;
+                case MouseButtons.XButton2: return Mouse.currentState.XButton2 == ButtonState.Released;
                     break;
             }
 
@@ -127,19 +129,39 @@ namespace Pulsar.Input
 
         #region Properties
 
-        public Vector2 Position
+        public static float X
         {
-            get { return this.currentPosition; }
+            get { return Mouse.currentPosition.X; }
         }
 
-        public Vector2 PositionDelta
+        public static float Y
         {
-            get { return this.positionDelta; }
+            get { return Mouse.currentPosition.Y; }
         }
 
-        public float WheelDelta
+        public static float DeltaX
         {
-            get { return this.wheelDelta; }
+            get { return Mouse.positionDelta.X; }
+        }
+
+        public static float DeltaY
+        {
+            get { return Mouse.positionDelta.Y; }
+        }
+
+        public static Vector2 Position
+        {
+            get { return Mouse.currentPosition; }
+        }
+
+        public static Vector2 PositionDelta
+        {
+            get { return Mouse.positionDelta; }
+        }
+
+        public static float WheelDelta
+        {
+            get { return Mouse.wheelDelta; }
         }
 
         #endregion

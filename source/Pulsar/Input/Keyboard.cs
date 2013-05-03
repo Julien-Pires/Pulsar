@@ -8,41 +8,41 @@ using XnaKeyboard = Microsoft.Xna.Framework.Input.Keyboard;
 
 namespace Pulsar.Input
 {
-    public class Keyboard : IPeripheric
+    public static class Keyboard
     {
         #region Fields
 
-        private KeyboardState previousState;
-        private KeyboardState currentState;
+        private static KeyboardState previousState;
+        private static KeyboardState currentState;
 
         #endregion
 
         #region Methods
 
-        internal void Update()
+        internal static void Update()
         {
-            this.previousState = this.currentState;
-            this.currentState = XnaKeyboard.GetState();
+            Keyboard.previousState = Keyboard.currentState;
+            Keyboard.currentState = XnaKeyboard.GetState();
         }
 
-        public bool IsJustPressed(Keys key)
+        public static bool IsPressed(Keys key)
         {
-            return this.previousState.IsKeyUp(key) && this.currentState.IsKeyDown(key);
+            return Keyboard.previousState.IsKeyUp(key) && Keyboard.currentState.IsKeyDown(key);
         }
 
-        public bool IsJustReleased(Keys key)
+        public static bool IsReleased(Keys key)
         {
-            return this.previousState.IsKeyDown(key) && this.currentState.IsKeyUp(key);
+            return Keyboard.previousState.IsKeyDown(key) && Keyboard.currentState.IsKeyUp(key);
         }
 
-        public bool IsDown(Keys key)
+        public static bool IsDown(Keys key)
         {
-            return this.currentState.IsKeyDown(key);
+            return Keyboard.currentState.IsKeyDown(key);
         }
 
-        public bool IsUp(Keys key)
+        public static bool IsUp(Keys key)
         {
-            return this.currentState.IsKeyUp(key);
+            return Keyboard.currentState.IsKeyUp(key);
         }
 
         #endregion

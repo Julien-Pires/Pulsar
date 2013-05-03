@@ -8,9 +8,22 @@ using XnaGamePad = Microsoft.Xna.Framework.Input.GamePad;
 
 namespace Pulsar.Input
 {
+    public enum GamePadAnalogButtons 
+    { 
+        LeftThumbStickX, 
+        LeftThumbStickY,
+        RightThumbStickX,
+        RightThumbStickY,
+        LeftTrigger, 
+        RightTrigger 
+    }
+
     public class GamePad : IPeripheric
     {
         #region Fields
+
+        private static int gamePadCount = 4;
+        private static GamePad[] gamePads = new GamePad[GamePad.gamePadCount];
 
         private PlayerIndex gamePadIndex;
         private GamePadState previousState;
@@ -24,12 +37,21 @@ namespace Pulsar.Input
 
         #region Event
 
-        public event EventHandler<GamePadEventArgs> Connected;
-        public event EventHandler<GamePadEventArgs> Disconnected;
+        internal event EventHandler<GamePadEventArgs> Connected;
+        internal event EventHandler<GamePadEventArgs> Disconnected;
 
         #endregion
 
         #region Constructors
+
+        static GamePad()
+        {
+            for (int i = 0; i < GamePad.gamePadCount; i++)
+            {
+                GamePad pad = new GamePad((PlayerIndex)i);
+                GamePad.gamePads[i] = pad;
+            }
+        }
 
         internal GamePad(PlayerIndex index)
         {
@@ -40,7 +62,20 @@ namespace Pulsar.Input
 
         #region Methods
 
-        internal void Update()
+        internal static void Update()
+        {
+            for (int i = 0; i < GamePad.gamePadCount; i++)
+            {
+                GamePad.gamePads[i].UpdatePad();
+            }
+        }
+
+        public static GamePad GetGamePad(int player)
+        {
+            return GamePad.gamePads[player];
+        }
+
+        internal void UpdatePad()
         {
             this.previousState = this.currentState;
             this.currentState = XnaGamePad.GetState(this.gamePadIndex);
@@ -80,12 +115,12 @@ namespace Pulsar.Input
             }
         }
 
-        public bool IsJustPressed(Buttons button)
+        public bool IsPressed(Buttons button)
         {
             return (this.previousState.IsButtonUp(button)) && (this.currentState.IsButtonDown(button));
         }
 
-        public bool IsJustReleased(Buttons button)
+        public bool IsReleased(Buttons button)
         {
             return (this.previousState.IsButtonDown(button)) && (this.currentState.IsButtonUp(button));
         }
