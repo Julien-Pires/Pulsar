@@ -1,34 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Pulsar.Input
 {
-    public class Button
+    public sealed class Button
     {
         #region Fields
 
-        private bool useDigital;
+        private bool useDigital = false;
         private AnalogButton analogKey;
         private DigitalButton digitalKey;
-        private bool previousDown;
-        private bool down;
+        private bool previousDown = false;
+        private bool down = false;
         private float pressedValue = 0.0f;
+        private float deadZone = 0.0f;
+        private int player = 0;
 
         #endregion
 
         #region Constructor
 
-        public Button(DigitalButton k)
+        public Button(DigitalButton digital)
         {
-            this.digitalKey = k;
+            this.digitalKey = digital;
             this.useDigital = true;
         }
 
-        public Button(AnalogButton k)
+        public Button(AnalogButton analog)
         {
-            this.analogKey = k;
+            this.analogKey = analog;
         }
 
         #endregion
@@ -37,12 +36,49 @@ namespace Pulsar.Input
 
         internal void Update()
         {
-            
+            this.previousDown = this.down;
+
+            if (this.useDigital)
+            {
+                this.down = this.digitalKey.IsDown(this.player);
+                if (this.down)
+                {
+                    this.pressedValue = 1.0f;
+                }
+                else
+                {
+                    this.pressedValue = 0.0f;
+                }
+            }
+            else
+            {
+                this.pressedValue = this.analogKey.GetValue(this.player);
+                this.down = this.pressedValue > this.deadZone;
+            }
         }
 
         #endregion
 
         #region Properties
+
+        public int PlayerIndex
+        {
+            get { return this.player; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new Exception("Player index can't be inferior to zero");
+                }
+                this.player = value;
+            }
+        }
+
+        public float DeadZone
+        {
+            get { return this.deadZone; }
+            set { this.deadZone = value; }
+        }
 
         public bool IsDown
         {
@@ -64,7 +100,7 @@ namespace Pulsar.Input
             get { return this.previousDown && !this.down; }
         }
 
-        public float PressedValue
+        public float Value
         {
             get { return this.pressedValue; }
         }

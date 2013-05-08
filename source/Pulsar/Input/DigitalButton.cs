@@ -11,7 +11,7 @@ namespace Pulsar.Input
         #region Fields
 
         [FieldOffset(0)]
-        private InputDevice device;
+        public readonly InputDevice Device;
 
         [FieldOffset(4)]
         private Keys key;
@@ -28,7 +28,7 @@ namespace Pulsar.Input
 
         public DigitalButton(Keys k)
         {
-            this.device = InputDevice.Keyboard;
+            this.Device = InputDevice.Keyboard;
             this.key = k;
             this.mouseButton = 0;
             this.gamePadButton = 0;
@@ -36,7 +36,7 @@ namespace Pulsar.Input
 
         public DigitalButton(MouseButtons btn)
         {
-            this.device = InputDevice.Mouse;
+            this.Device = InputDevice.Mouse;
             this.key = 0;
             this.mouseButton = btn;
             this.gamePadButton = 0;
@@ -44,10 +44,31 @@ namespace Pulsar.Input
 
         public DigitalButton(Buttons btn)
         {
-            this.device = InputDevice.GamePad;
+            this.Device = InputDevice.GamePad;
             this.key = 0;
             this.mouseButton = 0;
             this.gamePadButton = btn;
+        }
+
+        #endregion
+
+        #region Methods
+
+        public bool IsDown(int playerIndex)
+        {
+            switch (this.Device)
+            {
+                case InputDevice.Mouse: return Mouse.IsDown(this.mouseButton);
+                    break;
+                case InputDevice.Keyboard: return Keyboard.IsDown(this.key);
+                    break;
+                case InputDevice.GamePad:
+                    GamePad pad = GamePad.GetGamePad(playerIndex);
+                    return pad.IsDown(this.gamePadButton);
+                    break;
+            }
+
+            return false;
         }
 
         #endregion

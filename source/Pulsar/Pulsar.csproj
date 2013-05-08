@@ -113,6 +113,7 @@
     <Compile Include="Graphics\SpeedFrustum.cs" />
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
     <Compile Include="Input\AnalogButton.cs" />
+    <Compile Include="Input\Axis.cs" />
     <Compile Include="Input\Button.cs" />
     <Compile Include="Input\GamePad.cs" />
     <Compile Include="Input\GamePadEventArgs.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="Input\DigitalButton.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\Mouse.cs" />
+    <Compile Include="Input\VirtualInput.cs" />
     <Compile Include="Mathematic\MatrixHelpers.cs" />
     <Compile Include="Mathematic\QuaternionHelpers.cs" />
     <Compile Include="Mathematic\Vector3Helpers.cs" />

@@ -115,6 +115,27 @@ namespace Pulsar.Input
             }
         }
 
+        public float GetValue(GamePadAnalogButtons btn)
+        {
+            switch (btn)
+            {
+                case GamePadAnalogButtons.LeftThumbStickX: return this.currentState.ThumbSticks.Left.X;
+                    break;
+                case GamePadAnalogButtons.LeftThumbStickY: return this.currentState.ThumbSticks.Left.Y;
+                    break;
+                case GamePadAnalogButtons.RightThumbStickX: return this.currentState.ThumbSticks.Right.X;
+                    break;
+                case GamePadAnalogButtons.RightThumbStickY: return this.currentState.ThumbSticks.Right.Y;
+                    break;
+                case GamePadAnalogButtons.LeftTrigger: return this.currentState.Triggers.Left;
+                    break;
+                case GamePadAnalogButtons.RightTrigger: return this.currentState.Triggers.Right;
+                    break;
+            }
+
+            return 0.0f;
+        }
+
         public bool IsPressed(Buttons button)
         {
             return (this.previousState.IsButtonUp(button)) && (this.currentState.IsButtonDown(button));
