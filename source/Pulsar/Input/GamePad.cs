@@ -18,7 +18,7 @@ namespace Pulsar.Input
         RightTrigger 
     }
 
-    public class GamePad : IPeripheric
+    public class GamePad
     {
         #region Fields
 

@@ -118,7 +118,6 @@
     <Compile Include="Input\GamePad.cs" />
     <Compile Include="Input\GamePadEventArgs.cs" />
     <Compile Include="Input\Input.cs" />
-    <Compile Include="Input\IPeripheric.cs" />
     <Compile Include="Input\DigitalButton.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\Mouse.cs" />
