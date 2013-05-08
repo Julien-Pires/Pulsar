@@ -7,14 +7,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 using PulsarRuntime.Graphics;
 
+using Pulsar.Core;
 using Pulsar.Assets;
 using Pulsar.Assets.Graphics.Materials;
 using Pulsar.Game;
 using Pulsar.Graphics;
 using Pulsar.Graphics.SceneGraph;
 using Pulsar.Graphics.Rendering;
-
-using PangoTexture = Pulsar.Assets.Graphics.Materials.Texture;
 
 namespace Pulsar.Assets.Graphics.Models
 {
