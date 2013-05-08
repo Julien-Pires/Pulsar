@@ -43,7 +43,7 @@ namespace Pulsar.Input
         {
             switch (this.Device)
             {
-                case InputDevice.Mouse: return Mouse.GetValue(this.mouseButton);
+                case InputDevice.Mouse: return Mouse.GetDeltaValue(this.mouseButton);
                     break;
                 case InputDevice.GamePad:
                     GamePad pad = GamePad.GetGamePad(playerIndex);

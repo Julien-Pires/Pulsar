@@ -43,6 +43,21 @@ namespace Pulsar.Input
         {
             switch (btn)
             {
+                case MouseAnalogButtons.MouseX: return Mouse.currentPosition.X;
+                    break;
+                case MouseAnalogButtons.MouseY: return Mouse.currentPosition.Y;
+                    break;
+                case MouseAnalogButtons.MouseWheel: return Mouse.currentState.ScrollWheelValue;
+                    break;
+            }
+
+            return 0.0f;
+        }
+
+        public static float GetDeltaValue(MouseAnalogButtons btn)
+        {
+            switch (btn)
+            {
                 case MouseAnalogButtons.MouseX: return Mouse.positionDelta.X;
                     break;
                 case MouseAnalogButtons.MouseY: return Mouse.positionDelta.Y;
