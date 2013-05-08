@@ -70,6 +70,38 @@ namespace Pulsar.Input
             }
         }
 
+        public static void HookConnectedEvent(EventHandler<GamePadEventArgs> listener)
+        {
+            for (int i = 0; i < GamePad.gamePadCount; i++)
+            {
+                GamePad.gamePads[i].Connected += listener;
+            }
+        }
+
+        public static void UnhookConnectedEvent(EventHandler<GamePadEventArgs> listener)
+        {
+            for (int i = 0; i < GamePad.gamePadCount; i++)
+            {
+                GamePad.gamePads[i].Connected -= listener;
+            }
+        }
+
+        public static void HookDisconnectedEvent(EventHandler<GamePadEventArgs> listener)
+        {
+            for (int i = 0; i < GamePad.gamePadCount; i++)
+            {
+                GamePad.gamePads[i].Disconnected += listener;
+            }
+        }
+
+        public static void UnhookDisconnectedEvent(EventHandler<GamePadEventArgs> listener)
+        {
+            for (int i = 0; i < GamePad.gamePadCount; i++)
+            {
+                GamePad.gamePads[i].Disconnected -= listener;
+            }
+        }
+
         public static GamePad GetGamePad(int player)
         {
             return GamePad.gamePads[player];
