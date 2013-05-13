@@ -12,10 +12,10 @@ namespace Pulsar.Input
         public readonly InputDevice Device;
 
         [FieldOffset(4)]
-        private MouseAnalogButtons mouseButton;
+        private readonly MouseAnalogButtons mouseButton;
 
         [FieldOffset(4)]
-        private GamePadAnalogButtons gamePadButton;
+        private readonly GamePadAnalogButtons gamePadButton;
 
         #endregion
 
@@ -23,16 +23,16 @@ namespace Pulsar.Input
 
         public AnalogButton(MouseAnalogButtons btn)
         {
+            this.Device = InputDevice.Mouse;
             this.gamePadButton = 0;
             this.mouseButton = btn;
-            this.Device = InputDevice.Mouse;
         }
 
         public AnalogButton(GamePadAnalogButtons btn)
         {
-            this.gamePadButton = btn;
-            this.mouseButton = 0;
             this.Device = InputDevice.GamePad;
+            this.mouseButton = 0;
+            this.gamePadButton = btn;
         }
 
         #endregion

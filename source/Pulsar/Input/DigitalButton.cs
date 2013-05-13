@@ -14,13 +14,13 @@ namespace Pulsar.Input
         public readonly InputDevice Device;
 
         [FieldOffset(4)]
-        private Keys key;
+        private readonly Keys key;
 
         [FieldOffset(4)]
-        private MouseButtons mouseButton;
+        private readonly MouseButtons mouseButton;
 
         [FieldOffset(4)]
-        private Buttons gamePadButton;
+        private readonly Buttons gamePadButton;
 
         #endregion
 
@@ -29,17 +29,17 @@ namespace Pulsar.Input
         public DigitalButton(Keys k)
         {
             this.Device = InputDevice.Keyboard;
-            this.key = k;
             this.mouseButton = 0;
             this.gamePadButton = 0;
+            this.key = k;
         }
 
         public DigitalButton(MouseButtons btn)
         {
             this.Device = InputDevice.Mouse;
             this.key = 0;
-            this.mouseButton = btn;
             this.gamePadButton = 0;
+            this.mouseButton = btn;
         }
 
         public DigitalButton(Buttons btn)
