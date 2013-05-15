@@ -17,6 +17,14 @@ namespace Pulsar.Input
 
         #endregion
 
+        #region Constructors
+
+        internal VirtualInput()
+        {
+        }
+
+        #endregion
+
         #region Methods
 
         internal void Update()

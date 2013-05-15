@@ -115,6 +115,7 @@
     <Compile Include="Input\InputAction.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\Mouse.cs" />
+    <Compile Include="Input\PlayerInput.cs" />
     <Compile Include="Input\VirtualInput.cs" />
     <Compile Include="Mathematic\MatrixHelpers.cs" />
     <Compile Include="Mathematic\QuaternionHelpers.cs" />
