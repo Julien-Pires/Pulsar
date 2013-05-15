@@ -81,24 +81,32 @@ namespace Pulsar.Input
             return this.actions[idx];
         }
 
-        public void AddButton(string name, Button btn)
+        public void AddButton(Button btn)
         {
-            if (this.buttonsMap.ContainsKey(name))
+            if (string.IsNullOrEmpty(btn.Name))
             {
-                throw new Exception(string.Format("A button named {0} already exists in this virtual input", name)); 
+                throw new Exception("Failed to add the button, his name is null or empty");
+            }
+            if (this.buttonsMap.ContainsKey(btn.Name))
+            {
+                throw new Exception(string.Format("A button named {0} already exists in this virtual input", btn.Name)); 
             }
             this.buttons.Add(btn);
-            this.buttonsMap.Add(name, this.buttons.Count - 1);
+            this.buttonsMap.Add(btn.Name, this.buttons.Count - 1);
         }
 
-        public void AddAxis(string name, Axis axis)
+        public void AddAxis(Axis axis)
         {
-            if (this.axesMap.ContainsKey(name))
+            if(string.IsNullOrEmpty(axis.Name))
             {
-                throw new Exception(string.Format("An axis named {0} already exists in this virtual input", name));
+                throw new Exception("Failed to add the axis, his name is null or empty");
+            }
+            if (this.axesMap.ContainsKey(axis.Name))
+            {
+                throw new Exception(string.Format("An axis named {0} already exists in this virtual input", axis.Name));
             }
             this.axes.Add(axis);
-            this.axesMap.Add(name, this.axes.Count - 1);
+            this.axesMap.Add(axis.Name, this.axes.Count - 1);
         }
 
         public bool RemoveButton(string name)

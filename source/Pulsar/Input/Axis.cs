@@ -150,6 +150,8 @@ namespace Pulsar.Input
 
         #region Properties
 
+        public string Name { get; set; }
+
         public int PlayerIndex
         {
             get { return this.player; }
