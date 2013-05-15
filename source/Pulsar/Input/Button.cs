@@ -132,6 +132,8 @@ namespace Pulsar.Input
 
         public string Name { get; set; }
 
+        public VirtualInput Owner { get; internal set; }
+
         public int PlayerIndex
         {
             get { return this.player; }

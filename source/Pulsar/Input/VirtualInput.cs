@@ -91,8 +91,14 @@ namespace Pulsar.Input
             {
                 throw new Exception(string.Format("A button named {0} already exists in this virtual input", btn.Name)); 
             }
+
+            if (btn.Owner != null)
+            {
+                btn.Owner.RemoveButton(btn.Name);
+            }
             this.buttons.Add(btn);
             this.buttonsMap.Add(btn.Name, this.buttons.Count - 1);
+            btn.Owner = this;
         }
 
         public void AddAxis(Axis axis)
@@ -105,8 +111,14 @@ namespace Pulsar.Input
             {
                 throw new Exception(string.Format("An axis named {0} already exists in this virtual input", axis.Name));
             }
+
+            if (axis.Owner != null)
+            {
+                axis.Owner.RemoveAxis(axis.Name);
+            }
             this.axes.Add(axis);
             this.axesMap.Add(axis.Name, this.axes.Count - 1);
+            axis.Owner = this;
         }
 
         public bool RemoveButton(string name)
@@ -116,6 +128,8 @@ namespace Pulsar.Input
             {
                 return false;
             }
+            Button btn = this.buttons[idx];
+            btn.Owner = null;
             this.buttons.RemoveAt(idx);
             this.buttonsMap.Remove(name);
             this.UpdateIndexMap(idx, this.buttonsMap);
@@ -130,6 +144,8 @@ namespace Pulsar.Input
             {
                 return false;
             }
+            Axis axis = this.axes[idx];
+            axis.Owner = null;
             this.axes.RemoveAt(idx);
             this.axesMap.Remove(name);
             this.UpdateIndexMap(idx, this.axesMap);
