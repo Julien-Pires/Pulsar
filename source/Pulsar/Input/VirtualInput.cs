@@ -10,8 +10,10 @@ namespace Pulsar.Input
 
         private Dictionary<string, int> buttonsMap = new Dictionary<string, int>();
         private Dictionary<string, int> axesMap = new Dictionary<string, int>();
+        private Dictionary<string, int> actionsMap = new Dictionary<string, int>();
         private List<Button> buttons = new List<Button>();
         private List<Axis> axes = new List<Axis>();
+        private List<InputAction> actions = new List<InputAction>();
 
         #endregion
 
@@ -28,12 +30,60 @@ namespace Pulsar.Input
             {
                 this.axes[i].Update();
             }
+
+            for (int i = 0; i < actions.Count; i++)
+            {
+                this.actions[i].Update();
+            }
+        }
+
+        public InputAction CreateAction(string name, InputActionFired actionDelegate)
+        {
+            if (this.actionsMap.ContainsKey(name))
+            {
+                throw new Exception(string.Format("An action named {0} already exists", name));
+            }
+
+            InputAction action = new InputAction()
+            {
+                Name = name,
+                Owner = this,
+                ActionMethod = actionDelegate
+            };
+            this.actions.Add(action);
+            this.actionsMap.Add(name, this.actions.Count - 1);
+
+            return action;
+        }
+
+        public bool DeleteAction(string name)
+        {
+            int idx;
+            if (!this.actionsMap.TryGetValue(name, out idx))
+            {
+                return false;
+            }
+            this.actions.RemoveAt(idx);
+            this.actionsMap.Remove(name);
+            this.UpdateIndexMap(idx, this.actionsMap);
+
+            return true;
+        }
+
+        public InputAction GetAction(string name)
+        {
+            int idx;
+            if (!this.actionsMap.TryGetValue(name, out idx))
+            {
+                throw new Exception(string.Format("Failed to find an action named {0}", name));
+            }
+
+            return this.actions[idx];
         }
 
         public void AddButton(string name, Button btn)
         {
-            int idx;
-            if(this.buttonsMap.TryGetValue(name, out idx))
+            if (this.buttonsMap.ContainsKey(name))
             {
                 throw new Exception(string.Format("A button named {0} already exists in this virtual input", name)); 
             }
@@ -43,8 +93,7 @@ namespace Pulsar.Input
 
         public void AddAxis(string name, Axis axis)
         {
-            int idx;
-            if (this.axesMap.TryGetValue(name, out idx))
+            if (this.axesMap.ContainsKey(name))
             {
                 throw new Exception(string.Format("An axis named {0} already exists in this virtual input", name));
             }

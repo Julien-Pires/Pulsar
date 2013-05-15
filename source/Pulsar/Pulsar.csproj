@@ -114,11 +114,15 @@
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
     <Compile Include="Input\AnalogButton.cs" />
     <Compile Include="Input\Axis.cs" />
+    <Compile Include="Input\AxisCommand.cs" />
     <Compile Include="Input\Button.cs" />
+    <Compile Include="Input\ButtonCommand.cs" />
     <Compile Include="Input\GamePad.cs" />
     <Compile Include="Input\GamePadEventArgs.cs" />
+    <Compile Include="Input\IInputCommand.cs" />
     <Compile Include="Input\Input.cs" />
     <Compile Include="Input\DigitalButton.cs" />
+    <Compile Include="Input\InputAction.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\VirtualInput.cs" />
