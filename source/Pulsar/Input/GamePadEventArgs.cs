@@ -2,7 +2,7 @@
 
 namespace Pulsar.Input
 {
-    public class GamePadEventArgs : EventArgs
+    public sealed class GamePadEventArgs : EventArgs
     {
         #region Fields
 

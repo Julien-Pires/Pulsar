@@ -9,7 +9,7 @@ namespace Pulsar.Input
 {
     public enum InputDevice { Mouse, Keyboard, GamePad }
 
-    public class Input
+    public sealed class InputManager
     {
         #region Fields
 
