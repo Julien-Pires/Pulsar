@@ -35,7 +35,7 @@ namespace Pulsar.Input
 
             Mouse.previousPosition = new Vector2(Mouse.previousState.X, Mouse.previousState.Y);
             Mouse.currentPosition = new Vector2(Mouse.currentState.X, Mouse.currentState.Y);
-            Vector2.Subtract(ref Mouse.previousPosition, ref Mouse.currentPosition, out Mouse.positionDelta);
+            Vector2.Subtract(ref Mouse.currentPosition, ref Mouse.previousPosition, out Mouse.positionDelta);
             Mouse.wheelDelta = Mouse.currentState.ScrollWheelValue - Mouse.previousState.ScrollWheelValue;
         }
 
