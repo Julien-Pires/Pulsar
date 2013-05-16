@@ -7,7 +7,13 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Pulsar.Input
 {
-    public enum InputDevice { Mouse, Keyboard, GamePad }
+    public enum InputDevice 
+    { 
+        None,
+        Mouse,
+        Keyboard,
+        GamePad
+    }
 
     public sealed class InputManager
     {
