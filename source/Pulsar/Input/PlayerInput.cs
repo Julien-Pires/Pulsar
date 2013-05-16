@@ -64,6 +64,26 @@ namespace Pulsar.Input
 
             this.currentContext = input;
         }
+
+        public Button GetButton(string name)
+        {
+            if (this.currentContext == null)
+            {
+                throw new Exception("No current context set");
+            }
+
+            return this.currentContext.GetButton(name);
+        }
+
+        public Axis GetAxis(string name)
+        {
+            if (this.currentContext == null)
+            {
+                throw new Exception("No current context set");
+            }
+
+            return this.currentContext.GetAxis(name);
+        }
         
         #endregion
 
