@@ -109,7 +109,7 @@ namespace Pulsar.Input
                         rawValue -= 1.0f;
                     }
 
-                    if (rawValue > 0.0f)
+                    if (rawValue != 0.0f)
                     {
                         activated = true;
                         if (this.inverse)
@@ -122,12 +122,15 @@ namespace Pulsar.Input
                 {
                     rawValue = binding.AnalogKey.GetValue(this.player);
 
-                    if ((rawValue < this.deadZone) && (rawValue > -this.deadZone))
+                    if (binding.AnalogKey.Device == InputDevice.GamePad)
                     {
-                        rawValue = 0.0f;
+                        if ((rawValue < this.deadZone) && (rawValue > -this.deadZone))
+                        {
+                            rawValue = 0.0f;
+                        }
                     }
 
-                    if (rawValue > 0.0f)
+                    if (rawValue != 0.0f)
                     {
                         activated = true;
                         if (this.inverse)
