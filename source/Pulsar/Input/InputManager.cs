@@ -45,7 +45,9 @@ namespace Pulsar.Input
 
         internal void Update()
         {
+#if WINDOWS
             Mouse.Update();
+#endif
             Keyboard.Update();
             GamePad.Update();
 
