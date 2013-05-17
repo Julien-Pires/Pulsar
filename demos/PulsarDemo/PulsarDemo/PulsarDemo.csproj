@@ -102,7 +102,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="SceneDemo\CameraController.cs" />
-    <Compile Include="SceneDemo\Input.cs" />
     <Compile Include="SceneDemo\ISceneDemo.cs" />
     <Compile Include="SceneDemo\SolarSystem\Planet.cs" />
     <Compile Include="SceneDemo\SolarSystem\SolarSystem.cs" />

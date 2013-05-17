@@ -7,17 +7,22 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Input;
+
+using XnaGame = Microsoft.Xna.Framework.Game;
+
 namespace Pulsar.Game
 {
     /// <summary>
     /// Game class containing update and render loop
     /// </summary>
-    public class GameApplication : Microsoft.Xna.Framework.Game
+    public class GameApplication : XnaGame
     {
         #region Fields
 
-        protected GraphicsDeviceManager gDeviceMngr = null;
-        protected SpriteBatch spriteBatch = null;
+        protected InputService inputService;
+        protected GraphicsDeviceManager gDeviceMngr;
+        protected SpriteBatch spriteBatch;
 
         #endregion
 
@@ -28,6 +33,7 @@ namespace Pulsar.Game
         /// </summary>
         public GameApplication()
         {
+            this.inputService = new InputService(this);
             this.gDeviceMngr = new GraphicsDeviceManager(this);
             this.Content.RootDirectory = "Content";
         }
@@ -71,6 +77,8 @@ namespace Pulsar.Game
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            this.inputService.Input.Update();
         }
 
         /// <summary>

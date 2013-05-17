@@ -27,7 +27,6 @@ namespace PulsarDemo
         private Root graphSystem = null;
         private List<ISceneDemo> demo = new List<ISceneDemo>();
         private ISceneDemo currentScene = null;
-        private Input inHandler = null;
 
         public Game1()
         {
@@ -51,9 +50,7 @@ namespace PulsarDemo
         protected override void LoadContent()
         {
             this.graphSystem = new Root(this.gDeviceMngr.GraphicsDevice);
-
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            this.inHandler = Input.Instance;
 
             this.CreateScene();
             for (int i = 0; i < this.demo.Count; i++)
@@ -64,7 +61,7 @@ namespace PulsarDemo
 
         private void CreateScene()
         {
-            this.demo.Add(new SolarSystem(this.graphSystem, this.Content));
+            this.demo.Add(new SolarSystem(this.graphSystem));
 
             this.currentScene = this.demo[0];
         }
@@ -84,14 +81,12 @@ namespace PulsarDemo
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            this.inHandler.Update();
+            base.Update(gameTime);
 
             if (this.currentScene != null)
             {
                 this.currentScene.Update(gameTime);
             }
-
-            base.Update(gameTime);
         }
 
         /// <summary>
@@ -100,12 +95,12 @@ namespace PulsarDemo
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            base.Draw(gameTime);
+
             if (this.currentScene != null)
             {
                 this.currentScene.Render();
             }
-
-            base.Draw(gameTime);
         }
     }
 }

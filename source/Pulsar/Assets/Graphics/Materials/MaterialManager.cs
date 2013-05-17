@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Core;
+
 namespace Pulsar.Assets.Graphics.Materials
 {
     /// <summary>

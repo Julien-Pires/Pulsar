@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 
+using Pulsar.Game;
+using Pulsar.Input;
 using Pulsar.Assets;
 using Pulsar.Graphics;
 using Pulsar.Graphics.SceneGraph;
@@ -34,7 +36,7 @@ namespace PulsarDemo.SceneDemo.SolarSystem
 
         #region Constructors
 
-        public SolarSystem(Root r, ContentManager cntMngr)
+        public SolarSystem(Root r)
         {
             this.storage = AssetStorageManager.Instance.CreateStorage("Default", "Content");
             this.graph = r.CreateSceneGraph("Solar System");
@@ -75,7 +77,12 @@ namespace PulsarDemo.SceneDemo.SolarSystem
             camMngr.AddCamera(mainCam);
             camMngr.UseCamera(mainCam);
 
-            this.camCtrl = new CameraController(mainCam);
+            InputService inService = (InputService)GameApplication.GameServices.GetService(typeof(IInputService));
+            if (inService == null)
+            {
+                throw new ArgumentException("Failed to find InputService");
+            }
+            this.camCtrl = new CameraController(mainCam, inService.Input);
         }
 
         private void CreateSystem()
