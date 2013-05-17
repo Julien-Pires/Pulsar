@@ -2,7 +2,7 @@
 using System.Text;
 using System.Reflection;
 
-namespace Pulsar
+namespace Pulsar.Core
 {
     /// <summary>
     /// Base class for singleton class

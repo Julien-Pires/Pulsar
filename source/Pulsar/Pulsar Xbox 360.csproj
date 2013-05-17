@@ -73,6 +73,7 @@
     <Compile Include="Components\GameObjectEventArgs.cs" />
     <Compile Include="Components\GameObjectManager.cs" />
     <Compile Include="Core\EventType.cs" />
+    <Compile Include="Core\Singleton.cs" />
     <Compile Include="Game\GameApplication.cs" />
     <Compile Include="Core\IEventHandler.cs" />
     <Compile Include="Core\Mediator.cs" />
@@ -101,11 +102,27 @@
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
     <Compile Include="Graphics\SpeedFrustum.cs" />
+    <Compile Include="Input\AnalogButton.cs" />
+    <Compile Include="Input\Axis.cs" />
+    <Compile Include="Input\AxisCommand.cs" />
+    <Compile Include="Input\Button.cs" />
+    <Compile Include="Input\ButtonCommand.cs" />
+    <Compile Include="Input\DigitalButton.cs" />
+    <Compile Include="Input\GamePad.cs" />
+    <Compile Include="Input\GamePadEventArgs.cs" />
+    <Compile Include="Input\IInputCommand.cs" />
+    <Compile Include="Input\IInputProvider.cs" />
+    <Compile Include="Input\InputAction.cs" />
+    <Compile Include="Input\InputManager.cs" />
+    <Compile Include="Input\InputService.cs" />
+    <Compile Include="Input\Keyboard.cs" />
+    <Compile Include="Input\Mouse.cs" />
+    <Compile Include="Input\PlayerInput.cs" />
+    <Compile Include="Input\VirtualInput.cs" />
     <Compile Include="Mathematic\MatrixHelpers.cs" />
     <Compile Include="Mathematic\QuaternionHelpers.cs" />
     <Compile Include="Mathematic\Vector3Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Singleton.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework" />
