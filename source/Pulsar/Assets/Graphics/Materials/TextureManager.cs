@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Game;
 using Pulsar.Core;
 
 namespace Pulsar.Assets.Graphics.Materials
@@ -17,7 +18,9 @@ namespace Pulsar.Assets.Graphics.Materials
         #region Fields
 
         private const string defaultTextureName = "DefaultTexture_PangolinSystem";
+
         private readonly AssetGroup<Texture> assetGroup;
+        private GameServiceContainer services;
 
         #endregion
 
@@ -29,6 +32,7 @@ namespace Pulsar.Assets.Graphics.Materials
         private TextureManager()
         {
             this.assetGroup = new AssetGroup<Texture>("Texture", this);
+            this.services = GameApplication.GameServices;
         }
 
         #endregion

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Input;
+using Pulsar.Graphics;
 
 using XnaGame = Microsoft.Xna.Framework.Game;
 
@@ -20,8 +21,9 @@ namespace Pulsar.Game
     {
         #region Fields
 
-        protected InputService inputService;
         protected GraphicsDeviceManager gDeviceMngr;
+        protected GraphicsEngineService gEngine;
+        protected InputService inputService;
         protected SpriteBatch spriteBatch;
 
         #endregion
@@ -33,8 +35,9 @@ namespace Pulsar.Game
         /// </summary>
         public GameApplication()
         {
-            this.inputService = new InputService(this);
             this.gDeviceMngr = new GraphicsDeviceManager(this);
+            this.gEngine = new GraphicsEngineService(this);
+            this.inputService = new InputService(this);
             this.Content.RootDirectory = "Content";
         }
 
@@ -48,7 +51,6 @@ namespace Pulsar.Game
         protected override void Initialize()
         {
             this.Services.AddService(typeof(ContentManager), this.Content);
-            GameApplication.GameGraphicsDevice = this.gDeviceMngr.GraphicsDevice;
             GameApplication.GameServices = this.Services;
 
             base.Initialize();
@@ -93,11 +95,6 @@ namespace Pulsar.Game
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Get the graphic device
-        /// </summary>
-        public static GraphicsDevice GameGraphicsDevice { get; internal set; }
 
         /// <summary>
         /// Get the service container

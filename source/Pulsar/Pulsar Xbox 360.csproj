@@ -82,6 +82,9 @@
     <Compile Include="Core\Pool.cs" />
     <Compile Include="Graphics\BoundingVolume.cs" />
     <Compile Include="Graphics\Factory.cs" />
+    <Compile Include="Graphics\GraphicsEngine.cs" />
+    <Compile Include="Graphics\GraphicsEngineService.cs" />
+    <Compile Include="Graphics\IGraphicsEngineService.cs" />
     <Compile Include="Graphics\Node.cs" />
     <Compile Include="Graphics\Rendering\InstanceBatch.cs" />
     <Compile Include="Graphics\Rendering\InstanceBatchManager.cs" />
@@ -91,7 +94,6 @@
     <Compile Include="Graphics\Rendering\RenderingInfo.cs" />
     <Compile Include="Graphics\Rendering\RenderPass\GBufferPass.cs" />
     <Compile Include="Graphics\Rendering\RenderPass\GBufferShader.cs" />
-    <Compile Include="Graphics\Root.cs" />
     <Compile Include="Graphics\SceneGraph\Camera.cs" />
     <Compile Include="Graphics\SceneGraph\CameraManager.cs" />
     <Compile Include="Graphics\SceneGraph\Entity.cs" />

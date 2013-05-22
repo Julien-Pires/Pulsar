@@ -91,6 +91,8 @@
     <Compile Include="Core\MessagePoolTracker.cs" />
     <Compile Include="Core\Pool.cs" />
     <Compile Include="Graphics\BoundingVolume.cs" />
+    <Compile Include="Graphics\GraphicsEngineService.cs" />
+    <Compile Include="Graphics\IGraphicsEngineService.cs" />
     <Compile Include="Graphics\Rendering\InstanceBatchManager.cs" />
     <Compile Include="Graphics\SceneGraph\Camera.cs" />
     <Compile Include="Graphics\SceneGraph\CameraManager.cs" />
@@ -107,7 +109,7 @@
     <Compile Include="Graphics\Rendering\RenderPass\GBufferPass.cs" />
     <Compile Include="Graphics\Rendering\RenderPass\GBufferShader.cs" />
     <Compile Include="Graphics\SceneGraph\RenderQueue.cs" />
-    <Compile Include="Graphics\Root.cs" />
+    <Compile Include="Graphics\GraphicsEngine.cs" />
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />
     <Compile Include="Graphics\SceneGraph\SceneNode.cs" />
     <Compile Include="Graphics\SpeedFrustum.cs" />

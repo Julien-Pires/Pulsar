@@ -144,6 +144,11 @@ namespace Pulsar.Graphics.Rendering
             this.UnsetBuffers();
         }
 
+        internal VertexBuffer CreateVertexBuffer(Type vertexType, int vertexCount)
+        {
+            return new VertexBuffer(this.graphicDevice, vertexType, vertexCount, BufferUsage.WriteOnly);
+        }
+
         #endregion
 
         #region Properties

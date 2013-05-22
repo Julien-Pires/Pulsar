@@ -24,6 +24,8 @@ namespace Pulsar.Assets.Graphics.Models
     {
         #region Fields
 
+        private GameServiceContainer services;
+        private GraphicsEngine engine;
         private readonly AssetGroup<Mesh> assetGroup = null;
 
         #endregion
@@ -36,6 +38,13 @@ namespace Pulsar.Assets.Graphics.Models
         private MeshManager()
         {
             this.assetGroup = new AssetGroup<Mesh>("Mesh", this);
+            this.services = GameApplication.GameServices;
+            GraphicsEngineService engineService = this.services.GetService(typeof(IGraphicsDeviceService)) as GraphicsEngineService;
+            if (engineService == null)
+            {
+                throw new ArgumentException("GraophicsEngine service cannot be found");
+            }
+            this.engine = engineService.Engine;
         }
 
         #endregion
@@ -52,9 +61,9 @@ namespace Pulsar.Assets.Graphics.Models
         {
             AssetSearchResult<Mesh> result = this.assetGroup.Load(name, storage);
             Mesh mesh = result.Resource;
-            mesh.VBuffer = new VertexBuffer(GameApplication.GameGraphicsDevice, typeof(VertexPositionNormalTexture), 0,
+            mesh.VBuffer = new VertexBuffer(this.engine.Renderer.GraphicsDevice, typeof(VertexPositionNormalTexture), 0,
                 BufferUsage.WriteOnly);
-            mesh.IBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
+            mesh.IBuffer = new IndexBuffer(this.engine.Renderer.GraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
                 BufferUsage.WriteOnly);
 
             return mesh;
@@ -125,9 +134,9 @@ namespace Pulsar.Assets.Graphics.Models
             }
             else
             {
-                mesh.VBuffer = new VertexBuffer(GameApplication.GameGraphicsDevice, typeof(VertexPositionNormalTexture), 0,
+                mesh.VBuffer = new VertexBuffer(this.engine.Renderer.GraphicsDevice, typeof(VertexPositionNormalTexture), 0,
                 BufferUsage.WriteOnly);
-                mesh.IBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
+                mesh.IBuffer = new IndexBuffer(this.engine.Renderer.GraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
                     BufferUsage.WriteOnly);
             }
 

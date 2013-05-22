@@ -58,9 +58,14 @@ namespace Pulsar.Graphics.Debugger
             {
                 indices[i] = i;
             }
-            this.vBuffer = new DynamicVertexBuffer(GameApplication.GameGraphicsDevice, typeof(VertexPositionNormalTexture),
+            GraphicsDeviceManager gDeviceMngr = GameApplication.GameServices.GetService(typeof(IGraphicsDeviceManager)) as GraphicsDeviceManager;
+            if (gDeviceMngr == null)
+            {
+                throw new ArgumentException("GraphicsDeviceManager cannot be found");
+            }
+            this.vBuffer = new DynamicVertexBuffer(gDeviceMngr.GraphicsDevice, typeof(VertexPositionNormalTexture),
                 MeshBoundingBox.verticesCount, BufferUsage.WriteOnly);
-            this.iBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits,
+            this.iBuffer = new IndexBuffer(gDeviceMngr.GraphicsDevice, IndexElementSize.ThirtyTwoBits,
                 MeshBoundingBox.verticesCount, BufferUsage.WriteOnly);
             this.iBuffer.SetData<int>(this.indices);
             this.renderInfo = new RenderingInfo()

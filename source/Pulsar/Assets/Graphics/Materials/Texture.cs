@@ -82,7 +82,12 @@ namespace Pulsar.Assets.Graphics.Materials
                 }
             }
 
-            Texture2D tex2D = new Texture2D(GameApplication.GameGraphicsDevice, size, size);
+            GraphicsDeviceManager gDeviceMngr = GameApplication.GameServices.GetService(typeof(IGraphicsDeviceManager)) as GraphicsDeviceManager;
+            if (gDeviceMngr == null)
+            {
+                throw new ArgumentException("GraphicsDeviceManager cannot be found");
+            }
+            Texture2D tex2D = new Texture2D(gDeviceMngr.GraphicsDevice, size, size);
             tex2D.SetData<Color>(texMap);
 
             return tex2D;
