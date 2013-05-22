@@ -87,20 +87,39 @@ namespace Pulsar.Graphics.Rendering
             this.EndFrame();
         }
 
+        internal void RenderGeometry(IRenderable geometry)
+        {
+            if (geometry.RenderInfo.useIndexes)
+            {
+                this.RenderIndexedGeometry(geometry);
+            }
+            else
+            {
+                this.RenderNonIndexedGeometry(geometry);
+            }
+        }
+
         /// <summary>
         /// Draw a IRenderable instance
         /// </summary>
         /// <param name="geometry">IRenderable instance</param>
         /// <param name="view">View matrix</param>
         /// <param name="projection">Projection matrix</param>
-        internal void RenderGeometry(IRenderable geometry)
+        internal void RenderIndexedGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
             this.graphicDevice.SetVertexBuffer(renderInfo.vBuffer, renderInfo.vertexOffset);
             this.graphicDevice.Indices = renderInfo.iBuffer;
             this.graphicDevice.DrawIndexedPrimitives(renderInfo.Primitive, 0, 0, renderInfo.vertexCount,
                 renderInfo.startIndex, renderInfo.triangleCount);
+            this.UnsetBuffers();
+        }
 
+        internal void RenderNonIndexedGeometry(IRenderable geometry)
+        {
+            RenderingInfo renderInfo = geometry.RenderInfo;
+            this.graphicDevice.SetVertexBuffer(renderInfo.vBuffer, renderInfo.vertexOffset);
+            this.graphicDevice.DrawPrimitives(renderInfo.Primitive, renderInfo.startIndex, renderInfo.triangleCount);
             this.UnsetBuffers();
         }
 
