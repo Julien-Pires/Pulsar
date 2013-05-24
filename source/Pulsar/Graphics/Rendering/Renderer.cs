@@ -108,9 +108,9 @@ namespace Pulsar.Graphics.Rendering
         internal void RenderIndexedGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
-            this.graphicDevice.SetVertexBuffer(renderInfo.vBuffer, renderInfo.vertexOffset);
+            this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
             this.graphicDevice.Indices = renderInfo.iBuffer;
-            this.graphicDevice.DrawIndexedPrimitives(renderInfo.Primitive, 0, 0, renderInfo.vertexCount,
+            this.graphicDevice.DrawIndexedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount,
                 renderInfo.startIndex, renderInfo.triangleCount);
             this.UnsetBuffers();
         }
@@ -118,8 +118,8 @@ namespace Pulsar.Graphics.Rendering
         internal void RenderNonIndexedGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
-            this.graphicDevice.SetVertexBuffer(renderInfo.vBuffer, renderInfo.vertexOffset);
-            this.graphicDevice.DrawPrimitives(renderInfo.Primitive, renderInfo.startIndex, renderInfo.triangleCount);
+            this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
+            this.graphicDevice.DrawPrimitives(renderInfo.primitive, renderInfo.startIndex, renderInfo.triangleCount);
             this.UnsetBuffers();
         }
 
@@ -132,21 +132,12 @@ namespace Pulsar.Graphics.Rendering
             if (batch.InstanceCount == 0)
                 return;
 
-            RenderingInfo info = batch.RenderInfo;
-            this.graphicDevice.SetVertexBuffers(
-                new VertexBufferBinding(info.vBuffer, info.vertexOffset, 0),
-                new VertexBufferBinding(batch.Buffer, 0, 1)
-            );
-            this.graphicDevice.Indices = info.iBuffer;
-            this.graphicDevice.DrawInstancedPrimitives(info.Primitive, 0, 0, info.vertexCount, info.startIndex, info.triangleCount,
-                batch.InstanceCount);
-
+            RenderingInfo renderInfo = batch.RenderInfo;
+            this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
+            this.graphicDevice.Indices = renderInfo.iBuffer;
+            this.graphicDevice.DrawInstancedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount, 
+                renderInfo.startIndex, renderInfo.triangleCount, batch.InstanceCount);
             this.UnsetBuffers();
-        }
-
-        internal VertexBuffer CreateVertexBuffer(Type vertexType, int vertexCount)
-        {
-            return new VertexBuffer(this.graphicDevice, vertexType, vertexCount, BufferUsage.WriteOnly);
         }
 
         #endregion

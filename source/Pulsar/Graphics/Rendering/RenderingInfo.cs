@@ -28,12 +28,7 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Primitive type
         /// </summary>
-        internal PrimitiveType Primitive = PrimitiveType.TriangleList;
-
-        /// <summary>
-        /// Offset in the vertex buffer for this instance
-        /// </summary>
-        internal int vertexOffset = 0;
+        internal PrimitiveType primitive = PrimitiveType.TriangleList;
 
         /// <summary>
         /// Get the starting index in the vertex buffer
@@ -58,7 +53,7 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Vertex buffer for this instance
         /// </summary>
-        internal VertexBuffer vBuffer = null;
+        internal VertexData vertexData = null;
 
         /// <summary>
         /// Index buffer for this instance
@@ -88,12 +83,11 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="other">Rendering info instance receiving all data of this instance</param>
         public void CopyTo(RenderingInfo other)
         {
-            other.vBuffer = this.vBuffer;
+            other.vertexData = this.vertexData;
             other.iBuffer = this.iBuffer;
-            other.Primitive = this.Primitive;
+            other.primitive = this.primitive;
             other.startIndex = this.startIndex;
             other.triangleCount = this.triangleCount;
-            other.vertexOffset = this.vertexOffset;
             other.vertexCount = this.vertexCount;
         }
 
@@ -114,15 +108,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public PrimitiveType PrimitiveType
         {
-            get { return this.Primitive; }
-        }
-
-        /// <summary>
-        /// Get the vertex offset
-        /// </summary>
-        public int VertexOffset
-        {
-            get { return this.vertexOffset; }
+            get { return this.primitive; }
         }
 
         /// <summary>

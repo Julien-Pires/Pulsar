@@ -84,6 +84,7 @@
     <Compile Include="Components\GameObjectEventArgs.cs" />
     <Compile Include="Components\GameObjectManager.cs" />
     <Compile Include="Core\EventType.cs" />
+    <Compile Include="Extension\ArrayExtension.cs" />
     <Compile Include="Game\GameApplication.cs" />
     <Compile Include="Core\IEventHandler.cs" />
     <Compile Include="Core\Mediator.cs" />
@@ -94,6 +95,9 @@
     <Compile Include="Graphics\GraphicsEngineService.cs" />
     <Compile Include="Graphics\IGraphicsEngineService.cs" />
     <Compile Include="Graphics\Rendering\InstanceBatchManager.cs" />
+    <Compile Include="Graphics\Rendering\VertexBufferManager.cs" />
+    <Compile Include="Graphics\Rendering\VertexBufferObject.cs" />
+    <Compile Include="Graphics\Rendering\VertexData.cs" />
     <Compile Include="Graphics\SceneGraph\Camera.cs" />
     <Compile Include="Graphics\SceneGraph\CameraManager.cs" />
     <Compile Include="Graphics\SceneGraph\Entity.cs" />

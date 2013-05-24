@@ -20,6 +20,12 @@ namespace Pulsar.Assets.Graphics.Models
     /// </summary>
     public sealed class PrefabFactory : Singleton<PrefabFactory>
     {
+        #region Fields
+
+        private GraphicsEngine engine;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -27,6 +33,13 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         private PrefabFactory()
         {
+            GameServiceContainer services = GameApplication.GameServices;
+            GraphicsEngineService engineService = services.GetService(typeof(IGraphicsEngineService)) as GraphicsEngineService;
+            if (engineService == null)
+            {
+                throw new ArgumentException("GraophicsEngine service cannot be found");
+            }
+            this.engine = engineService.Engine;
         }
 
         #endregion
@@ -131,15 +144,19 @@ namespace Pulsar.Assets.Graphics.Models
 
             string name = width + "x" + height + "x" + depth + "_box";
             Mesh mesh = MeshManager.Instance.LoadEmpty(name, "Default");
-            VertexBuffer vBuffer = mesh.VBuffer;
+            VertexData vData = mesh.VertexData;
+            VertexBufferObject vbo = this.engine.VertexBufferManager.CreateBuffer(BufferType.StaticWriteOnly, 
+                typeof(VertexPositionNormalTexture), verticesCount);
+            vbo.SetData(vertices);
+            vData.SetBinding(vbo);
+
             IndexBuffer iBuffer = mesh.IBuffer;
-            vBuffer.SetData<VertexPositionNormalTexture>(vertices);
             iBuffer.SetData<int>(indices);
-            mesh.UseIndexes = true;
+
+            SubMesh sub = mesh.CreateSubMesh();
+            sub.SetRenderingInfo(PrimitiveType.TriangleList, 0, (verticesCount / 3), verticesCount);
 
             BoundingData bounds = this.ComputeBoundingVolume(vec3List);
-            SubMesh sub = mesh.CreateSubMesh();
-            sub.SetRenderingInfo(PrimitiveType.TriangleList, 0, (verticesCount / 3), verticesCount, 0);
             sub.BoundingVolume = bounds;
 
             return mesh;

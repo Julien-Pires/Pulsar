@@ -35,10 +35,10 @@ namespace Pulsar.Game
         /// </summary>
         public GameApplication()
         {
-            this.gDeviceMngr = new GraphicsDeviceManager(this);
-            this.gEngine = new GraphicsEngineService(this);
-            this.inputService = new InputService(this);
+            GameApplication.GameServices = this.Services;
             this.Content.RootDirectory = "Content";
+            this.Services.AddService(typeof(ContentManager), this.Content);
+            this.gDeviceMngr = new GraphicsDeviceManager(this);
         }
 
         #endregion
@@ -50,8 +50,8 @@ namespace Pulsar.Game
         /// </summary>
         protected override void Initialize()
         {
-            this.Services.AddService(typeof(ContentManager), this.Content);
-            GameApplication.GameServices = this.Services;
+            this.gEngine = new GraphicsEngineService(this);
+            this.inputService = new InputService(this);
 
             base.Initialize();
         }

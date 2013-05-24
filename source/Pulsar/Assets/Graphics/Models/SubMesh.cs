@@ -22,6 +22,8 @@ namespace Pulsar.Assets.Graphics.Models
         private Mesh parent;
         private BoundingData bounds;
         private RenderingInfo renderData = new RenderingInfo();
+        private bool shareVertexBuffer = true;
+        private VertexData vertexData;
 
         #endregion
 
@@ -34,9 +36,6 @@ namespace Pulsar.Assets.Graphics.Models
         internal SubMesh(Mesh parent)
         {
             this.parent = parent;
-            this.renderData.useIndexes = this.parent.UseIndexes;
-            this.renderData.vBuffer = this.parent.VBuffer;
-            this.renderData.iBuffer = this.parent.IBuffer;
         }
 
         #endregion
@@ -51,13 +50,12 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="primitiveCount">Number of primitive to render</param>
         /// <param name="numVertices">Number of vertices used during the draw call</param>
         /// <param name="vertexOffset">Offset from the beginning of the vertex buffer</param>
-        public void SetRenderingInfo(PrimitiveType pType, int startIdx, int primitiveCount, int numVertices, int vertexOffset)
+        public void SetRenderingInfo(PrimitiveType pType, int startIdx, int primitiveCount, int numVertices)
         {
-            this.renderData.Primitive = pType;
+            this.renderData.primitive = pType;
             this.renderData.startIndex = startIdx;
             this.renderData.triangleCount = primitiveCount;
             this.renderData.vertexCount = numVertices;
-            this.renderData.vertexOffset = vertexOffset;
             this.parent.ComputeData();
         }
 
@@ -105,7 +103,31 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         internal RenderingInfo RenderInfo 
         {
-            get { return this.renderData; }  
+            get 
+            {
+                this.renderData.vertexData = this.shareVertexBuffer ? this.parent.vertexData : this.vertexData;
+                this.renderData.iBuffer = this.UseIndexes ? this.parent.IBuffer : null;
+
+                return this.renderData;
+            }  
+        }
+
+        public VertexData VertexData
+        {
+            get { return this.vertexData; }
+            set { this.vertexData = value; }
+        }
+
+        public bool ShareVertexBuffer
+        {
+            get { return this.shareVertexBuffer; }
+            set { this.shareVertexBuffer = value; }
+        }
+
+        public bool UseIndexes
+        {
+            get { return this.renderData.useIndexes; }
+            set { this.renderData.useIndexes = value; }
         }
 
         /// <summary>

@@ -39,7 +39,7 @@ namespace Pulsar.Assets.Graphics.Models
         {
             this.assetGroup = new AssetGroup<Mesh>("Mesh", this);
             this.services = GameApplication.GameServices;
-            GraphicsEngineService engineService = this.services.GetService(typeof(IGraphicsDeviceService)) as GraphicsEngineService;
+            GraphicsEngineService engineService = this.services.GetService(typeof(IGraphicsEngineService)) as GraphicsEngineService;
             if (engineService == null)
             {
                 throw new ArgumentException("GraophicsEngine service cannot be found");
@@ -61,8 +61,7 @@ namespace Pulsar.Assets.Graphics.Models
         {
             AssetSearchResult<Mesh> result = this.assetGroup.Load(name, storage);
             Mesh mesh = result.Resource;
-            mesh.VBuffer = new VertexBuffer(this.engine.Renderer.GraphicsDevice, typeof(VertexPositionNormalTexture), 0,
-                BufferUsage.WriteOnly);
+            mesh.VertexData = new VertexData();
             mesh.IBuffer = new IndexBuffer(this.engine.Renderer.GraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
                 BufferUsage.WriteOnly);
 
@@ -124,20 +123,22 @@ namespace Pulsar.Assets.Graphics.Models
             MeshData data = (MeshData)model.Tag;
             Matrix[] bones = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(bones);
-            mesh.UseIndexes = true;
             mesh.Bones = bones;
             mesh.BoundingVolume = data.BoundingVolume;
+
+            VertexData vData = new VertexData();
+            mesh.VertexData = vData;
+
+            VertexBufferObject vbo = null;
             if (model.Meshes.Count > 0)
             {
-                mesh.VBuffer = model.Meshes[0].MeshParts[0].VertexBuffer;
+                vbo = this.engine.VertexBufferManager.CreateBuffer(model.Meshes[0].MeshParts[0].VertexBuffer);
                 mesh.IBuffer = model.Meshes[0].MeshParts[0].IndexBuffer;
             }
-            else
+
+            if (vbo != null)
             {
-                mesh.VBuffer = new VertexBuffer(this.engine.Renderer.GraphicsDevice, typeof(VertexPositionNormalTexture), 0,
-                BufferUsage.WriteOnly);
-                mesh.IBuffer = new IndexBuffer(this.engine.Renderer.GraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
-                    BufferUsage.WriteOnly);
+                vData.SetBinding(vbo);
             }
 
             for (int i = 0; i < model.Meshes.Count; i++)
@@ -147,13 +148,20 @@ namespace Pulsar.Assets.Graphics.Models
                 {
                     ModelMeshPart part = currMesh.MeshParts[j];
                     SubMeshData subData = data.SubMeshData[i];
+                    SubMesh sub = mesh.CreateSubMesh(currMesh.Name);
+                    sub.UseIndexes = true;
+                    sub.ShareVertexBuffer = false;
+                    sub.BoundingVolume = subData.BoundingVolume;
+                    sub.BoneIndex = currMesh.ParentBone.Index;
+
+                    VertexData subVData = new VertexData();
+                    sub.VertexData = subVData;
+                    subVData.SetBinding(vbo, part.VertexOffset, 0);
+                    sub.SetRenderingInfo(PrimitiveType.TriangleList, part.StartIndex, part.PrimitiveCount, part.NumVertices);
+
                     string materialName = mesh.Name + @"/" + currMesh.Name + "_material";
                     Material mat = MaterialManager.Instance.CreateMaterial(materialName, storage, part.Effect, subData.TexturesName);
-                    SubMesh sub = mesh.CreateSubMesh(currMesh.Name);
-                    sub.SetRenderingInfo(PrimitiveType.TriangleList, part.StartIndex, part.PrimitiveCount, part.NumVertices, part.VertexOffset);
                     sub.Material = mat;
-                    sub.BoneIndex = currMesh.ParentBone.Index;
-                    sub.BoundingVolume = subData.BoundingVolume;
                 }
             }
         }
