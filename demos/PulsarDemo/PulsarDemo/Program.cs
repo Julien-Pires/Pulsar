@@ -10,7 +10,7 @@ namespace PulsarDemo
         /// </summary>
         static void Main(string[] args)
         {
-            using (Game1 game = new Game1())
+            using (Demo game = new Demo())
             {
                 game.Run();
             }

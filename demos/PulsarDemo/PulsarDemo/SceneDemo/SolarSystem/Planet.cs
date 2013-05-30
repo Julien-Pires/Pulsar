@@ -14,15 +14,10 @@ namespace PulsarDemo.SceneDemo.SolarSystem
     {
         #region Fields
 
-        private const float sizeRatio = 1.0f / 1000.0f;
-        private const float distanceRatio = 1.0f / 1.5f;
+        private const float distanceRatio = 5000.0f / 5129.0f;
 
         private string name;
-        private float realSize = 0.0f;
-        private float parentGap = 0.0f;
-        private float normalizeScale = 1.0f;
-        private float finalScale = 1.0f;
-        private float finalPosition = 0.0f;
+        private float startOrbit = 0.0f;
         private SceneNode node = null;
         private SceneNode parent = null;
         private Entity model = null;
@@ -31,11 +26,13 @@ namespace PulsarDemo.SceneDemo.SolarSystem
 
         #region Constructors
 
-        public Planet(string name, float realSize, float parentGap)
+        public Planet(string name, Entity planet, float orbit)
         {
             this.name = name;
-            this.realSize = realSize;
-            this.parentGap = parentGap;
+            this.model = planet;
+            this.node = this.model.Parent;
+            this.startOrbit = orbit;
+            this.InitializeNode();
         }
 
         #endregion
@@ -49,43 +46,8 @@ namespace PulsarDemo.SceneDemo.SolarSystem
 
         private void InitializeNode()
         {
-            if ((this.node == null) || (this.model == null))
-            {
-                return;
-            }
-            
             this.parent = (SceneNode)this.node.Parent;
-            this.normalizeScale = 1.0f / (model.Mesh.BoundingSphere.Radius * 2.0f);
-            this.finalScale = this.realSize * Planet.sizeRatio;
-            this.finalPosition = Planet.distanceRatio * this.parentGap;
-
-            this.node.DoScale(this.normalizeScale);
-            this.node.DoScale(this.finalScale);
-            this.node.SetPosition(new Vector3(0.0f, 0.0f, -this.finalPosition));
-        }
-
-        #endregion
-
-        #region Properties
-
-        internal SceneNode Node
-        {
-            get { return this.node; }
-            set
-            {
-                this.node = value;
-                this.InitializeNode();
-            }
-        }
-
-        internal Entity Model
-        {
-            get { return this.model; }
-            set
-            {
-                this.model = value;
-                this.InitializeNode();
-            }
+            this.node.SetPosition(new Vector3(0.0f, 0.0f, -this.startOrbit));
         }
 
         #endregion

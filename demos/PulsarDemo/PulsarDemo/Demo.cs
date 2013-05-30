@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
+using Pulsar.Input;
 using Pulsar.Game;
 using Pulsar.Core;
 using Pulsar.Graphics;
@@ -24,9 +25,9 @@ namespace PulsarDemo
     /// </summary>
     public class Demo : GameApplication
     {
-        private Root graphSystem = null;
-        private List<ISceneDemo> demo = new List<ISceneDemo>();
+        private List<ISceneDemo> scenes = new List<ISceneDemo>();
         private ISceneDemo currentScene = null;
+        private CameraController camCtrl;
 
         public Demo()
         {
@@ -49,21 +50,33 @@ namespace PulsarDemo
         /// </summary>
         protected override void LoadContent()
         {
-            this.graphSystem = new Root(this.gDeviceMngr.GraphicsDevice);
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            this.CreateCamera();
             this.CreateScene();
-            for (int i = 0; i < this.demo.Count; i++)
+            this.SwitchScene(0);
+        }
+
+        private void CreateCamera()
+        {
+            InputService inService = (InputService)GameApplication.GameServices.GetService(typeof(IInputService));
+            if (inService == null)
             {
-                this.demo[i].Load();
+                throw new ArgumentException("Failed to find InputService");
             }
+            this.camCtrl = new CameraController(inService.Input);
         }
 
         private void CreateScene()
         {
-            this.demo.Add(new SolarSystem(this.graphSystem));
+            this.scenes.Add(new SolarSystem(this.gEngine.Engine, this.camCtrl));
+        }
 
-            this.currentScene = this.demo[0];
+        private void SwitchScene(int sceneIndex)
+        {
+            ISceneDemo scene = this.scenes[sceneIndex];
+            this.currentScene = scene;
+            scene.Activate();
         }
 
         /// <summary>
