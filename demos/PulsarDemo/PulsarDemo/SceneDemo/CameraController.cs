@@ -43,9 +43,8 @@ namespace PulsarDemo.SceneDemo
 
         #region Constructors
 
-        public CameraController(Camera cam, InputManager input)
+        public CameraController(InputManager input)
         {
-            this.cam = cam;
             this.input = input;
             this.input.CreatePlayer(0);
             this.player = this.input.GetPlayer(0);
@@ -149,6 +148,23 @@ namespace PulsarDemo.SceneDemo
 
                 if (this.currentInput.GetButton(CameraController.leftName).IsDown) this.goLeft = true;
                 else if (this.currentInput.GetButton(CameraController.leftName).IsUp) this.goLeft = false;
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        public Camera Camera
+        {
+            get { return this.cam; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("Camera cannot be null");
+                }
+                this.cam = value;
             }
         }
 

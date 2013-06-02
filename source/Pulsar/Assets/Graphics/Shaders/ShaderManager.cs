@@ -3,8 +3,10 @@ using System.Reflection;
 
 using System.Collections.Generic;
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Game;
 using Pulsar.Core;
 
 namespace Pulsar.Assets.Graphics.Shaders
@@ -17,6 +19,7 @@ namespace Pulsar.Assets.Graphics.Shaders
         #region Fields
 
         private readonly AssetGroup<Shader> assetGroup;
+        private GameServiceContainer services;
 
         #endregion
 
@@ -28,6 +31,7 @@ namespace Pulsar.Assets.Graphics.Shaders
         private ShaderManager()
         {
             this.assetGroup = new AssetGroup<Shader>("Shader", this);
+            this.services = GameApplication.GameServices;
         }
 
         #endregion

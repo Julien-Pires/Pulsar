@@ -24,7 +24,7 @@ namespace Pulsar.Graphics.SceneGraph
         #region Fields
 
         protected string name = string.Empty;
-        protected SceneNode parent = null;
+        protected SceneNode parent;
         protected bool isDirtyView = true;
         protected bool isDirtyFrustum = true;
         protected bool isDirtyBoundingFrustum = true;

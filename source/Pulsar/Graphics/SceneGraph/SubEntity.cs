@@ -22,9 +22,9 @@ namespace Pulsar.Graphics.SceneGraph
         #region Fields
 
         private int queueID;
-        private Entity parent = null;
-        private SubMesh subMesh = null;
-        private Material material = null;
+        private Entity parent;
+        private SubMesh subMesh;
+        private Material material;
         private string name = string.Empty;
 
         #endregion

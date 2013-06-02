@@ -84,6 +84,7 @@
     <Compile Include="Components\GameObjectEventArgs.cs" />
     <Compile Include="Components\GameObjectManager.cs" />
     <Compile Include="Core\EventType.cs" />
+    <Compile Include="Extension\ArrayExtension.cs" />
     <Compile Include="Game\GameApplication.cs" />
     <Compile Include="Core\IEventHandler.cs" />
     <Compile Include="Core\Mediator.cs" />
@@ -91,7 +92,19 @@
     <Compile Include="Core\MessagePoolTracker.cs" />
     <Compile Include="Core\Pool.cs" />
     <Compile Include="Graphics\BoundingVolume.cs" />
+    <Compile Include="Graphics\FrameInfo.cs" />
+    <Compile Include="Graphics\GraphicsEngineService.cs" />
+    <Compile Include="Graphics\IGraphicsEngineService.cs" />
+    <Compile Include="Graphics\Rendering\BufferObject.cs" />
+    <Compile Include="Graphics\Rendering\IBufferWrapper.cs" />
+    <Compile Include="Graphics\Rendering\IndexBufferWrapper.cs" />
+    <Compile Include="Graphics\Rendering\IndexData.cs" />
+    <Compile Include="Graphics\Rendering\VertexBufferWrapper.cs" />
+    <Compile Include="Graphics\Rendering\IndexBufferObject.cs" />
     <Compile Include="Graphics\Rendering\InstanceBatchManager.cs" />
+    <Compile Include="Graphics\Rendering\BufferManager.cs" />
+    <Compile Include="Graphics\Rendering\VertexBufferObject.cs" />
+    <Compile Include="Graphics\Rendering\VertexData.cs" />
     <Compile Include="Graphics\SceneGraph\Camera.cs" />
     <Compile Include="Graphics\SceneGraph\CameraManager.cs" />
     <Compile Include="Graphics\SceneGraph\Entity.cs" />
@@ -107,7 +120,7 @@
     <Compile Include="Graphics\Rendering\RenderPass\GBufferPass.cs" />
     <Compile Include="Graphics\Rendering\RenderPass\GBufferShader.cs" />
     <Compile Include="Graphics\SceneGraph\RenderQueue.cs" />
-    <Compile Include="Graphics\Root.cs" />
+    <Compile Include="Graphics\GraphicsEngine.cs" />
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />
     <Compile Include="Graphics\SceneGraph\SceneNode.cs" />
     <Compile Include="Graphics\SpeedFrustum.cs" />

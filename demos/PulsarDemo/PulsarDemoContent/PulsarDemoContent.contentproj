@@ -45,92 +45,58 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="models\Cube\cat.tga">
-      <Name>cat</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="models\Cube\Cats.fbx">
-      <Name>Cats</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>PulsarModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\Planets\Earth\earth.fbx">
-      <Name>earth</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>PulsarModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\Planets\Jupiter\jupiter.fbx">
-      <Name>jupiter</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>PulsarModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\Planets\Mars\mars.FBX">
-      <Name>mars</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>PulsarModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\Planets\Mercure\mercure.FBX">
-      <Name>mercure</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>PulsarModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\Planets\Neptune\neptune.FBX">
-      <Name>neptune</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>PulsarModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\Planets\Saturne\saturne.FBX">
-      <Name>saturne</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>PulsarModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\Planets\Venus\venus.FBX">
-      <Name>venus</Name>
+    <Compile Include="SolarSystem\Models\Earth\Earth.FBX">
+      <Name>Earth</Name>
       <Importer>FbxImporter</Importer>
       <Processor>PulsarModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="models\Planets\Earth\earth.jpg">
-      <Name>earth_tex</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+    <Compile Include="SolarSystem\Models\Mercury\Mercury.FBX">
+      <Name>Mercury</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>PulsarModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\Planets\Jupiter\JupiterMap.jpg">
-      <Name>JupiterMap</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SolarSystem\Models\Venus\Venus.FBX">
+      <Name>Venus</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>PulsarModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\Planets\Mars\marsMap.jpg">
-      <Name>marsMap</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SolarSystem\Models\Jupiter\Jupiter.FBX">
+      <Name>Jupiter</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>PulsarModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\Planets\Mercure\MercuryMap.jpg">
-      <Name>MercuryMap</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+    <Compile Include="SolarSystem\Models\Mars\Mars.FBX">
+      <Name>Mars</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>PulsarModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\Planets\Neptune\NeptuneMap.jpg">
-      <Name>NeptuneMap</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+    <Compile Include="SolarSystem\Models\Saturn\Saturn.FBX">
+      <Name>Saturn</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>PulsarModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\Planets\Saturne\SaturnFinalRings.png">
-      <Name>SaturnFinalRings</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SolarSystem\Models\Neptune\Neptune.FBX">
+      <Name>Neptune</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>PulsarModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\Planets\Saturne\saturnMap.jpg">
-      <Name>saturnMap</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+    <Compile Include="SolarSystem\Models\Sun\Sun.FBX">
+      <Name>Sun</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>PulsarModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\Planets\Venus\venusMap.jpg">
-      <Name>venusMap</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+    <Compile Include="SolarSystem\Models\Uranus\Uranus.FBX">
+      <Name>Uranus</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>PulsarModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

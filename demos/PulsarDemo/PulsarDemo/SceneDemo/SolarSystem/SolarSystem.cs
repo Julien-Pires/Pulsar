@@ -19,28 +19,30 @@ namespace PulsarDemo.SceneDemo.SolarSystem
     {
         #region Fields
 
-        private readonly AssetStorage storage;
-        private readonly int planetCount;
-        private const string modelsFolder = "models/Planets/";
-        private readonly string[] planetsModel = { "Mercure/mercure", "Venus/venus", "Earth/earth", "Mars/mars", 
-                                                     "Jupiter/jupiter", "Saturne/saturne", "Neptune/neptune" };
-        private readonly string[] planetsName = { "Mercure", "Venus", "Earth", "Mars", "Jupiter", "Saturne", "Neptune" };
-        private readonly float[] planetsGap = { 58.0f, 108.0f, 149.6f, 228.0f, 740.0f, 1429.0f, 4540.0f };
-        private readonly float[] planetSize = { 4880.0f, 12100.0f, 12756.0f, 6792.0f, 142984.0f, 120536.0f, 49532.0f };
+        private const string contentFolder = @"SolarSystem/";
+        private const string modelsFolder = @"Models/";
 
-        private CameraController camCtrl = null;
-        private SceneTree graph = null;
+        private readonly AssetStorage storage;
+        private readonly string sunModel = "Sun/Sun";
+        private readonly string sunName = "Sun";
+        private readonly float sunOrbit = 0.0f;
+        private readonly string[] planetsModel = { "Mercury/Mercury", "Venus/Venus", "Earth/Earth", "Mars/Mars", "Jupiter/Jupiter",
+                                                   "Saturn/Saturn", "Uranus/Uranus", "Neptune/Neptune" };
+        private readonly string[] planetsName = { "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune" };
+        private readonly float[] planetsOrbit = { 150.0f, 290.0f, 420.0f, 600.0f, 1100.0f, 1600.0f, 2000.0f, 2410.0f };
+        private CameraController camCtrl;
+        private SceneTree graph;
         private List<Planet> planets = new List<Planet>();
 
         #endregion
 
         #region Constructors
 
-        public SolarSystem(Root r)
+        public SolarSystem(GraphicsEngine r, CameraController camCtrl)
         {
-            this.storage = AssetStorageManager.Instance.CreateStorage("Default", "Content");
-            this.graph = r.CreateSceneGraph("Solar System");
-            this.planetCount = this.planetsModel.Length;
+            this.storage = AssetStorageManager.Instance.CreateStorage("Default", "Content/SolarSystem");
+            this.graph = r.CreateSceneGraph("SolarSystem");
+            this.camCtrl = camCtrl;
         }
 
         #endregion
@@ -53,6 +55,16 @@ namespace PulsarDemo.SceneDemo.SolarSystem
             this.CreateSystem();
         }
 
+        public void Activate()
+        {
+            if (!this.IsLoaded)
+            {
+                this.Load();
+            }
+
+            this.camCtrl.Camera = this.graph.CameraManager.Current;
+        }
+
         public void Render()
         {
             this.graph.RenderScene();
@@ -60,8 +72,9 @@ namespace PulsarDemo.SceneDemo.SolarSystem
 
         public void Update(GameTime time)
         {
+            Camera c = camCtrl.Camera;
             this.camCtrl.Tick(time);
-
+            
             for (int i = 0; i < this.planets.Count; i++)
             {
                 this.planets[i].Update();
@@ -72,43 +85,54 @@ namespace PulsarDemo.SceneDemo.SolarSystem
         {
             Camera mainCam = new Camera("MainCam");
             mainCam.FarPlane = 5000.0f;
-
+            mainCam.Translate(new Vector3(600.0f, 0.0f, 0.0f));
+            mainCam.Yaw(MathHelper.ToRadians(90.0f));
+            
             CameraManager camMngr = this.graph.CameraManager;
             camMngr.AddCamera(mainCam);
             camMngr.UseCamera(mainCam);
-
-            InputService inService = (InputService)GameApplication.GameServices.GetService(typeof(IInputService));
-            if (inService == null)
-            {
-                throw new ArgumentException("Failed to find InputService");
-            }
-            this.camCtrl = new CameraController(mainCam, inService.Input);
         }
 
         private void CreateSystem()
         {
             SceneNode rootNode = this.graph.Root;
 
-            for (int i = 0; i < this.planetCount; i++)
+            this.CreateSun(rootNode);
+            for (int i = 0; i < this.planetsModel.Length; i++)
             {
                 this.AddPlanet(i, rootNode);
             }
+        }
+
+        private void CreateSun(SceneNode parent)
+        {
+            string mesh = SolarSystem.modelsFolder + this.sunModel;
+            Entity modelSun = this.graph.CreateEntity(mesh, this.sunName);
+            modelSun.RenderAABB = true;
+            SceneNode node = parent.CreateChildSceneNode(this.sunName);
+            node.AttachObject(modelSun);
+
+            Planet plt = new Planet(this.sunName, modelSun, this.sunOrbit);
+            this.planets.Add(plt);
         }
 
         private void AddPlanet(int planetIdx, SceneNode parent)
         {
             string mesh = SolarSystem.modelsFolder + this.planetsModel[planetIdx];
             Entity modelPlanet = this.graph.CreateEntity(mesh, this.planetsName[planetIdx]);
+            modelPlanet.RenderAABB = true;
             SceneNode node = parent.CreateChildSceneNode(this.planetsName[planetIdx]);
             node.AttachObject(modelPlanet);
-            modelPlanet.RenderAABB = true;
-            Planet plt = new Planet(this.planetsName[planetIdx], this.planetSize[planetIdx], this.planetsGap[planetIdx])
-                {
-                    Model = modelPlanet,
-                    Node = node
-                };
+
+            Planet plt = new Planet(this.planetsName[planetIdx], modelPlanet, this.planetsOrbit[planetIdx]);
             this.planets.Add(plt);
         }
+
+        #endregion
+
+        #region Properties
+
+        public bool IsLoaded { get; internal set; }
 
         #endregion
     }
