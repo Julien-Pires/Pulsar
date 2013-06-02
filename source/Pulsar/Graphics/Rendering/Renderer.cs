@@ -109,7 +109,7 @@ namespace Pulsar.Graphics.Rendering
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
             this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
-            this.graphicDevice.Indices = renderInfo.iBuffer;
+            this.graphicDevice.Indices = renderInfo.indexData.Buffer;
             this.graphicDevice.DrawIndexedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount,
                 renderInfo.startIndex, renderInfo.triangleCount);
             this.UnsetBuffers();
@@ -134,7 +134,7 @@ namespace Pulsar.Graphics.Rendering
 
             RenderingInfo renderInfo = batch.RenderInfo;
             this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
-            this.graphicDevice.Indices = renderInfo.iBuffer;
+            this.graphicDevice.Indices = renderInfo.indexData.Buffer;
             this.graphicDevice.DrawInstancedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount, 
                 renderInfo.startIndex, renderInfo.triangleCount, batch.InstanceCount);
             this.UnsetBuffers();

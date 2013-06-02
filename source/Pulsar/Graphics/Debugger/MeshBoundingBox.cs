@@ -26,12 +26,11 @@ namespace Pulsar.Graphics.Debugger
         private const int verticesCount = 24;
         private const int primitiveCount = 12;
 
-        private VertexData vData;
         private VertexBufferObject vbo;
-        private IndexBuffer iBuffer;
+        private IndexBufferObject ibo;
         private RenderingInfo renderInfo;
         private Material material;
-        private int[] indices = new int[MeshBoundingBox.verticesCount];
+        private short[] indices = new short[MeshBoundingBox.verticesCount];
         private VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[MeshBoundingBox.verticesCount];
 
         #endregion
@@ -55,30 +54,34 @@ namespace Pulsar.Graphics.Debugger
         /// </summary>
         private void InitBuffers()
         {
-            for (int i = 0; i < MeshBoundingBox.verticesCount; i++)
-            {
-                indices[i] = i;
-            }
             GraphicsEngineService engineService = GameApplication.GameServices.GetService(typeof(IGraphicsEngineService)) as GraphicsEngineService;
             if (engineService == null)
             {
                 throw new ArgumentException("GraphicsEngineService cannot be found");
             }
 
-            GraphicsEngine engine = engineService.Engine;
-            this.vData = new VertexData();
-            this.vbo = engine.VertexBufferManager.CreateBuffer(BufferType.DynamicWriteOnly, typeof(VertexPositionNormalTexture),
+            BufferManager bufferMngr = engineService.Engine.BufferManager;
+            VertexData vData = new VertexData();
+            this.vbo = bufferMngr.CreateVertexBuffer(BufferType.DynamicWriteOnly, typeof(VertexPositionNormalTexture),
                 MeshBoundingBox.verticesCount);
-            this.vData.SetBinding(this.vbo);
-            this.iBuffer = new IndexBuffer(engine.Renderer.GraphicsDevice, IndexElementSize.ThirtyTwoBits,
-                MeshBoundingBox.verticesCount, BufferUsage.WriteOnly);
-            this.iBuffer.SetData<int>(this.indices);
+            vData.SetBinding(this.vbo);
+
+            IndexData iData = new IndexData();
+            this.ibo = bufferMngr.CreateIndexBuffer(BufferType.DynamicWriteOnly, IndexElementSize.SixteenBits,
+                MeshBoundingBox.verticesCount);
+            this.ibo.SetData(this.indices);
+            iData.indexBuffer = ibo;
+
+            for (short i = 0; i < MeshBoundingBox.verticesCount; i++)
+            {
+                indices[i] = i;
+            }
 
             this.renderInfo = new RenderingInfo()
             {
                 primitive = PrimitiveType.LineList,
-                vertexData = this.vData,
-                iBuffer = this.iBuffer,
+                vertexData = vData,
+                indexData = iData,
                 vertexCount = MeshBoundingBox.verticesCount,
                 triangleCount = MeshBoundingBox.primitiveCount
             };

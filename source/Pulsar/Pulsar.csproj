@@ -94,8 +94,14 @@
     <Compile Include="Graphics\BoundingVolume.cs" />
     <Compile Include="Graphics\GraphicsEngineService.cs" />
     <Compile Include="Graphics\IGraphicsEngineService.cs" />
+    <Compile Include="Graphics\Rendering\BufferObject.cs" />
+    <Compile Include="Graphics\Rendering\IBufferWrapper.cs" />
+    <Compile Include="Graphics\Rendering\IndexBufferWrapper.cs" />
+    <Compile Include="Graphics\Rendering\IndexData.cs" />
+    <Compile Include="Graphics\Rendering\VertexBufferWrapper.cs" />
+    <Compile Include="Graphics\Rendering\IndexBufferObject.cs" />
     <Compile Include="Graphics\Rendering\InstanceBatchManager.cs" />
-    <Compile Include="Graphics\Rendering\VertexBufferManager.cs" />
+    <Compile Include="Graphics\Rendering\BufferManager.cs" />
     <Compile Include="Graphics\Rendering\VertexBufferObject.cs" />
     <Compile Include="Graphics\Rendering\VertexData.cs" />
     <Compile Include="Graphics\SceneGraph\Camera.cs" />

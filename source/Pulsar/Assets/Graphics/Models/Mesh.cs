@@ -26,7 +26,7 @@ namespace Pulsar.Assets.Graphics.Models
         private Dictionary<string, int> subMeshNamesMap = new Dictionary<string, int>();
         private BoundingData bounds;
         internal VertexData vertexData;
-        private IndexBuffer iBuffer;
+        internal IndexData indexData;
 
         #endregion
 
@@ -234,10 +234,10 @@ namespace Pulsar.Assets.Graphics.Models
         /// <summary>
         /// Get the index buffer of the mesh
         /// </summary>
-        public IndexBuffer IBuffer
+        public IndexData IndexData
         {
-            get { return this.iBuffer; }
-            internal set { this.iBuffer = value; }
+            get { return this.indexData; }
+            set { this.indexData = value; }
         }
 
         #endregion

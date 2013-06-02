@@ -59,7 +59,7 @@ namespace Pulsar.Assets.Graphics.Models
             float halfW = width / 2.0f;
             float halfH = height / 2.0f;
             float halfD = depth / 2.0f;
-            int[] indices = new int[verticesCount];
+            short[] indices = new short[verticesCount];
 
             Vector3 topLeftFront = new Vector3(-halfW, halfH, halfD);
             Vector3 topRightFront = new Vector3(halfW, halfH, halfD);
@@ -137,21 +137,25 @@ namespace Pulsar.Assets.Graphics.Models
             vertices[33] = new VertexPositionNormalTexture(topRightFront, rightNormal, texTopLeft);
             vertices[35] = new VertexPositionNormalTexture(bottomRightBack, rightNormal, texBottomRight);
 
-            for (int i = 0; i < verticesCount; i++)
+            for (short i = 0; i < verticesCount; i++)
             {
                 indices[i] = i;
             }
 
             string name = width + "x" + height + "x" + depth + "_box";
             Mesh mesh = MeshManager.Instance.LoadEmpty(name, "Default");
-            VertexData vData = mesh.VertexData;
-            VertexBufferObject vbo = this.engine.VertexBufferManager.CreateBuffer(BufferType.StaticWriteOnly, 
+
+            VertexData vData = mesh.vertexData;
+            VertexBufferObject vbo = this.engine.BufferManager.CreateVertexBuffer(BufferType.StaticWriteOnly, 
                 typeof(VertexPositionNormalTexture), verticesCount);
             vbo.SetData(vertices);
             vData.SetBinding(vbo);
 
-            IndexBuffer iBuffer = mesh.IBuffer;
-            iBuffer.SetData<int>(indices);
+            IndexData iData = mesh.indexData;
+            IndexBufferObject ibo = this.engine.BufferManager.CreateIndexBuffer(BufferType.StaticWriteOnly,
+                IndexElementSize.SixteenBits, verticesCount);
+            ibo.SetData(indices);
+            iData.indexBuffer = ibo;
 
             SubMesh sub = mesh.CreateSubMesh();
             sub.SetRenderingInfo(PrimitiveType.TriangleList, 0, (verticesCount / 3), verticesCount);

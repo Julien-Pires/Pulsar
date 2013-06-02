@@ -58,7 +58,7 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Index buffer for this instance
         /// </summary>
-        internal IndexBuffer iBuffer = null;
+        internal IndexData indexData = null;
 
         #endregion
 
@@ -84,7 +84,7 @@ namespace Pulsar.Graphics.Rendering
         public void CopyTo(RenderingInfo other)
         {
             other.vertexData = this.vertexData;
-            other.iBuffer = this.iBuffer;
+            other.indexData = this.indexData;
             other.primitive = this.primitive;
             other.startIndex = this.startIndex;
             other.triangleCount = this.triangleCount;

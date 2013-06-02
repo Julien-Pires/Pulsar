@@ -61,9 +61,8 @@ namespace Pulsar.Assets.Graphics.Models
         {
             AssetSearchResult<Mesh> result = this.assetGroup.Load(name, storage);
             Mesh mesh = result.Resource;
-            mesh.VertexData = new VertexData();
-            mesh.IBuffer = new IndexBuffer(this.engine.Renderer.GraphicsDevice, IndexElementSize.ThirtyTwoBits, 0,
-                BufferUsage.WriteOnly);
+            mesh.vertexData = new VertexData();
+            mesh.indexData = new IndexData();
 
             return mesh;
         }
@@ -127,18 +126,26 @@ namespace Pulsar.Assets.Graphics.Models
             mesh.BoundingVolume = data.BoundingVolume;
 
             VertexData vData = new VertexData();
-            mesh.VertexData = vData;
+            IndexData iData = new IndexData();
+            mesh.vertexData = vData;
+            mesh.indexData = iData;
 
             VertexBufferObject vbo = null;
+            IndexBufferObject ibo = null;
             if (model.Meshes.Count > 0)
             {
-                vbo = this.engine.VertexBufferManager.CreateBuffer(model.Meshes[0].MeshParts[0].VertexBuffer);
-                mesh.IBuffer = model.Meshes[0].MeshParts[0].IndexBuffer;
+                ModelMeshPart part = model.Meshes[0].MeshParts[0];
+                vbo = this.engine.BufferManager.CreateVertexBuffer(part.VertexBuffer);
+                ibo = this.engine.BufferManager.CreateIndexBuffer(part.IndexBuffer);
             }
 
             if (vbo != null)
             {
                 vData.SetBinding(vbo);
+            }
+            if (ibo != null)
+            {
+                iData.indexBuffer = ibo;
             }
 
             for (int i = 0; i < model.Meshes.Count; i++)

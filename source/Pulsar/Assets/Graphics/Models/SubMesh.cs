@@ -106,7 +106,7 @@ namespace Pulsar.Assets.Graphics.Models
             get 
             {
                 this.renderData.vertexData = this.shareVertexBuffer ? this.parent.vertexData : this.vertexData;
-                this.renderData.iBuffer = this.UseIndexes ? this.parent.IBuffer : null;
+                this.renderData.indexData = this.UseIndexes ? this.parent.indexData : null;
 
                 return this.renderData;
             }  

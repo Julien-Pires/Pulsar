@@ -22,7 +22,7 @@ namespace Pulsar.Graphics
 
         private GameServiceContainer services;
         private Renderer renderer;
-        private VertexBufferManager vertexManager;
+        private BufferManager bufferManager;
         private Dictionary<string, SceneTree> scenes = new Dictionary<string, SceneTree>();
 
         #endregion
@@ -40,13 +40,13 @@ namespace Pulsar.Graphics
                 throw new ArgumentNullException("Services cannot be null");
             }
             this.services = services;
-            GraphicsDeviceManager deviceService = services.GetService(typeof(IGraphicsDeviceService)) as GraphicsDeviceManager;
+            GraphicsDeviceManager deviceService = services.GetService(typeof(IGraphicsDeviceManager)) as GraphicsDeviceManager;
             if (deviceService == null)
             {
                 throw new ArgumentNullException("No Graphics device service found");
             }
             this.renderer = new Renderer(deviceService.GraphicsDevice);
-            this.vertexManager = new VertexBufferManager(this);
+            this.bufferManager = new BufferManager(deviceService);
         }
 
         #endregion
@@ -84,9 +84,9 @@ namespace Pulsar.Graphics
 
         #region Properties
 
-        public VertexBufferManager VertexBufferManager
+        public BufferManager BufferManager
         {
-            get { return this.vertexManager; }
+            get { return this.bufferManager; }
         }
 
         internal Renderer Renderer
