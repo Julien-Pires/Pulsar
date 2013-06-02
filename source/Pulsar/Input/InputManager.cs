@@ -25,7 +25,7 @@ namespace Pulsar.Input
 
         #region Methods
 
-        public void CreatePlayer(short player)
+        public PlayerInput CreatePlayer(short player)
         {
             if (this.players.ContainsKey(player))
             {
@@ -37,6 +37,8 @@ namespace Pulsar.Input
                 PlayerIndex = player
             };
             this.players.Add(player, input);
+
+            return input;
         }
 
         public bool RemovePlayer(short player)
