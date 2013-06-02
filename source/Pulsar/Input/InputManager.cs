@@ -46,6 +46,11 @@ namespace Pulsar.Input
             return this.players.Remove(player);
         }
 
+        public void RemoveAllPlayers()
+        {
+            this.players.Clear();
+        }
+
         public PlayerInput GetPlayer(short player)
         {
             return this.players[player];
