@@ -29,13 +29,16 @@ namespace Pulsar.Input
             this.currentContext = null;
         }
 
-        public void CreateContext(string name)
+        public VirtualInput CreateContext(string name)
         {
             if (this.contextMap.ContainsKey(name))
             {
                 throw new Exception(string.Format("A context named {0} already exists", name));
             }
-            this.contextMap.Add(name, new VirtualInput());
+            VirtualInput vInput = new VirtualInput();
+            this.contextMap.Add(name, vInput);
+
+            return vInput;
         }
 
         public bool RemoveContext(string name)
