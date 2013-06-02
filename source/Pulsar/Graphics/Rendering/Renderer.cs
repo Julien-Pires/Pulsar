@@ -17,9 +17,10 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
         
-        private GraphicsDevice graphicDevice = null;
+        private GraphicsDevice graphicDevice;
         private InstanceBatchManager instancingManager;
-        private GBufferPass gBufferPass = null;
+        private GBufferPass gBufferPass;
+        private FrameInfo frameInfo;
 
         #endregion
 
@@ -29,9 +30,10 @@ namespace Pulsar.Graphics.Rendering
         /// Constructor of the GraphicsRenderer class
         /// </summary>
         /// <param name="gDevice">Graphic device used by this instance</param>
-        internal Renderer(GraphicsDevice gDevice)
+        internal Renderer(GraphicsDevice gDevice, FrameInfo frameInfo)
         {
             this.graphicDevice = gDevice;
+            this.frameInfo = frameInfo;
             this.instancingManager = new InstanceBatchManager(this);
             this.gBufferPass = new GBufferPass(this);
         }
@@ -53,6 +55,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         private void BeginFrame()
         {
+            this.frameInfo.PrepareNewRendering();
             this.instancingManager.Reset();
             this.graphicDevice.Clear(Color.Black);
         }
@@ -85,6 +88,7 @@ namespace Pulsar.Graphics.Rendering
             this.gBufferPass.Render(queue, cam);
 
             this.EndFrame();
+            this.frameInfo.Framecount++;
         }
 
         internal void RenderGeometry(IRenderable geometry)
@@ -113,6 +117,11 @@ namespace Pulsar.Graphics.Rendering
             this.graphicDevice.DrawIndexedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount,
                 renderInfo.startIndex, renderInfo.triangleCount);
             this.UnsetBuffers();
+
+            this.frameInfo.PrimitiveCount += renderInfo.triangleCount;
+            this.frameInfo.VertexCount += renderInfo.vertexCount;
+            this.frameInfo.SubMeshCount++;
+            this.frameInfo.DrawCall++;
         }
 
         internal void RenderNonIndexedGeometry(IRenderable geometry)
@@ -121,6 +130,11 @@ namespace Pulsar.Graphics.Rendering
             this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
             this.graphicDevice.DrawPrimitives(renderInfo.primitive, renderInfo.startIndex, renderInfo.triangleCount);
             this.UnsetBuffers();
+
+            this.frameInfo.PrimitiveCount += renderInfo.triangleCount;
+            this.frameInfo.VertexCount += renderInfo.vertexCount;
+            this.frameInfo.SubMeshCount++;
+            this.frameInfo.DrawCall++;
         }
 
         /// <summary>
@@ -138,6 +152,11 @@ namespace Pulsar.Graphics.Rendering
             this.graphicDevice.DrawInstancedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount, 
                 renderInfo.startIndex, renderInfo.triangleCount, batch.InstanceCount);
             this.UnsetBuffers();
+
+            this.frameInfo.PrimitiveCount += renderInfo.triangleCount;
+            this.frameInfo.VertexCount += renderInfo.vertexCount;
+            this.frameInfo.SubMeshCount++;
+            this.frameInfo.DrawCall++;
         }
 
         #endregion

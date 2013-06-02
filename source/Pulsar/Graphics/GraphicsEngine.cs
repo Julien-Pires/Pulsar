@@ -21,6 +21,7 @@ namespace Pulsar.Graphics
         #region Fields
 
         private GameServiceContainer services;
+        private FrameInfo frameInfo = new FrameInfo();
         private Renderer renderer;
         private BufferManager bufferManager;
         private Dictionary<string, SceneTree> scenes = new Dictionary<string, SceneTree>();
@@ -45,13 +46,18 @@ namespace Pulsar.Graphics
             {
                 throw new ArgumentNullException("No Graphics device service found");
             }
-            this.renderer = new Renderer(deviceService.GraphicsDevice);
+            this.renderer = new Renderer(deviceService.GraphicsDevice, this.frameInfo);
             this.bufferManager = new BufferManager(deviceService);
         }
 
         #endregion
 
         #region Methods
+
+        public void Update(GameTime time)
+        {
+            this.frameInfo.Update(time);
+        }
 
         /// <summary>
         /// Create a scene graph
@@ -83,6 +89,11 @@ namespace Pulsar.Graphics
         #endregion
 
         #region Properties
+
+        public FrameInfo FrameInfo
+        {
+            get { return this.frameInfo; }
+        }
 
         public BufferManager BufferManager
         {

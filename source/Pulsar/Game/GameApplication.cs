@@ -81,6 +81,7 @@ namespace Pulsar.Game
             base.Update(gameTime);
 
             this.inputService.Input.Update();
+            this.gEngine.Engine.Update(gameTime);
         }
 
         /// <summary>

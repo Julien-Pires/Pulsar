@@ -83,6 +83,7 @@
     <Compile Include="Core\Pool.cs" />
     <Compile Include="Graphics\BoundingVolume.cs" />
     <Compile Include="Graphics\Factory.cs" />
+    <Compile Include="Graphics\FrameInfo.cs" />
     <Compile Include="Graphics\GraphicsEngine.cs" />
     <Compile Include="Graphics\GraphicsEngineService.cs" />
     <Compile Include="Graphics\IGraphicsEngineService.cs" />
