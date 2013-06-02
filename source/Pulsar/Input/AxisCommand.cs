@@ -14,7 +14,7 @@ namespace Pulsar.Input
 
         private AxisEvent axisEvent;
         private Axis axis;
-        private CommandCheckState checkMethod;
+        private CheckCommandState checkMethod;
 
         #endregion
 

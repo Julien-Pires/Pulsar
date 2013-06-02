@@ -16,7 +16,7 @@ namespace Pulsar.Input
 
         private ButtonEvent buttonEvent;
         private Button button;
-        private CommandCheckState checkMethod;
+        private CheckCommandState checkMethod;
 
         #endregion
 

@@ -15,6 +15,17 @@ namespace Pulsar.Input
 
         #endregion
 
+        #region Constructors
+
+        internal InputAction(string name, InputActionFired action, VirtualInput owner)
+        {
+            this.Name = name;
+            this.actionMethod = action;
+            this.Owner = owner;
+        }
+
+        #endregion
+
         #region Methods
 
         internal void Update()
@@ -61,7 +72,6 @@ namespace Pulsar.Input
         public InputActionFired ActionMethod
         {
             get { return this.actionMethod; }
-            internal set { this.actionMethod = value; }
         }
 
         #endregion

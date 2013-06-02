@@ -52,12 +52,7 @@ namespace Pulsar.Input
                 throw new Exception(string.Format("An action named {0} already exists", name));
             }
 
-            InputAction action = new InputAction()
-            {
-                Name = name,
-                Owner = this,
-                ActionMethod = actionDelegate
-            };
+            InputAction action = new InputAction(name, actionDelegate, this);
             this.actions.Add(action);
             this.actionsMap.Add(name, this.actions.Count - 1);
 
