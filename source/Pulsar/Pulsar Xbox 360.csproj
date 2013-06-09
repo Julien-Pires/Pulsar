@@ -80,7 +80,6 @@
     <Compile Include="Core\IEventHandler.cs" />
     <Compile Include="Core\Mediator.cs" />
     <Compile Include="Core\Message.cs" />
-    <Compile Include="Core\MessagePoolTracker.cs" />
     <Compile Include="Core\Pool.cs" />
     <Compile Include="Graphics\BoundingVolume.cs" />
     <Compile Include="Graphics\Factory.cs" />
