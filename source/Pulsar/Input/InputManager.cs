@@ -7,12 +7,14 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Pulsar.Input
 {
+    [Flags]
     public enum InputDevice 
     { 
-        None,
-        Mouse,
-        Keyboard,
-        GamePad
+        None = 0,
+        Mouse = 1,
+        Keyboard = 2,
+        GamePad = 4,
+        AllGamePad = 8
     }
 
     public sealed class InputManager
@@ -20,12 +22,13 @@ namespace Pulsar.Input
         #region Fields
 
         private Dictionary<short, PlayerInput> players = new Dictionary<short, PlayerInput>();
+        private AbstractButton[] allButtons;
 
         #endregion
 
         #region Methods
 
-        public void CreatePlayer(short player)
+        public PlayerInput CreatePlayer(short player)
         {
             if (this.players.ContainsKey(player))
             {
@@ -37,11 +40,18 @@ namespace Pulsar.Input
                 PlayerIndex = player
             };
             this.players.Add(player, input);
+
+            return input;
         }
 
         public bool RemovePlayer(short player)
         {
             return this.players.Remove(player);
+        }
+
+        public void RemoveAllPlayers()
+        {
+            this.players.Clear();
         }
 
         public PlayerInput GetPlayer(short player)
@@ -55,16 +65,11 @@ namespace Pulsar.Input
             Mouse.Update();
 #endif
             Keyboard.Update();
-            GamePad.Update();
+            GamePad.UpdatePads();
 
-            Dictionary<short, PlayerInput>.ValueCollection values = this.players.Values;
-            foreach (PlayerInput plInput in values)
+            foreach (PlayerInput plInput in this.players.Values)
             {
-                VirtualInput current = plInput.CurrentContext;
-                if (current != null)
-                {
-                    current.Update();
-                }
+                plInput.Update();
             }
         }
 

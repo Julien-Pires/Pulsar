@@ -8,6 +8,7 @@ namespace Pulsar.Input
     {
         #region Fields
 
+        internal List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
         private Dictionary<string, int> buttonsMap = new Dictionary<string, int>();
         private Dictionary<string, int> axesMap = new Dictionary<string, int>();
         private Dictionary<string, int> actionsMap = new Dictionary<string, int>();
@@ -29,6 +30,7 @@ namespace Pulsar.Input
 
         internal void Update()
         {
+            this.ButtonPressed.Clear();
             for (int i = 0; i < buttons.Count; i++)
             {
                 this.buttons[i].Update();
@@ -45,6 +47,11 @@ namespace Pulsar.Input
             }
         }
 
+        public bool AnyKeyPressed()
+        {
+            return this.ButtonPressed.Count > 0;
+        }
+
         public InputAction CreateAction(string name, InputActionFired actionDelegate)
         {
             if (this.actionsMap.ContainsKey(name))
@@ -52,12 +59,7 @@ namespace Pulsar.Input
                 throw new Exception(string.Format("An action named {0} already exists", name));
             }
 
-            InputAction action = new InputAction()
-            {
-                Name = name,
-                Owner = this,
-                ActionMethod = actionDelegate
-            };
+            InputAction action = new InputAction(name, actionDelegate, this);
             this.actions.Add(action);
             this.actionsMap.Add(name, this.actions.Count - 1);
 
@@ -193,6 +195,12 @@ namespace Pulsar.Input
                 }
             }
         }
+
+        #endregion
+
+        #region Properties
+
+        public InputDevice AssociatedDevice { get; set; }
 
         #endregion
     }

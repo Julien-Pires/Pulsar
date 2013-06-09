@@ -2,7 +2,7 @@
 
 namespace Pulsar.Input
 {
-    public enum ButtonEvent
+    public enum ButtonEventType : byte
     {
         IsPressed,
         IsReleased,
@@ -14,15 +14,15 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private ButtonEvent buttonEvent;
+        private ButtonEventType buttonEvent;
         private Button button;
-        private CommandCheckState checkMethod;
+        private CheckCommandState checkMethod;
 
         #endregion
 
         #region Constructors
 
-        internal ButtonCommand(Button btn, ButtonEvent btnEvent)
+        internal ButtonCommand(Button btn, ButtonEventType btnEvent)
         {
             this.button = btn;
             this.buttonEvent = btnEvent;
@@ -37,13 +37,13 @@ namespace Pulsar.Input
         {
             switch (this.buttonEvent)
             {
-                case ButtonEvent.IsPressed: this.checkMethod = this.IsPressed;
+                case ButtonEventType.IsPressed: this.checkMethod = this.IsPressed;
                     break;
-                case ButtonEvent.IsReleased: this.checkMethod = this.IsReleased;
+                case ButtonEventType.IsReleased: this.checkMethod = this.IsReleased;
                     break;
-                case ButtonEvent.IsDown: this.checkMethod = this.IsDown;
+                case ButtonEventType.IsDown: this.checkMethod = this.IsDown;
                     break;
-                case ButtonEvent.IsUp: this.checkMethod = this.IsUp;
+                case ButtonEventType.IsUp: this.checkMethod = this.IsUp;
                     break;
                 default: throw new Exception("Invalid command event code provided");
                     break;

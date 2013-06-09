@@ -12,27 +12,26 @@ namespace Pulsar.Input
             #region Fields
 
             public readonly short Priority;
-            public readonly bool IsAnalogBinding;
-            public readonly AnalogButton AnalogKey;
-            public readonly DigitalButton NegativeButton;
-            public readonly DigitalButton PositiveButton;
+            public readonly AbstractButton negative;
+            public readonly AbstractButton positive;
+            private readonly bool digital;
 
             #endregion
 
             #region Constructors
 
-            internal AxisBinding(AnalogButton btn, short priority)
+            internal AxisBinding(AbstractButton button, short priority)
             {
-                this.AnalogKey = btn;
-                this.IsAnalogBinding = true;
+                this.positive = button;
                 this.Priority = priority;
             }
 
-            internal AxisBinding(DigitalButton negBtn, DigitalButton posBtn, short priority)
+            internal AxisBinding(AbstractButton negative, AbstractButton positive, short priority)
             {
-                this.NegativeButton = negBtn;
-                this.PositiveButton = posBtn;
+                this.negative = negative;
+                this.positive = positive;
                 this.Priority = priority;
+                this.digital = true;
             }
 
             #endregion
@@ -64,21 +63,21 @@ namespace Pulsar.Input
         private float value;
         private bool inverse;
         private float deadZone = 0.0f;
-        private int player = 0;
+        private short player = 0;
         private float sensitivity = 1.0f;
 
         #endregion
 
         #region Methods
 
-        public void AddButton(AnalogButton btn, short priority)
+        public void AddButton(AbstractButton btn, short priority)
         {
             AxisBinding binding = new AxisBinding(btn, priority);
             this.hardwareButtons.Add(binding);
             this.hardwareButtons.Sort(binding.Comparison);
         }
 
-        public void AddButton(DigitalButton negative, DigitalButton positive, short priority)
+        public void AddButton(AbstractButton negative, AbstractButton positive, short priority)
         {
             AxisBinding binding = new AxisBinding(negative, positive, priority);
             this.hardwareButtons.Add(binding);
@@ -98,16 +97,11 @@ namespace Pulsar.Input
             for (int i = 0; i < this.hardwareButtons.Count; i++)
             {
                 AxisBinding binding = this.hardwareButtons[i];
-                if (!binding.IsAnalogBinding)
+                AbstractButton positive = binding.positive;
+                if (positive.Type == ButtonType.Digital)
                 {
-                    if (binding.PositiveButton.IsDown(this.player))
-                    {
-                        rawValue += 1.0f;
-                    }
-                    if (binding.NegativeButton.IsDown(this.player))
-                    {
-                        rawValue -= 1.0f;
-                    }
+                    rawValue += positive.GetValue(this.player);
+                    rawValue -= binding.negative.GetValue(this.player);
 
                     if (rawValue != 0.0f)
                     {
@@ -120,9 +114,9 @@ namespace Pulsar.Input
                 }
                 else
                 {
-                    rawValue = binding.AnalogKey.GetValue(this.player);
+                    rawValue = positive.GetValue(this.player);
 
-                    if (binding.AnalogKey.Device == InputDevice.GamePad)
+                    if (positive.Device == InputDevice.GamePad)
                     {
                         if ((rawValue < this.deadZone) && (rawValue > -this.deadZone))
                         {
@@ -157,7 +151,7 @@ namespace Pulsar.Input
 
         public VirtualInput Owner { get; internal set; }
 
-        public int PlayerIndex
+        public short PlayerIndex
         {
             get { return this.player; }
             set

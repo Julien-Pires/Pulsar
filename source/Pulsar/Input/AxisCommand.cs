@@ -2,7 +2,7 @@
 
 namespace Pulsar.Input
 {
-    public enum AxisEvent
+    public enum AxisEventType : byte
     {
         IsInactive,
         IsActive
@@ -12,15 +12,15 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private AxisEvent axisEvent;
+        private AxisEventType axisEvent;
         private Axis axis;
-        private CommandCheckState checkMethod;
+        private CheckCommandState checkMethod;
 
         #endregion
 
         #region Constructors
 
-        internal AxisCommand(Axis axis, AxisEvent axisEvent)
+        internal AxisCommand(Axis axis, AxisEventType axisEvent)
         {
             this.axis = axis;
             this.axisEvent = axisEvent;
@@ -35,9 +35,9 @@ namespace Pulsar.Input
         {
             switch (this.axisEvent)
             {
-                case AxisEvent.IsInactive: this.checkMethod = this.IsInactive;
+                case AxisEventType.IsInactive: this.checkMethod = this.IsInactive;
                     break;
-                case AxisEvent.IsActive: this.checkMethod = this.IsActive;
+                case AxisEventType.IsActive: this.checkMethod = this.IsActive;
                     break;
                 default: throw new Exception("Invalid command event code provided");
                     break;

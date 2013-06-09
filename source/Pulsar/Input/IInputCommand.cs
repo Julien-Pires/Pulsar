@@ -2,7 +2,7 @@
 
 namespace Pulsar.Input
 {
-    internal delegate bool CommandCheckState();
+    internal delegate bool CheckCommandState();
 
     internal interface IInputCommand
     {
