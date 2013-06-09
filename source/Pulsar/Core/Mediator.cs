@@ -10,9 +10,9 @@ namespace Pulsar.Core
     /// A message is made of an EventType object, the mediator receives messages
     /// and dispatches them according to the event object find in each messages
     /// Mediator can send message in real time (trigger) or add them to a queue
-    /// which is processed at the end of the update loop
+    /// which is processed later
     /// </summary>
-    public sealed class Mediator : Singleton<Mediator>
+    public sealed class Mediator
     {
         #region Fields
 
