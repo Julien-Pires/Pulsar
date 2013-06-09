@@ -12,25 +12,16 @@ namespace Pulsar.Input
             #region Fields
 
             public readonly short Priority;
-            public readonly bool IsAnalogBinding;
-            public readonly AnalogButton AnalogKey;
-            public readonly DigitalButton DigitalKey;
+            public readonly AbstractButton Button;
 
             #endregion
 
             #region Constructors
 
-            internal ButtonBinding(AnalogButton btn, short priority)
+            internal ButtonBinding(AbstractButton btn, short priority)
             {
+                this.Button = btn;
                 this.Priority = priority;
-                this.IsAnalogBinding = true;
-                this.AnalogKey = btn;
-            }
-
-            internal ButtonBinding(DigitalButton btn, short priority)
-            {
-                this.Priority = priority;
-                this.DigitalKey = btn;
             }
 
             #endregion
@@ -63,20 +54,13 @@ namespace Pulsar.Input
         private bool down = false;
         private float pressedValue = 0.0f;
         private float deadZone = 0.0f;
-        private int player = 0;
+        private short player = 0;
 
         #endregion
 
         #region Methods
 
-        public void AddButton(AnalogButton btn, short priority)
-        {
-            ButtonBinding binding = new ButtonBinding(btn, priority);
-            this.hardwareButtons.Add(binding);
-            this.hardwareButtons.Sort(binding.Comparison);
-        }
-
-        public void AddButton(DigitalButton btn, short priority)
+        public void AddButton(AbstractButton btn, short priority)
         {
             ButtonBinding binding = new ButtonBinding(btn, priority);
             this.hardwareButtons.Add(binding);
@@ -95,29 +79,18 @@ namespace Pulsar.Input
             bool activated = false;
             for (int i = 0; i < this.hardwareButtons.Count; i++)
             {
-                ButtonBinding binding = this.hardwareButtons[i];
-                if (!binding.IsAnalogBinding)
+                AbstractButton btn = this.hardwareButtons[i].Button;
+                if (btn.Type == ButtonType.Digital)
                 {
-                    this.down = binding.DigitalKey.IsDown(this.player);
-                    if (this.down)
-                    {
-                        this.pressedValue = 1.0f;
-                        activated = true;
-                    }
-                    else
-                    {
-                        this.pressedValue = 0.0f;
-                    }
+                    this.pressedValue = btn.GetValue(this.player);
+                    this.down = this.pressedValue > 0.0f;
                 }
                 else
                 {
-                    this.pressedValue = binding.AnalogKey.GetValue(this.player);
+                    this.pressedValue = btn.GetValue(this.player);
                     this.down = this.pressedValue > this.deadZone;
-                    if (this.down)
-                    {
-                        activated = true;
-                    }
                 }
+                activated = this.down;
 
                 if (activated)
                 {
@@ -134,7 +107,7 @@ namespace Pulsar.Input
 
         public VirtualInput Owner { get; internal set; }
 
-        public int PlayerIndex
+        public short PlayerIndex
         {
             get { return this.player; }
             set

@@ -68,23 +68,23 @@ namespace PulsarDemo.SceneDemo
             Axis vertical = new Axis() { Name = CameraController.verticalName, Inverse = true };
             
 #if WINDOWS
-            forward.AddButton(new DigitalButton(Keys.Z), 0);
-            forward.AddButton(new DigitalButton(Keys.Up), 1);
-            back.AddButton(new DigitalButton(Keys.S), 0);
-            back.AddButton(new DigitalButton(Keys.Down), 1);
-            right.AddButton(new DigitalButton(Keys.D), 0);
-            right.AddButton(new DigitalButton(Keys.Right), 1);
-            left.AddButton(new DigitalButton(Keys.Q), 0);
-            left.AddButton(new DigitalButton(Keys.Left), 1);
-            horizontal.AddButton(new AnalogButton(MouseAnalogButtons.MouseX), 0);
-            vertical.AddButton(new AnalogButton(MouseAnalogButtons.MouseY), 0);
+            forward.AddButton(new AbstractButton(Keys.Z), 0);
+            forward.AddButton(new AbstractButton(Keys.Up), 1);
+            back.AddButton(new AbstractButton(Keys.S), 0);
+            back.AddButton(new AbstractButton(Keys.Down), 1);
+            right.AddButton(new AbstractButton(Keys.D), 0);
+            right.AddButton(new AbstractButton(Keys.Right), 1);
+            left.AddButton(new AbstractButton(Keys.Q), 0);
+            left.AddButton(new AbstractButton(Keys.Left), 1);
+            horizontal.AddButton(new AbstractButton(MouseAnalogButtons.MouseX), 0);
+            vertical.AddButton(new AbstractButton(MouseAnalogButtons.MouseY), 0);
 #endif
-            forward.AddButton(new DigitalButton(Buttons.LeftThumbstickUp), 2);
-            back.AddButton(new DigitalButton(Buttons.LeftThumbstickDown), 2);
-            right.AddButton(new DigitalButton(Buttons.LeftThumbstickRight), 2);
-            left.AddButton(new DigitalButton(Buttons.LeftThumbstickLeft), 2);
-            horizontal.AddButton(new AnalogButton(GamePadAnalogButtons.RightThumbStickX), 1);
-            vertical.AddButton(new AnalogButton(GamePadAnalogButtons.RightThumbStickY), 1);
+            forward.AddButton(new AbstractButton(Buttons.LeftThumbstickUp), 2);
+            back.AddButton(new AbstractButton(Buttons.LeftThumbstickDown), 2);
+            right.AddButton(new AbstractButton(Buttons.LeftThumbstickRight), 2);
+            left.AddButton(new AbstractButton(Buttons.LeftThumbstickLeft), 2);
+            horizontal.AddButton(new AbstractButton(AnalogButtons.RightThumbStickX), 1);
+            vertical.AddButton(new AbstractButton(AnalogButtons.RightThumbStickY), 1);
 
             this.currentInput.AddButton(forward);
             this.currentInput.AddButton(back);

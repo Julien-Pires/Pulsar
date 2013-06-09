@@ -8,6 +8,7 @@ namespace Pulsar.Input
     {
         #region Fields
 
+        internal List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
         private Dictionary<string, int> buttonsMap = new Dictionary<string, int>();
         private Dictionary<string, int> axesMap = new Dictionary<string, int>();
         private Dictionary<string, int> actionsMap = new Dictionary<string, int>();
@@ -29,6 +30,7 @@ namespace Pulsar.Input
 
         internal void Update()
         {
+            this.ButtonPressed.Clear();
             for (int i = 0; i < buttons.Count; i++)
             {
                 this.buttons[i].Update();
@@ -43,6 +45,11 @@ namespace Pulsar.Input
             {
                 this.actions[i].Update();
             }
+        }
+
+        public bool AnyKeyPressed()
+        {
+            return this.ButtonPressed.Count > 0;
         }
 
         public InputAction CreateAction(string name, InputActionFired actionDelegate)
@@ -188,6 +195,12 @@ namespace Pulsar.Input
                 }
             }
         }
+
+        #endregion
+
+        #region Properties
+
+        public InputDevice AssociatedDevice { get; set; }
 
         #endregion
     }

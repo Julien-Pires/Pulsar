@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
+using Pulsar.Extension;
+
 using XnaGamePad = Microsoft.Xna.Framework.Input.GamePad;
 
 namespace Pulsar.Input
 {
-    public enum GamePadAnalogButtons 
+    public enum AnalogButtons 
     { 
         LeftThumbStickX, 
         LeftThumbStickY,
@@ -22,7 +24,9 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private static int gamePadCount = 4;
+        private const short gamePadCount = 4;
+        private static Buttons[] AllDigital;
+        internal static List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
         private static GamePad[] gamePads = new GamePad[GamePad.gamePadCount];
 
         private PlayerIndex gamePadIndex;
@@ -46,11 +50,12 @@ namespace Pulsar.Input
 
         static GamePad()
         {
-            for (int i = 0; i < GamePad.gamePadCount; i++)
+            for (short i = 0; i < GamePad.gamePadCount; i++)
             {
                 GamePad pad = new GamePad((PlayerIndex)i);
                 GamePad.gamePads[i] = pad;
             }
+            GamePad.Initialize();
         }
 
         internal GamePad(PlayerIndex index)
@@ -62,12 +67,40 @@ namespace Pulsar.Input
 
         #region Methods
 
-        internal static void Update()
+        internal static void Initialize()
         {
-            for (int i = 0; i < GamePad.gamePadCount; i++)
+#if !XBOX
+            GamePad.AllDigital = (Buttons[])Enum.GetValues(typeof(Buttons));
+#else
+            GamePad.AllDigital = EnumExtension.GetValues<Buttons>();
+#endif
+        }
+
+        internal static void UpdatePads()
+        {
+            GamePad.ButtonPressed.Clear(); 
+            for (short i = 0; i < GamePad.gamePadCount; i++)
             {
-                GamePad.gamePads[i].UpdatePad();
+                GamePad pad = GamePad.gamePads[i];
+                pad.Update();
+
+                if (pad.IsConnected)
+                {
+                    for (short j = 0; j < GamePad.AllDigital.Length; j++)
+                    {
+                        if (pad.IsPressed(GamePad.AllDigital[j]))
+                        {
+                            AbstractButton btn = new AbstractButton(GamePad.AllDigital[j]);
+                            GamePad.ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, i));
+                        }
+                    }
+                }
             }
+        }
+
+        public static bool AnyKeyPressed()
+        {
+            return GamePad.ButtonPressed.Count > 0;
         }
 
         public static void HookConnectedEvent(EventHandler<GamePadEventArgs> listener)
@@ -107,7 +140,7 @@ namespace Pulsar.Input
             return GamePad.gamePads[player];
         }
 
-        internal void UpdatePad()
+        internal void Update()
         {
             this.previousState = this.currentState;
             this.currentState = XnaGamePad.GetState(this.gamePadIndex);
@@ -147,21 +180,21 @@ namespace Pulsar.Input
             }
         }
 
-        public float GetValue(GamePadAnalogButtons btn)
+        public float GetValue(AnalogButtons btn)
         {
             switch (btn)
             {
-                case GamePadAnalogButtons.LeftThumbStickX: return this.currentState.ThumbSticks.Left.X;
+                case AnalogButtons.LeftThumbStickX: return this.currentState.ThumbSticks.Left.X;
                     break;
-                case GamePadAnalogButtons.LeftThumbStickY: return this.currentState.ThumbSticks.Left.Y;
+                case AnalogButtons.LeftThumbStickY: return this.currentState.ThumbSticks.Left.Y;
                     break;
-                case GamePadAnalogButtons.RightThumbStickX: return this.currentState.ThumbSticks.Right.X;
+                case AnalogButtons.RightThumbStickX: return this.currentState.ThumbSticks.Right.X;
                     break;
-                case GamePadAnalogButtons.RightThumbStickY: return this.currentState.ThumbSticks.Right.Y;
+                case AnalogButtons.RightThumbStickY: return this.currentState.ThumbSticks.Right.Y;
                     break;
-                case GamePadAnalogButtons.LeftTrigger: return this.currentState.Triggers.Left;
+                case AnalogButtons.LeftTrigger: return this.currentState.Triggers.Left;
                     break;
-                case GamePadAnalogButtons.RightTrigger: return this.currentState.Triggers.Right;
+                case AnalogButtons.RightTrigger: return this.currentState.Triggers.Right;
                     break;
             }
 

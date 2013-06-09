@@ -42,14 +42,14 @@ namespace Pulsar.Input
             }
         }
 
-        public void AddCommand(string buttonName, ButtonEvent btnEvent)
+        public void AddCommand(string buttonName, ButtonEventType btnEvent)
         {
             Button btn = this.Owner.GetButton(buttonName);
             ButtonCommand command = new ButtonCommand(btn, btnEvent);
             this.commands.Add(command);
         }
 
-        public void AddCommand(string axisName, AxisEvent axisEvent)
+        public void AddCommand(string axisName, AxisEventType axisEvent)
         {
             Axis axis = this.Owner.GetAxis(axisName);
             AxisCommand command = new AxisCommand(axis, axisEvent);

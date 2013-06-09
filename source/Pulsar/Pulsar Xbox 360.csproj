@@ -75,6 +75,7 @@
     <Compile Include="Core\EventType.cs" />
     <Compile Include="Core\Singleton.cs" />
     <Compile Include="Extension\ArrayExtension.cs" />
+    <Compile Include="Extension\EnumExtension.cs" />
     <Compile Include="Game\GameApplication.cs" />
     <Compile Include="Core\IEventHandler.cs" />
     <Compile Include="Core\Mediator.cs" />
@@ -115,12 +116,12 @@
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
     <Compile Include="Graphics\SpeedFrustum.cs" />
-    <Compile Include="Input\AnalogButton.cs" />
+    <Compile Include="Input\AbstractButton.cs" />
     <Compile Include="Input\Axis.cs" />
     <Compile Include="Input\AxisCommand.cs" />
     <Compile Include="Input\Button.cs" />
     <Compile Include="Input\ButtonCommand.cs" />
-    <Compile Include="Input\DigitalButton.cs" />
+    <Compile Include="Input\ButtonEvent.cs" />
     <Compile Include="Input\GamePad.cs" />
     <Compile Include="Input\GamePadEventArgs.cs" />
     <Compile Include="Input\IInputCommand.cs" />

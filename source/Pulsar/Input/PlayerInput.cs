@@ -23,6 +23,54 @@ namespace Pulsar.Input
 
         #region Methods
 
+        internal void Update()
+        {
+            if (this.currentContext != null)
+            {
+                this.currentContext.Update();
+                this.DispatchButtonEvent();
+            }
+        }
+
+        private void DispatchButtonEvent()
+        {
+            InputDevice device = this.currentContext.AssociatedDevice;
+#if WINDOWS
+            if ((device & InputDevice.Mouse) == InputDevice.Mouse)
+            {
+                for (short i = 0; i < Mouse.ButtonPressed.Count; i++)
+                {
+                    this.currentContext.ButtonPressed.Add(Mouse.ButtonPressed[i]);
+                }
+            }
+#endif
+            if ((device & InputDevice.Keyboard) == InputDevice.Keyboard)
+            {
+                for (short i = 0; i < Keyboard.ButtonPressed.Count; i++)
+                {
+                    this.currentContext.ButtonPressed.Add(Keyboard.ButtonPressed[i]);
+                }
+            }
+            if ((device & InputDevice.GamePad) == InputDevice.GamePad)
+            {
+                for(short i = 0; i < GamePad.ButtonPressed.Count; i++)
+                {
+                    ButtonEvent btnEvent = GamePad.ButtonPressed[i];
+                    if (btnEvent.Index == this.PlayerIndex)
+                    {
+                        this.currentContext.ButtonPressed.Add(btnEvent);
+                    }
+                }
+            }
+            else if ((device & InputDevice.AllGamePad) == InputDevice.AllGamePad)
+            {
+                for (short i = 0; i < GamePad.ButtonPressed.Count; i++)
+                {
+                    this.currentContext.ButtonPressed.Add(GamePad.ButtonPressed[i]);
+                }
+            }
+        }
+
         public void Reset()
         {
             this.contextMap.Clear();
