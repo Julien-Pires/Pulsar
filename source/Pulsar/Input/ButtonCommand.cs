@@ -2,6 +2,9 @@
 
 namespace Pulsar.Input
 {
+    /// <summary>
+    /// Type of event for a button
+    /// </summary>
     public enum ButtonEventType : byte
     {
         IsPressed,
@@ -10,6 +13,9 @@ namespace Pulsar.Input
         IsUp
     }
 
+    /// <summary>
+    /// Check the state of a button against a specific event
+    /// </summary>
     internal sealed class ButtonCommand : IInputCommand
     {
         #region Fields
@@ -22,6 +28,11 @@ namespace Pulsar.Input
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of ButtonCommand class
+        /// </summary>
+        /// <param name="btn">Button instance</param>
+        /// <param name="btnEvent">Type of event</param>
         internal ButtonCommand(Button btn, ButtonEventType btnEvent)
         {
             this.button = btn;
@@ -33,6 +44,9 @@ namespace Pulsar.Input
 
         #region Methods
 
+        /// <summary>
+        /// Assign a method that check the state of the button for a specific event
+        /// </summary>
         private void AssignCheckMethod()
         {
             switch (this.buttonEvent)
@@ -50,21 +64,37 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Check if the button has just been pressed
+        /// </summary>
+        /// <returns></returns>
         private bool IsPressed()
         {
             return this.button.IsPressed;
         }
 
+        /// <summary>
+        /// Check if the button has just been released
+        /// </summary>
+        /// <returns></returns>
         private bool IsReleased()
         {
             return this.button.IsReleased;
         }
 
+        /// <summary>
+        /// Check if the button is down
+        /// </summary>
+        /// <returns></returns>
         private bool IsDown()
         {
             return this.button.IsDown;
         }
 
+        /// <summary>
+        /// Check if the button is up
+        /// </summary>
+        /// <returns></returns>
         private bool IsUp()
         {
             return this.button.IsUp;
@@ -74,6 +104,9 @@ namespace Pulsar.Input
 
         #region Properties
 
+        /// <summary>
+        /// Get a value that indicates if the commande has been triggered
+        /// </summary>
         public bool IsTriggered
         {
             get { return this.checkMethod(); }

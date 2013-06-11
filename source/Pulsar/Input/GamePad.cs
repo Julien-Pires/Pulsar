@@ -10,6 +10,9 @@ using XnaGamePad = Microsoft.Xna.Framework.Input.GamePad;
 
 namespace Pulsar.Input
 {
+    /// <summary>
+    /// Enumerates analog buttons for a gamepad
+    /// </summary>
     public enum AnalogButtons 
     { 
         LeftThumbStickX, 
@@ -20,6 +23,9 @@ namespace Pulsar.Input
         RightTrigger 
     }
 
+    /// <summary>
+    /// Allows to retrieve state of a Xbox 360 controller
+    /// </summary>
     public sealed class GamePad
     {
         #region Fields
@@ -48,6 +54,9 @@ namespace Pulsar.Input
 
         #region Constructors
 
+        /// <summary>
+        /// Static constructor of GamePad class
+        /// </summary>
         static GamePad()
         {
             for (short i = 0; i < GamePad.gamePadCount; i++)
@@ -58,6 +67,10 @@ namespace Pulsar.Input
             GamePad.Initialize();
         }
 
+        /// <summary>
+        /// Constructor of GamePad class
+        /// </summary>
+        /// <param name="index"></param>
         internal GamePad(PlayerIndex index)
         {
             this.gamePadIndex = index;
@@ -67,6 +80,9 @@ namespace Pulsar.Input
 
         #region Methods
 
+        /// <summary>
+        /// Initialize static GamePad
+        /// </summary>
         internal static void Initialize()
         {
 #if !XBOX
@@ -76,6 +92,9 @@ namespace Pulsar.Input
 #endif
         }
 
+        /// <summary>
+        /// Update the four gamepad
+        /// </summary>
         internal static void UpdatePads()
         {
             GamePad.ButtonPressed.Clear(); 
@@ -98,11 +117,19 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Check if any key has been pressed on any gamepad
+        /// </summary>
+        /// <returns>Return true if any key has been pressed otherwise false</returns>
         public static bool AnyKeyPressed()
         {
             return GamePad.ButtonPressed.Count > 0;
         }
 
+        /// <summary>
+        /// Hook a delegate to the gamepad connected event
+        /// </summary>
+        /// <param name="listener">Delegate to trigger</param>
         public static void HookConnectedEvent(EventHandler<GamePadEventArgs> listener)
         {
             for (int i = 0; i < GamePad.gamePadCount; i++)
@@ -111,6 +138,10 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Unhook a delegate to the gamepad connected event
+        /// </summary>
+        /// <param name="listener">Delegate to trigger</param>
         public static void UnhookConnectedEvent(EventHandler<GamePadEventArgs> listener)
         {
             for (int i = 0; i < GamePad.gamePadCount; i++)
@@ -119,6 +150,10 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Hook a delegate to the gamepad disconnected event
+        /// </summary>
+        /// <param name="listener">Delegate to trigger</param>
         public static void HookDisconnectedEvent(EventHandler<GamePadEventArgs> listener)
         {
             for (int i = 0; i < GamePad.gamePadCount; i++)
@@ -127,6 +162,10 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Unhook a delegate to the gamepad disconnected event
+        /// </summary>
+        /// <param name="listener">Delegate to trigger</param>
         public static void UnhookDisconnectedEvent(EventHandler<GamePadEventArgs> listener)
         {
             for (int i = 0; i < GamePad.gamePadCount; i++)
@@ -135,11 +174,19 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Get a gamepad
+        /// </summary>
+        /// <param name="player">Index of the gamepad</param>
+        /// <returns>Return an instance of GamePad class</returns>
         public static GamePad GetGamePad(int player)
         {
             return GamePad.gamePads[player];
         }
 
+        /// <summary>
+        /// Update one gamepad state
+        /// </summary>
         internal void Update()
         {
             this.previousState = this.currentState;
@@ -180,6 +227,11 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Get the value for an analog button
+        /// </summary>
+        /// <param name="btn">Analog button to find</param>
+        /// <returns>Return the value of the button</returns>
         public float GetValue(AnalogButtons btn)
         {
             switch (btn)
@@ -201,21 +253,41 @@ namespace Pulsar.Input
             return 0.0f;
         }
 
+        /// <summary>
+        /// Check if a button has just been pressed
+        /// </summary>
+        /// <param name="button">Button to check</param>
+        /// <returns>Return true if the button has just been pressed otherwise false</returns>
         public bool IsPressed(Buttons button)
         {
             return (this.previousState.IsButtonUp(button)) && (this.currentState.IsButtonDown(button));
         }
 
+        /// <summary>
+        /// Check if a button has just been released
+        /// </summary>
+        /// <param name="button">Button to check</param>
+        /// <returns>Return true if the button has just been released otherwise false</returns>
         public bool IsReleased(Buttons button)
         {
             return (this.previousState.IsButtonDown(button)) && (this.currentState.IsButtonUp(button));
         }
 
+        /// <summary>
+        /// Check if a button is down
+        /// </summary>
+        /// <param name="button">Button to check</param>
+        /// <returns>Return true if the button is down otherwise false</returns>
         public bool IsDown(Buttons button)
         {
             return this.currentState.IsButtonDown(button);
         }
 
+        /// <summary>
+        /// Check if a button is up
+        /// </summary>
+        /// <param name="button">Button to check</param>
+        /// <returns>Return true if the button is up otherwise false</returns>
         public bool IsUp(Buttons button)
         {
             return this.currentState.IsButtonUp(button);
@@ -225,46 +297,73 @@ namespace Pulsar.Input
 
         #region Properties
 
+        /// <summary>
+        /// Get the position of the left thumbstick
+        /// </summary>
         public Vector2 ThumbLeftPosition
         {
             get { return this.currentState.ThumbSticks.Left; }
         }
 
+        /// <summary>
+        /// Get the position of the right thumbstick
+        /// </summary>
         public Vector2 ThumbRightPosition
         {
             get { return this.currentState.ThumbSticks.Right; }
         }
 
+        /// <summary>
+        /// Get the delta of the left thumbstick
+        /// </summary>
         public Vector2 ThumbLeftDelta
         {
             get { return this.thumbLeftDelta; }
         }
 
+        /// <summary>
+        /// Get the delta of the right thumbstick
+        /// </summary>
         public Vector2 ThumbRightDelta
         {
             get { return this.thumbRightDelta; }
         }
 
+        /// <summary>
+        /// Get the value of the left trigger
+        /// </summary>
         public float LeftTrigger
         {
             get { return this.currentState.Triggers.Left; }
         }
 
+        /// <summary>
+        /// Get the value of the right trigger
+        /// </summary>
         public float RightTrigger
         {
             get { return this.currentState.Triggers.Right; }
         }
 
+        /// <summary>
+        /// Get the delta of the left trigger
+        /// </summary>
         public float LeftTriggerDelta
         {
             get { return this.triggerLeftDelta; }
         }
 
+        /// <summary>
+        /// Get the delta of the right trigger
+        /// </summary>
         public float RightTriggerDelta
         {
             get { return this.triggerRightDelta; }
         }
 
+        /// <summary>
+        /// Get a value that indicates if the gamepad is connected
+        /// </summary>
         public bool IsConnected
         {
             get { return this.currentState.IsConnected; }

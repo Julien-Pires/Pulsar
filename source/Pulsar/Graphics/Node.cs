@@ -12,6 +12,9 @@ namespace Pulsar.Graphics
     /// </summary>
     public enum TransformSpace { World, Parent, Local };
 
+    /// <summary>
+    /// Base class for a scene tree node
+    /// </summary>
     public abstract class Node
     {
         #region Fields

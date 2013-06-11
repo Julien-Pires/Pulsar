@@ -4,26 +4,45 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Pulsar.Input
 {
+    /// <summary>
+    /// Describe a type of button
+    /// </summary>
     public enum ButtonType
     {
         Analog,
         Digital
     }
 
+    /// <summary>
+    /// Allows to abstract any button for use in virtual input
+    /// </summary>
     public struct AbstractButton
     {
         #region Fields
 
+        /// <summary>
+        /// The device associated with the button
+        /// </summary>
         public readonly InputDevice Device;
 
+        /// <summary>
+        /// The type of button
+        /// </summary>
         public readonly ButtonType Type;
 
+        /// <summary>
+        /// The button code
+        /// </summary>
         public readonly int ButtonCode;
 
         #endregion
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of AbstractButton struct
+        /// </summary>
+        /// <param name="button">Underlying button</param>
         public AbstractButton(MouseButtons button)
         {
             this.Device = InputDevice.Mouse;
@@ -31,6 +50,10 @@ namespace Pulsar.Input
             this.ButtonCode = (int)button;
         }
 
+        /// <summary>
+        /// Constructor of AbstractButton struct
+        /// </summary>
+        /// <param name="button">Underlying button</param>
         public AbstractButton(MouseAnalogButtons button)
         {
             this.Device = InputDevice.Mouse;
@@ -38,6 +61,10 @@ namespace Pulsar.Input
             this.ButtonCode = (int)button;
         }
 
+        /// <summary>
+        /// Constructor of AbstractButton struct
+        /// </summary>
+        /// <param name="button">Underlying button</param>
         public AbstractButton(Keys button)
         {
             this.Device = InputDevice.Keyboard;
@@ -45,6 +72,10 @@ namespace Pulsar.Input
             this.ButtonCode = (int)button;
         }
 
+        /// <summary>
+        /// Constructor of AbstractButton struct
+        /// </summary>
+        /// <param name="button">Underlying button</param>
         public AbstractButton(AnalogButtons button)
         {
             this.Device = InputDevice.GamePad;
@@ -52,6 +83,10 @@ namespace Pulsar.Input
             this.ButtonCode = (int)button;
         }
 
+        /// <summary>
+        /// Constructor of AbstractButton struct
+        /// </summary>
+        /// <param name="button">Underlying button</param>
         public AbstractButton(Buttons button)
         {
             this.Device = InputDevice.GamePad;
@@ -63,6 +98,11 @@ namespace Pulsar.Input
 
         #region Methods
 
+        /// <summary>
+        /// Get the value of the underlying button
+        /// </summary>
+        /// <param name="player">Index of the player</param>
+        /// <returns>Return the value of the button</returns>
         public float GetValue(short player)
         {
             float val = 0.0f;

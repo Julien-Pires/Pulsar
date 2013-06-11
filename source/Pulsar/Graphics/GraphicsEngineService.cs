@@ -4,6 +4,9 @@ using XnaGame = Microsoft.Xna.Framework.Game;
 
 namespace Pulsar.Graphics
 {
+    /// <summary>
+    /// Service containing the graphic engine
+    /// </summary>
     public sealed class GraphicsEngineService : IGraphicsEngineService
     {
         #region Fields
@@ -15,6 +18,10 @@ namespace Pulsar.Graphics
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of GraphicsEngineService class
+        /// </summary>
+        /// <param name="game">Instance of Game class</param>
         public GraphicsEngineService(XnaGame game)
         {
             if (game == null)
@@ -34,6 +41,9 @@ namespace Pulsar.Graphics
 
         #region Properties
 
+        /// <summary>
+        /// Get the graphic engine
+        /// </summary>
         public GraphicsEngine Engine
         {
             get { return this.engine; }
