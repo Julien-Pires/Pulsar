@@ -31,9 +31,9 @@ namespace Pulsar.Graphics
         #region Constructors
 
         /// <summary>
-        /// Constructor of the Root class
+        /// Constructor of the GraphicsEngine class
         /// </summary>
-        /// <param name="gDevice">Graphic device used by the rendering system</param>
+        /// <param name="services">GameServiceContainer used by the engine</param>
         public GraphicsEngine(GameServiceContainer services)
         {
             if (services == null)
@@ -54,6 +54,10 @@ namespace Pulsar.Graphics
 
         #region Methods
 
+        /// <summary>
+        /// Update the graphic engine
+        /// </summary>
+        /// <param name="time">Time since the last update</param>
         public void Update(GameTime time)
         {
             this.frameInfo.Update(time);
@@ -90,16 +94,25 @@ namespace Pulsar.Graphics
 
         #region Properties
 
+        /// <summary>
+        /// Get information about the last frame
+        /// </summary>
         public FrameInfo FrameInfo
         {
             get { return this.frameInfo; }
         }
 
+        /// <summary>
+        /// Get the buffer manager
+        /// </summary>
         public BufferManager BufferManager
         {
             get { return this.bufferManager; }
         }
 
+        /// <summary>
+        /// Get the renderer
+        /// </summary>
         internal Renderer Renderer
         {
             get { return this.renderer; }

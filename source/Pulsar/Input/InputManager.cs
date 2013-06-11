@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Pulsar.Input
 {
+    /// <summary>
+    /// Enumerate all input devices
+    /// </summary>
     [Flags]
     public enum InputDevice 
     { 
@@ -17,6 +20,9 @@ namespace Pulsar.Input
         AllGamePad = 8
     }
 
+    /// <summary>
+    /// Manages all input device and virtual input
+    /// </summary>
     public sealed class InputManager
     {
         #region Fields
@@ -28,6 +34,11 @@ namespace Pulsar.Input
 
         #region Methods
 
+        /// <summary>
+        /// Create a new player
+        /// </summary>
+        /// <param name="player">Index of the player</param>
+        /// <returns>Return a PlayerInput instance</returns>
         public PlayerInput CreatePlayer(short player)
         {
             if (this.players.ContainsKey(player))
@@ -44,21 +55,37 @@ namespace Pulsar.Input
             return input;
         }
 
+        /// <summary>
+        /// Remove a player
+        /// </summary>
+        /// <param name="player">Index of the player</param>
+        /// <returns>Return true if the player is removed otherwise false</returns>
         public bool RemovePlayer(short player)
         {
             return this.players.Remove(player);
         }
 
+        /// <summary>
+        /// Remove all players
+        /// </summary>
         public void RemoveAllPlayers()
         {
             this.players.Clear();
         }
 
+        /// <summary>
+        /// Get a player
+        /// </summary>
+        /// <param name="player">Index of the player</param>
+        /// <returns>Return a PlayerInput instance</returns>
         public PlayerInput GetPlayer(short player)
         {
             return this.players[player];
         }
 
+        /// <summary>
+        /// Update the states of devices and players
+        /// </summary>
         internal void Update()
         {
 #if WINDOWS

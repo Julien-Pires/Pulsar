@@ -131,6 +131,11 @@ namespace Pulsar.Assets.Graphics.Models
             return this.GetSubMesh(idx);
         }
 
+        /// <summary>
+        /// Rename a submesh
+        /// </summary>
+        /// <param name="name">Old name to replace</param>
+        /// <param name="newName">New name to use</param>
         public void RenameSubMesh(string name, string newName)
         {
             int idx = this.GetSubMeshIndex(name);

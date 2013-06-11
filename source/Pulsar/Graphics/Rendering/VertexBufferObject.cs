@@ -4,10 +4,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsar.Graphics.Rendering
 {
+    /// <summary>
+    /// Store and manage a vertex buffer
+    /// </summary>
     public sealed class VertexBufferObject : BufferObject<IVertexBufferWrapper>
     {
         #region Constructors
 
+        /// <summary>
+        /// Constructor of VertexBufferObject class
+        /// </summary>
+        /// <param name="buffer">Vertex buffer managed by the buffe object</param>
         internal VertexBufferObject(VertexBuffer buffer)
         {
             if (buffer == null)
@@ -30,16 +37,25 @@ namespace Pulsar.Graphics.Rendering
 
         #region Properties
 
+        /// <summary>
+        /// Get the number of vertices in the buffer
+        /// </summary>
         public int VerticesCount
         {
             get { return this.wrapper.Buffer.VertexCount; }
         }
 
+        /// <summary>
+        /// Get the vertex declaration associated with the buffer
+        /// </summary>
         public VertexDeclaration Declaration
         {
             get { return this.Buffer.VertexDeclaration; }
         }
 
+        /// <summary>
+        /// Get the vertex buffer
+        /// </summary>
         internal VertexBuffer Buffer
         {
             get { return this.wrapper.Buffer; }

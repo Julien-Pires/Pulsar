@@ -2,12 +2,18 @@
 
 namespace Pulsar.Input
 {
+    /// <summary>
+    /// Type of event for an axis
+    /// </summary>
     public enum AxisEventType : byte
     {
         IsInactive,
         IsActive
     }
 
+    /// <summary>
+    /// Check the state of an axis against a specific event
+    /// </summary>
     internal sealed class AxisCommand : IInputCommand
     {
         #region Fields
@@ -20,6 +26,11 @@ namespace Pulsar.Input
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of AxisCommand
+        /// </summary>
+        /// <param name="axis">Axis instance</param>
+        /// <param name="axisEvent">Event to check for</param>
         internal AxisCommand(Axis axis, AxisEventType axisEvent)
         {
             this.axis = axis;
@@ -31,6 +42,9 @@ namespace Pulsar.Input
 
         #region Methods
 
+        /// <summary>
+        /// Assign a method that check the state of the axis
+        /// </summary>
         private void AssignCheckMethod()
         {
             switch (this.axisEvent)
@@ -44,11 +58,19 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Check if an axis is inactive
+        /// </summary>
+        /// <returns>Return true if the axis is inactive othterwise false</returns>
         private bool IsInactive()
         {
             return this.axis.Value == 0.0f;
         }
 
+        /// <summary>
+        /// Check if an axis is active
+        /// </summary>
+        /// <returns>Return true if the axis is active otherwise false</returns>
         private bool IsActive()
         {
             return this.axis.Value > 0.0f;
@@ -58,6 +80,9 @@ namespace Pulsar.Input
 
         #region Properties
 
+        /// <summary>
+        /// Get a value that indicates if the command is triggered
+        /// </summary>
         public bool IsTriggered
         {
             get { return this.checkMethod(); }
