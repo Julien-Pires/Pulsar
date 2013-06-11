@@ -26,6 +26,13 @@ The following list is a non-exhaustive list of next features:
 - Light PrePass
 - and many others...
 
+Credits
+--------
+
+I would like to thanks following people and communities. Their works is a great source of inspiration:
+
+- Ogre3D and Ogre community: Their engine is perfect and contains all functionalities we can seek in 3D engine.
+There is a number of similarities between Ogre3D engine and the graphics module of Pulsar.
 
 Authors
 --------

@@ -3,40 +3,55 @@ using System.Collections.Generic;
 
 namespace Pulsar.Input
 {
+    /// <summary>
+    /// Describes a virtual button
+    /// </summary>
     public sealed class Button
     {
         #region Nested
 
+        /// <summary>
+        /// Describe a button priority
+        /// </summary>
         private class ButtonBinding
         {
             #region Fields
 
+            /// <summary>
+            /// Priority of the button
+            /// </summary>
             public readonly short Priority;
-            public readonly bool IsAnalogBinding;
-            public readonly AnalogButton AnalogKey;
-            public readonly DigitalButton DigitalKey;
+
+            /// <summary>
+            /// Button used by the binding
+            /// </summary>
+            public readonly AbstractButton Button;
 
             #endregion
 
             #region Constructors
 
-            internal ButtonBinding(AnalogButton btn, short priority)
+            /// <summary>
+            /// Constructor of ButtonBinding class
+            /// </summary>
+            /// <param name="btn">Button instance</param>
+            /// <param name="priority">Priority of the button</param>
+            internal ButtonBinding(AbstractButton btn, short priority)
             {
+                this.Button = btn;
                 this.Priority = priority;
-                this.IsAnalogBinding = true;
-                this.AnalogKey = btn;
-            }
-
-            internal ButtonBinding(DigitalButton btn, short priority)
-            {
-                this.Priority = priority;
-                this.DigitalKey = btn;
             }
 
             #endregion
 
             #region Methods
 
+            /// <summary>
+            /// Compare two instance of ButtonBinding
+            /// </summary>
+            /// <param name="first">First instance</param>
+            /// <param name="second">Second instance</param>
+            /// <returns>Return a value indicating the position of the first instance</returns>
             internal int Comparison(ButtonBinding first, ButtonBinding second)
             {
                 if (first.Priority < second.Priority)
@@ -63,31 +78,35 @@ namespace Pulsar.Input
         private bool down = false;
         private float pressedValue = 0.0f;
         private float deadZone = 0.0f;
-        private int player = 0;
+        private short player = 0;
 
         #endregion
 
         #region Methods
 
-        public void AddButton(AnalogButton btn, short priority)
+        /// <summary>
+        /// Link a real button to the virtual button
+        /// </summary>
+        /// <param name="btn">Button instance</param>
+        /// <param name="priority">Priority of the button</param>
+        public void AddButton(AbstractButton btn, short priority)
         {
             ButtonBinding binding = new ButtonBinding(btn, priority);
             this.hardwareButtons.Add(binding);
             this.hardwareButtons.Sort(binding.Comparison);
         }
 
-        public void AddButton(DigitalButton btn, short priority)
-        {
-            ButtonBinding binding = new ButtonBinding(btn, priority);
-            this.hardwareButtons.Add(binding);
-            this.hardwareButtons.Sort(binding.Comparison);
-        }
-
+        /// <summary>
+        /// Remove all real buttons
+        /// </summary>
         public void RemoveAllButtons()
         {
             this.hardwareButtons.Clear();
         }
 
+        /// <summary>
+        /// Update the button
+        /// </summary>
         internal void Update()
         {
             this.previousDown = this.down;
@@ -95,29 +114,18 @@ namespace Pulsar.Input
             bool activated = false;
             for (int i = 0; i < this.hardwareButtons.Count; i++)
             {
-                ButtonBinding binding = this.hardwareButtons[i];
-                if (!binding.IsAnalogBinding)
+                AbstractButton btn = this.hardwareButtons[i].Button;
+                if (btn.Type == ButtonType.Digital)
                 {
-                    this.down = binding.DigitalKey.IsDown(this.player);
-                    if (this.down)
-                    {
-                        this.pressedValue = 1.0f;
-                        activated = true;
-                    }
-                    else
-                    {
-                        this.pressedValue = 0.0f;
-                    }
+                    this.pressedValue = btn.GetValue(this.player);
+                    this.down = this.pressedValue > 0.0f;
                 }
                 else
                 {
-                    this.pressedValue = binding.AnalogKey.GetValue(this.player);
+                    this.pressedValue = btn.GetValue(this.player);
                     this.down = this.pressedValue > this.deadZone;
-                    if (this.down)
-                    {
-                        activated = true;
-                    }
                 }
+                activated = this.down;
 
                 if (activated)
                 {
@@ -130,11 +138,20 @@ namespace Pulsar.Input
 
         #region Properties
 
+        /// <summary>
+        /// Get or set the name
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Get the owner of the button
+        /// </summary>
         public VirtualInput Owner { get; internal set; }
 
-        public int PlayerIndex
+        /// <summary>
+        /// Get or set the player index
+        /// </summary>
+        public short PlayerIndex
         {
             get { return this.player; }
             set
@@ -147,32 +164,50 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Get or set the deadzone
+        /// </summary>
         public float DeadZone
         {
             get { return this.deadZone; }
             set { this.deadZone = value; }
         }
 
+        /// <summary>
+        /// Get a value that indicates if the button is down
+        /// </summary>
         public bool IsDown
         {
             get { return this.down; }
         }
 
+        /// <summary>
+        /// Get a value that indicates if the button is up
+        /// </summary>
         public bool IsUp
         {
             get { return !this.down; }
         }
 
+        /// <summary>
+        /// Get a value that indicates if the button has just been pressed
+        /// </summary>
         public bool IsPressed
         {
             get { return !this.previousDown && this.down; }
         }
 
+        /// <summary>
+        /// Get a value that indicates if the button has just been released
+        /// </summary>
         public bool IsReleased
         {
             get { return this.previousDown && !this.down; }
         }
 
+        /// <summary>
+        /// Get the value of the button
+        /// </summary>
         public float Value
         {
             get { return this.pressedValue; }

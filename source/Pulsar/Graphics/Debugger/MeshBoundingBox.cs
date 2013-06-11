@@ -26,11 +26,11 @@ namespace Pulsar.Graphics.Debugger
         private const int verticesCount = 24;
         private const int primitiveCount = 12;
 
-        private DynamicVertexBuffer vBuffer = null;
-        private IndexBuffer iBuffer = null;
-        private RenderingInfo renderInfo = null;
-        private Material material = null;
-        private int[] indices = new int[MeshBoundingBox.verticesCount];
+        private VertexBufferObject vbo;
+        private IndexBufferObject ibo;
+        private RenderingInfo renderInfo;
+        private Material material;
+        private short[] indices = new short[MeshBoundingBox.verticesCount];
         private VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[MeshBoundingBox.verticesCount];
 
         #endregion
@@ -54,24 +54,37 @@ namespace Pulsar.Graphics.Debugger
         /// </summary>
         private void InitBuffers()
         {
-            for (int i = 0; i < MeshBoundingBox.verticesCount; i++)
+            GraphicsEngineService engineService = GameApplication.GameServices.GetService(typeof(IGraphicsEngineService)) as GraphicsEngineService;
+            if (engineService == null)
+            {
+                throw new ArgumentException("GraphicsEngineService cannot be found");
+            }
+
+            BufferManager bufferMngr = engineService.Engine.BufferManager;
+            VertexData vData = new VertexData();
+            this.vbo = bufferMngr.CreateVertexBuffer(BufferType.DynamicWriteOnly, typeof(VertexPositionNormalTexture),
+                MeshBoundingBox.verticesCount);
+            vData.SetBinding(this.vbo);
+
+            IndexData iData = new IndexData();
+            this.ibo = bufferMngr.CreateIndexBuffer(BufferType.DynamicWriteOnly, IndexElementSize.SixteenBits,
+                MeshBoundingBox.verticesCount);
+            this.ibo.SetData(this.indices);
+            iData.indexBuffer = ibo;
+
+            for (short i = 0; i < MeshBoundingBox.verticesCount; i++)
             {
                 indices[i] = i;
             }
-            this.vBuffer = new DynamicVertexBuffer(GameApplication.GameGraphicsDevice, typeof(VertexPositionNormalTexture),
-                MeshBoundingBox.verticesCount, BufferUsage.WriteOnly);
-            this.iBuffer = new IndexBuffer(GameApplication.GameGraphicsDevice, IndexElementSize.ThirtyTwoBits,
-                MeshBoundingBox.verticesCount, BufferUsage.WriteOnly);
-            this.iBuffer.SetData<int>(this.indices);
+
             this.renderInfo = new RenderingInfo()
             {
-                Primitive = PrimitiveType.LineList,
-                vBuffer = this.vBuffer,
-                iBuffer = this.iBuffer,
+                primitive = PrimitiveType.LineList,
+                vertexData = vData,
+                indexData = iData,
                 vertexCount = MeshBoundingBox.verticesCount,
                 triangleCount = MeshBoundingBox.primitiveCount
             };
-
             this.material = MaterialManager.Instance.LoadDefault();
             this.material.DiffuseColor = Color.White;
         }
@@ -117,8 +130,8 @@ namespace Pulsar.Graphics.Debugger
             this.vertices[21].Position = box.Max - yOffset;
             this.vertices[22].Position = box.Max - xOffset;
             this.vertices[23].Position = (box.Max - xOffset) - yOffset;
-            
-            this.vBuffer.SetData<VertexPositionNormalTexture>(this.vertices);
+
+            this.vbo.SetData(this.vertices);
         }
 
         #endregion

@@ -2,7 +2,10 @@
 
 namespace Pulsar.Input
 {
-    public enum ButtonEvent
+    /// <summary>
+    /// Type of event for a button
+    /// </summary>
+    public enum ButtonEventType : byte
     {
         IsPressed,
         IsReleased,
@@ -10,19 +13,27 @@ namespace Pulsar.Input
         IsUp
     }
 
+    /// <summary>
+    /// Check the state of a button against a specific event
+    /// </summary>
     internal sealed class ButtonCommand : IInputCommand
     {
         #region Fields
 
-        private ButtonEvent buttonEvent;
+        private ButtonEventType buttonEvent;
         private Button button;
-        private CommandCheckState checkMethod;
+        private CheckCommandState checkMethod;
 
         #endregion
 
         #region Constructors
 
-        internal ButtonCommand(Button btn, ButtonEvent btnEvent)
+        /// <summary>
+        /// Constructor of ButtonCommand class
+        /// </summary>
+        /// <param name="btn">Button instance</param>
+        /// <param name="btnEvent">Type of event</param>
+        internal ButtonCommand(Button btn, ButtonEventType btnEvent)
         {
             this.button = btn;
             this.buttonEvent = btnEvent;
@@ -33,38 +44,57 @@ namespace Pulsar.Input
 
         #region Methods
 
+        /// <summary>
+        /// Assign a method that check the state of the button for a specific event
+        /// </summary>
         private void AssignCheckMethod()
         {
             switch (this.buttonEvent)
             {
-                case ButtonEvent.IsPressed: this.checkMethod = this.IsPressed;
+                case ButtonEventType.IsPressed: this.checkMethod = this.IsPressed;
                     break;
-                case ButtonEvent.IsReleased: this.checkMethod = this.IsReleased;
+                case ButtonEventType.IsReleased: this.checkMethod = this.IsReleased;
                     break;
-                case ButtonEvent.IsDown: this.checkMethod = this.IsDown;
+                case ButtonEventType.IsDown: this.checkMethod = this.IsDown;
                     break;
-                case ButtonEvent.IsUp: this.checkMethod = this.IsUp;
+                case ButtonEventType.IsUp: this.checkMethod = this.IsUp;
                     break;
                 default: throw new Exception("Invalid command event code provided");
                     break;
             }
         }
 
+        /// <summary>
+        /// Check if the button has just been pressed
+        /// </summary>
+        /// <returns></returns>
         private bool IsPressed()
         {
             return this.button.IsPressed;
         }
 
+        /// <summary>
+        /// Check if the button has just been released
+        /// </summary>
+        /// <returns></returns>
         private bool IsReleased()
         {
             return this.button.IsReleased;
         }
 
+        /// <summary>
+        /// Check if the button is down
+        /// </summary>
+        /// <returns></returns>
         private bool IsDown()
         {
             return this.button.IsDown;
         }
 
+        /// <summary>
+        /// Check if the button is up
+        /// </summary>
+        /// <returns></returns>
         private bool IsUp()
         {
             return this.button.IsUp;
@@ -74,6 +104,9 @@ namespace Pulsar.Input
 
         #region Properties
 
+        /// <summary>
+        /// Get a value that indicates if the commande has been triggered
+        /// </summary>
         public bool IsTriggered
         {
             get { return this.checkMethod(); }

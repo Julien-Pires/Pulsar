@@ -25,8 +25,8 @@ namespace Pulsar.Assets.Graphics.Models
         private List<SubMesh> subMeshes = new List<SubMesh>();
         private Dictionary<string, int> subMeshNamesMap = new Dictionary<string, int>();
         private BoundingData bounds;
-        private VertexBuffer vBuffer;
-        private IndexBuffer iBuffer;
+        internal VertexData vertexData;
+        internal IndexData indexData;
 
         #endregion
 
@@ -52,6 +52,7 @@ namespace Pulsar.Assets.Graphics.Models
         {
             SubMesh sub = new SubMesh(this);
             this.subMeshes.Add(sub);
+            this.ComputeData();
 
             return sub;
         }
@@ -131,6 +132,18 @@ namespace Pulsar.Assets.Graphics.Models
         }
 
         /// <summary>
+        /// Rename a submesh
+        /// </summary>
+        /// <param name="name">Old name to replace</param>
+        /// <param name="newName">New name to use</param>
+        public void RenameSubMesh(string name, string newName)
+        {
+            int idx = this.GetSubMeshIndex(name);
+            this.subMeshNamesMap.Remove(name);
+            this.subMeshNamesMap.Add(newName, idx);
+        }
+
+        /// <summary>
         /// Get the index of a named submesh
         /// </summary>
         /// <param name="name">Name of the submesh</param>
@@ -147,29 +160,17 @@ namespace Pulsar.Assets.Graphics.Models
         }
 
         /// <summary>
-        /// Propagate changes to all child submesh
-        /// </summary>
-        private void ApplyChanges()
-        {
-            for (int i = 0; i < this.subMeshes.Count; i++)
-            {
-                RenderingInfo renderData = this.subMeshes[i].RenderInfo;
-                renderData.useIndexes = this.UseIndexes;
-                renderData.iBuffer = this.iBuffer;
-            }
-        }
-
-        /// <summary>
         /// Update mesh data, can be called by childs submesh to notify changes on them
         /// </summary>
         internal void ComputeData()
         {
-            this.VerticesCount = this.vBuffer.VertexCount;
+            this.VerticesCount = 0;
             this.PrimitiveCount = 0;
             for (int i = 0; i < this.subMeshes.Count; i++)
             {
-                SubMesh sub = this.subMeshes[i];
-                this.PrimitiveCount += sub.RenderInfo.triangleCount;
+                RenderingInfo renderData = this.subMeshes[i].RenderInfo;
+                this.VerticesCount += renderData.vertexCount;
+                this.PrimitiveCount += renderData.triangleCount;
             }
         }
 
@@ -234,34 +235,21 @@ namespace Pulsar.Assets.Graphics.Models
         public Matrix[] Bones { get; internal set; }
 
         /// <summary>
-        /// Get or set a boolean to enable index buffer
-        /// </summary>
-        public bool UseIndexes 
-        {
-            get { return this.useIndexes; }
-            set
-            {
-                this.useIndexes = value;
-                this.ApplyChanges();
-            }
-        }
-
-        /// <summary>
         /// Get the vertex buffer of the mesh
         /// </summary>
-        public VertexBuffer VBuffer
+        public VertexData VertexData
         {
-            get { return this.vBuffer; }
-            internal set { this.vBuffer = value; }
+            get { return this.vertexData; }
+            set { this.vertexData = value; }
         }
 
         /// <summary>
         /// Get the index buffer of the mesh
         /// </summary>
-        public IndexBuffer IBuffer
+        public IndexData IndexData
         {
-            get { return this.iBuffer; }
-            internal set { this.iBuffer = value; }
+            get { return this.indexData; }
+            set { this.indexData = value; }
         }
 
         #endregion

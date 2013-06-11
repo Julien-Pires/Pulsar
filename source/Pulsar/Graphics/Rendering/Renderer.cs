@@ -17,9 +17,10 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
         
-        private GraphicsDevice graphicDevice = null;
+        private GraphicsDevice graphicDevice;
         private InstanceBatchManager instancingManager;
-        private GBufferPass gBufferPass = null;
+        private GBufferPass gBufferPass;
+        private FrameInfo frameInfo;
 
         #endregion
 
@@ -29,9 +30,10 @@ namespace Pulsar.Graphics.Rendering
         /// Constructor of the GraphicsRenderer class
         /// </summary>
         /// <param name="gDevice">Graphic device used by this instance</param>
-        internal Renderer(GraphicsDevice gDevice)
+        internal Renderer(GraphicsDevice gDevice, FrameInfo frameInfo)
         {
             this.graphicDevice = gDevice;
+            this.frameInfo = frameInfo;
             this.instancingManager = new InstanceBatchManager(this);
             this.gBufferPass = new GBufferPass(this);
         }
@@ -53,6 +55,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         private void BeginFrame()
         {
+            this.frameInfo.PrepareNewRendering();
             this.instancingManager.Reset();
             this.graphicDevice.Clear(Color.Black);
         }
@@ -85,6 +88,19 @@ namespace Pulsar.Graphics.Rendering
             this.gBufferPass.Render(queue, cam);
 
             this.EndFrame();
+            this.frameInfo.Framecount++;
+        }
+
+        internal void RenderGeometry(IRenderable geometry)
+        {
+            if (geometry.RenderInfo.useIndexes)
+            {
+                this.RenderIndexedGeometry(geometry);
+            }
+            else
+            {
+                this.RenderNonIndexedGeometry(geometry);
+            }
         }
 
         /// <summary>
@@ -93,15 +109,32 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="geometry">IRenderable instance</param>
         /// <param name="view">View matrix</param>
         /// <param name="projection">Projection matrix</param>
-        internal void RenderGeometry(IRenderable geometry)
+        internal void RenderIndexedGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
-            this.graphicDevice.SetVertexBuffer(renderInfo.vBuffer, renderInfo.vertexOffset);
-            this.graphicDevice.Indices = renderInfo.iBuffer;
-            this.graphicDevice.DrawIndexedPrimitives(renderInfo.Primitive, 0, 0, renderInfo.vertexCount,
+            this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
+            this.graphicDevice.Indices = renderInfo.indexData.Buffer;
+            this.graphicDevice.DrawIndexedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount,
                 renderInfo.startIndex, renderInfo.triangleCount);
-
             this.UnsetBuffers();
+
+            this.frameInfo.PrimitiveCount += renderInfo.triangleCount;
+            this.frameInfo.VertexCount += renderInfo.vertexCount;
+            this.frameInfo.SubMeshCount++;
+            this.frameInfo.DrawCall++;
+        }
+
+        internal void RenderNonIndexedGeometry(IRenderable geometry)
+        {
+            RenderingInfo renderInfo = geometry.RenderInfo;
+            this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
+            this.graphicDevice.DrawPrimitives(renderInfo.primitive, renderInfo.startIndex, renderInfo.triangleCount);
+            this.UnsetBuffers();
+
+            this.frameInfo.PrimitiveCount += renderInfo.triangleCount;
+            this.frameInfo.VertexCount += renderInfo.vertexCount;
+            this.frameInfo.SubMeshCount++;
+            this.frameInfo.DrawCall++;
         }
 
         /// <summary>
@@ -113,16 +146,17 @@ namespace Pulsar.Graphics.Rendering
             if (batch.InstanceCount == 0)
                 return;
 
-            RenderingInfo info = batch.RenderInfo;
-            this.graphicDevice.SetVertexBuffers(
-                new VertexBufferBinding(info.vBuffer, info.vertexOffset, 0),
-                new VertexBufferBinding(batch.Buffer, 0, 1)
-            );
-            this.graphicDevice.Indices = info.iBuffer;
-            this.graphicDevice.DrawInstancedPrimitives(info.Primitive, 0, 0, info.vertexCount, info.startIndex, info.triangleCount,
-                batch.InstanceCount);
-
+            RenderingInfo renderInfo = batch.RenderInfo;
+            this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
+            this.graphicDevice.Indices = renderInfo.indexData.Buffer;
+            this.graphicDevice.DrawInstancedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount, 
+                renderInfo.startIndex, renderInfo.triangleCount, batch.InstanceCount);
             this.UnsetBuffers();
+
+            this.frameInfo.PrimitiveCount += renderInfo.triangleCount;
+            this.frameInfo.VertexCount += renderInfo.vertexCount;
+            this.frameInfo.SubMeshCount++;
+            this.frameInfo.DrawCall++;
         }
 
         #endregion

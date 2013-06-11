@@ -20,6 +20,12 @@ namespace Pulsar.Assets.Graphics.Models
     /// </summary>
     public sealed class PrefabFactory : Singleton<PrefabFactory>
     {
+        #region Fields
+
+        private GraphicsEngine engine;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -27,6 +33,13 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         private PrefabFactory()
         {
+            GameServiceContainer services = GameApplication.GameServices;
+            GraphicsEngineService engineService = services.GetService(typeof(IGraphicsEngineService)) as GraphicsEngineService;
+            if (engineService == null)
+            {
+                throw new ArgumentException("GraophicsEngine service cannot be found");
+            }
+            this.engine = engineService.Engine;
         }
 
         #endregion
@@ -46,7 +59,7 @@ namespace Pulsar.Assets.Graphics.Models
             float halfW = width / 2.0f;
             float halfH = height / 2.0f;
             float halfD = depth / 2.0f;
-            int[] indices = new int[verticesCount];
+            short[] indices = new short[verticesCount];
 
             Vector3 topLeftFront = new Vector3(-halfW, halfH, halfD);
             Vector3 topRightFront = new Vector3(halfW, halfH, halfD);
@@ -124,22 +137,30 @@ namespace Pulsar.Assets.Graphics.Models
             vertices[33] = new VertexPositionNormalTexture(topRightFront, rightNormal, texTopLeft);
             vertices[35] = new VertexPositionNormalTexture(bottomRightBack, rightNormal, texBottomRight);
 
-            for (int i = 0; i < verticesCount; i++)
+            for (short i = 0; i < verticesCount; i++)
             {
                 indices[i] = i;
             }
 
             string name = width + "x" + height + "x" + depth + "_box";
             Mesh mesh = MeshManager.Instance.LoadEmpty(name, "Default");
-            VertexBuffer vBuffer = mesh.VBuffer;
-            IndexBuffer iBuffer = mesh.IBuffer;
-            vBuffer.SetData<VertexPositionNormalTexture>(vertices);
-            iBuffer.SetData<int>(indices);
-            mesh.UseIndexes = true;
+
+            VertexData vData = mesh.vertexData;
+            VertexBufferObject vbo = this.engine.BufferManager.CreateVertexBuffer(BufferType.StaticWriteOnly, 
+                typeof(VertexPositionNormalTexture), verticesCount);
+            vbo.SetData(vertices);
+            vData.SetBinding(vbo);
+
+            IndexData iData = mesh.indexData;
+            IndexBufferObject ibo = this.engine.BufferManager.CreateIndexBuffer(BufferType.StaticWriteOnly,
+                IndexElementSize.SixteenBits, verticesCount);
+            ibo.SetData(indices);
+            iData.indexBuffer = ibo;
+
+            SubMesh sub = mesh.CreateSubMesh();
+            sub.SetRenderingInfo(PrimitiveType.TriangleList, 0, (verticesCount / 3), verticesCount);
 
             BoundingData bounds = this.ComputeBoundingVolume(vec3List);
-            SubMesh sub = mesh.CreateSubMesh();
-            sub.SetRenderingInfo(PrimitiveType.TriangleList, 0, (verticesCount / 3), verticesCount, 0);
             sub.BoundingVolume = bounds;
 
             return mesh;

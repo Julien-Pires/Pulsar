@@ -7,46 +7,53 @@ using Microsoft.Xna.Framework;
 namespace Pulsar.Core
 {
     /// <summary>
-    /// Base class for message used in event system
+    /// Struct for message used in event system
     /// A message is linked to a specific event, the mediator reads the event on the message
     /// in order to determine to which listener the message is send
     /// </summary>
-    public class Message
+    public struct Message
     {
         #region Fields
 
-        /// <summary>
-        /// Event used by this message
-        /// </summary>
-        public readonly EventType Event;
-        
-        protected object sender;
-        protected GameTime time;
+        private EventType eventType;
+
+        private object payload;
+
+        private GameTime time;
+
+        private object sender;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Constructor of Message class
+        /// Constructor of Message struct
         /// </summary>
-        public Message()
+        /// <param name="eventType">Type of event</param>
+        /// <param name="time">Time at which the message was sent</param>
+        /// <param name="sender">Sender of the message</param>
+        public Message(EventType eventType, GameTime time, object sender)
         {
+            this.eventType = eventType;
+            this.sender = sender;
+            this.time = time;
+            this.payload = null;
         }
 
-        #endregion
-
-        #region Methods
-
         /// <summary>
-        /// Recycle the message to reuse it
+        /// Constructor of Message struct
         /// </summary>
-        /// <param name="s">Sender of the message</param>
-        /// <param name="ti">Time at wich the message was sent</param>
-        public virtual void Recycle(object obj, GameTime time)
+        /// <param name="eventType">Type of event</param>
+        /// <param name="time">Time at which the message was sent</param>
+        /// <param name="sender">Sender of the message</param>
+        /// <param name="payload">Payload data</param>
+        public Message(EventType eventType, GameTime time, object sender, object payload)
         {
-            this.sender = obj;
+            this.eventType = eventType;
+            this.sender = sender;
             this.time = time;
+            this.payload = payload;
         }
 
         #endregion
@@ -54,19 +61,35 @@ namespace Pulsar.Core
         #region Properties
 
         /// <summary>
+        /// Get the type of event
+        /// </summary>
+        public EventType Event
+        {
+            get { return this.eventType; }
+        }
+
+        /// <summary>
+        /// Get the payload data
+        /// </summary>
+        public object Payload
+        {
+            get { return this.payload; }
+        }
+
+        /// <summary>
+        /// Get the time at which the message was sent
+        /// </summary>
+        public GameTime Time
+        {
+            get { return this.time; }
+        }
+
+        /// <summary>
         /// Get the sender of the message
         /// </summary>
         public object Sender
         {
             get { return this.sender; }
-        }
-
-        /// <summary>
-        /// Get the time at wich the message is send
-        /// </summary>
-        public GameTime Time
-        {
-            get { return this.time; }
         }
 
         #endregion

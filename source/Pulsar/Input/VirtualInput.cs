@@ -4,10 +4,14 @@ using System.Collections.Generic;
 
 namespace Pulsar.Input
 {
+    /// <summary>
+    /// Manages virtual button and axis
+    /// </summary>
     public sealed class VirtualInput
     {
         #region Fields
 
+        internal List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
         private Dictionary<string, int> buttonsMap = new Dictionary<string, int>();
         private Dictionary<string, int> axesMap = new Dictionary<string, int>();
         private Dictionary<string, int> actionsMap = new Dictionary<string, int>();
@@ -19,6 +23,9 @@ namespace Pulsar.Input
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of VirtualInput class
+        /// </summary>
         internal VirtualInput()
         {
         }
@@ -27,8 +34,12 @@ namespace Pulsar.Input
 
         #region Methods
 
+        /// <summary>
+        /// Update virtual input states
+        /// </summary>
         internal void Update()
         {
+            this.ButtonPressed.Clear();
             for (int i = 0; i < buttons.Count; i++)
             {
                 this.buttons[i].Update();
@@ -45,6 +56,21 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Check if any key has been pressed
+        /// </summary>
+        /// <returns></returns>
+        public bool AnyKeyPressed()
+        {
+            return this.ButtonPressed.Count > 0;
+        }
+
+        /// <summary>
+        /// Create a new action
+        /// </summary>
+        /// <param name="name">Name of the action</param>
+        /// <param name="actionDelegate">Delegate to call when the action is triggered</param>
+        /// <returns>Return an InputAction instance</returns>
         public InputAction CreateAction(string name, InputActionFired actionDelegate)
         {
             if (this.actionsMap.ContainsKey(name))
@@ -52,18 +78,18 @@ namespace Pulsar.Input
                 throw new Exception(string.Format("An action named {0} already exists", name));
             }
 
-            InputAction action = new InputAction()
-            {
-                Name = name,
-                Owner = this,
-                ActionMethod = actionDelegate
-            };
+            InputAction action = new InputAction(name, actionDelegate, this);
             this.actions.Add(action);
             this.actionsMap.Add(name, this.actions.Count - 1);
 
             return action;
         }
 
+        /// <summary>
+        /// Remove an action
+        /// </summary>
+        /// <param name="name">Name of the action</param>
+        /// <returns>Return true if the action is removed otherwise false</returns>
         public bool DeleteAction(string name)
         {
             int idx;
@@ -78,6 +104,11 @@ namespace Pulsar.Input
             return true;
         }
 
+        /// <summary>
+        /// Get an action
+        /// </summary>
+        /// <param name="name">Name of the action</param>
+        /// <returns>Return an InputAction instance</returns>
         public InputAction GetAction(string name)
         {
             int idx;
@@ -89,6 +120,10 @@ namespace Pulsar.Input
             return this.actions[idx];
         }
 
+        /// <summary>
+        /// Add a button
+        /// </summary>
+        /// <param name="btn">Button instance</param>
         public void AddButton(Button btn)
         {
             if (string.IsNullOrEmpty(btn.Name))
@@ -109,6 +144,10 @@ namespace Pulsar.Input
             btn.Owner = this;
         }
 
+        /// <summary>
+        /// Add an axis
+        /// </summary>
+        /// <param name="axis">Axis instance</param>
         public void AddAxis(Axis axis)
         {
             if(string.IsNullOrEmpty(axis.Name))
@@ -129,6 +168,11 @@ namespace Pulsar.Input
             axis.Owner = this;
         }
 
+        /// <summary>
+        /// Remove a button
+        /// </summary>
+        /// <param name="name">Name of the button</param>
+        /// <returns>Return true if the button is removed otherwise false</returns>
         public bool RemoveButton(string name)
         {
             int idx;
@@ -145,6 +189,11 @@ namespace Pulsar.Input
             return true;
         }
 
+        /// <summary>
+        /// Remove an axis
+        /// </summary>
+        /// <param name="name">Name of the axis</param>
+        /// <returns>Return true if the axis is removed otherwise false</returns>
         public bool RemoveAxis(string name)
         {
             int idx;
@@ -161,6 +210,11 @@ namespace Pulsar.Input
             return true;
         }
 
+        /// <summary>
+        /// Get a button
+        /// </summary>
+        /// <param name="name">Name of the button</param>
+        /// <returns>Return a button instance</returns>
         public Button GetButton(string name)
         {
             int idx;
@@ -172,6 +226,11 @@ namespace Pulsar.Input
             return this.buttons[idx];
         }
 
+        /// <summary>
+        /// Get an axis
+        /// </summary>
+        /// <param name="name">Name of the axis</param>
+        /// <returns>Return an axis instance</returns>
         public Axis GetAxis(string name)
         {
             int idx;
@@ -183,6 +242,11 @@ namespace Pulsar.Input
             return this.axes[idx];
         }
 
+        /// <summary>
+        /// Update a dictionary used as an index dictionary when an index is removed
+        /// </summary>
+        /// <param name="idx">Removed index</param>
+        /// <param name="map">Dictionary to update</param>
         private void UpdateIndexMap(int idx, Dictionary<string, int> map)
         {
             foreach (KeyValuePair<string, int> kvp in map)
@@ -193,6 +257,15 @@ namespace Pulsar.Input
                 }
             }
         }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Get the device enum that the virtual input is listening to
+        /// </summary>
+        public InputDevice AssociatedDevice { get; set; }
 
         #endregion
     }
