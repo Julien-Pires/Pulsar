@@ -91,6 +91,8 @@ namespace Pulsar.Game
         protected override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
+
+            this.gEngine.Engine.Render(gameTime);
         }
 
         #endregion

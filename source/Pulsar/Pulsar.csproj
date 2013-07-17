@@ -92,6 +92,7 @@
     <Compile Include="Core\Message.cs" />
     <Compile Include="Core\Pool.cs" />
     <Compile Include="Graphics\BoundingVolume.cs" />
+    <Compile Include="Graphics\WindowDisplayModeChangedEventArgs.cs" />
     <Compile Include="Graphics\FrameInfo.cs" />
     <Compile Include="Graphics\GraphicsEngineService.cs" />
     <Compile Include="Graphics\IGraphicsEngineService.cs" />
@@ -125,6 +126,8 @@
     <Compile Include="Graphics\SceneGraph\SceneNode.cs" />
     <Compile Include="Graphics\SpeedFrustum.cs" />
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
+    <Compile Include="Graphics\Window.cs" />
+    <Compile Include="Graphics\WindowFullScreenSwitchedEventArgs.cs" />
     <Compile Include="Input\AbstractButton.cs" />
     <Compile Include="Input\Axis.cs" />
     <Compile Include="Input\AxisCommand.cs" />

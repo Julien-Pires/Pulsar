@@ -22,6 +22,7 @@ namespace Pulsar.Graphics
 
         private GameServiceContainer services;
         private FrameInfo frameInfo = new FrameInfo();
+        private Window window;
         private Renderer renderer;
         private BufferManager bufferManager;
         private Dictionary<string, SceneTree> scenes = new Dictionary<string, SceneTree>();
@@ -46,6 +47,7 @@ namespace Pulsar.Graphics
             {
                 throw new ArgumentNullException("No Graphics device service found");
             }
+            this.window = new Window(deviceService);
             this.renderer = new Renderer(deviceService.GraphicsDevice, this.frameInfo);
             this.bufferManager = new BufferManager(deviceService);
         }
@@ -61,6 +63,11 @@ namespace Pulsar.Graphics
         public void Update(GameTime time)
         {
             this.frameInfo.Update(time);
+        }
+
+        public void Render(GameTime gameTime)
+        {
+            this.window.Render();
         }
 
         /// <summary>
@@ -100,6 +107,11 @@ namespace Pulsar.Graphics
         public FrameInfo FrameInfo
         {
             get { return this.frameInfo; }
+        }
+
+        public Window Window
+        {
+            get { return this.window; }
         }
 
         /// <summary>
