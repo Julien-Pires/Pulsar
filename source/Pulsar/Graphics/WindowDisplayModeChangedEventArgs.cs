@@ -8,8 +8,8 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        private DisplayMode mode;
-        private Window window;
+        private readonly DisplayMode _mode;
+        private readonly Window _window;
 
         #endregion
 
@@ -17,8 +17,8 @@ namespace Pulsar.Graphics
 
         public WindowDisplayModeChangedEventArgs(DisplayMode mode, Window win)
         {
-            this.mode = mode;
-            this.window = win;
+            _mode = mode;
+            _window = win;
         }
 
         #endregion
@@ -27,12 +27,12 @@ namespace Pulsar.Graphics
 
         public DisplayMode Mode
         {
-            get { return this.mode; }
+            get { return _mode; }
         }
 
         public Window Window
         {
-            get { return this.window; }
+            get { return _window; }
         }
 
         #endregion

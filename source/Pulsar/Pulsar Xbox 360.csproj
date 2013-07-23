@@ -115,6 +115,7 @@
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
     <Compile Include="Graphics\SpeedFrustum.cs" />
+    <Compile Include="Graphics\Viewport.cs" />
     <Compile Include="Graphics\Window.cs" />
     <Compile Include="Graphics\WindowDisplayModeChangedEventArgs.cs" />
     <Compile Include="Graphics\WindowFullScreenSwitchedEventArgs.cs" />

@@ -5,8 +5,6 @@ using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Extension;
-
 namespace Pulsar.Graphics
 {
     public enum ResizeRule
@@ -19,32 +17,97 @@ namespace Pulsar.Graphics
 
     public sealed class Window
     {
+        #region Nested
+
+        private sealed class ViewportBinding
+        {
+            #region Fields
+
+            private readonly int _id;
+
+            private ushort _zOrder;
+
+            private readonly Viewport _viewport;
+
+            #endregion
+
+            #region Constructor
+
+            public ViewportBinding(int id, Viewport vp)
+            {
+                _id = id;
+                _viewport = vp;
+                ZOrder = 0;
+            }
+
+            #endregion
+
+            #region Methods
+
+            public static int CompareByZOrder(ViewportBinding objOne, ViewportBinding objTwo)
+            {
+                if (objOne._zOrder > objTwo._zOrder) return -1;
+
+                return (objOne._zOrder < objTwo._zOrder) ? 1 : 0;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public int Id
+            {
+                get { return _id; }
+            }
+
+            public Viewport Viewport
+            {
+                get { return _viewport; }
+            }
+
+            public ushort ZOrder
+            {
+                get { return _zOrder; }
+                set
+                {
+                    _zOrder = value;
+                    _viewport.ZOrder = value;
+                }
+            }
+
+            #endregion
+        }
+
+        #endregion
+
         #region Fields
 
-        private GraphicsDeviceManager deviceManager;
-        private GraphicsDevice device;
-        private ResizeRule resizeRule = ResizeRule.None;
-        private ReadOnlyCollection<SurfaceFormat> supportedFormat;
-        private Dictionary<int, ReadOnlyCollection<DisplayMode>> supportedDisplayMode = new Dictionary<int, ReadOnlyCollection<DisplayMode>>();
-        private bool isDirty = true;
+        private int _viewportCounter;
+        private readonly GraphicsDeviceManager _deviceManager;
+        private readonly GraphicsDevice _device;
+        private ResizeRule _resizeRule = ResizeRule.None;
+        private ReadOnlyCollection<SurfaceFormat> _supportedFormat;
+        private readonly Dictionary<int, ReadOnlyCollection<DisplayMode>> _supportedDisplayMode = new Dictionary<int, ReadOnlyCollection<DisplayMode>>();
+        private readonly List<ViewportBinding> _viewports = new List<ViewportBinding>();
+        private bool _isDirty = true;
 
         #endregion
 
         #region Event
 
-        private event EventHandler<WindowDisplayModeChangedEventArgs> displayModeChanged;
-        private event EventHandler<WindowFullScreenSwitchedEventArgs> fullScreenSwitched;
+        private EventHandler<WindowDisplayModeChangedEventArgs> _onDisplayModeChanged;
+        private EventHandler<WindowFullScreenSwitchedEventArgs> _onFullScreenSwitched;
 
         public event EventHandler<WindowDisplayModeChangedEventArgs> DisplayModeChanged
         {
-            add { this.displayModeChanged += value; }
-            remove { this.displayModeChanged -= value; }
+            add { _onDisplayModeChanged += value; }
+            remove { _onDisplayModeChanged -= value; }
         }
 
         public event EventHandler<WindowFullScreenSwitchedEventArgs> FullScreenSwitched
         {
-            add { this.fullScreenSwitched += value; }
-            remove { this.fullScreenSwitched -= value; }
+            add { _onFullScreenSwitched += value; }
+            remove { _onFullScreenSwitched -= value; }
         }
 
         #endregion
@@ -55,15 +118,15 @@ namespace Pulsar.Graphics
         {
             if (deviceManager == null)
             {
-                throw new ArgumentNullException("GraphicsDeviceManager cannot be null");
+                throw new ArgumentNullException("deviceManager");
             }
             if (deviceManager.GraphicsDevice == null)
             {
-                throw new ArgumentNullException("GraphicsDevice cannot be null");
+                throw new Exception("GraphicsDevice cannot be null");
             }
-            this.deviceManager = deviceManager;
-            this.device = deviceManager.GraphicsDevice;
-            this.Initialize();
+            _deviceManager = deviceManager;
+            _device = deviceManager.GraphicsDevice;
+            Initialize();
         }
 
         #endregion
@@ -72,22 +135,77 @@ namespace Pulsar.Graphics
 
         private void Initialize()
         {
-            this.ExtractDisplayMode();
-            this.ExtractSupportedSurfaceFormat();
+            ExtractDisplayMode();
+            ExtractSupportedSurfaceFormat();
         }
 
         public void Render()
         {
-            if (this.isDirty)
+            if (_isDirty)
             {
-                this.ApplyChanges();
+                ApplyChanges();
             }
         }
 
         private void ApplyChanges()
         {
-            this.deviceManager.ApplyChanges();
-            this.isDirty = false;
+            _deviceManager.ApplyChanges();
+            _isDirty = false;
+        }
+
+        public int AddViewport(float width, float height, float top, float left)
+        {
+            Viewport vp = new Viewport(this, _device, width, height, top, left);
+            ViewportBinding binding = new ViewportBinding(_viewportCounter++, vp);
+            _viewports.Add(binding);
+
+            return binding.Id;
+        }
+
+        public bool RemoveViewport(int id)
+        {
+            int idx = -1;
+            for (int i = 0; i < _viewports.Count; i++)
+            {
+                ViewportBinding current = _viewports[i];
+                if(current.Id != id) continue;
+                idx = i;
+                break;
+            }
+
+            if (idx <= -1) return false;
+            _viewports.RemoveAt(idx);
+
+            return true;
+        }
+
+        public Viewport GetViewport(int id)
+        {
+            ViewportBinding binding = GetViewportBinding(id);
+
+            return binding == null ? null : binding.Viewport;
+        }
+
+        private ViewportBinding GetViewportBinding(int id)
+        {
+            ViewportBinding binding = null;
+            for (int i = 0; i < _viewports.Count; i++)
+            {
+                ViewportBinding current = _viewports[i];
+                if (current.Id != id) continue;
+                binding = current;
+                break;
+            }
+
+            return binding;
+        }
+
+        public void SetViewportZOrder(int id, ushort z)
+        {
+            ViewportBinding binding = GetViewportBinding(id);
+            if(binding == null) return;
+            binding.ZOrder = z;
+            _viewports.Sort(ViewportBinding.CompareByZOrder);
         }
 
         public void SetResolution(int width, int height)
@@ -101,22 +219,22 @@ namespace Pulsar.Graphics
                 throw new ArgumentException("Height cannot be inferior or equal to zero");
             }
 
-            this.deviceManager.PreferredBackBufferWidth = width;
-            this.deviceManager.PreferredBackBufferHeight = height;
-            this.isDirty = true;
+            _deviceManager.PreferredBackBufferWidth = width;
+            _deviceManager.PreferredBackBufferHeight = height;
+            _isDirty = true;
 
-            WindowDisplayModeChangedEventArgs args = new WindowDisplayModeChangedEventArgs(this.device.Adapter.CurrentDisplayMode, this);
-            this.OnDisplayModeChanged(this, args);
+            WindowDisplayModeChangedEventArgs args = new WindowDisplayModeChangedEventArgs(_device.Adapter.CurrentDisplayMode, this);
+            OnDisplayModeChanged(this, args);
         }
 
         public void SetFullScreen(bool isFullScreen)
         {
             if (isFullScreen)
             {
-                int newWidth = this.deviceManager.PreferredBackBufferWidth;
-                int newHeight = this.deviceManager.PreferredBackBufferHeight;
-                DisplayMode mode = this.FindFullScreenResolution(this.resizeRule, newWidth, newHeight);
-                if (this.resizeRule != ResizeRule.None)
+                int newWidth = _deviceManager.PreferredBackBufferWidth;
+                int newHeight = _deviceManager.PreferredBackBufferHeight;
+                DisplayMode mode = FindFullScreenResolution(_resizeRule, newWidth, newHeight);
+                if (_resizeRule != ResizeRule.None)
                 {
                     if (mode == null)
                     {
@@ -126,52 +244,52 @@ namespace Pulsar.Graphics
                     newHeight = mode.Height;
                 }
 
-                this.deviceManager.PreferredBackBufferWidth = newWidth;
-                this.deviceManager.PreferredBackBufferHeight = newHeight;
+                _deviceManager.PreferredBackBufferWidth = newWidth;
+                _deviceManager.PreferredBackBufferHeight = newHeight;
             }
 
-            this.deviceManager.IsFullScreen = isFullScreen;
-            this.isDirty = true;
+            _deviceManager.IsFullScreen = isFullScreen;
+            _isDirty = true;
 
             WindowFullScreenSwitchedEventArgs args = new WindowFullScreenSwitchedEventArgs(isFullScreen, this);
-            this.OnFullScreenSwitched(this, args);
+            OnFullScreenSwitched(this, args);
         }
 
         public void SetSurfaceFormat(SurfaceFormat format)
         {
-            SurfaceFormat supportedFormat;
-            DepthFormat supportedDepth;
-            int supportedSampling;
-            bool supported = this.device.Adapter.QueryBackBufferFormat(this.deviceManager.GraphicsProfile, format,
-                this.deviceManager.PreferredDepthStencilFormat, 0, out supportedFormat, out supportedDepth, out supportedSampling);
-            if (supportedFormat != format)
+            SurfaceFormat selectedFormat;
+            DepthFormat selectedDepthFormat;
+            int selectedMultiSampleCount;
+            _device.Adapter.QueryBackBufferFormat(_deviceManager.GraphicsProfile, format, _deviceManager.PreferredDepthStencilFormat, 
+                0, out selectedFormat, out selectedDepthFormat, out selectedMultiSampleCount);
+            if (selectedFormat != format)
             {
                 throw new NotSupportedException(string.Format("SurfaceFormat {0} not supported for back buffer", format));
             }
 
-            this.deviceManager.PreferredBackBufferFormat = format;
-            this.isDirty = true;
+            _deviceManager.PreferredBackBufferFormat = format;
+            _isDirty = true;
         }
 
         public void SetDepthFormat(DepthFormat depth)
         {
-            SurfaceFormat supportedFormat;
-            DepthFormat supportedDepth;
-            int supportedSampling;
-            bool supported = this.device.Adapter.QueryBackBufferFormat(this.deviceManager.GraphicsProfile, 
-                this.deviceManager.PreferredBackBufferFormat, depth, 0, out supportedFormat, out supportedDepth, out supportedSampling);
-            if (supportedDepth != depth)
+            SurfaceFormat selectedFormat;
+            DepthFormat selectedDepthFormat;
+            int selectedMultiSampleCount;
+            _device.Adapter.QueryBackBufferFormat(_deviceManager.GraphicsProfile, _deviceManager.PreferredBackBufferFormat, 
+                depth, 0, out selectedFormat, out selectedDepthFormat, out selectedMultiSampleCount);
+            if (selectedDepthFormat != depth)
             {
                 throw new NotSupportedException(string.Format("DepthFormat {0} not supported for back buffer", depth));
             }
 
-            this.deviceManager.PreferredDepthStencilFormat = depth;
-            this.isDirty = true;
+            _deviceManager.PreferredDepthStencilFormat = depth;
+            _isDirty = true;
         }
 
         private DisplayMode FindFullScreenResolution(ResizeRule rule, int width, int height)
         {
-            ReadOnlyCollection<DisplayMode> availableModes = this.GetAvailableModes();
+            ReadOnlyCollection<DisplayMode> availableModes = GetAvailableModes();
             if ((availableModes == null) || (availableModes.Count == 0))
             {
                 return null;
@@ -184,14 +302,14 @@ namespace Pulsar.Graphics
                     break;
                 case ResizeRule.Highest: mode = availableModes[availableModes.Count - 1];
                     break;
-                case ResizeRule.Nearest: mode = this.FindNearestResolution(width, height, availableModes);
+                case ResizeRule.Nearest: mode = FindNearestResolution(width, height, availableModes);
                     break;
             }
 
             return mode;
         }
 
-        private DisplayMode FindNearestResolution(int width, int height, ReadOnlyCollection<DisplayMode> availableModes)
+        private static DisplayMode FindNearestResolution(int width, int height, ReadOnlyCollection<DisplayMode> availableModes)
         {
             if (availableModes.Count == 0)
             {
@@ -200,14 +318,14 @@ namespace Pulsar.Graphics
 
             DisplayMode nearest = availableModes[0];
             int screenDiff = Math.Abs(nearest.Width - width) + Math.Abs(nearest.Height - height);
-            float ratio = (float)width / (float)height;
-            float ratioDiff = Math.Abs(ratio - ((float)nearest.Width / (float)nearest.Height));
+            float ratio = (float)width / height;
+            float ratioDiff = Math.Abs(ratio - ((float)nearest.Width / nearest.Height));
 
             for (int i = 1; i < availableModes.Count; i++)
             {
                 DisplayMode current = availableModes[i];
                 int currScreenDiff = Math.Abs(current.Width - width) + Math.Abs(current.Height - height);
-                float currRatioDiff = Math.Abs(ratio - ((float)current.Width / (float)current.Height));
+                float currRatioDiff = Math.Abs(ratio - ((float)current.Width / current.Height));
                 bool isNearest = false;
 
                 if (currScreenDiff < screenDiff)
@@ -219,12 +337,10 @@ namespace Pulsar.Graphics
                     isNearest = true;
                 }
 
-                if (isNearest)
-                {
-                    nearest = current;
-                    screenDiff = currScreenDiff;
-                    ratioDiff = currRatioDiff;
-                }
+                if (!isNearest) continue;
+                nearest = current;
+                screenDiff = currScreenDiff;
+                ratioDiff = currRatioDiff;
             }
 
             return nearest;
@@ -232,12 +348,12 @@ namespace Pulsar.Graphics
 
         public bool IsValidResolution(int width, int height)
         {
-            if (!this.deviceManager.IsFullScreen)
+            if (!_deviceManager.IsFullScreen)
             {
                 return true;
             }
 
-            ReadOnlyCollection<DisplayMode> availableModes = this.GetAvailableModes();
+            ReadOnlyCollection<DisplayMode> availableModes = GetAvailableModes();
             if (availableModes == null)
             {
                 return false;
@@ -257,19 +373,15 @@ namespace Pulsar.Graphics
 
         private ReadOnlyCollection<DisplayMode> GetAvailableModes()
         {
-            int currentFormat = (int)this.deviceManager.PreferredBackBufferFormat;
+            int currentFormat = (int)_deviceManager.PreferredBackBufferFormat;
             ReadOnlyCollection<DisplayMode> availableModes;
-            if (!this.supportedDisplayMode.TryGetValue(currentFormat, out availableModes))
-            {
-                return null;
-            }
 
-            return availableModes;
+            return !_supportedDisplayMode.TryGetValue(currentFormat, out availableModes) ? null : availableModes;
         }
 
         private void ExtractDisplayMode()
         {
-            DisplayModeCollection modes = this.device.Adapter.SupportedDisplayModes;
+            DisplayModeCollection modes = _device.Adapter.SupportedDisplayModes;
             Dictionary<int, List<DisplayMode>> supported = new Dictionary<int, List<DisplayMode>>();
             foreach (DisplayMode dm in modes)
             {
@@ -286,24 +398,24 @@ namespace Pulsar.Graphics
             foreach (KeyValuePair<int, List<DisplayMode>> kvp in supported)
             {
                 List<DisplayMode> modesList = kvp.Value;
-                modesList.Sort(this.CompareDisplayModeByResolution);
-                this.supportedDisplayMode.Add(kvp.Key, new ReadOnlyCollection<DisplayMode>(modesList));
+                modesList.Sort(CompareDisplayModeByResolution);
+                _supportedDisplayMode.Add(kvp.Key, new ReadOnlyCollection<DisplayMode>(modesList));
             }
         }
 
         private void ExtractSupportedSurfaceFormat()
         {
             List<SurfaceFormat> supported = new List<SurfaceFormat>();
-            foreach (SurfaceFormat sf in this.supportedDisplayMode.Keys)
+            foreach (SurfaceFormat sf in _supportedDisplayMode.Keys)
             {
                 supported.Add(sf);
             }
-            this.supportedFormat = new ReadOnlyCollection<SurfaceFormat>(supported);
+            _supportedFormat = new ReadOnlyCollection<SurfaceFormat>(supported);
         }
 
-        private int CompareDisplayModeByResolution(DisplayMode first, DisplayMode second)
+        private static int CompareDisplayModeByResolution(DisplayMode first, DisplayMode second)
         {
-            int result = 0;
+            int result;
             if (first.Width < second.Width)
             {
                 result = -1;
@@ -329,17 +441,17 @@ namespace Pulsar.Graphics
 
         private void OnDisplayModeChanged(object sender, WindowDisplayModeChangedEventArgs args)
         {
-            if (this.displayModeChanged != null)
+            if (_onDisplayModeChanged != null)
             {
-                this.displayModeChanged(sender, args);
+                _onDisplayModeChanged(sender, args);
             }
         }
 
         private void OnFullScreenSwitched(object sender, WindowFullScreenSwitchedEventArgs args)
         {
-            if (this.fullScreenSwitched != null)
+            if (_onFullScreenSwitched != null)
             {
-                this.fullScreenSwitched(sender, args);
+                _onFullScreenSwitched(sender, args);
             }
         }
 
@@ -349,53 +461,53 @@ namespace Pulsar.Graphics
 
         public int Height
         {
-            get { return this.deviceManager.PreferredBackBufferHeight; }
+            get { return _deviceManager.PreferredBackBufferHeight; }
         }
 
         public int Width
         {
-            get { return this.deviceManager.PreferredBackBufferWidth; }
+            get { return _deviceManager.PreferredBackBufferWidth; }
         }
 
         public bool IsFullScreen
         {
-            get { return this.deviceManager.IsFullScreen; }
+            get { return _deviceManager.IsFullScreen; }
         }
 
         public SurfaceFormat Surface
         {
-            get { return this.deviceManager.PreferredBackBufferFormat; }
+            get { return _deviceManager.PreferredBackBufferFormat; }
         }
 
         public DepthFormat Depth
         {
-            get { return this.deviceManager.PreferredDepthStencilFormat; }
+            get { return _deviceManager.PreferredDepthStencilFormat; }
         }
 
         public bool VSync
         {
-            get { return this.deviceManager.SynchronizeWithVerticalRetrace; }
+            get { return _deviceManager.SynchronizeWithVerticalRetrace; }
             set
             {
-                this.deviceManager.SynchronizeWithVerticalRetrace = value;
-                this.isDirty = true;
+                _deviceManager.SynchronizeWithVerticalRetrace = value;
+                _isDirty = true;
             }
         }
 
         public ResizeRule PreferredResizeRule
         {
-            get { return this.resizeRule; }
-            set { this.resizeRule = value; }
+            get { return _resizeRule; }
+            set { _resizeRule = value; }
         }
 
         public ReadOnlyCollection<SurfaceFormat> SupportedSurfaceFormat
         {
-            get { return this.supportedFormat; }
+            get { return _supportedFormat; }
         }
 
         public ReadOnlyCollection<DisplayMode> AvailableDisplayMode
         {
-            get { return this.GetAvailableModes(); }
+            get { return GetAvailableModes(); }
         }
 
         #endregion

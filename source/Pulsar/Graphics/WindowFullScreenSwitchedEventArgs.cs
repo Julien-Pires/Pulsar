@@ -6,8 +6,8 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        private bool isFullScreen;
-        private Window window;
+        private readonly bool _isFullScreen;
+        private readonly Window _window;
 
         #endregion
 
@@ -15,8 +15,8 @@ namespace Pulsar.Graphics
 
         public WindowFullScreenSwitchedEventArgs(bool fullScreen, Window win)
         {
-            this.isFullScreen = fullScreen;
-            this.window = win;
+            _isFullScreen = fullScreen;
+            _window = win;
         }
 
         #endregion
@@ -25,12 +25,12 @@ namespace Pulsar.Graphics
 
         public bool IsFullScreen
         {
-            get { return this.isFullScreen; }
+            get { return _isFullScreen; }
         }
 
         public Window Window
         {
-            get { return this.window; }
+            get { return _window; }
         }
 
         #endregion

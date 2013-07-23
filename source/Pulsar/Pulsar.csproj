@@ -92,6 +92,7 @@
     <Compile Include="Core\Message.cs" />
     <Compile Include="Core\Pool.cs" />
     <Compile Include="Graphics\BoundingVolume.cs" />
+    <Compile Include="Graphics\Viewport.cs" />
     <Compile Include="Graphics\WindowDisplayModeChangedEventArgs.cs" />
     <Compile Include="Graphics\FrameInfo.cs" />
     <Compile Include="Graphics\GraphicsEngineService.cs" />
