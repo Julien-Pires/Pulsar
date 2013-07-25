@@ -15,6 +15,15 @@ namespace Pulsar.Graphics
         Nearest
     }
 
+    [Flags]
+    public enum ViewportPosition
+    {
+        Top = 0,
+        Bottom = 1,
+        Left = 2,
+        Right = 4
+    }
+
     public sealed class Window
     {
         #region Nested
@@ -67,7 +76,6 @@ namespace Pulsar.Graphics
 
             public ushort ZOrder
             {
-                get { return _zOrder; }
                 set
                 {
                     _zOrder = value;
@@ -151,6 +159,41 @@ namespace Pulsar.Graphics
         {
             _deviceManager.ApplyChanges();
             _isDirty = false;
+        }
+
+        public int AddViewport()
+        {
+            return AddViewport(1.0f, 1.0f, 0.0f, 0.0f);
+        }
+
+        public int AddViewport(ViewportPosition position)
+        {
+            float width = 1.0f;
+            float height = 1.0f;
+            float top = 0.0f;
+            float left = 0.0f;
+
+            if ((position & ViewportPosition.Bottom) == ViewportPosition.Bottom)
+            {
+                top += 0.5f;
+                height -= 0.5f;
+            }
+            else if ((position & ViewportPosition.Top) == ViewportPosition.Top)
+            {
+                height -= 0.5f;
+            }
+
+            if ((position & ViewportPosition.Right) == ViewportPosition.Right)
+            {
+                left += 0.5f;
+                width -= 0.5f;
+            }
+            else if ((position & ViewportPosition.Left) == ViewportPosition.Left)
+            {
+                width -= 0.5f;
+            }
+
+            return AddViewport(width, height, top, left);
         }
 
         public int AddViewport(float width, float height, float top, float left)
