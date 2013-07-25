@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 
-using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
@@ -39,7 +38,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="camera">The camera to add</param>
         public void AddCamera(Camera camera)
         {
-            if (!this.cameras.Keys.Contains(camera.Name))
+            if (!this.cameras.ContainsKey(camera.Name))
             {
                 this.cameras.Add(camera.Name, camera);
             }
@@ -70,7 +69,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="camera">Camera to set as current</param>
         public void UseCamera(Camera camera)
         {
-            if (!this.cameras.Keys.Contains(camera.Name))
+            if (!this.cameras.ContainsKey(camera.Name))
                 this.AddCamera(camera);
 
             this.InternalUseCamera(camera);
@@ -82,7 +81,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="cameraName">Name of the camera to set as current</param>
         public void UseCamera(string cameraName)
         {
-            if (!this.cameras.Keys.Contains(cameraName))
+            if (!this.cameras.ContainsKey(cameraName))
                 throw new Exception(string.Format("No camera with name {0} exist.", cameraName));
 
             this.InternalUseCamera(this.cameras[cameraName]);
