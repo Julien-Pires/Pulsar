@@ -126,11 +126,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="addChildren">Boolean indicating if the search goes through childrens</param>
         internal void FindVisibleObjects(Camera cam, RenderQueue queue, bool addChildren)
         {
-            Dictionary<string, IMovable>.ValueCollection movObjs = this.movablesByName.Values;
-
-            for (int i = 0; i < movObjs.Count; i++)
+            for (int i = 0; i < movablesList.Count; i++)
             {
-                queue.ProcessVisibleObject(cam, movObjs.ElementAt(i));
+                queue.ProcessVisibleObject(cam, movablesList[i]);
             }
 
             if (addChildren)
