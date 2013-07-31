@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Text;
-
 using System.Collections.Generic;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 
 using Pulsar.Graphics.Rendering;
 
@@ -17,10 +12,10 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
-        private Renderer renderer = null;
-        private CameraManager camManager = new CameraManager();
+        private Renderer renderer;
+        private CameraManager camManager;
         private RenderQueue queue = new RenderQueue();
-        private SceneNode root = null;
+        private SceneNode root;
         private Dictionary<string, SceneNode> nodesMap = new Dictionary<string, SceneNode>();
         private Dictionary<string, IMovable> movablesMap = new Dictionary<string, IMovable>();
         private EntityFactory entityFactory = new EntityFactory();
@@ -36,6 +31,7 @@ namespace Pulsar.Graphics.SceneGraph
         internal SceneTree(Renderer renderer)
         {
             this.renderer = renderer;
+            this.camManager = new CameraManager(this);
             this.root = this.CreateNode("Root");
         }
 
@@ -46,19 +42,13 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Call to draw the entire scene
         /// </summary>
-        public void RenderScene()
+        public void RenderScene(Viewport vp, Camera cam)
         {
-            Camera cam = this.camManager.Current;
-
             this.UpdateGraph();
             this.Clean();
-
-            if (cam != null)
-            {
-                this.FindVisibleObjects(cam);
-            }
-
-            this.renderer.Render(this.queue, this.camManager.Current);
+            
+            this.FindVisibleObjects(cam);
+            this.renderer.Render(vp, cam, queue);
         }
         
         /// <summary>

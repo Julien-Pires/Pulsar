@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Text;
-
-using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Mathematic;
 
@@ -23,6 +19,7 @@ namespace Pulsar.Graphics.SceneGraph
         #region Fields
 
         protected string name = string.Empty;
+        protected SceneTree owner;
         protected SceneNode parent;
         protected bool isDirtyView = true;
         protected bool isDirtyFrustum = true;
@@ -32,8 +29,8 @@ namespace Pulsar.Graphics.SceneGraph
         protected bool useFixedYaw = true;
         protected ProjectionType projType = ProjectionType.Perspective;
         protected Matrix transform = Matrix.Identity;
-        protected Matrix viewMatrix = Matrix.Identity;
-        protected Matrix projectionMatrix = Matrix.Identity;
+        internal Matrix ViewMatrix = Matrix.Identity;
+        internal Matrix ProjectionMatrix = Matrix.Identity;
         protected float near = 1.0f;
         protected float far = 1000.0f;
         protected float aspectRatio = 16.0f/9.0f;
@@ -47,7 +44,7 @@ namespace Pulsar.Graphics.SceneGraph
         protected Vector3 lastNodePosition = Vector3.Zero;
         protected Quaternion fullOrientation = Quaternion.Identity;
         protected Vector3 fullPosition = Vector3.Zero;
-        protected Viewport vp;
+        protected Viewport viewport;
         protected BoundingFrustum frustum = new BoundingFrustum(Matrix.Identity);
         protected SpeedFrustum spdFrustum;
 
@@ -59,14 +56,21 @@ namespace Pulsar.Graphics.SceneGraph
         /// Constructor of the BaseCamera class
         /// </summary>
         /// <param name="name">Name of the camera</param>
-        public Camera(string name)
+        public Camera(string name, SceneTree owner)
         {
             this.name = name;
+            this.owner = owner;
         }
 
         #endregion
 
         #region Methods
+
+        public void Render(Viewport vp)
+        {
+            if (vp != this.viewport) this.Viewport = vp;
+            this.owner.RenderScene(vp, this);
+        }
 
         /// <summary>
         /// <remarks>Not implemented for the BaseCamera class</remarks>
@@ -358,7 +362,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         protected virtual void ComputeBoundingFrustum()
         {
-            this.frustum.Matrix = this.viewMatrix * this.projectionMatrix;
+            this.frustum.Matrix = this.ViewMatrix * this.ProjectionMatrix;
             this.spdFrustum = new SpeedFrustum(ref this.frustum);
 
             this.isDirtyBoundingFrustum = false;
@@ -373,10 +377,10 @@ namespace Pulsar.Graphics.SceneGraph
             {
                 case ProjectionType.Perspective:
                     Matrix.CreatePerspectiveFieldOfView(this.fieldOfView, this.aspectRatio, this.near, 
-                        this.far, out this.projectionMatrix);
+                        this.far, out this.ProjectionMatrix);
                     break;
                 case ProjectionType.Orthographic:
-                    Matrix.CreateOrthographic(vp.Width, vp.Height, this.near, this.far, out this.projectionMatrix);
+                    Matrix.CreateOrthographic(viewport.Width, viewport.Height, this.near, this.far, out this.ProjectionMatrix);
                     break;
             }
 
@@ -391,7 +395,7 @@ namespace Pulsar.Graphics.SceneGraph
             if (this.isDirtyView)
             {
                 this.transform = Matrix.CreateFromQuaternion(this.fullOrientation) * Matrix.CreateTranslation(this.fullPosition);
-                Matrix.Invert(ref this.transform, out this.viewMatrix);
+                Matrix.Invert(ref this.transform, out this.ViewMatrix);
             }
 
             this.isDirtyView = false;
@@ -435,12 +439,10 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public Viewport Viewport
         {
-            get { return this.vp; }
-            set
+            get { return this.viewport; }
+            internal set
             {
-                this.vp = value;
-                this.aspectRatio = this.vp.AspectRatio;
-
+                this.viewport = value;
                 this.InvalidateFrustum();
             }
         }
@@ -550,7 +552,7 @@ namespace Pulsar.Graphics.SceneGraph
             {
                 this.UpdateFrustum();
 
-                return this.projectionMatrix;
+                return this.ProjectionMatrix;
             }
         }
 
@@ -563,7 +565,7 @@ namespace Pulsar.Graphics.SceneGraph
             {
                 this.UpdateView();
 
-                return this.viewMatrix;
+                return this.ViewMatrix;
             }
         }
 

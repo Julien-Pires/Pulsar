@@ -1,9 +1,4 @@
-﻿using System;
-using System.Text;
-
-using System.Collections.Generic;
-
-using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
 
 namespace Pulsar.Graphics.SceneGraph
 {
@@ -15,7 +10,7 @@ namespace Pulsar.Graphics.SceneGraph
         #region Fields
 
         private Dictionary<string, Camera> cameras = new Dictionary<string, Camera>();
-        private Camera current = null;
+        private SceneTree owner;
 
         #endregion
 
@@ -24,8 +19,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Constructor of CameraManager class
         /// </summary>
-        internal CameraManager()
+        internal CameraManager(SceneTree owner)
         {
+            this.owner = owner;
         }
 
         #endregion
@@ -36,12 +32,15 @@ namespace Pulsar.Graphics.SceneGraph
         /// Add a camera to the manager
         /// </summary>
         /// <param name="camera">The camera to add</param>
-        public void AddCamera(Camera camera)
+        public Camera CreateCamera(string name)
         {
-            if (!this.cameras.ContainsKey(camera.Name))
-            {
-                this.cameras.Add(camera.Name, camera);
-            }
+            Camera cam;
+            if (this.cameras.TryGetValue(name, out cam)) return cam;
+
+            cam = new Camera(name, this.owner);
+            this.cameras.Add(name, cam);
+
+            return cam;
         }
 
         /// <summary>
@@ -51,62 +50,12 @@ namespace Pulsar.Graphics.SceneGraph
         /// <returns>Return true if the camera was removed, else false</returns>
         public bool RemoveCamera(Camera camera)
         {
-            if (this.current != null)
-            {
-                if (string.Equals(this.current.Name, camera.Name))
-                    this.current = null;
-
-                if (this.cameras.Remove(camera.Name))
-                    return true;
-            }
-
-            return false;
+            return this.cameras.Remove(camera.Name);
         }
 
-        /// <summary>
-        /// Set the current camera to the one specified
-        /// </summary>
-        /// <param name="camera">Camera to set as current</param>
-        public void UseCamera(Camera camera)
+        public bool RemoveCamera(string name)
         {
-            if (!this.cameras.ContainsKey(camera.Name))
-                this.AddCamera(camera);
-
-            this.InternalUseCamera(camera);
-        }
-
-        /// <summary>
-        /// Set the current camera to the one specified
-        /// </summary>
-        /// <param name="cameraName">Name of the camera to set as current</param>
-        public void UseCamera(string cameraName)
-        {
-            if (!this.cameras.ContainsKey(cameraName))
-                throw new Exception(string.Format("No camera with name {0} exist.", cameraName));
-
-            this.InternalUseCamera(this.cameras[cameraName]);
-        }
-
-        /// <summary>
-        /// Set the current camera
-        /// </summary>
-        /// <param name="camera">Camera to set as current</param>
-        private void InternalUseCamera(Camera camera)
-        {
-            this.current = null;
-            this.current = camera;
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Get the current camera
-        /// </summary>
-        public Camera Current
-        {
-            get { return this.current; }
+            return this.cameras.Remove(name);
         }
 
         #endregion

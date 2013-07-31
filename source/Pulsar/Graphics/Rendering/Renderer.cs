@@ -1,26 +1,23 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Graphics.Rendering.RenderingTechnique;
 using Pulsar.Graphics.SceneGraph;
-using Pulsar.Graphics.Rendering.RenderPass;
 
 namespace Pulsar.Graphics.Rendering
 {
     /// <summary>
     /// GraphicsRenderer is used to do operations on graphic device
     /// </summary>
-    internal sealed class Renderer
+    public sealed class Renderer
     {
         #region Fields
         
-        private GraphicsDevice graphicDevice;
+        private GraphicsDevice _graphicDevice;
+        private SpriteBatch _spriteBatch;
         private InstanceBatchManager instancingManager;
-        private GBufferPass gBufferPass;
-        private FrameInfo frameInfo;
+        private IRenderingTechnique _renderingTechnique;
 
         #endregion
 
@@ -30,12 +27,12 @@ namespace Pulsar.Graphics.Rendering
         /// Constructor of the GraphicsRenderer class
         /// </summary>
         /// <param name="gDevice">Graphic device used by this instance</param>
-        internal Renderer(GraphicsDevice gDevice, FrameInfo frameInfo)
+        internal Renderer(GraphicsDevice gDevice)
         {
-            this.graphicDevice = gDevice;
-            this.frameInfo = frameInfo;
+            this._graphicDevice = gDevice;
+            this._spriteBatch = new SpriteBatch(_graphicDevice);
             this.instancingManager = new InstanceBatchManager(this);
-            this.gBufferPass = new GBufferPass(this);
+            this._renderingTechnique = new SimpleRenderingTechnique(this);
         }
 
         #endregion
@@ -43,27 +40,19 @@ namespace Pulsar.Graphics.Rendering
         #region Methods
 
         /// <summary>
-        /// Reset all buffers
-        /// </summary>
-        private void ClearBuffer()
-        {
-            this.graphicDevice.Clear((ClearOptions.Stencil | ClearOptions.DepthBuffer), Color.Black, 1.0f, 0);
-        }
-
-        /// <summary>
         /// Begin the draw operation
         /// </summary>
-        private void BeginFrame()
+        private void BeginFrame(Viewport vp)
         {
-            this.frameInfo.PrepareNewRendering();
             this.instancingManager.Reset();
-            this.graphicDevice.Clear(Color.Black);
+            if (vp.AlwaysClear) Clear(vp.RenderTarget);
+            _graphicDevice.DepthStencilState = DepthStencilState.Default;
         }
 
         /// <summary>
         /// End the draw operation
         /// </summary>
-        private void EndFrame()
+        private void EndFrame(Viewport vp)
         {
         }
 
@@ -72,34 +61,82 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         private void UnsetBuffers()
         {
-            this.graphicDevice.SetVertexBuffer(null);
-            this.graphicDevice.Indices = null;
+            this._graphicDevice.SetVertexBuffer(null);
+            this._graphicDevice.Indices = null;
         }
 
-        /// <summary>
-        /// Perform the rendering pipeline
-        /// </summary>
-        /// <param name="queue">Render queue to draw</param>
-        /// <param name="cam">Camera used as point of view for rendering</param>
-        internal void Render(RenderQueue queue, Camera cam)
+        internal void Clear(RenderTarget2D renderTarget)
         {
-            this.BeginFrame();
-
-            this.gBufferPass.Render(queue, cam);
-
-            this.EndFrame();
-            this.frameInfo.Framecount++;
+            this._graphicDevice.SetRenderTarget(renderTarget);
+            this._graphicDevice.Clear(Color.Black);
+            this._graphicDevice.SetRenderTarget(null);
         }
 
-        internal void RenderGeometry(IRenderable geometry)
+        internal void SetRenderTarget(RenderTarget2D renderTarget)
+        {
+            this._graphicDevice.SetRenderTarget(renderTarget);
+        }
+
+        internal void UnsetRenderTarget()
+        {
+            _graphicDevice.SetRenderTarget(null);
+        }
+
+        internal void Render(Viewport vp, Camera cam, RenderQueue queue)
+        {
+            BeginFrame(vp);
+
+            _renderingTechnique.Render(vp, cam, queue);
+
+            EndFrame(vp);
+        }
+
+        internal void RenderToTarget(RenderTarget renderTarget)
+        {
+            List<RenderTarget.ViewportBinding> viewports = renderTarget.Viewports;
+            for (int i = 0; i < viewports.Count; i++)
+            {
+                viewports[i].Viewport.Render();
+            }
+
+            _graphicDevice.SetRenderTarget(renderTarget.Target);
+            if(renderTarget.AlwaysClear) _graphicDevice.Clear(Color.Black);
+
+            if (viewports.Count > 0)
+            {
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp,
+                    DepthStencilState.None, RasterizerState.CullCounterClockwise);
+                for (int i = 0; i < viewports.Count; i++)
+                {
+                    Viewport vp = viewports[i].Viewport;
+                    Rectangle rect = new Rectangle(vp.RealLeft, vp.RealTop, vp.RealWidth, vp.RealHeight);
+                    _spriteBatch.Draw(vp.RenderTarget, rect, Color.White);
+                }
+                _spriteBatch.End();
+            }
+
+            _graphicDevice.SetRenderTarget(null);
+        }
+
+        internal void DrawFullQuad(Texture2D texture)
+        {
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp,
+                DepthStencilState.None, RasterizerState.CullCounterClockwise);
+            PresentationParameters presentation = _graphicDevice.PresentationParameters;
+            Rectangle rect = new Rectangle(0, 0, presentation.BackBufferWidth, presentation.BackBufferHeight);
+            _spriteBatch.Draw(texture, rect, Color.White);
+            _spriteBatch.End();
+        }
+
+        internal void DrawGeometry(IRenderable geometry)
         {
             if (geometry.RenderInfo.useIndexes)
             {
-                this.RenderIndexedGeometry(geometry);
+                this.DrawIndexedGeometry(geometry);
             }
             else
             {
-                this.RenderNonIndexedGeometry(geometry);
+                this.DrawNonIndexedGeometry(geometry);
             }
         }
 
@@ -109,54 +146,39 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="geometry">IRenderable instance</param>
         /// <param name="view">View matrix</param>
         /// <param name="projection">Projection matrix</param>
-        internal void RenderIndexedGeometry(IRenderable geometry)
+        internal void DrawIndexedGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
-            this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
-            this.graphicDevice.Indices = renderInfo.indexData.Buffer;
-            this.graphicDevice.DrawIndexedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount,
+            this._graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
+            this._graphicDevice.Indices = renderInfo.indexData.Buffer;
+            this._graphicDevice.DrawIndexedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount,
                 renderInfo.startIndex, renderInfo.triangleCount);
             this.UnsetBuffers();
-
-            this.frameInfo.PrimitiveCount += renderInfo.triangleCount;
-            this.frameInfo.VertexCount += renderInfo.vertexCount;
-            this.frameInfo.SubMeshCount++;
-            this.frameInfo.DrawCall++;
         }
 
-        internal void RenderNonIndexedGeometry(IRenderable geometry)
+        internal void DrawNonIndexedGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
-            this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
-            this.graphicDevice.DrawPrimitives(renderInfo.primitive, renderInfo.startIndex, renderInfo.triangleCount);
+            this._graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
+            this._graphicDevice.DrawPrimitives(renderInfo.primitive, renderInfo.startIndex, renderInfo.triangleCount);
             this.UnsetBuffers();
-
-            this.frameInfo.PrimitiveCount += renderInfo.triangleCount;
-            this.frameInfo.VertexCount += renderInfo.vertexCount;
-            this.frameInfo.SubMeshCount++;
-            this.frameInfo.DrawCall++;
         }
 
         /// <summary>
         /// Draw a geometry batch
         /// </summary>
         /// <param name="batch">Geometry batch to draw</param>
-        internal void RenderInstancedGeometry(InstanceBatch batch)
+        internal void DrawInstancedGeometry(InstanceBatch batch)
         {
             if (batch.InstanceCount == 0)
                 return;
 
             RenderingInfo renderInfo = batch.RenderInfo;
-            this.graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
-            this.graphicDevice.Indices = renderInfo.indexData.Buffer;
-            this.graphicDevice.DrawInstancedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount, 
+            this._graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
+            this._graphicDevice.Indices = renderInfo.indexData.Buffer;
+            this._graphicDevice.DrawInstancedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount, 
                 renderInfo.startIndex, renderInfo.triangleCount, batch.InstanceCount);
             this.UnsetBuffers();
-
-            this.frameInfo.PrimitiveCount += renderInfo.triangleCount;
-            this.frameInfo.VertexCount += renderInfo.vertexCount;
-            this.frameInfo.SubMeshCount++;
-            this.frameInfo.DrawCall++;
         }
 
         #endregion
@@ -168,7 +190,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         internal GraphicsDevice GraphicsDevice
         {
-            get { return this.graphicDevice; }
+            get { return this._graphicDevice; }
         }
 
         /// <summary>

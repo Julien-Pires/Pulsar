@@ -46,8 +46,8 @@ namespace Pulsar.Graphics
             {
                 throw new ArgumentNullException("No Graphics device service found");
             }
-            this.window = new Window(deviceService);
-            this.renderer = new Renderer(deviceService.GraphicsDevice, this.frameInfo);
+            this.renderer = new Renderer(deviceService.GraphicsDevice);
+            this.window = new Window(deviceService, renderer);
             this.bufferManager = new BufferManager(deviceService);
         }
 

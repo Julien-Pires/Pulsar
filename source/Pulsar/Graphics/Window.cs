@@ -5,6 +5,8 @@ using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Graphics.Rendering;
+
 namespace Pulsar.Graphics
 {
     public enum ResizeRule
@@ -15,89 +17,14 @@ namespace Pulsar.Graphics
         Nearest
     }
 
-    [Flags]
-    public enum ViewportPosition
+    public sealed class Window : RenderTarget
     {
-        Top = 0,
-        Bottom = 1,
-        Left = 2,
-        Right = 4
-    }
-
-    public sealed class Window
-    {
-        #region Nested
-
-        private sealed class ViewportBinding
-        {
-            #region Fields
-
-            private readonly int _id;
-
-            private ushort _zOrder;
-
-            private readonly Viewport _viewport;
-
-            #endregion
-
-            #region Constructor
-
-            public ViewportBinding(int id, Viewport vp)
-            {
-                _id = id;
-                _viewport = vp;
-                ZOrder = 0;
-            }
-
-            #endregion
-
-            #region Methods
-
-            public static int CompareByZOrder(ViewportBinding objOne, ViewportBinding objTwo)
-            {
-                if (objOne._zOrder > objTwo._zOrder) return -1;
-
-                return (objOne._zOrder < objTwo._zOrder) ? 1 : 0;
-            }
-
-            #endregion
-
-            #region Properties
-
-            public int Id
-            {
-                get { return _id; }
-            }
-
-            public Viewport Viewport
-            {
-                get { return _viewport; }
-            }
-
-            public ushort ZOrder
-            {
-                set
-                {
-                    _zOrder = value;
-                    _viewport.ZOrder = value;
-                }
-            }
-
-            #endregion
-        }
-
-        #endregion
-
         #region Fields
 
-        private int _viewportCounter;
-        private readonly GraphicsDeviceManager _deviceManager;
-        private readonly GraphicsDevice _device;
-        private ResizeRule _resizeRule = ResizeRule.None;
-        private ReadOnlyCollection<SurfaceFormat> _supportedFormat;
+        private bool _displayModeChanged;
+        private bool _fullScreenChanged;
+        private bool _deviceDirty;
         private readonly Dictionary<int, ReadOnlyCollection<DisplayMode>> _supportedDisplayMode = new Dictionary<int, ReadOnlyCollection<DisplayMode>>();
-        private readonly List<ViewportBinding> _viewports = new List<ViewportBinding>();
-        private bool _isDirty = true;
 
         #endregion
 
@@ -122,18 +49,10 @@ namespace Pulsar.Graphics
 
         #region Constructor
 
-        internal Window(GraphicsDeviceManager deviceManager)
+        internal Window(GraphicsDeviceManager deviceManager, Renderer renderer) : base(deviceManager, renderer)
         {
-            if (deviceManager == null)
-            {
-                throw new ArgumentNullException("deviceManager");
-            }
-            if (deviceManager.GraphicsDevice == null)
-            {
-                throw new Exception("GraphicsDevice cannot be null");
-            }
-            _deviceManager = deviceManager;
-            _device = deviceManager.GraphicsDevice;
+            PreferredResizeRule = ResizeRule.None;
+            ExtractDeviceData();
             Initialize();
         }
 
@@ -143,191 +62,141 @@ namespace Pulsar.Graphics
 
         private void Initialize()
         {
+            SetResolution(DeviceManager.PreferredBackBufferWidth, DeviceManager.PreferredBackBufferHeight);
+            SetPixel(DeviceManager.PreferredBackBufferFormat);
+            SetDepth(DeviceManager.PreferredDepthStencilFormat);
+        }
+
+        private void ExtractDeviceData()
+        {
             ExtractDisplayMode();
             ExtractSupportedSurfaceFormat();
         }
 
-        public void Render()
+        private void InvalidateDisplayMode()
         {
-            if (_isDirty)
+            _displayModeChanged = true;
+            _deviceDirty = true;
+        }
+
+        private void InvalidateScreenMode()
+        {
+            _fullScreenChanged = true;
+            _deviceDirty = true;
+        }
+
+        protected override void PreRender()
+        {
+            base.PreRender();
+
+            if (!_deviceDirty) return;
+
+            DeviceManager.ApplyChanges();
+            _deviceDirty = false;
+
+            if (_displayModeChanged)
             {
-                ApplyChanges();
+                WindowDisplayModeChangedEventArgs args = new WindowDisplayModeChangedEventArgs(DeviceManager.GraphicsDevice.Adapter.CurrentDisplayMode, this);
+                OnDisplayModeChanged(this, args);
+                _displayModeChanged = false;
+            }
+            if (_fullScreenChanged)
+            {
+                WindowFullScreenSwitchedEventArgs args = new WindowFullScreenSwitchedEventArgs(DeviceManager.IsFullScreen, this);
+                OnFullScreenSwitched(this, args);
+                _fullScreenChanged = false;
             }
         }
 
-        private void ApplyChanges()
+        protected override void PostRender()
         {
-            _deviceManager.ApplyChanges();
-            _isDirty = false;
+            base.PostRender();
+
+            Renderer.DrawFullQuad(Target);
         }
 
-        public int AddViewport()
+        public override bool IsValidResolution(int width, int height)
         {
-            return AddViewport(1.0f, 1.0f, 0.0f, 0.0f);
+            if (width <= 0) return false;
+            if (height <= 0) return false;
+            if (!DeviceManager.IsFullScreen) return true;
+
+            ReadOnlyCollection<DisplayMode> availableModes = GetAvailableModes();
+            if (availableModes == null) return false;
+            for (int i = 0; i < availableModes.Count; i++)
+            {
+                DisplayMode mode = availableModes[i];
+                if ((mode.Width == width) && (mode.Height == height))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
-        public int AddViewport(ViewportPosition position)
+        public override bool IsValidPixel(SurfaceFormat pixel)
         {
-            float width = 1.0f;
-            float height = 1.0f;
-            float top = 0.0f;
-            float left = 0.0f;
+            SurfaceFormat selectedPixel;
+            DepthFormat selectedDepth;
+            int selectedMultiSample;
+            DeviceManager.GraphicsDevice.Adapter.QueryBackBufferFormat(DeviceManager.GraphicsProfile, pixel,
+                DeviceManager.PreferredDepthStencilFormat, 0, out selectedPixel, out selectedDepth,
+                out selectedMultiSample);
 
-            if ((position & ViewportPosition.Bottom) == ViewportPosition.Bottom)
-            {
-                top += 0.5f;
-                height -= 0.5f;
-            }
-            else if ((position & ViewportPosition.Top) == ViewportPosition.Top)
-            {
-                height -= 0.5f;
-            }
-
-            if ((position & ViewportPosition.Right) == ViewportPosition.Right)
-            {
-                left += 0.5f;
-                width -= 0.5f;
-            }
-            else if ((position & ViewportPosition.Left) == ViewportPosition.Left)
-            {
-                width -= 0.5f;
-            }
-
-            return AddViewport(width, height, top, left);
+            return selectedPixel == pixel;
         }
 
-        public int AddViewport(float width, float height, float top, float left)
+        public override bool IsValidDepth(DepthFormat depth)
         {
-            Viewport vp = new Viewport(this, _device, width, height, top, left);
-            ViewportBinding binding = new ViewportBinding(_viewportCounter++, vp);
-            _viewports.Add(binding);
+            SurfaceFormat selectedPixel;
+            DepthFormat selectedDepth;
+            int selectedMultiSample;
+            DeviceManager.GraphicsDevice.Adapter.QueryBackBufferFormat(DeviceManager.GraphicsProfile,
+                DeviceManager.PreferredBackBufferFormat, depth, 0, out selectedPixel, out selectedDepth,
+                out selectedMultiSample);
 
-            return binding.Id;
+            return selectedDepth == depth;
         }
 
-        public bool RemoveViewport(int id)
+        public override void SetResolution(int width, int height)
         {
-            int idx = -1;
-            for (int i = 0; i < _viewports.Count; i++)
-            {
-                ViewportBinding current = _viewports[i];
-                if(current.Id != id) continue;
-                idx = i;
-                break;
-            }
-
-            if (idx <= -1) return false;
-            _viewports.RemoveAt(idx);
-
-            return true;
+            base.SetResolution(width, height);
+            DeviceManager.PreferredBackBufferWidth = width;
+            DeviceManager.PreferredBackBufferHeight = height;
+            InvalidateDisplayMode();
         }
 
-        public Viewport GetViewport(int id)
+        public override void SetPixel(SurfaceFormat pixel)
         {
-            ViewportBinding binding = GetViewportBinding(id);
-
-            return binding == null ? null : binding.Viewport;
+            base.SetPixel(pixel);
+            DeviceManager.PreferredBackBufferFormat = pixel;
+            InvalidateScreenMode();
         }
 
-        private ViewportBinding GetViewportBinding(int id)
+        public override void SetDepth(DepthFormat depth)
         {
-            ViewportBinding binding = null;
-            for (int i = 0; i < _viewports.Count; i++)
-            {
-                ViewportBinding current = _viewports[i];
-                if (current.Id != id) continue;
-                binding = current;
-                break;
-            }
-
-            return binding;
-        }
-
-        public void SetViewportZOrder(int id, ushort z)
-        {
-            ViewportBinding binding = GetViewportBinding(id);
-            if(binding == null) return;
-            binding.ZOrder = z;
-            _viewports.Sort(ViewportBinding.CompareByZOrder);
-        }
-
-        public void SetResolution(int width, int height)
-        {
-            if (width <= 0)
-            {
-                throw new ArgumentException("Width cannot be inferior or equal to zero");
-            }
-            if (height <= 0)
-            {
-                throw new ArgumentException("Height cannot be inferior or equal to zero");
-            }
-
-            _deviceManager.PreferredBackBufferWidth = width;
-            _deviceManager.PreferredBackBufferHeight = height;
-            _isDirty = true;
-
-            WindowDisplayModeChangedEventArgs args = new WindowDisplayModeChangedEventArgs(_device.Adapter.CurrentDisplayMode, this);
-            OnDisplayModeChanged(this, args);
+            base.SetDepth(depth);
+            DeviceManager.PreferredDepthStencilFormat = depth;
+            _deviceDirty = true;
         }
 
         public void SetFullScreen(bool isFullScreen)
         {
             if (isFullScreen)
             {
-                int newWidth = _deviceManager.PreferredBackBufferWidth;
-                int newHeight = _deviceManager.PreferredBackBufferHeight;
-                DisplayMode mode = FindFullScreenResolution(_resizeRule, newWidth, newHeight);
-                if (_resizeRule != ResizeRule.None)
+                if (PreferredResizeRule != ResizeRule.None)
                 {
+                    DisplayMode mode = FindFullScreenResolution(PreferredResizeRule, Width, Height);
                     if (mode == null)
                     {
                         throw new Exception("No valid resolution find for fullscreen mode");
                     }
-                    newWidth = mode.Width;
-                    newHeight = mode.Height;
+                    SetResolution(mode.Width, mode.Height);
                 }
-
-                _deviceManager.PreferredBackBufferWidth = newWidth;
-                _deviceManager.PreferredBackBufferHeight = newHeight;
             }
-
-            _deviceManager.IsFullScreen = isFullScreen;
-            _isDirty = true;
-
-            WindowFullScreenSwitchedEventArgs args = new WindowFullScreenSwitchedEventArgs(isFullScreen, this);
-            OnFullScreenSwitched(this, args);
-        }
-
-        public void SetSurfaceFormat(SurfaceFormat format)
-        {
-            SurfaceFormat selectedFormat;
-            DepthFormat selectedDepthFormat;
-            int selectedMultiSampleCount;
-            _device.Adapter.QueryBackBufferFormat(_deviceManager.GraphicsProfile, format, _deviceManager.PreferredDepthStencilFormat, 
-                0, out selectedFormat, out selectedDepthFormat, out selectedMultiSampleCount);
-            if (selectedFormat != format)
-            {
-                throw new NotSupportedException(string.Format("SurfaceFormat {0} not supported for back buffer", format));
-            }
-
-            _deviceManager.PreferredBackBufferFormat = format;
-            _isDirty = true;
-        }
-
-        public void SetDepthFormat(DepthFormat depth)
-        {
-            SurfaceFormat selectedFormat;
-            DepthFormat selectedDepthFormat;
-            int selectedMultiSampleCount;
-            _device.Adapter.QueryBackBufferFormat(_deviceManager.GraphicsProfile, _deviceManager.PreferredBackBufferFormat, 
-                depth, 0, out selectedFormat, out selectedDepthFormat, out selectedMultiSampleCount);
-            if (selectedDepthFormat != depth)
-            {
-                throw new NotSupportedException(string.Format("DepthFormat {0} not supported for back buffer", depth));
-            }
-
-            _deviceManager.PreferredDepthStencilFormat = depth;
-            _isDirty = true;
+            DeviceManager.IsFullScreen = isFullScreen;
+            InvalidateScreenMode();
         }
 
         private DisplayMode FindFullScreenResolution(ResizeRule rule, int width, int height)
@@ -389,34 +258,9 @@ namespace Pulsar.Graphics
             return nearest;
         }
 
-        public bool IsValidResolution(int width, int height)
-        {
-            if (!_deviceManager.IsFullScreen)
-            {
-                return true;
-            }
-
-            ReadOnlyCollection<DisplayMode> availableModes = GetAvailableModes();
-            if (availableModes == null)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < availableModes.Count; i++)
-            {
-                DisplayMode mode = availableModes[i];
-                if ((mode.Width == width) && (mode.Height == height))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private ReadOnlyCollection<DisplayMode> GetAvailableModes()
         {
-            int currentFormat = (int)_deviceManager.PreferredBackBufferFormat;
+            int currentFormat = (int)DeviceManager.PreferredBackBufferFormat;
             ReadOnlyCollection<DisplayMode> availableModes;
 
             return !_supportedDisplayMode.TryGetValue(currentFormat, out availableModes) ? null : availableModes;
@@ -424,7 +268,7 @@ namespace Pulsar.Graphics
 
         private void ExtractDisplayMode()
         {
-            DisplayModeCollection modes = _device.Adapter.SupportedDisplayModes;
+            DisplayModeCollection modes = DeviceManager.GraphicsDevice.Adapter.SupportedDisplayModes;
             Dictionary<int, List<DisplayMode>> supported = new Dictionary<int, List<DisplayMode>>();
             foreach (DisplayMode dm in modes)
             {
@@ -453,7 +297,7 @@ namespace Pulsar.Graphics
             {
                 supported.Add(sf);
             }
-            _supportedFormat = new ReadOnlyCollection<SurfaceFormat>(supported);
+            SupportedSurfaceFormat = new ReadOnlyCollection<SurfaceFormat>(supported);
         }
 
         private static int CompareDisplayModeByResolution(DisplayMode first, DisplayMode second)
@@ -502,51 +346,30 @@ namespace Pulsar.Graphics
 
         #region Properties
 
-        public int Height
+        public override bool MipMap
         {
-            get { return _deviceManager.PreferredBackBufferHeight; }
-        }
-
-        public int Width
-        {
-            get { return _deviceManager.PreferredBackBufferWidth; }
+            get { return false; }
+            set { }
         }
 
         public bool IsFullScreen
         {
-            get { return _deviceManager.IsFullScreen; }
-        }
-
-        public SurfaceFormat Surface
-        {
-            get { return _deviceManager.PreferredBackBufferFormat; }
-        }
-
-        public DepthFormat Depth
-        {
-            get { return _deviceManager.PreferredDepthStencilFormat; }
+            get { return DeviceManager.IsFullScreen; }
         }
 
         public bool VSync
         {
-            get { return _deviceManager.SynchronizeWithVerticalRetrace; }
+            get { return DeviceManager.SynchronizeWithVerticalRetrace; }
             set
             {
-                _deviceManager.SynchronizeWithVerticalRetrace = value;
-                _isDirty = true;
+                DeviceManager.SynchronizeWithVerticalRetrace = value;
+                _deviceDirty = true;
             }
         }
 
-        public ResizeRule PreferredResizeRule
-        {
-            get { return _resizeRule; }
-            set { _resizeRule = value; }
-        }
+        public ResizeRule PreferredResizeRule { get; set; }
 
-        public ReadOnlyCollection<SurfaceFormat> SupportedSurfaceFormat
-        {
-            get { return _supportedFormat; }
-        }
+        public ReadOnlyCollection<SurfaceFormat> SupportedSurfaceFormat { get; private set; }
 
         public ReadOnlyCollection<DisplayMode> AvailableDisplayMode
         {

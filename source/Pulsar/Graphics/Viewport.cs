@@ -1,9 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+
 using Microsoft.Xna.Framework.Graphics;
+
+using Pulsar.Graphics.Rendering;
+using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics
 {
-    public sealed class Viewport
+    public sealed class Viewport : IDisposable
     {
         #region Fields
 
@@ -11,67 +15,78 @@ namespace Pulsar.Graphics
         private float _height;
         private float _topPosition;
         private float _leftPosition;
-        private bool _isDirty;
+        private bool _disposed;
+        private bool _isDirty = true;
         private readonly GraphicsDevice _device;
-        private readonly Window _target;
+        private readonly RenderTarget _parentTarget;
+        public Camera Camera;
 
         #endregion
 
         #region Constructor
 
-        internal Viewport(Window target, GraphicsDevice device, float width, float height, float top, float left)
+        internal Viewport(RenderTarget parentTarget, GraphicsDevice device, float width, float height, float top, float left)
         {
-            _target = target;
+            _parentTarget = parentTarget;
             _device = device;
             Width = width;
             Height = height;
             Top = top;
             Left = left;
+            AlwaysClear = true;
         }
 
         #endregion
 
         #region Methods
 
-        public void Render(GameTime time)
+        public void Dispose()
         {
-            if (_isDirty)
-            {
-                UpdateSize();
-            }
+            Dispose(true);
         }
 
-        internal void UpdateSize()
+        private void Dispose(bool disposing)
         {
-            int targetWidth = _target.Width;
-            int targetHeight = _target.Height;
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                RenderTarget.Dispose();
+            }
+            _disposed = true;
+        }
+
+        public void Render()
+        {
+            if (_isDirty) UpdateDimension();
+            if(Camera != null) Camera.Render(this);
+        }
+
+        private void UpdateDimension()
+        {
+            int targetWidth = _parentTarget.Width;
+            int targetHeight = _parentTarget.Height;
             int newWidth = (int)(targetWidth * _width);
             int newHeight = (int)(targetHeight * _height);
-
             if ((newWidth != RealWidth) || (newHeight != RealHeight))
             {
-                if (newWidth > targetWidth) newWidth = targetWidth;
-                if (newHeight > targetHeight) newHeight = targetHeight;
                 RealWidth = newWidth;
                 RealHeight = newHeight;
                 AspectRatio = (float)newWidth/newHeight;
-
                 CreateRenderTarget();
             }
+            RealTop = (int)(_topPosition * targetHeight);
+            RealLeft = (int) (_leftPosition * targetWidth);
 
             _isDirty = false;
         }
 
         private void CreateRenderTarget()
         {
-            if (RenderTarget != null)
-            {
-                RenderTarget.Dispose();
-                RenderTarget = null;
-            }
+            if (RenderTarget != null) RenderTarget.Dispose();
 
-            RenderTarget = new RenderTarget2D(_device, RealWidth, RealHeight, false,
-                _target.Surface, _target.Depth);
+            RenderTarget = new RenderTarget2D(_device, RealWidth, RealHeight, _parentTarget.MipMap,
+                _parentTarget.Pixel, _parentTarget.Depth);
         }
 
         #endregion
@@ -80,9 +95,15 @@ namespace Pulsar.Graphics
 
         internal RenderTarget2D RenderTarget { get; private set; }
 
+        public bool AlwaysClear { get; set; }
+
         public float AspectRatio { get; private set; }
 
         public ushort ZOrder { get; internal set; }
+
+        public int RealTop { get; private set; }
+
+        public int RealLeft { get; private set; }
 
         public float Top
         {
