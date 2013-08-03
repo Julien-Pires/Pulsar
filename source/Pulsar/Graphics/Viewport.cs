@@ -33,7 +33,6 @@ namespace Pulsar.Graphics
             Height = height;
             Top = top;
             Left = left;
-            AlwaysClear = true;
         }
 
         #endregion
@@ -95,7 +94,11 @@ namespace Pulsar.Graphics
 
         internal RenderTarget2D RenderTarget { get; private set; }
 
-        public bool AlwaysClear { get; set; }
+        public bool AlwaysClear
+        {
+            get { return _parentTarget.AlwaysClear; }
+            
+        }
 
         public float AspectRatio { get; private set; }
 
