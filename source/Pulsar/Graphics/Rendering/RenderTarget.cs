@@ -102,6 +102,7 @@ namespace Pulsar.Graphics.Rendering
             DeviceManager = deviceManager;
             Renderer = renderer;
             AlwaysClear = true;
+            ClearColor = Color.CornflowerBlue;
         }
 
         #endregion
@@ -293,6 +294,8 @@ namespace Pulsar.Graphics.Rendering
         }
 
         internal RenderTarget2D Target { get; private set; }
+
+        public Color ClearColor { get; set; }
 
         public bool AlwaysClear { get; set; }
 

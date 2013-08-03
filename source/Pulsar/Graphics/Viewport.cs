@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Graphics.Rendering;
@@ -98,6 +98,11 @@ namespace Pulsar.Graphics
         {
             get { return _parentTarget.AlwaysClear; }
             
+        }
+
+        public Color ClearColor
+        {
+            get { return _parentTarget.ClearColor; }
         }
 
         public float AspectRatio { get; private set; }

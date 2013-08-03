@@ -45,7 +45,7 @@ namespace Pulsar.Graphics.Rendering
         private void BeginFrame(Viewport vp)
         {
             this.instancingManager.Reset();
-            if (vp.AlwaysClear) Clear(vp.RenderTarget);
+            if (vp.AlwaysClear) Clear(vp);
             _graphicDevice.DepthStencilState = DepthStencilState.Default;
         }
 
@@ -65,10 +65,10 @@ namespace Pulsar.Graphics.Rendering
             this._graphicDevice.Indices = null;
         }
 
-        internal void Clear(RenderTarget2D renderTarget)
+        internal void Clear(Viewport vp)
         {
-            this._graphicDevice.SetRenderTarget(renderTarget);
-            this._graphicDevice.Clear(Color.Black);
+            this._graphicDevice.SetRenderTarget(vp.RenderTarget);
+            this._graphicDevice.Clear(vp.ClearColor);
             this._graphicDevice.SetRenderTarget(null);
         }
 
@@ -100,7 +100,7 @@ namespace Pulsar.Graphics.Rendering
             }
 
             _graphicDevice.SetRenderTarget(renderTarget.Target);
-            if(renderTarget.AlwaysClear) _graphicDevice.Clear(Color.Black);
+            if(renderTarget.AlwaysClear) _graphicDevice.Clear(renderTarget.ClearColor);
 
             if (viewports.Count > 0)
             {
