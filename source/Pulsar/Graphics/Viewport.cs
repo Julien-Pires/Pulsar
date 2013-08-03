@@ -17,7 +17,6 @@ namespace Pulsar.Graphics
         private float _leftPosition;
         private bool _disposed;
         private bool _isDirty = true;
-        private readonly GraphicsDevice _device;
         private readonly RenderTarget _parentTarget;
         public Camera Camera;
 
@@ -25,10 +24,9 @@ namespace Pulsar.Graphics
 
         #region Constructor
 
-        internal Viewport(RenderTarget parentTarget, GraphicsDevice device, float width, float height, float top, float left)
+        internal Viewport(RenderTarget parentTarget, float width, float height, float top, float left)
         {
             _parentTarget = parentTarget;
-            _device = device;
             Width = width;
             Height = height;
             Top = top;
@@ -84,7 +82,7 @@ namespace Pulsar.Graphics
         {
             if (RenderTarget != null) RenderTarget.Dispose();
 
-            RenderTarget = new RenderTarget2D(_device, RealWidth, RealHeight, _parentTarget.MipMap,
+            RenderTarget = new RenderTarget2D(_parentTarget.GraphicsDevice, RealWidth, RealHeight, _parentTarget.MipMap,
                 _parentTarget.Pixel, _parentTarget.Depth);
         }
 

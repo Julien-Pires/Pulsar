@@ -93,10 +93,10 @@ namespace Pulsar.Graphics.Rendering
 
         internal void RenderToTarget(RenderTarget renderTarget)
         {
-            List<RenderTarget.ViewportBinding> viewports = renderTarget.Viewports;
+            ViewportCollection viewports = renderTarget.Viewports;
             for (int i = 0; i < viewports.Count; i++)
             {
-                viewports[i].Viewport.Render();
+                viewports[i].Render();
             }
 
             _graphicDevice.SetRenderTarget(renderTarget.Target);
@@ -108,7 +108,7 @@ namespace Pulsar.Graphics.Rendering
                     DepthStencilState.None, RasterizerState.CullCounterClockwise);
                 for (int i = 0; i < viewports.Count; i++)
                 {
-                    Viewport vp = viewports[i].Viewport;
+                    Viewport vp = viewports[i];
                     Rectangle rect = new Rectangle(vp.RealLeft, vp.RealTop, vp.RealWidth, vp.RealHeight);
                     _spriteBatch.Draw(vp.RenderTarget, rect, Color.White);
                 }
