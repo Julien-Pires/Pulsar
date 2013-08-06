@@ -56,7 +56,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// Constructor of the BaseCamera class
         /// </summary>
         /// <param name="name">Name of the camera</param>
-        public Camera(string name, SceneTree owner)
+        internal Camera(string name, SceneTree owner)
         {
             this.name = name;
             this.owner = owner;
