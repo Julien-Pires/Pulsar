@@ -19,6 +19,7 @@ namespace Pulsar.Graphics
         private bool _isDirty = true;
         private readonly RenderTarget _parentTarget;
         public Camera Camera;
+        private readonly FrameDetail _frameDetail = new FrameDetail();
 
         #endregion
 
@@ -56,6 +57,7 @@ namespace Pulsar.Graphics
         public void Render()
         {
             if (_isDirty) UpdateDimension();
+            _frameDetail.Reset();
             if(Camera != null) Camera.Render(this);
         }
 
@@ -92,10 +94,14 @@ namespace Pulsar.Graphics
 
         internal RenderTarget2D RenderTarget { get; private set; }
 
+        internal FrameDetail FrameDetail
+        {
+            get { return _frameDetail; }
+        }
+
         public bool AlwaysClear
         {
             get { return _parentTarget.AlwaysClear; }
-            
         }
 
         public Color ClearColor

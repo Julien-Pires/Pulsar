@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Graphics.Rendering.RenderingTechnique;
@@ -18,6 +17,7 @@ namespace Pulsar.Graphics.Rendering
         private SpriteBatch _spriteBatch;
         private InstanceBatchManager instancingManager;
         private IRenderingTechnique _renderingTechnique;
+        private readonly FrameDetail _frameDetail = new FrameDetail();
 
         #endregion
 
@@ -39,21 +39,18 @@ namespace Pulsar.Graphics.Rendering
 
         #region Methods
 
-        /// <summary>
-        /// Begin the draw operation
-        /// </summary>
-        private void BeginFrame(Viewport vp)
+        private void BeginRender(Viewport vp)
         {
             this.instancingManager.Reset();
+            _frameDetail.Reset();
+
             if (vp.AlwaysClear) Clear(vp);
             _graphicDevice.DepthStencilState = DepthStencilState.Default;
         }
 
-        /// <summary>
-        /// End the draw operation
-        /// </summary>
-        private void EndFrame(Viewport vp)
+        private void EndRender(Viewport vp)
         {
+            vp.FrameDetail.Merge(_frameDetail);
         }
 
         /// <summary>
@@ -84,24 +81,19 @@ namespace Pulsar.Graphics.Rendering
 
         internal void Render(Viewport vp, Camera cam, RenderQueue queue)
         {
-            BeginFrame(vp);
+            BeginRender(vp);
 
             _renderingTechnique.Render(vp, cam, queue);
 
-            EndFrame(vp);
+            EndRender(vp);
         }
 
         internal void RenderToTarget(RenderTarget renderTarget)
         {
-            ViewportCollection viewports = renderTarget.Viewports;
-            for (int i = 0; i < viewports.Count; i++)
-            {
-                viewports[i].Render();
-            }
-
             _graphicDevice.SetRenderTarget(renderTarget.Target);
             if(renderTarget.AlwaysClear) _graphicDevice.Clear(renderTarget.ClearColor);
 
+            ViewportCollection viewports = renderTarget.Viewports;
             if (viewports.Count > 0)
             {
                 _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp,
@@ -126,6 +118,8 @@ namespace Pulsar.Graphics.Rendering
             Rectangle rect = new Rectangle(0, 0, presentation.BackBufferWidth, presentation.BackBufferHeight);
             _spriteBatch.Draw(texture, rect, Color.White);
             _spriteBatch.End();
+
+            _frameDetail.AddDrawCall(4, 2, 1);
         }
 
         internal void DrawGeometry(IRenderable geometry)
@@ -154,6 +148,8 @@ namespace Pulsar.Graphics.Rendering
             this._graphicDevice.DrawIndexedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount,
                 renderInfo.startIndex, renderInfo.triangleCount);
             this.UnsetBuffers();
+
+            _frameDetail.AddDrawCall((uint)renderInfo.VertexCount, (uint)renderInfo.PrimitiveCount, 1);
         }
 
         internal void DrawNonIndexedGeometry(IRenderable geometry)
@@ -162,6 +158,8 @@ namespace Pulsar.Graphics.Rendering
             this._graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
             this._graphicDevice.DrawPrimitives(renderInfo.primitive, renderInfo.startIndex, renderInfo.triangleCount);
             this.UnsetBuffers();
+
+            _frameDetail.AddDrawCall((uint)renderInfo.VertexCount, (uint)renderInfo.PrimitiveCount, 1);
         }
 
         /// <summary>
@@ -179,6 +177,10 @@ namespace Pulsar.Graphics.Rendering
             this._graphicDevice.DrawInstancedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount, 
                 renderInfo.startIndex, renderInfo.triangleCount, batch.InstanceCount);
             this.UnsetBuffers();
+
+            int instanceCount = batch.InstanceCount;
+            _frameDetail.AddDrawCall((uint)(renderInfo.VertexCount * instanceCount), (uint)(renderInfo.PrimitiveCount * instanceCount), 
+                (uint)instanceCount);
         }
 
         #endregion

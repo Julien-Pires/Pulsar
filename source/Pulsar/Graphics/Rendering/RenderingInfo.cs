@@ -97,7 +97,7 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Get the Id
         /// </summary>
-        public uint ID
+        public uint Id
         {
             get { return this.id; }
         }

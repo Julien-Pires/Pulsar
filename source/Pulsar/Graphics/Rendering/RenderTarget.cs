@@ -23,6 +23,7 @@ namespace Pulsar.Graphics.Rendering
         private bool _isDirty = true;
         protected readonly Renderer Renderer;
         protected readonly GraphicsDeviceManager DeviceManager;
+        private readonly FrameStatistics _frameStatistics = new FrameStatistics();
 
         #endregion
 
@@ -62,14 +63,28 @@ namespace Pulsar.Graphics.Rendering
             _disposed = true;
         }
 
-        internal void Render()
+        internal void Render(GameTime time)
         {
             PreRender();
 
             if (_isDirty) ApplyChanges();
+            if (Viewports.Count > 0)
+            {
+                FrameDetail currentFrame = _frameStatistics.CurrentFrame;
+                for (int i = 0; i < Viewports.Count; i++)
+                {
+                    Viewport vp = Viewports[i];
+                    vp.Render();
+                    currentFrame.Merge(vp.FrameDetail);
+                }
+            }
             if (Target != null) Renderer.RenderToTarget(this);
 
             PostRender();
+
+            _frameStatistics.SaveCurrentFrame();
+            _frameStatistics.Framecount++;
+            _frameStatistics.ComputeFramerate(time);
         }
 
         protected virtual void PreRender()
@@ -136,6 +151,11 @@ namespace Pulsar.Graphics.Rendering
         internal GraphicsDevice GraphicsDevice
         {
             get { return DeviceManager.GraphicsDevice; }
+        }
+
+        public FrameStatistics FrameStatistics
+        {
+            get { return _frameStatistics; }
         }
 
         public ViewportCollection Viewports { get; private set; }

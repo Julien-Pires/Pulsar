@@ -20,7 +20,6 @@ namespace Pulsar.Graphics
         #region Fields
 
         private GameServiceContainer services;
-        private FrameInfo frameInfo = new FrameInfo();
         private Window window;
         private Renderer renderer;
         private BufferManager bufferManager;
@@ -55,18 +54,9 @@ namespace Pulsar.Graphics
 
         #region Methods
 
-        /// <summary>
-        /// Update the graphic engine
-        /// </summary>
-        /// <param name="time">Time since the last update</param>
-        public void Update(GameTime time)
+        public void Render(GameTime time)
         {
-            this.frameInfo.Update(time);
-        }
-
-        public void Render(GameTime gameTime)
-        {
-            this.window.Render();
+            this.window.Render(time);
         }
 
         /// <summary>
@@ -103,9 +93,9 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Get information about the last frame
         /// </summary>
-        public FrameInfo FrameInfo
+        public FrameStatistics FrameStatistics
         {
-            get { return this.frameInfo; }
+            get { return window.FrameStatistics; }
         }
 
         public Window Window
