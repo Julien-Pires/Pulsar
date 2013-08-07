@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Microsoft.Xna.Framework;
+
 using Pulsar.Graphics.Rendering;
 using Pulsar.Mathematic;
 
@@ -14,39 +15,36 @@ namespace Pulsar.Graphics.SceneGraph
     /// <summary>
     /// Base class for a camera
     /// </summary>
-    public class Camera : IMovable
+    public sealed class Camera : IMovable
     {
         #region Fields
 
-        protected string name = string.Empty;
-        protected SceneTree owner;
-        protected SceneNode parent;
-        protected bool isDirtyView = true;
-        protected bool isDirtyFrustum = true;
-        protected bool isDirtyBoundingFrustum = true;
-        protected bool isViewportChanged = true;
-        protected bool hasParentChanged = false;
-        protected bool useFixedYaw = true;
-        protected ProjectionType projType = ProjectionType.Perspective;
-        protected Matrix transform = Matrix.Identity;
         internal Matrix ViewMatrix = Matrix.Identity;
         internal Matrix ProjectionMatrix = Matrix.Identity;
-        protected float near = 1.0f;
-        protected float far = 1000.0f;
-        protected float aspectRatio = 16.0f/9.0f;
-        protected float fieldOfView = MathHelper.PiOver4;
-        protected Vector3 yawFixedAxis = Vector3.UnitY;
-        protected Vector3 direction = Vector3.Forward;
-        protected Vector3 defaultDirection = Vector3.Forward;
-        protected Quaternion orientation = Quaternion.Identity;
-        protected Vector3 position = Vector3.Zero;
-        protected Quaternion lastNodeOrientation = Quaternion.Identity;
-        protected Vector3 lastNodePosition = Vector3.Zero;
-        protected Quaternion fullOrientation = Quaternion.Identity;
-        protected Vector3 fullPosition = Vector3.Zero;
-        protected Viewport viewport;
-        protected BoundingFrustum frustum = new BoundingFrustum(Matrix.Identity);
-        protected SpeedFrustum spdFrustum;
+
+        private readonly string _name = string.Empty;
+        private readonly SceneTree _owner;
+        private SceneNode _parent;
+        private bool _isDirtyView = true;
+        private bool _isDirtyFrustum = true;
+        private bool _isDirtyBoundingFrustum = true;
+        private bool _useFixedYaw = true;
+        private ProjectionType _projectionType = ProjectionType.Perspective;
+        private Matrix _transform = Matrix.Identity;
+        private float _near = 1.0f;
+        private float _far = 1000.0f;
+        private float _aspectRatio = 16.0f/9.0f;
+        private float _fieldOfView = MathHelper.PiOver4;
+        private Vector3 _yawFixedAxis = Vector3.UnitY;
+        private Quaternion _orientation = Quaternion.Identity;
+        private Vector3 _position = Vector3.Zero;
+        private Quaternion _lastNodeOrientation = Quaternion.Identity;
+        private Vector3 _lastNodePosition = Vector3.Zero;
+        private Quaternion _fullOrientation = Quaternion.Identity;
+        private Vector3 _fullPosition = Vector3.Zero;
+        private Viewport _viewport;
+        private BoundingFrustum _frustum = new BoundingFrustum(Matrix.Identity);
+        private SpeedFrustum _spdFrustum;
 
         #endregion
 
@@ -56,27 +54,34 @@ namespace Pulsar.Graphics.SceneGraph
         /// Constructor of the BaseCamera class
         /// </summary>
         /// <param name="name">Name of the camera</param>
+        /// <param name="owner">SceneTree in which the camera was created</param>
         internal Camera(string name, SceneTree owner)
         {
-            this.name = name;
-            this.owner = owner;
+            HasParentChanged = false;
+            _name = name;
+            _owner = owner;
         }
 
         #endregion
 
         #region Methods
 
+        /// <summary>
+        /// Render the scene in a specific viewport
+        /// </summary>
+        /// <param name="vp">Viewport in which to render the scene</param>
         public void Render(Viewport vp)
         {
-            if (vp != this.viewport) this.Viewport = vp;
-            this.owner.RenderScene(vp, this);
+            if (vp != _viewport) Viewport = vp;
+            _owner.RenderScene(vp, this);
         }
 
         /// <summary>
         /// <remarks>Not implemented for the BaseCamera class</remarks>
         /// </summary>
         /// <param name="cam">Current camera</param>
-        public virtual void NotifyCurrentCamera(Camera cam)
+        /// <exception cref="NotImplementedException">Camera doesn't need to be notified about other cameras</exception>
+        public void NotifyCurrentCamera(Camera cam)
         {
             throw new NotImplementedException();
         }
@@ -85,7 +90,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// <remarks>Not implemented for the BaseCamera class </remarks>
         /// </summary>
         /// <param name="queue">Current render queue</param>
-        public virtual void UpdateRenderQueue(RenderQueue queue)
+        /// <exception cref="NotImplementedException">Camera doesn't neeed to be added in a queue</exception>
+        public void UpdateRenderQueue(RenderQueue queue)
         {
             throw new NotImplementedException();
         }
@@ -95,81 +101,68 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         /// <param name="useFixed">Boolean indicating the uses or not of a fixed vector</param>
         /// <param name="fixedAxis">Fixed vector for yaw</param>
-        public virtual void UseFixedYaw(bool useFixed, Vector3? fixedAxis)
+        public void UseFixedYaw(bool useFixed, Vector3? fixedAxis)
         {
             fixedAxis = fixedAxis ?? Vector3.UnitY;
-            this.useFixedYaw = useFixed;
-            this.yawFixedAxis = fixedAxis.Value;
+            _useFixedYaw = useFixed;
+            _yawFixedAxis = fixedAxis.Value;
         }
 
         /// <summary>
         /// Move the camera's position by a specific vector in the world coordinate
         /// </summary>
         /// <param name="v">Vector to add for translate</param>
-        public virtual void Translate(Vector3 v)
+        public void Translate(Vector3 v)
         {
-            Vector3.Add(ref this.position, ref v, out this.position);
+            Vector3.Add(ref _position, ref v, out _position);
 
-            this.InvalidateView();
+            InvalidateView();
         }
 
         /// <summary>
         /// Move the camera's position by a specific vector in the local coordinate
         /// </summary>
         /// <param name="v">Vector to add for translate</param>
-        public virtual void TranslateRelative(Vector3 v)
+        public void TranslateRelative(Vector3 v)
         {
-            Vector3 mov = Vector3.Transform(v, this.orientation);
-
-            Vector3.Add(ref this.position, ref mov, out this.position);
+            Vector3 mov = Vector3.Transform(v, _orientation);
+            Vector3.Add(ref _position, ref mov, out _position);
         }
 
         /// <summary>
         /// Execute a yaw operation
         /// </summary>
         /// <param name="angle">Angle to rotate</param>
-        public virtual void Yaw(float angle)
+        public void Yaw(float angle)
         {
-            Vector3 axis;
+            Vector3 axis = _useFixedYaw ? _yawFixedAxis : Vector3.Transform(Vector3.UnitY, _orientation);
+            Rotate(axis, angle);
 
-            if (this.useFixedYaw)
-            {
-                axis = this.yawFixedAxis;
-            }
-            else
-            {
-                axis = Vector3.Transform(Vector3.UnitY, this.orientation);
-            }
-
-            this.Rotate(axis, angle);
-
-            this.InvalidateView();
+            InvalidateView();
         }
 
         /// <summary>
         /// Execute a pitch operation
         /// </summary>
         /// <param name="angle">Angle to rotate</param>
-        public virtual void Pitch(float angle)
+        public void Pitch(float angle)
         {
-            Vector3 axis = Vector3.Transform(Vector3.UnitX, this.orientation);
-            
-            this.Rotate(axis, angle);
+            Vector3 axis = Vector3.Transform(Vector3.UnitX, _orientation);
+            Rotate(axis, angle);
 
-            this.InvalidateView();
+            InvalidateView();
         }
 
         /// <summary>
         /// Execute a roll operation
         /// </summary>
         /// <param name="angle">Angle to rotate</param>
-        public virtual void Roll(float angle)
+        public void Roll(float angle)
         {
-            Vector3 axis = Vector3.Transform(Vector3.UnitZ, this.orientation);
+            Vector3 axis = Vector3.Transform(Vector3.UnitZ, _orientation);
+            Rotate(axis, angle);
 
-            this.Rotate(axis, angle);
-
-            this.InvalidateView();
+            InvalidateView();
         }
 
         /// <summary>
@@ -177,49 +170,47 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         /// <param name="axis">Axis to rotate around</param>
         /// <param name="angle">Angle to rotate</param>
-        public virtual void Rotate(Vector3 axis, float angle)
+        public void Rotate(Vector3 axis, float angle)
         {
             Quaternion q = Quaternion.CreateFromAxisAngle(axis, angle);
-            
-            this.Rotate(q);
+            Rotate(q);
         }
 
         /// <summary>
         /// Rotate around an axis with a quaternion
         /// </summary>
         /// <param name="q">Quaternion used for rotation</param>
-        public virtual void Rotate(Quaternion q)
+        public void Rotate(Quaternion q)
         {
             q.Normalize();
-            Quaternion.Multiply(ref q, ref this.orientation, out this.orientation);
+            Quaternion.Multiply(ref q, ref _orientation, out _orientation);
 
-            this.InvalidateView();
+            InvalidateView();
         }
 
         /// <summary>
         /// Set a direction on wich the camera is looking
         /// </summary>
-        /// <param name="v">Direction to look for the camera</param>
-        public virtual void LookAt(Vector3 target)
+        /// <param name="target">Direction to look for</param>
+        public void LookAt(Vector3 target)
         {
-            this.UpdateView();
-            this.SetDirection(target - this.fullPosition);
+            UpdateView();
+            SetDirection(target - _fullPosition);
         }
 
         /// <summary>
         /// Set the direction where the camera is watching
         /// </summary>
         /// <param name="v">Direction vector</param>
-        public virtual void SetDirection(Vector3 v)
+        public void SetDirection(Vector3 v)
         {
+            Quaternion targetOrientation;
             Vector3 adjustZ = -v;
             adjustZ.Normalize();
 
-            Quaternion targetOrientation;
-
-            if (this.useFixedYaw)
+            if (_useFixedYaw)
             {
-                Vector3 vecX = Vector3.Cross(this.yawFixedAxis, adjustZ);
+                Vector3 vecX = Vector3.Cross(_yawFixedAxis, adjustZ);
                 vecX.Normalize();
 
                 Vector3 vecY = Vector3.Cross(adjustZ, vecX);
@@ -232,10 +223,10 @@ namespace Pulsar.Graphics.SceneGraph
             else
             {
                 Vector3[] axes;
-                this.UpdateView();
-                this.fullOrientation.GetAxes(out axes);
-                Quaternion rotationQuat;
+                UpdateView();
+                _fullOrientation.GetAxes(out axes);
 
+                Quaternion rotationQuat;
                 if ((axes[2] + adjustZ).LengthSquared() < 0.00005f)
                 {
                     Quaternion.CreateFromAxisAngle(ref axes[1], MathHelper.ToRadians(MathHelper.Pi), out rotationQuat);
@@ -246,160 +237,145 @@ namespace Pulsar.Graphics.SceneGraph
                     axes[2].GetArcRotation(ref adjustZ, ref fallB, out rotationQuat);
                 }
 
-                Quaternion.Multiply(ref rotationQuat, ref fullOrientation, out targetOrientation);
+                Quaternion.Multiply(ref rotationQuat, ref _fullOrientation, out targetOrientation);
             }
 
-            if (this.parent != null)
+            if (_parent != null)
             {
-                this.orientation = Quaternion.Inverse(this.parent.Orientation) * targetOrientation;
+                _orientation = Quaternion.Inverse(_parent.Orientation) * targetOrientation;
             }
             else
             {
-                this.orientation = targetOrientation;
+                _orientation = targetOrientation;
             }
 
-            this.InvalidateView();
+            InvalidateView();
         }
 
         /// <summary>
         /// Check if the frustum is out of date and update values accordingly
         /// </summary>
         /// <returns>Return true if the frustum is out of date, else false</returns>
-        protected virtual bool IsProjectionOutOfDate()
+        private bool IsProjectionOutOfDate()
         {
-            if (this.IsViewOutOfDate())
-            {
-                this.isDirtyFrustum = true;
-            }
+            if (IsViewOutOfDate()) _isDirtyFrustum = true;
 
-            return this.isDirtyFrustum;
+            return _isDirtyFrustum;
         }
 
         /// <summary>
         /// Check if view is out of date and update values accordingly
         /// </summary>
-        protected virtual bool IsViewOutOfDate()
+        private bool IsViewOutOfDate()
         {
-            if (this.parent != null)
+            if (_parent != null)
             {
-                if((isDirtyView) ||
-                    ((this.lastNodeOrientation != this.parent.FullOrientation) ||
-                    (this.lastNodePosition != this.parent.FullPosition)))
+                if((_isDirtyView) || ((_lastNodeOrientation != _parent.FullOrientation) ||
+                    (_lastNodePosition != _parent.FullPosition)))
                 {
-                    this.lastNodeOrientation = this.parent.FullOrientation;
-                    this.lastNodePosition = this.parent.FullPosition;
-                    Quaternion.Multiply(ref this.lastNodeOrientation, ref this.orientation, out this.fullOrientation);
-                    this.fullPosition = Vector3.Add(Vector3.Transform(this.position, this.lastNodeOrientation), this.lastNodePosition);
+                    _lastNodeOrientation = _parent.FullOrientation;
+                    _lastNodePosition = _parent.FullPosition;
+                    Quaternion.Multiply(ref _lastNodeOrientation, ref _orientation, out _fullOrientation);
+                    _fullPosition = Vector3.Add(Vector3.Transform(_position, _lastNodeOrientation), _lastNodePosition);
 
-                    this.InvalidateView();
+                    InvalidateView();
                 }
             }
             else
             {
-                this.fullOrientation = this.orientation;
-                this.fullPosition = this.position;
+                _fullOrientation = _orientation;
+                _fullPosition = _position;
             }
 
-            return this.isDirtyView;
+            return _isDirtyView;
         }
 
         /// <summary>
         /// Invalidate the projection
         /// </summary>
-        protected virtual void InvalidateFrustum()
+        private void InvalidateFrustum()
         {
-            this.isDirtyFrustum = true;
-            this.isDirtyBoundingFrustum = true;
+            _isDirtyFrustum = true;
+            _isDirtyBoundingFrustum = true;
         }
 
         /// <summary>
         /// Invalidate the view
         /// </summary>
-        protected virtual void InvalidateView()
+        private void InvalidateView()
         {
-            this.isDirtyView = true;
-            this.isDirtyBoundingFrustum = true;
+            _isDirtyView = true;
+            _isDirtyBoundingFrustum = true;
         }
 
         /// <summary>
         /// Check if view matrix need to be updated
         /// </summary>
-        protected virtual void UpdateView()
+        private void UpdateView()
         {
-            if (this.IsViewOutOfDate())
-            {
-                this.ComputeView();
-            }
+            if (IsViewOutOfDate()) ComputeView();
         }
 
         /// <summary>
         /// Check if projection matrix need to be updated
         /// </summary>
-        protected virtual void UpdateFrustum()
+        private void UpdateFrustum()
         {
-            if (this.IsProjectionOutOfDate())
-            {
-                this.ComputeProjection();
-            }
+            if (IsProjectionOutOfDate()) ComputeProjection();
         }
 
         /// <summary>
         /// Check if the bounding frustum need to be updated
         /// </summary>
-        protected virtual void UpdateBoundingFrustum()
+        private void UpdateBoundingFrustum()
         {
-            this.UpdateView();
-            this.UpdateFrustum();
+            UpdateView();
+            UpdateFrustum();
 
-            if (this.isDirtyBoundingFrustum)
-            {
-                this.ComputeBoundingFrustum();
-            }
+            if (_isDirtyBoundingFrustum) ComputeBoundingFrustum();
         }
 
         /// <summary>
         /// Compute the bounding frustum
         /// </summary>
-        protected virtual void ComputeBoundingFrustum()
+        private void ComputeBoundingFrustum()
         {
-            this.frustum.Matrix = this.ViewMatrix * this.ProjectionMatrix;
-            this.spdFrustum = new SpeedFrustum(ref this.frustum);
-
-            this.isDirtyBoundingFrustum = false;
+            _frustum.Matrix = ViewMatrix * ProjectionMatrix;
+            _spdFrustum = new SpeedFrustum(ref _frustum);
+            _isDirtyBoundingFrustum = false;
         }
 
         /// <summary>
         /// Compute the projection matrix depending on the projection type
         /// </summary>
-        protected virtual void ComputeProjection()
+        private void ComputeProjection()
         {
-            switch (this.projType)
+            switch (_projectionType)
             {
                 case ProjectionType.Perspective:
-                    Matrix.CreatePerspectiveFieldOfView(this.fieldOfView, this.aspectRatio, this.near, 
-                        this.far, out this.ProjectionMatrix);
+                    Matrix.CreatePerspectiveFieldOfView(_fieldOfView, _aspectRatio, _near, 
+                        _far, out ProjectionMatrix);
                     break;
                 case ProjectionType.Orthographic:
-                    Matrix.CreateOrthographic(viewport.Width, viewport.Height, this.near, this.far, out this.ProjectionMatrix);
+                    Matrix.CreateOrthographic(_viewport.Width, _viewport.Height, _near, _far, out ProjectionMatrix);
                     break;
             }
 
-            this.isDirtyFrustum = false;
+            _isDirtyFrustum = false;
         }
 
         /// <summary>
         /// Compute the view matrix
         /// </summary>
-        protected virtual void ComputeView()
+        private void ComputeView()
         {
-            if (this.isDirtyView)
+            if (_isDirtyView)
             {
-                this.transform = Matrix.CreateFromQuaternion(this.fullOrientation) * Matrix.CreateTranslation(this.fullPosition);
-                Matrix.Invert(ref this.transform, out this.ViewMatrix);
+                _transform = Matrix.CreateFromQuaternion(_fullOrientation) * Matrix.CreateTranslation(_fullPosition);
+                Matrix.Invert(ref _transform, out ViewMatrix);
             }
-
-            this.isDirtyView = false;
-            this.isDirtyBoundingFrustum = true;
+            _isDirtyView = false;
+            _isDirtyBoundingFrustum = true;
         }
 
         /// <summary>
@@ -409,9 +385,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="parent">Parent scene node</param>
         public void AttachParent(SceneNode parent)
         {
-            this.parent = parent;
+            _parent = parent;
 
-            this.InvalidateView();
+            InvalidateView();
         }
 
         /// <summary>
@@ -420,9 +396,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public void DetachParent()
         {
-            this.parent = null;
+            _parent = null;
 
-            this.InvalidateView();
+            InvalidateView();
         }
 
         #endregion
@@ -439,140 +415,136 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public Viewport Viewport
         {
-            get { return this.viewport; }
+            get { return _viewport; }
             internal set
             {
-                this.viewport = value;
-                this.InvalidateFrustum();
+                _viewport = value;
+                _aspectRatio = _viewport.AspectRatio;
+                InvalidateFrustum();
             }
         }
 
         /// <summary>
         /// Get or set the projection type of this camera
         /// </summary>
-        public virtual ProjectionType Projection
+        public ProjectionType Projection
         {
-            get { return this.projType; }
+            get { return _projectionType; }
             set
             {
-                this.projType = value;
-
-                this.InvalidateFrustum();
+                _projectionType = value;
+                InvalidateFrustum();
             }
         }
 
         /// <summary>
         /// Get or set the field of view of this camera
         /// </summary>
-        public virtual float FOV
+        public float FieldOfView
         {
-            get { return this.fieldOfView; }
+            get { return _fieldOfView; }
             set
             {
-                this.fieldOfView = value;
-
-                this.InvalidateFrustum();
+                _fieldOfView = value;
+                InvalidateFrustum();
             }
         }
 
         /// <summary>
         /// Get or set the near plane of this camera
         /// </summary>
-        public virtual float NearPlane
+        public float NearPlane
         {
-            get { return this.near; }
+            get { return _near; }
             set
             {
-                this.near = value;
-
-                this.InvalidateFrustum();
+                _near = value;
+                InvalidateFrustum();
             }
         }
 
         /// <summary>
         /// Get or set the far plane of this camera
         /// </summary>
-        public virtual float FarPlane
+        public float FarPlane
         {
-            get { return this.far; }
+            get { return _far; }
             set
             {
-                this.far = value;
-
-                this.InvalidateFrustum();
+                _far = value;
+                InvalidateFrustum();
             }
         }
 
         /// <summary>
         /// Get or set the position of the camera
         /// </summary>
-        public virtual Vector3 Position
+        public Vector3 Position
         {
-            get { return this.position; }
+            get { return _position; }
             set
             {
-                this.position = value;
-
-                this.InvalidateView();
+                _position = value;
+                InvalidateView();
             }
         }
 
         /// <summary>
         /// Get the bounding frustum of the camera
         /// </summary>
-        public virtual BoundingFrustum Frustum
+        public BoundingFrustum Frustum
         {
             get
             {
-                this.UpdateBoundingFrustum();
+                UpdateBoundingFrustum();
 
-                return this.frustum;
+                return _frustum;
             }
         }
 
         /// <summary>
         /// Get a SpeedFrustum instance to compute fast frustum interesection
         /// </summary>
-        public virtual SpeedFrustum FastFrustum
+        public SpeedFrustum FastFrustum
         {
             get
             {
-                this.UpdateBoundingFrustum();
+                UpdateBoundingFrustum();
 
-                return this.spdFrustum;
+                return _spdFrustum;
             }
         }
 
         /// <summary>
         /// Get the projection matrix of this camera
         /// </summary>
-        public virtual Matrix ProjectionTransform
+        public Matrix ProjectionTransform
         {
             get
             {
-                this.UpdateFrustum();
+                UpdateFrustum();
 
-                return this.ProjectionMatrix;
+                return ProjectionMatrix;
             }
         }
 
         /// <summary>
         /// Get the view matrix of this camera
         /// </summary>
-        public virtual Matrix ViewTransform
+        public Matrix ViewTransform
         {
             get
             {
-                this.UpdateView();
+                UpdateView();
 
-                return this.ViewMatrix;
+                return ViewMatrix;
             }
         }
 
         /// <summary>
         /// Get the AABB of the camera (Not implemented...)
         /// </summary>
-        public virtual BoundingBox WorldBoundingBox
+        public BoundingBox WorldBoundingBox
         {
             get { throw new NotImplementedException(); }
         }
@@ -580,9 +552,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Get a boolean indicating if this object is attached to a scene node
         /// </summary>
-        public virtual bool IsAttached
+        public bool IsAttached
         {
-            get { return this.parent != null; }
+            get { return _parent != null; }
         }
 
         /// <summary>
@@ -590,13 +562,13 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public string Name
         {
-            get { return this.name; }
+            get { return _name; }
         }
 
         /// <summary>
         /// Get a boolean indicating if this object is visible
         /// </summary>
-        public virtual bool IsRendered
+        public bool IsRendered
         {
             get { return false; }
         }
@@ -604,24 +576,20 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Get or set a boolean indicating if the parent node has changed
         /// </summary>
-        public virtual bool HasParentChanged
-        {
-            get { return this.hasParentChanged; }
-            set { this.hasParentChanged = value; }
-        }
+        public bool HasParentChanged { get; set; }
 
         /// <summary>
         /// Get the parent scene node of this object
         /// </summary>
-        public virtual SceneNode Parent
+        public SceneNode Parent
         {
-            get { return this.parent; }
+            get { return _parent; }
         }
 
         /// <summary>
         /// Get the transform matrix of this object
         /// </summary>
-        public virtual Matrix Transform
+        public Matrix Transform
         {
             get { return Matrix.Identity; }
         }
@@ -629,25 +597,25 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Get the direction vector
         /// </summary>
-        public virtual Vector3 Direction
+        public Vector3 Direction
         {
-            get { return this.transform.Forward; }
+            get { return _transform.Forward; }
         }
 
         /// <summary>
         /// Get the right vector
         /// </summary>
-        public virtual Vector3 Right
+        public Vector3 Right
         {
-            get { return this.transform.Right; }
+            get { return _transform.Right; }
         }
 
         /// <summary>
         /// Get the up vector
         /// </summary>
-        public virtual Vector3 Up
+        public Vector3 Up
         {
-            get { return this.transform.Up; }
+            get { return _transform.Up; }
         }
 
         #endregion
