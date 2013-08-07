@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Microsoft.Xna.Framework;
-
+using Pulsar.Graphics.Rendering;
 using Pulsar.Mathematic;
 
 namespace Pulsar.Graphics.SceneGraph

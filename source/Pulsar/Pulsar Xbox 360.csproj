@@ -108,7 +108,11 @@
     <Compile Include="Graphics\Rendering\VertexBufferObject.cs" />
     <Compile Include="Graphics\Rendering\VertexBufferWrapper.cs" />
     <Compile Include="Graphics\Rendering\VertexData.cs" />
+    <Compile Include="Graphics\Rendering\Viewport.cs" />
     <Compile Include="Graphics\Rendering\ViewportCollection.cs" />
+    <Compile Include="Graphics\Rendering\Window.cs" />
+    <Compile Include="Graphics\Rendering\WindowDisplayModeChangedEventArgs.cs" />
+    <Compile Include="Graphics\Rendering\WindowFullScreenSwitchedEventArgs.cs" />
     <Compile Include="Graphics\SceneGraph\Camera.cs" />
     <Compile Include="Graphics\SceneGraph\CameraManager.cs" />
     <Compile Include="Graphics\SceneGraph\Entity.cs" />
@@ -119,10 +123,6 @@
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
     <Compile Include="Graphics\SpeedFrustum.cs" />
-    <Compile Include="Graphics\Viewport.cs" />
-    <Compile Include="Graphics\Window.cs" />
-    <Compile Include="Graphics\WindowDisplayModeChangedEventArgs.cs" />
-    <Compile Include="Graphics\WindowFullScreenSwitchedEventArgs.cs" />
     <Compile Include="Input\AbstractButton.cs" />
     <Compile Include="Input\Axis.cs" />
     <Compile Include="Input\AxisCommand.cs" />
