@@ -16,16 +16,6 @@ You can find a presentation of the various module on the wiki at this address: [
 
 And the API documentation is available here: [API](https://github.com/TakuProjects/Pulsar/wiki/API)
 
-Coming soon
---------
-
-The following list is a non-exhaustive list of next features:
-- New Asset management
-- New Instancing mecanism
-- Default component
-- Light PrePass
-- and many others...
-
 Credits
 --------
 
