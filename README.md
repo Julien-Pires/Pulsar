@@ -4,10 +4,10 @@ Pulsar
 Pulsar is a game engine based on XNA. The objectives of this engine is to provide a wide range of modules 
 for developing video games.
 
-Installation
+Installing
 --------
 
-Installation instruction can be found on the wiki: [Installation](https://github.com/TakuProjects/Pulsar/wiki/Installation)
+Installing instruction can be found on the wiki: [Installing](https://github.com/TakuProjects/Pulsar/wiki/Installing)
 
 Documentation
 --------
@@ -15,16 +15,6 @@ Documentation
 You can find a presentation of the various module on the wiki at this address: [Modules](https://github.com/TakuProjects/Pulsar/wiki/Modules-overview)
 
 And the API documentation is available here: [API](https://github.com/TakuProjects/Pulsar/wiki/API)
-
-Coming soon
---------
-
-The following list is a non-exhaustive list of next features:
-- New Asset management
-- New Instancing mecanism
-- Default component
-- Light PrePass
-- and many others...
 
 Credits
 --------

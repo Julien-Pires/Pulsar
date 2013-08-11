@@ -13,7 +13,7 @@ namespace Pulsar.Assets.Graphics.Shaders
     {
         #region Fields
 
-        protected Effect fx = null;
+        protected Effect Fx = null;
 
         #endregion
 
@@ -40,7 +40,7 @@ namespace Pulsar.Assets.Graphics.Shaders
         /// <param name="fx">Effect instance</param>
         protected internal virtual void SetEffect(Effect fx)
         {
-            this.fx = fx;
+            this.Fx = fx;
         }
 
         #endregion

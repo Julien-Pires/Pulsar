@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text;
-
-using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
@@ -11,14 +7,14 @@ namespace Pulsar.Graphics.SceneGraph
     /// <summary>
     /// Define a Transform node
     /// </summary>
-    public class SceneNode : Node
+    public sealed class SceneNode : Node
     {
         #region Fields
 
-        private SceneTree owner = null;
-        private BoundingBox boundingBox = new BoundingBox();
-        private Dictionary<string, IMovable> movablesByName = new Dictionary<string, IMovable>();
-        private List<IMovable> movablesList = new List<IMovable>();
+        private readonly SceneTree _owner;
+        private BoundingBox _boundingBox;
+        private readonly Dictionary<string, IMovable> _movablesByName = new Dictionary<string, IMovable>();
+        private readonly List<IMovable> _movablesList = new List<IMovable>();
 
         #endregion
 
@@ -31,8 +27,8 @@ namespace Pulsar.Graphics.SceneGraph
         internal SceneNode(SceneTree scene)
             : base(string.Empty)
         {
-            this.owner = scene;
-            this.NeedUpdate(false);
+            _owner = scene;
+            NeedUpdate(false);
         }
 
         /// <summary>
@@ -43,8 +39,8 @@ namespace Pulsar.Graphics.SceneGraph
         internal SceneNode(SceneTree scene, string name) 
             : base(name)
         {
-            this.owner = scene;
-            this.NeedUpdate(false);
+            _owner = scene;
+            NeedUpdate(false);
         }
 
         #endregion
@@ -57,17 +53,17 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="movObj">IMovable instance</param>
         public void AttachObject(IMovable movObj)
         {
-            if (this.movablesByName.ContainsKey(movObj.Name))
+            if (_movablesByName.ContainsKey(movObj.Name))
             {
-                this.movablesByName.Remove(movObj.Name);
-                this.movablesList.Remove(movObj);
+                _movablesByName.Remove(movObj.Name);
+                _movablesList.Remove(movObj);
             }
 
-            this.movablesByName.Add(movObj.Name, movObj);
-            this.movablesList.Add(movObj);
+            _movablesByName.Add(movObj.Name, movObj);
+            _movablesList.Add(movObj);
             movObj.AttachParent(this);
 
-            this.NeedUpdate(false);
+            NeedUpdate(false);
         }
 
         /// <summary>
@@ -76,16 +72,14 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="name">Name of the movable object</param>
         public void DetachObject(string name)
         {
-            if (!this.movablesByName.ContainsKey(name))
-                return;
+            if (!_movablesByName.ContainsKey(name)) return;
 
-            IMovable movObj = this.movablesByName[name];
-
+            IMovable movObj = _movablesByName[name];
             movObj.DetachParent();
-            this.movablesByName.Remove(name);
-            this.movablesList.Remove(movObj);
+            _movablesByName.Remove(name);
+            _movablesList.Remove(movObj);
 
-            this.NeedUpdate(false);
+            NeedUpdate(false);
         }
 
         /// <summary>
@@ -95,7 +89,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <returns>Return a new child node</returns>
         protected override Node CreateChildIntern(string name)
         {
-            return this.owner.CreateNode(name);
+            return _owner.CreateNode(name);
         }
 
         /// <summary>
@@ -105,7 +99,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <returns></returns>
         protected override bool RemoveChildIntern(string name)
         {
-            return this.owner.RemoveNode(name);
+            return _owner.RemoveNode(name);
         }
 
         /// <summary>
@@ -115,7 +109,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <returns>Return a new child node</returns>
         public SceneNode CreateChildSceneNode(string name)
         {
-            return (SceneNode)this.CreateChild(name);
+            return (SceneNode)CreateChild(name);
         }
 
         /// <summary>
@@ -126,18 +120,16 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="addChildren">Boolean indicating if the search goes through childrens</param>
         internal void FindVisibleObjects(Camera cam, RenderQueue queue, bool addChildren)
         {
-            Dictionary<string, IMovable>.ValueCollection movObjs = this.movablesByName.Values;
-
-            for (int i = 0; i < movObjs.Count; i++)
+            for (int i = 0; i < _movablesList.Count; i++)
             {
-                queue.ProcessVisibleObject(cam, movObjs.ElementAt(i));
+                queue.ProcessVisibleObject(cam, _movablesList[i]);
             }
 
             if (addChildren)
             {
-                for (int j = 0; j < this.childrensList.Count; j++)
+                for (int j = 0; j < ChildrensList.Count; j++)
                 {
-                    ((SceneNode)this.childrensList[j]).FindVisibleObjects(cam, queue, addChildren);
+                    ((SceneNode)ChildrensList[j]).FindVisibleObjects(cam, queue, true);
                 }
             }
         }
@@ -150,7 +142,7 @@ namespace Pulsar.Graphics.SceneGraph
         protected internal override void Update(bool updateChild, bool parentHasChanged)
         {
             base.Update(updateChild, parentHasChanged);
-            this.UpdateBounds();
+            UpdateBounds();
         }
 
         /// <summary>
@@ -158,20 +150,20 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void UpdateBounds()
         {
-            this.boundingBox = new BoundingBox();
+            _boundingBox = new BoundingBox();
 
-            for (int i = 0; i < this.movablesList.Count; i++)
+            for (int i = 0; i < _movablesList.Count; i++)
             {
-                IMovable obj = this.movablesList[i];
+                IMovable obj = _movablesList[i];
                 BoundingBox objBox = obj.WorldBoundingBox;
 
-                BoundingBox.CreateMerged(ref this.boundingBox, ref objBox, out this.boundingBox);
+                BoundingBox.CreateMerged(ref _boundingBox, ref objBox, out _boundingBox);
             }
 
-            for (int i = 0; i < this.childrensList.Count; i++)
+            for (int i = 0; i < ChildrensList.Count; i++)
             {
-                SceneNode node = (SceneNode)this.childrensList[i];
-                BoundingBox.CreateMerged(ref this.boundingBox, ref node.boundingBox, out this.boundingBox);
+                SceneNode node = (SceneNode)ChildrensList[i];
+                BoundingBox.CreateMerged(ref _boundingBox, ref node._boundingBox, out _boundingBox);
             }
         }
 

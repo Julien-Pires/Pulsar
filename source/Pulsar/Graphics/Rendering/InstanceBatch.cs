@@ -1,12 +1,9 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets.Graphics.Materials;
-using Pulsar.Graphics.Rendering;
 
 namespace Pulsar.Graphics.Rendering
 {
@@ -17,7 +14,7 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
 
-        private static VertexDeclaration instanceVertexDeclaration = new VertexDeclaration
+        private static readonly VertexDeclaration InstanceVertexDeclaration = new VertexDeclaration
         (
             new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 0),
             new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1),
@@ -25,14 +22,13 @@ namespace Pulsar.Graphics.Rendering
             new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 3)
         );
 
-        private uint id;
-        private int renderQueueId;
-        private bool renderInfoInit = false;
-        private List<IRenderable> instances = new List<IRenderable>();
-        private RenderingInfo renderInfo = null;
-        private Material material = null;
-        private Matrix[] transforms;
-        private DynamicVertexBuffer transformsBuffer;
+        private readonly uint _id;
+        private bool _renderInfoInit;
+        private readonly List<IRenderable> _instances = new List<IRenderable>();
+        private RenderingInfo _renderInfo;
+        private Material _material;
+        private Matrix[] _transforms;
+        private readonly DynamicVertexBuffer _transformsBuffer;
 
         #endregion
 
@@ -46,9 +42,9 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="queueId">Queue Id of the batch</param>
         internal InstanceBatch(GraphicsDevice gDevice, uint id, int queueId)
         {
-            this.transformsBuffer = new DynamicVertexBuffer(gDevice, instanceVertexDeclaration, 0, BufferUsage.WriteOnly);
-            this.id = id;
-            this.renderQueueId = queueId;
+            _transformsBuffer = new DynamicVertexBuffer(gDevice, InstanceVertexDeclaration, 0, BufferUsage.WriteOnly);
+            _id = id;
+            RenderQueueId = queueId;
         }
 
         #endregion
@@ -61,7 +57,7 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="instance">IRenderable instance</param>
         internal void AddDrawable(IRenderable instance)
         {
-            this.instances.Add(instance);
+            _instances.Add(instance);
         }
 
         /// <summary>
@@ -69,8 +65,8 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         internal void Reset()
         {
-            this.instances.Clear();
-            this.renderInfoInit = false;
+            _instances.Clear();
+            _renderInfoInit = false;
         }
 
         /// <summary>
@@ -78,14 +74,12 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         private void ExtractRenderingInfo()
         {
-            if (!this.renderInfoInit)
-            {
-                IRenderable renderable = this.instances[0];
+            if (_renderInfoInit) return;
 
-                this.material = renderable.Material;
-                this.renderInfo = renderable.RenderInfo;
-                this.renderInfoInit = true;
-            }
+            IRenderable renderable = _instances[0];
+            _material = renderable.Material;
+            _renderInfo = renderable.RenderInfo;
+            _renderInfoInit = true;
         }
 
         /// <summary>
@@ -93,21 +87,15 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         private void UpdateTransforms()
         {
-            if (this.transforms == null)
-            {
-                this.transforms = new Matrix[this.instances.Count * 2];
-            }
+            if (_transforms == null) _transforms = new Matrix[_instances.Count * 2];
 
-            if (this.transforms.Length < this.instances.Count)
-            {
-                this.transforms = new Matrix[this.instances.Count * 2];
-            }
+            if (_transforms.Length < _instances.Count) _transforms = new Matrix[_instances.Count * 2];
 
-            for (int i = 0; i < this.instances.Count; i++)
+            for (int i = 0; i < _instances.Count; i++)
             {
-                this.transforms[i] = this.instances[i].Transform;
+                _transforms[i] = _instances[i].Transform;
             }
-            this.transformsBuffer.SetData<Matrix>(this.transforms, 0, this.instances.Count, SetDataOptions.Discard);
+            _transformsBuffer.SetData(_transforms, 0, _instances.Count, SetDataOptions.Discard);
         }
 
         #endregion
@@ -117,9 +105,9 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Get the ID of this geometry batch
         /// </summary>
-        public uint ID
+        public uint Id
         {
-            get { return this.id; }
+            get { return _id; }
         }
 
         /// <summary>
@@ -129,9 +117,9 @@ namespace Pulsar.Graphics.Rendering
         {
             get
             {
-                this.UpdateTransforms();
+                UpdateTransforms();
 
-                return this.transformsBuffer;
+                return _transformsBuffer;
             }
         }
 
@@ -142,9 +130,9 @@ namespace Pulsar.Graphics.Rendering
         {
             get
             {
-                this.UpdateTransforms();
+                UpdateTransforms();
 
-                return this.transforms;
+                return _transforms;
             }
         }
 
@@ -153,16 +141,13 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public int InstanceCount
         {
-            get { return this.instances.Count; }
+            get { return _instances.Count; }
         }
 
         /// <summary>
         /// Get the ID of the render queue used by this batch
         /// </summary>
-        public int RenderQueueID 
-        {
-            get { return this.renderQueueId; }
-        }
+        public int RenderQueueId { get; private set; }
 
         /// <summary>
         /// Get the rendering info of this batch
@@ -171,9 +156,9 @@ namespace Pulsar.Graphics.Rendering
         {
             get 
             {
-                this.ExtractRenderingInfo();
+                ExtractRenderingInfo();
 
-                return this.renderInfo; 
+                return _renderInfo; 
             }
         }
 
@@ -184,9 +169,9 @@ namespace Pulsar.Graphics.Rendering
         {
             get
             {
-                this.ExtractRenderingInfo();
+                ExtractRenderingInfo();
 
-                return this.material;
+                return _material;
             }
         }
 

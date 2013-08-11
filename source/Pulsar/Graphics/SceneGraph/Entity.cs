@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Text;
-
-using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets.Graphics.Models;
 using Pulsar.Graphics.Debugger;
@@ -20,18 +17,18 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
-        public bool RenderAABB = false;
+        public bool RenderAabb;
 
-        internal Matrix[] bonesTransform;
-        internal int bonesCount;
+        internal Matrix[] BonesTransform;
+        internal int BonesCount;
 
-        private MeshBoundingBox meshAABB = null;
-        private bool isRendered = false;
-        private string name = string.Empty;
-        private Mesh mesh = null;
-        private SceneNode parent = null;
-        private BoundingVolume bounds = new BoundingVolume();
-        private List<SubEntity> subEntities = new List<SubEntity>();
+        private MeshBoundingBox _meshAabb;
+        private bool _isRendered;
+        private readonly string _name = string.Empty;
+        private Mesh _mesh;
+        private SceneNode _parent;
+        private readonly BoundingVolume _bounds = new BoundingVolume();
+        private readonly List<SubEntity> _subEntities = new List<SubEntity>();
 
         #endregion
 
@@ -42,8 +39,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         internal Entity()
         {
-            this.Visible = true;
-            this.bounds.Type = BoundingType.AABB;
+            Visible = true;
+            _bounds.Type = BoundingType.Aabb;
         }
 
         /// <summary>
@@ -52,8 +49,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="m">Mesh associated to this entity</param>
         internal Entity(Mesh m) : this()
         {
-            this.mesh = m;
-            this.ProcessMesh();
+            _mesh = m;
+            ProcessMesh();
         }
 
         #endregion
@@ -65,11 +62,11 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void ProcessMesh()
         {
-            this.CreateSubEntities();
+            CreateSubEntities();
 
-            this.bounds.InitialBox = this.mesh.AxisAlignedBoundingBox;
-            this.bonesTransform = this.mesh.Bones;
-            this.bonesCount = this.bonesTransform.Length;
+            _bounds.InitialBox = _mesh.AxisAlignedBoundingBox;
+            BonesTransform = _mesh.Bones;
+            BonesCount = BonesTransform.Length;
         }
 
         /// <summary>
@@ -77,9 +74,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void Reset()
         {
-            this.subEntities.Clear();
-            this.bonesTransform = null;
-            this.bounds.InitialBox = new BoundingBox();
+            _subEntities.Clear();
+            BonesTransform = null;
+            _bounds.InitialBox = new BoundingBox();
         }
 
         /// <summary>
@@ -89,7 +86,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="parent">Node parent</param>
         public void AttachParent(SceneNode parent)
         {
-            this.parent = parent;
+            _parent = parent;
         }
 
         /// <summary>
@@ -98,7 +95,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public void DetachParent()
         {
-            this.parent = null;
+            _parent = null;
         }
 
         /// <summary>
@@ -108,15 +105,16 @@ namespace Pulsar.Graphics.SceneGraph
         public void NotifyCurrentCamera(Camera cam)
         {
             SpeedFrustum frustCull = cam.FastFrustum;
-            this.UpdateBounds();
+            UpdateBounds();
 
-            this.isRendered = this.bounds.FrustumIntersect(ref frustCull);
+            _isRendered = _bounds.FrustumIntersect(ref frustCull);
         }
 
         /// <summary>
         /// Merge the bounding box of the entity with another one
         /// </summary>
         /// <param name="original">Bounding box to merge with the box of the entity</param>
+        /// <exception cref="NotImplementedException"></exception>
         /// <returns>Return the result of the merge</returns>
         public BoundingBox Merge(ref BoundingBox original)
         {
@@ -129,35 +127,42 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="queue">RenderQueue to fill</param>
         public void UpdateRenderQueue(RenderQueue queue)
         {
-            for (int i = 0; i < this.subEntities.Count; i++)
+            for (int i = 0; i < _subEntities.Count; i++)
             {
-                SubEntity sub = this.subEntities[i];
+                SubEntity sub = _subEntities[i];
                 queue.AddRenderable(sub);
             }
 
-            if (this.RenderAABB)
+            if (RenderAabb)
             {
-                if (this.meshAABB == null)
-                {
-                    this.meshAABB = new MeshBoundingBox();
-                }
+                if (_meshAabb == null) _meshAabb = new MeshBoundingBox();
 
-                BoundingBox aabb = this.bounds.Box;
-                this.meshAABB.UpdateBox(ref aabb);
-                queue.AddRenderable(this.meshAABB);
+                BoundingBox aabb = _bounds.Box;
+                _meshAabb.UpdateBox(ref aabb);
+                queue.AddRenderable(_meshAabb);
             }
         }
 
+        /// <summary>
+        /// Gets the sub entity at the specified index
+        /// </summary>
+        /// <param name="index">Index</param>
+        /// <returns>Returns a SubEntity</returns>
         public SubEntity GetSubEntity(int index)
         {
-            return this.subEntities[index];
+            return _subEntities[index];
         }
 
+        /// <summary>
+        /// Gets the sub entity with a specified name
+        /// </summary>
+        /// <param name="name">Name of the sub entity</param>
+        /// <returns>Returns a SubEntity</returns>
         public SubEntity GetSubEntity(string name)
         {
-            int index = this.mesh.GetSubMeshIndex(name);
+            int index = _mesh.GetSubMeshIndex(name);
 
-            return this.GetSubEntity(index);
+            return GetSubEntity(index);
         }
 
         /// <summary>
@@ -165,14 +170,14 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void CreateSubEntities()
         {
-            List<SubMesh> subMeshes = this.mesh.SubMeshes;
+            List<SubMesh> subMeshes = _mesh.SubMeshes;
 
             for (int i = 0; i < subMeshes.Count; i++)
             {
                 SubMesh meshPart = subMeshes[i];
-                SubEntity subEnt = new SubEntity(meshPart.ID.ToString(), this, meshPart);
+                SubEntity subEnt = new SubEntity(meshPart.ID.ToString(CultureInfo.InvariantCulture), this, meshPart);
 
-                this.subEntities.Add(subEnt);
+                _subEntities.Add(subEnt);
             }
         }
 
@@ -181,8 +186,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void UpdateBounds()
         {
-            Matrix transform = this.parent.FullTransform;
-            this.bounds.Update(ref transform);
+            Matrix transform = _parent.Transform;
+            _bounds.Update(ref transform);
         }
 
         #endregion
@@ -199,13 +204,12 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public Mesh Mesh
         {
-            get { return this.mesh; }
+            get { return _mesh; }
             set 
             {
-                this.mesh = value;
-
-                this.Reset();
-                this.ProcessMesh();
+                _mesh = value;
+                Reset();
+                ProcessMesh();
             }
         }
 
@@ -216,9 +220,9 @@ namespace Pulsar.Graphics.SceneGraph
         {
             get 
             {
-                this.UpdateBounds();
+                UpdateBounds();
 
-                return this.bounds.Box;
+                return _bounds.Box;
             }
         }
 
@@ -227,7 +231,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public bool IsAttached
         {
-            get { return this.parent != null; }
+            get { return _parent != null; }
         }
 
         /// <summary>
@@ -235,7 +239,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public string Name
         {
-            get { return this.name; }
+            get { return _name; }
         }
 
         /// <summary>
@@ -248,13 +252,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public bool IsRendered
         {
-            get 
-            {
-                if (!this.Visible || !this.isRendered)
-                    return false;
-
-                return true;
-            }
+            get { return Visible && _isRendered; }
         }
 
         /// <summary>
@@ -267,7 +265,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public SceneNode Parent
         {
-            get { return this.parent; }
+            get { return _parent; }
         }
 
         /// <summary>
@@ -277,10 +275,7 @@ namespace Pulsar.Graphics.SceneGraph
         {
             get
             {
-                if (this.parent != null)
-                    return this.parent.FullTransform;
-
-                return Matrix.Identity;
+                return (_parent != null) ? _parent.Transform : Matrix.Identity;
             }
         }
 
@@ -289,7 +284,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         internal List<SubEntity> SubEntities
         {
-            get { return this.subEntities; }
+            get { return _subEntities; }
         }
 
         #endregion

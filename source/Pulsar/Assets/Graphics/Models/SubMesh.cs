@@ -52,10 +52,10 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="vertexOffset">Offset from the beginning of the vertex buffer</param>
         public void SetRenderingInfo(PrimitiveType pType, int startIdx, int primitiveCount, int numVertices)
         {
-            this.renderData.primitive = pType;
-            this.renderData.startIndex = startIdx;
-            this.renderData.triangleCount = primitiveCount;
-            this.renderData.vertexCount = numVertices;
+            this.renderData.PrimitiveType = pType;
+            this.renderData.StartIndex = startIdx;
+            this.renderData.PrimitiveCount = primitiveCount;
+            this.renderData.VertexCount = numVertices;
             this.parent.ComputeData();
         }
 
@@ -90,7 +90,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         public uint ID
         {
-            get { return this.renderData.id; }
+            get { return this.renderData.Id; }
         }
 
         /// <summary>
@@ -105,8 +105,8 @@ namespace Pulsar.Assets.Graphics.Models
         {
             get 
             {
-                this.renderData.vertexData = this.shareVertexBuffer ? this.parent.vertexData : this.vertexData;
-                this.renderData.indexData = this.UseIndexes ? this.parent.indexData : null;
+                this.renderData.VertexData = this.shareVertexBuffer ? this.parent.vertexData : this.vertexData;
+                this.renderData.IndexData = this.UseIndexes ? this.parent.indexData : null;
 
                 return this.renderData;
             }  
@@ -126,8 +126,8 @@ namespace Pulsar.Assets.Graphics.Models
 
         public bool UseIndexes
         {
-            get { return this.renderData.useIndexes; }
-            set { this.renderData.useIndexes = value; }
+            get { return this.renderData.UseIndexes; }
+            set { this.renderData.UseIndexes = value; }
         }
 
         /// <summary>

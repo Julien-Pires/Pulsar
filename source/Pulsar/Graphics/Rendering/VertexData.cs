@@ -3,9 +3,6 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Graphics;
-using Pulsar.Extension;
-
 namespace Pulsar.Graphics.Rendering
 {
     /// <summary>
@@ -37,89 +34,87 @@ namespace Pulsar.Graphics.Rendering
         #region Fields
 
         internal VertexBufferBinding[] VertexBindings = new VertexBufferBinding[0];
-        private List<BindingInfo> bindings = new List<BindingInfo>();
+
+        private readonly List<BindingInfo> _bindings = new List<BindingInfo>();
 
         #endregion
 
         #region Methods
 
         /// <summary>
-        /// Get the VertexBufferObject
+        /// Gets the VertexBufferObject
         /// </summary>
         /// <param name="index">Index at which the buffer object is stored</param>
         /// <returns>Return a VertexBufferObject</returns>
-        public VertexBufferObject GetBuffer(ushort index)
+        public VertexBufferObject GetBuffer(int index)
         {
-            return this.bindings[index].BufferObject;
+            return _bindings[index].BufferObject;
         }
 
         /// <summary>
-        /// Set a new binding for a specified VertexBufferObject
+        /// Sets a new binding for a specified VertexBufferObject
         /// </summary>
         /// <param name="buffer">VertexBufferObject for the binding</param>
-        public void SetBinding(VertexBufferObject buffer)
+        public int SetBinding(VertexBufferObject buffer)
         {
-            this.SetBinding(buffer, 0, 0);
+            return SetBinding(buffer, 0, 0);
         }
 
         /// <summary>
-        /// Set a new binding for a specified VertexBufferObject
+        /// Sets a new binding for a specified VertexBufferObject
         /// </summary>
         /// <param name="buffer">VertexBufferObject for the binding</param>
         /// <param name="vertexOffset">Vertex offset in the buffer</param>
         /// <param name="frequency">Number of instance to draw</param>
         /// <returns>Return the index at which the binding is stored</returns>
-        public ushort SetBinding(VertexBufferObject buffer, int vertexOffset, int frequency)
+        public int SetBinding(VertexBufferObject buffer, int vertexOffset, int frequency)
         {
-            if(buffer == null)
-            {
-                throw new ArgumentNullException("Buffer cannot be null");
-            }
-            BindingInfo inf = new BindingInfo()
+            if (buffer == null) throw new ArgumentNullException("buffer");
+            BindingInfo inf = new BindingInfo
             {
                 BufferObject = buffer,
                 VertexOffset = vertexOffset,
                 Frequency = frequency
             };
-            this.bindings.Add(inf);
-            this.UpdateBindingArray();
+            _bindings.Add(inf);
+            UpdateBindingArray();
 
-            return (ushort)(this.bindings.Count - 1);
+            return _bindings.Count - 1;
         }
 
         /// <summary>
-        /// Remove a vertex buffer binding
+        /// Removes a vertex buffer binding
         /// </summary>
         /// <param name="index">Index of the binding to remove</param>
-        public void UnsetBinding(ushort index)
+        public void UnsetBinding(int index)
         {
-            this.bindings.RemoveAt(index);
-            this.UpdateBindingArray();
+            _bindings.RemoveAt(index);
+            UpdateBindingArray();
         }
 
         /// <summary>
-        /// Remove all vertex buffer bindings
+        /// Removes all vertex buffer bindings
         /// </summary>
         public void UnsetAllBinding()
         {
-            this.bindings.Clear();
-            this.UpdateBindingArray();
+            _bindings.Clear();
+            UpdateBindingArray();
         }
 
         /// <summary>
-        /// Update the binding array
+        /// Updates the binding array
         /// </summary>
         private void UpdateBindingArray()
         {
-            ushort newSize = (ushort)this.bindings.Count;
+            int newSize = _bindings.Count;
             VertexBufferBinding[] newBindings = new VertexBufferBinding[newSize];
-            for (ushort i = 0; i < newSize; i++)
+            for (int i = 0; i < newSize; i++)
             {
-                BindingInfo inf = this.bindings[i];
+                BindingInfo inf = _bindings[i];
                 VertexBufferBinding bufferBinding = new VertexBufferBinding(inf.BufferObject.Buffer, inf.VertexOffset, inf.Frequency);
                 newBindings[i] = bufferBinding;
             }
-            this.VertexBindings = newBindings;
+            VertexBindings = newBindings;
         }
 
         #endregion
@@ -127,11 +122,11 @@ namespace Pulsar.Graphics.Rendering
         #region Properties
 
         /// <summary>
-        /// Get the number of buffer
+        /// Gets the number of buffer
         /// </summary>
         public int BufferCount
         {
-            get { return this.bindings.Count; }
+            get { return _bindings.Count; }
         }
 
         #endregion

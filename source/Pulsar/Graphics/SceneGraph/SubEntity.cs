@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Text;
-
-using System.Linq;
-using System.Collections.Generic;
-
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
 using Pulsar.Assets.Graphics.Models;
 using Pulsar.Assets.Graphics.Materials;
 using Pulsar.Graphics.Rendering;
@@ -21,11 +14,10 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
-        private int queueID;
-        private Entity parent;
-        private SubMesh subMesh;
-        private Material material;
-        private string name = string.Empty;
+        private readonly Entity _parent;
+        private readonly SubMesh _subMesh;
+        private Material _material;
+        private readonly string _name = string.Empty;
 
         #endregion
 
@@ -39,10 +31,10 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="sub">ModelMeshPart associated to this SubEntity</param>
         internal SubEntity(string name, Entity parent, SubMesh sub)
         {
-            this.name = name;
-            this.parent = parent;
-            this.subMesh = sub;
-            this.material = sub.Material;
+            _name = name;
+            _parent = parent;
+            _subMesh = sub;
+            _material = sub.Material;
         }
 
         #endregion
@@ -52,9 +44,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Get the ID of this sub entity, the ID correspond to the ID of the submesh attached to this instance
         /// </summary>
-        public uint BatchID
+        public uint BatchId
         {
-            get { return this.subMesh.RenderInfo.id; }
+            get { return _subMesh.RenderInfo.Id; }
         }
 
         /// <summary>
@@ -62,7 +54,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public string Name
         {
-            get { return this.name; }
+            get { return _name; }
         }
 
         /// <summary>
@@ -70,7 +62,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public bool UseInstancing
         {
-            get { return this.parent.UseInstancing; }
+            get { return _parent.UseInstancing; }
             set { throw new NotImplementedException(); }
         }
 
@@ -79,7 +71,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public RenderingInfo RenderInfo
         {
-            get { return this.subMesh.RenderInfo; }
+            get { return _subMesh.RenderInfo; }
         }
 
         /// <summary>
@@ -87,18 +79,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public Material Material
         {
-            get { return this.material; }
-            set
-            {
-                if (value == null)
-                {
-                    this.material = this.subMesh.Material;
-                }
-                else
-                {
-                    this.material = value;
-                }
-            }
+            get { return _material; }
+            set { _material = value ?? _subMesh.Material; }
         }
 
         /// <summary>
@@ -108,24 +90,16 @@ namespace Pulsar.Graphics.SceneGraph
         {
             get
             {
-                if (this.parent.bonesCount > 0)
-                {
-                    return this.parent.bonesTransform[this.subMesh.BoneIndex] * this.parent.Transform;
-                }
-                else
-                {
-                    return this.parent.Transform;
-                }
+                if (_parent.BonesCount > 0) return _parent.BonesTransform[_subMesh.BoneIndex] * _parent.Transform;
+
+                return _parent.Transform;
             }
         }
 
         /// <summary>
         /// Get the ID of the render queue used by this SubEntity
         /// </summary>
-        public int RenderQueueID
-        {
-            get { return this.queueID; }
-        }
+        public int RenderQueueId { get; private set; }
 
         #endregion
     }

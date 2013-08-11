@@ -169,8 +169,8 @@ namespace Pulsar.Assets.Graphics.Models
             for (int i = 0; i < this.subMeshes.Count; i++)
             {
                 RenderingInfo renderData = this.subMeshes[i].RenderInfo;
-                this.VerticesCount += renderData.vertexCount;
-                this.PrimitiveCount += renderData.triangleCount;
+                this.VerticesCount += renderData.VertexCount;
+                this.PrimitiveCount += renderData.PrimitiveCount;
             }
         }
 

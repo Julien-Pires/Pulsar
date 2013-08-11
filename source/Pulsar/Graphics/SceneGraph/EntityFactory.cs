@@ -1,12 +1,4 @@
-﻿using System;
-using System.Text;
-
-using System.Linq;
-using System.Collections.Generic;
-
-using Microsoft.Xna.Framework.Graphics;
-
-using Pulsar.Assets.Graphics.Models;
+﻿using Pulsar.Assets.Graphics.Models;
 
 namespace Pulsar.Graphics.SceneGraph
 {
@@ -20,7 +12,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Create an instance of the Entity class
         /// </summary>
-        /// <param name="name">Name of the model used to create the Entity</param>
+        /// <param name="data">Datas</param>
         /// <returns>Return an instance of the Entity class</returns>
         public override Entity Create(params string[] data)
         {

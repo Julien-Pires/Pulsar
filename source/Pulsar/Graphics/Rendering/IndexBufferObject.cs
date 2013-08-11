@@ -17,20 +17,11 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="buffer">Index buffer managed by the buffer object</param>
         internal IndexBufferObject(IndexBuffer buffer)
         {
-            if (buffer == null)
-            {
-                throw new ArgumentNullException("Buffer cannot be null");
-            }
+            if (buffer == null) throw new ArgumentNullException("buffer");
 
             DynamicIndexBuffer dynBuffer = buffer as DynamicIndexBuffer;
-            if (dynBuffer == null)
-            {
-                this.wrapper = new StaticIndexBufferWrapper(buffer);
-            }
-            else
-            {
-                this.wrapper = new DynamicIndexBufferWrapper(dynBuffer);
-            }
+            if (dynBuffer == null) Wrapper = new StaticIndexBufferWrapper(buffer);
+            else Wrapper = new DynamicIndexBufferWrapper(dynBuffer);
         }
 
         #endregion
@@ -42,7 +33,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public int IndicesCount
         {
-            get { return this.wrapper.Buffer.IndexCount; }
+            get { return Wrapper.IndexBuffer.IndexCount; }
         }
 
         /// <summary>
@@ -50,7 +41,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public IndexElementSize ElementSize
         {
-            get { return this.wrapper.Buffer.IndexElementSize; }
+            get { return Wrapper.IndexBuffer.IndexElementSize; }
         }
 
         /// <summary>
@@ -58,7 +49,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         internal IndexBuffer Buffer
         {
-            get { return this.wrapper.Buffer; }
+            get { return Wrapper.IndexBuffer; }
         }
 
         #endregion

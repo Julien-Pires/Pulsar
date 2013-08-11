@@ -1,13 +1,8 @@
 ﻿using System;
-
-using System.Collections.Generic;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Game;
-using Pulsar.Core;
-using Pulsar.Assets.Graphics.Models;
 using Pulsar.Assets.Graphics.Materials;
 using Pulsar.Graphics.SceneGraph;
 using Pulsar.Graphics.Rendering;
@@ -22,16 +17,13 @@ namespace Pulsar.Graphics.Debugger
     {
         #region Fields
 
-        private const string materialName = "MeshBoundingBox_Material";
-        private const int verticesCount = 24;
-        private const int primitiveCount = 12;
+        private const int VerticesCount = 24;
+        private const int PrimitiveCount = 12;
 
-        private VertexBufferObject vbo;
-        private IndexBufferObject ibo;
-        private RenderingInfo renderInfo;
-        private Material material;
-        private short[] indices = new short[MeshBoundingBox.verticesCount];
-        private VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[MeshBoundingBox.verticesCount];
+        private VertexBufferObject _vbo;
+        private IndexBufferObject _ibo;
+        private readonly short[] _indices = new short[VerticesCount];
+        private readonly VertexPositionNormalTexture[] _vertices = new VertexPositionNormalTexture[VerticesCount];
 
         #endregion
 
@@ -42,7 +34,7 @@ namespace Pulsar.Graphics.Debugger
         /// </summary>
         internal MeshBoundingBox()
         {
-            this.InitBuffers();
+            InitBuffers();
         }
 
         #endregion
@@ -55,38 +47,35 @@ namespace Pulsar.Graphics.Debugger
         private void InitBuffers()
         {
             GraphicsEngineService engineService = GameApplication.GameServices.GetService(typeof(IGraphicsEngineService)) as GraphicsEngineService;
-            if (engineService == null)
-            {
-                throw new ArgumentException("GraphicsEngineService cannot be found");
-            }
+            if (engineService == null) throw new NullReferenceException("GraphicsEngineService cannot be found");
 
             BufferManager bufferMngr = engineService.Engine.BufferManager;
             VertexData vData = new VertexData();
-            this.vbo = bufferMngr.CreateVertexBuffer(BufferType.DynamicWriteOnly, typeof(VertexPositionNormalTexture),
-                MeshBoundingBox.verticesCount);
-            vData.SetBinding(this.vbo);
+            _vbo = bufferMngr.CreateVertexBuffer(BufferType.DynamicWriteOnly, typeof(VertexPositionNormalTexture),
+                VerticesCount);
+            vData.SetBinding(_vbo);
 
             IndexData iData = new IndexData();
-            this.ibo = bufferMngr.CreateIndexBuffer(BufferType.DynamicWriteOnly, IndexElementSize.SixteenBits,
-                MeshBoundingBox.verticesCount);
-            this.ibo.SetData(this.indices);
-            iData.indexBuffer = ibo;
+            _ibo = bufferMngr.CreateIndexBuffer(BufferType.DynamicWriteOnly, IndexElementSize.SixteenBits,
+                VerticesCount);
+            _ibo.SetData(_indices);
+            iData.IndexBufferObj = _ibo;
 
-            for (short i = 0; i < MeshBoundingBox.verticesCount; i++)
+            for (short i = 0; i < VerticesCount; i++)
             {
-                indices[i] = i;
+                _indices[i] = i;
             }
-
-            this.renderInfo = new RenderingInfo()
+            
+            RenderInfo = new RenderingInfo
             {
-                primitive = PrimitiveType.LineList,
-                vertexData = vData,
-                indexData = iData,
-                vertexCount = MeshBoundingBox.verticesCount,
-                triangleCount = MeshBoundingBox.primitiveCount
+                PrimitiveType = PrimitiveType.LineList,
+                VertexData = vData,
+                IndexData = iData,
+                VertexCount = VerticesCount,
+                PrimitiveCount = PrimitiveCount
             };
-            this.material = MaterialManager.Instance.LoadDefault();
-            this.material.DiffuseColor = Color.White;
+            Material = MaterialManager.Instance.LoadDefault();
+            Material.DiffuseColor = Color.White;
         }
 
         /// <summary>
@@ -102,36 +91,36 @@ namespace Pulsar.Graphics.Debugger
             Vector3 maxOpposite = box.Max - (xOffset + zOffset);
 
             //// Top
-            this.vertices[0].Position = box.Min;
-            this.vertices[1].Position = box.Min + xOffset;
-            this.vertices[2].Position = box.Min;
-            this.vertices[3].Position = box.Min + zOffset;
-            this.vertices[4].Position = minOpposite;
-            this.vertices[5].Position = box.Min + xOffset;
-            this.vertices[6].Position = minOpposite;
-            this.vertices[7].Position = box.Min + zOffset;
+            _vertices[0].Position = box.Min;
+            _vertices[1].Position = box.Min + xOffset;
+            _vertices[2].Position = box.Min;
+            _vertices[3].Position = box.Min + zOffset;
+            _vertices[4].Position = minOpposite;
+            _vertices[5].Position = box.Min + xOffset;
+            _vertices[6].Position = minOpposite;
+            _vertices[7].Position = box.Min + zOffset;
 
             //// Bottom
-            this.vertices[8].Position = box.Max;
-            this.vertices[9].Position = box.Max - xOffset;
-            this.vertices[10].Position = box.Max;
-            this.vertices[11].Position = box.Max - zOffset;
-            this.vertices[12].Position = maxOpposite;
-            this.vertices[13].Position = box.Max - xOffset;
-            this.vertices[14].Position = maxOpposite;
-            this.vertices[15].Position = box.Max - zOffset;
+            _vertices[8].Position = box.Max;
+            _vertices[9].Position = box.Max - xOffset;
+            _vertices[10].Position = box.Max;
+            _vertices[11].Position = box.Max - zOffset;
+            _vertices[12].Position = maxOpposite;
+            _vertices[13].Position = box.Max - xOffset;
+            _vertices[14].Position = maxOpposite;
+            _vertices[15].Position = box.Max - zOffset;
 
             //// Sides
-            this.vertices[16].Position = box.Min;
-            this.vertices[17].Position = box.Min + yOffset;
-            this.vertices[18].Position = box.Min + xOffset;
-            this.vertices[19].Position = (box.Min + xOffset) + yOffset;
-            this.vertices[20].Position = box.Max;
-            this.vertices[21].Position = box.Max - yOffset;
-            this.vertices[22].Position = box.Max - xOffset;
-            this.vertices[23].Position = (box.Max - xOffset) - yOffset;
+            _vertices[16].Position = box.Min;
+            _vertices[17].Position = box.Min + yOffset;
+            _vertices[18].Position = box.Min + xOffset;
+            _vertices[19].Position = (box.Min + xOffset) + yOffset;
+            _vertices[20].Position = box.Max;
+            _vertices[21].Position = box.Max - yOffset;
+            _vertices[22].Position = box.Max - xOffset;
+            _vertices[23].Position = (box.Max - xOffset) - yOffset;
 
-            this.vbo.SetData(this.vertices);
+            _vbo.SetData(_vertices);
         }
 
         #endregion
@@ -158,17 +147,17 @@ namespace Pulsar.Graphics.Debugger
         /// <summary>
         /// Get the batch ID of this instance
         /// </summary>
-        public uint BatchID 
+        public uint BatchId 
         {
-            get { return this.renderInfo.id; } 
+            get { return RenderInfo.Id; } 
         }
 
         /// <summary>
         /// Get the render qeue ID of this instance
         /// </summary>
-        public int RenderQueueID 
+        public int RenderQueueId 
         {
-            get { return (int)RenderQueueGroupID.Default; } 
+            get { return (int)RenderQueueGroupId.Default; } 
         }
 
         /// <summary>
@@ -182,18 +171,12 @@ namespace Pulsar.Graphics.Debugger
         /// <summary>
         /// Get the rendering info of this instance
         /// </summary>
-        public RenderingInfo RenderInfo 
-        {
-            get { return this.renderInfo; }
-        }
+        public RenderingInfo RenderInfo { get; private set; }
 
         /// <summary>
         /// Get the material associated to this instance
         /// </summary>
-        public Material Material
-        {
-            get { return this.material; }
-        }
+        public Material Material { get; private set; }
 
         #endregion
     }

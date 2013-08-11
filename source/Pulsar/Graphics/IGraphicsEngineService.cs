@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pulsar.Graphics
+﻿namespace Pulsar.Graphics
 {
     /// <summary>
     /// Interface describing a service managing a graphic engine

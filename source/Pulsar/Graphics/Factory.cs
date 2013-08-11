@@ -1,10 +1,4 @@
-﻿using System;
-using System.Text;
-
-using System.Linq;
-using System.Collections.Generic;
-
-namespace Pulsar.Graphics
+﻿namespace Pulsar.Graphics
 {
     /// <summary>
     /// Factory base class
@@ -17,7 +11,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Method used to create an instance of a specific type
         /// </summary>
-        /// <param name="name">Parameter used by the method</param>
+        /// <param name="data">Array of string containing parameters to create an instance</param>
         /// <returns>Returns a new instance</returns>
         public abstract T Create(params string[] data);
 

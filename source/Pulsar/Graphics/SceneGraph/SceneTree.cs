@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Text;
-
-using System.Linq;
 using System.Collections.Generic;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 
 using Pulsar.Graphics.Rendering;
 
@@ -18,13 +12,13 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
-        private Renderer renderer = null;
-        private CameraManager camManager = new CameraManager();
-        private RenderQueue queue = new RenderQueue();
-        private SceneNode root = null;
-        private Dictionary<string, SceneNode> nodesMap = new Dictionary<string, SceneNode>();
-        private Dictionary<string, IMovable> movablesMap = new Dictionary<string, IMovable>();
-        private EntityFactory entityFactory = new EntityFactory();
+        private readonly Renderer _renderer;
+        private readonly CameraManager _camManager;
+        private readonly RenderQueue _queue = new RenderQueue();
+        private readonly SceneNode _root;
+        private readonly Dictionary<string, SceneNode> _nodesMap = new Dictionary<string, SceneNode>();
+        private readonly Dictionary<string, IMovable> _movablesMap = new Dictionary<string, IMovable>();
+        private readonly EntityFactory _entityFactory = new EntityFactory();
 
         #endregion
 
@@ -36,8 +30,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="renderer">GraphicsRenderer instance</param>
         internal SceneTree(Renderer renderer)
         {
-            this.renderer = renderer;
-            this.root = this.CreateNode("Root");
+            _renderer = renderer;
+            _camManager = new CameraManager(this);
+            _root = CreateNode("Root");
         }
 
         #endregion
@@ -47,19 +42,13 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Call to draw the entire scene
         /// </summary>
-        public void RenderScene()
+        public void RenderScene(Viewport vp, Camera cam)
         {
-            Camera cam = this.camManager.Current;
-
-            this.UpdateGraph();
-            this.Clean();
-
-            if (cam != null)
-            {
-                this.FindVisibleObjects(cam);
-            }
-
-            this.renderer.Render(this.queue, this.camManager.Current);
+            UpdateGraph();
+            Clean();
+            
+            FindVisibleObjects(cam);
+            _renderer.Render(vp, cam, _queue);
         }
         
         /// <summary>
@@ -67,7 +56,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void UpdateGraph()
         {
-            this.root.Update(true, false);
+            _root.Update(true, false);
         }
 
         /// <summary>
@@ -75,7 +64,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void Clean()
         {
-            this.queue.Clear();
+            _queue.Clear();
         }
 
         /// <summary>
@@ -84,7 +73,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="cam">Current camera</param>
         private void FindVisibleObjects(Camera cam)
         {
-            this.root.FindVisibleObjects(cam, this.queue, true);
+            _root.FindVisibleObjects(cam, _queue, true);
         }
 
         /// <summary>
@@ -95,9 +84,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// <returns>Returns an Entity instance</returns>
         public Entity CreateEntity(string modelName, string name)
         {
-            Entity ent = this.entityFactory.Create(modelName, name);
-            
-            this.movablesMap.Add(name, ent);
+            Entity ent = _entityFactory.Create(modelName, name);
+            _movablesMap.Add(name, ent);
 
             return ent;
         }
@@ -110,14 +98,11 @@ namespace Pulsar.Graphics.SceneGraph
         internal SceneNode CreateNode(string name)
         {
             SceneNode node;
-            this.nodesMap.TryGetValue(name, out node);
-            if (node != null)
-            {
-                throw new Exception(string.Format("A node named {0} already exists in this scene graph", name));
-            }
+            _nodesMap.TryGetValue(name, out node);
+            if (node != null) throw new Exception(string.Format("A node named {0} already exists in this scene graph", name));
 
             node = new SceneNode(this, name);
-            this.nodesMap.Add(name, node);
+            _nodesMap.Add(name, node);
 
             return node;
         }
@@ -129,7 +114,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <returns>Returns true if the node is removed successfully otherwise false</returns>
         internal bool RemoveNode(string name)
         {
-            return this.nodesMap.Remove(name);
+            return _nodesMap.Remove(name);
         }
 
         #endregion
@@ -141,7 +126,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public CameraManager CameraManager
         {
-            get { return this.camManager; }
+            get { return _camManager; }
         }
 
         /// <summary>
@@ -149,7 +134,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public SceneNode Root
         {
-            get { return this.root; }
+            get { return _root; }
         }
 
         #endregion

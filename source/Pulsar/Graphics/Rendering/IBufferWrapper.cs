@@ -38,7 +38,7 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Get the underlying index buffer
         /// </summary>
-        IndexBuffer Buffer { get; }
+        IndexBuffer IndexBuffer { get; }
 
         #endregion
     }
@@ -50,7 +50,7 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Get the underlying vertex buffer
         /// </summary>
-        VertexBuffer Buffer { get; }
+        VertexBuffer VertexBuffer { get; }
 
         #endregion
     }

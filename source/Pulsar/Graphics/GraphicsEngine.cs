@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Text;
-
-using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Graphics.SceneGraph;
 using Pulsar.Graphics.Rendering;
@@ -20,11 +15,10 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        private GameServiceContainer services;
-        private FrameInfo frameInfo = new FrameInfo();
-        private Renderer renderer;
-        private BufferManager bufferManager;
-        private Dictionary<string, SceneTree> scenes = new Dictionary<string, SceneTree>();
+        private readonly Window _window;
+        private readonly Renderer _renderer;
+        private readonly BufferManager _bufferManager;
+        private readonly Dictionary<string, SceneTree> _scenes = new Dictionary<string, SceneTree>();
 
         #endregion
 
@@ -34,20 +28,16 @@ namespace Pulsar.Graphics
         /// Constructor of the GraphicsEngine class
         /// </summary>
         /// <param name="services">GameServiceContainer used by the engine</param>
-        public GraphicsEngine(GameServiceContainer services)
+        public GraphicsEngine(IServiceProvider services)
         {
-            if (services == null)
-            {
-                throw new ArgumentNullException("Services cannot be null");
-            }
-            this.services = services;
+            if (services == null) throw new ArgumentNullException("services");
+
             GraphicsDeviceManager deviceService = services.GetService(typeof(IGraphicsDeviceManager)) as GraphicsDeviceManager;
-            if (deviceService == null)
-            {
-                throw new ArgumentNullException("No Graphics device service found");
-            }
-            this.renderer = new Renderer(deviceService.GraphicsDevice, this.frameInfo);
-            this.bufferManager = new BufferManager(deviceService);
+            if (deviceService == null) throw new NullReferenceException("No Graphics device service found");
+
+            _renderer = new Renderer(deviceService.GraphicsDevice);
+            _window = new Window(deviceService, _renderer);
+            _bufferManager = new BufferManager(deviceService);
         }
 
         #endregion
@@ -55,12 +45,12 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Update the graphic engine
+        /// Render the current frame
         /// </summary>
-        /// <param name="time">Time since the last update</param>
-        public void Update(GameTime time)
+        /// <param name="time">Time since last update</param>
+        public void Render(GameTime time)
         {
-            this.frameInfo.Update(time);
+            _window.Render(time);
         }
 
         /// <summary>
@@ -70,9 +60,8 @@ namespace Pulsar.Graphics
         /// <returns>Returns an instance of SceneGraph class</returns>
         public SceneTree CreateSceneGraph(string name)
         {
-            SceneTree graph = new SceneTree(this.renderer);
-            
-            scenes.Add(name, graph);
+            SceneTree graph = new SceneTree(_renderer);
+            _scenes.Add(name, graph);
 
             return graph;
         }
@@ -84,10 +73,7 @@ namespace Pulsar.Graphics
         /// <returns>Returns an instance of SceneGraph</returns>
         public SceneTree GetScene(string name)
         {
-            if (!this.scenes.ContainsKey(name))
-                return null;
-
-            return this.scenes[name];
+            return !_scenes.ContainsKey(name) ? null : _scenes[name];
         }
 
         #endregion
@@ -95,11 +81,19 @@ namespace Pulsar.Graphics
         #region Properties
 
         /// <summary>
-        /// Get information about the last frame
+        /// Get statistics about drawn frames
         /// </summary>
-        public FrameInfo FrameInfo
+        public FrameStatistics FrameStatistics
         {
-            get { return this.frameInfo; }
+            get { return _window.FrameStatistics; }
+        }
+
+        /// <summary>
+        /// Get the window
+        /// </summary>
+        public Window Window
+        {
+            get { return _window; }
         }
 
         /// <summary>
@@ -107,7 +101,7 @@ namespace Pulsar.Graphics
         /// </summary>
         public BufferManager BufferManager
         {
-            get { return this.bufferManager; }
+            get { return _bufferManager; }
         }
 
         /// <summary>
@@ -115,7 +109,7 @@ namespace Pulsar.Graphics
         /// </summary>
         internal Renderer Renderer
         {
-            get { return this.renderer; }
+            get { return _renderer; }
         }
 
         #endregion
