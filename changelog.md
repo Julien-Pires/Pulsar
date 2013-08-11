@@ -1,3 +1,18 @@
+## 0.3.2 (August 11, 2013)
+
+New feature: Window management
+
+- **Graphics:**
+  - RenderTarget class has been added. It's a base class for all classes that need render target rendering. Currently only Window class inherits it
+  - RenderTarget can be split into multiple viewports with the new Viewport class
+  - ViewportPosition is a new enum to allow creation of viewport with predefined dimension and position
+  - Window class has been added. It allows to manage window parameters and create split-screen
+  - A camera should be associated to a viewport of the Window class in order to render the scene associated to it
+  - GraphicsEngine has two new properties: Window and FrameStatistics
+  - Camera are now strongly linked to a scene graph and should be created with the CameraManager
+- **Miscellaneous:**
+  - Demo project has been removed
+
 ## 0.3.1 (June 11, 2013)
 
 Bugfixe release
