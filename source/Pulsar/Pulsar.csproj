@@ -127,6 +127,7 @@
     <Compile Include="Graphics\Rendering\RenderingTechnique\SimpleRenderingShader.cs" />
     <Compile Include="Graphics\SceneGraph\RenderQueue.cs" />
     <Compile Include="Graphics\GraphicsEngine.cs" />
+    <Compile Include="Graphics\SceneGraph\RenderQueueGroup.cs" />
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />
     <Compile Include="Graphics\SceneGraph\SceneNode.cs" />
     <Compile Include="Graphics\SpeedFrustum.cs" />
