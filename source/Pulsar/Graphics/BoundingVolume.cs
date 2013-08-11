@@ -1,15 +1,11 @@
-﻿using System;
-
-using System.Collections.Generic;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace Pulsar.Graphics
 {
     /// <summary>
     /// Enum for bounding volume type
     /// </summary>
-    public enum BoundingType { AABB, Sphere };
+    public enum BoundingType { Aabb, Sphere };
 
     /// <summary>
     /// Manage various type of bounding volume
@@ -18,12 +14,12 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        private BoundingType boundType = BoundingType.AABB;
-        private BoundingBox initialBox;
-        private BoundingSphere initialSphere;
-        private BoundingSphere realSphere;
-        private BoundingBox realBox;
-        private Vector3[] tempCorners = new Vector3[8];
+        private BoundingType _boundType = BoundingType.Aabb;
+        private BoundingBox _initialBox;
+        private BoundingSphere _initialSphere;
+        private BoundingSphere _realSphere;
+        private BoundingBox _realBox;
+        private readonly Vector3[] _tempCorners = new Vector3[8];
 
         #endregion
 
@@ -43,8 +39,8 @@ namespace Pulsar.Graphics
         /// <param name="initSphere">Initial bounding sphere</param>
         public BoundingVolume(BoundingBox initBox, BoundingSphere initSphere)
         {
-            this.initialBox = initBox;
-            this.initialSphere = initSphere;
+            _initialBox = initBox;
+            _initialSphere = initSphere;
         }
 
         #endregion
@@ -57,11 +53,11 @@ namespace Pulsar.Graphics
         /// <param name="transform">Matrix transform</param>
         public void Update(ref Matrix transform)
         {
-            switch (this.boundType)
+            switch (_boundType)
             {
-                case BoundingType.AABB: this.UpdateAABB(ref transform);
+                case BoundingType.Aabb: UpdateAabb(ref transform);
                     break;
-                case BoundingType.Sphere: this.UpdateSphere(ref transform);
+                case BoundingType.Sphere: UpdateSphere(ref transform);
                     break;
             }
         }
@@ -74,11 +70,11 @@ namespace Pulsar.Graphics
         public bool FrustumIntersect(ref SpeedFrustum frustum)
         {
             bool result = false;
-            switch (this.boundType)
+            switch (_boundType)
             {
-                case BoundingType.AABB: result = frustum.Intersects(ref this.realBox);
+                case BoundingType.Aabb: result = frustum.Intersects(ref _realBox);
                     break;
-                case BoundingType.Sphere: result = frustum.Intersects(ref this.realSphere);
+                case BoundingType.Sphere: result = frustum.Intersects(ref _realSphere);
                     break;
             }
 
@@ -89,16 +85,16 @@ namespace Pulsar.Graphics
         /// Update the AABB
         /// </summary>
         /// <param name="transform">Matrix transform</param>
-        private void UpdateAABB(ref Matrix transform)
+        private void UpdateAabb(ref Matrix transform)
         {
-            this.initialBox.GetCorners(this.tempCorners);
-            Vector3.Transform(this.tempCorners, ref transform, this.tempCorners);
+            _initialBox.GetCorners(_tempCorners);
+            Vector3.Transform(_tempCorners, ref transform, _tempCorners);
 
-            Vector3 min = this.tempCorners[0];
-            Vector3 max = this.tempCorners[0];
-            for (int i = 0; i < this.tempCorners.Length; i++)
+            Vector3 min = _tempCorners[0];
+            Vector3 max = _tempCorners[0];
+            for (int i = 0; i < _tempCorners.Length; i++)
             {
-                Vector3 vec = this.tempCorners[i];
+                Vector3 vec = _tempCorners[i];
                 if (vec.X > max.X) max.X = vec.X;
                 if (vec.Y > max.Y) max.Y = vec.Y;
                 if (vec.Z > max.Z) max.Z = vec.Z;
@@ -107,8 +103,8 @@ namespace Pulsar.Graphics
                 if (vec.Z < min.Z) min.Z = vec.Z;
             }
 
-            this.realBox.Min = min;
-            this.realBox.Max = max;
+            _realBox.Min = min;
+            _realBox.Max = max;
         }
 
         /// <summary>
@@ -117,7 +113,7 @@ namespace Pulsar.Graphics
         /// <param name="transform">Matrix transform</param>
         private void UpdateSphere(ref Matrix transform)
         {
-            this.initialSphere.Transform(ref transform, out this.realSphere);
+            _initialSphere.Transform(ref transform, out _realSphere);
         }
 
         #endregion
@@ -129,8 +125,8 @@ namespace Pulsar.Graphics
         /// </summary>
         public BoundingType Type
         {
-            get { return this.boundType; }
-            set { this.boundType = value; }
+            get { return _boundType; }
+            set { _boundType = value; }
         }
 
         /// <summary>
@@ -138,7 +134,7 @@ namespace Pulsar.Graphics
         /// </summary>
         public BoundingBox Box
         {
-            get { return this.realBox; }
+            get { return _realBox; }
         }
 
         /// <summary>
@@ -146,7 +142,7 @@ namespace Pulsar.Graphics
         /// </summary>
         public BoundingSphere Sphere
         {
-            get { return this.realSphere; }
+            get { return _realSphere; }
         }
 
         /// <summary>
@@ -154,8 +150,8 @@ namespace Pulsar.Graphics
         /// </summary>
         public BoundingBox InitialBox
         {
-            get { return this.initialBox; }
-            set { this.initialBox = value; }
+            get { return _initialBox; }
+            set { _initialBox = value; }
         }
 
         /// <summary>
@@ -163,8 +159,8 @@ namespace Pulsar.Graphics
         /// </summary>
         public BoundingSphere InitialSphere
         {
-            get { return this.initialSphere; }
-            set { this.initialSphere = value; }
+            get { return _initialSphere; }
+            set { _initialSphere = value; }
         }
 
         #endregion

@@ -4,7 +4,10 @@ using Microsoft.Xna.Framework;
 namespace Pulsar.Graphics
 {
     /// <summary>
-    /// Contains information about one frame
+    /// Contains statistics about rendered frames and framerate.
+    /// Frame statistics are stored in logs when a frame is rendered. The logs size can be adjusted.
+    /// By default the size is 1 which means we only keep information about the last frame.
+    /// The most recent frame stats corresponds to the last frame drawn, not the current one.
     /// </summary>
     public sealed class FrameStatistics
     {
@@ -17,7 +20,9 @@ namespace Pulsar.Graphics
         #endregion
 
         #region Constructor
-
+        /// <summary>
+        /// Constructor of FrameStatistics class
+        /// </summary>
         internal FrameStatistics()
         {
             CurrentFrame = new FrameDetail();
@@ -32,6 +37,9 @@ namespace Pulsar.Graphics
 
         #region Methods
 
+        /// <summary>
+        /// Resize logs of frames statistics 
+        /// </summary>
         private void Resize()
         {
             FrameDetail[] newDetails = new FrameDetail[_historicLength];
@@ -45,7 +53,7 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// ComputeFramerate FrameStatistics counter
+        /// Update the framerate
         /// </summary>
         /// <param name="time">Time since the last update</param>
         internal void ComputeFramerate(GameTime time)
@@ -58,6 +66,9 @@ namespace Pulsar.Graphics
             Framecount = 0;
         }
 
+        /// <summary>
+        /// Push the current frame at the top of the logs
+        /// </summary>
         internal void SaveCurrentFrame()
         {
             int lastIdx = _historicLength - 1;
@@ -74,6 +85,11 @@ namespace Pulsar.Graphics
             CurrentFrame = newCurrent;
         }
 
+        /// <summary>
+        /// Get a specific frame
+        /// </summary>
+        /// <param name="index">Index of the frame</param>
+        /// <returns>Return the frame statistics at the specified index</returns>
         public FrameDetail GetFrame(int index)
         {
             return _frameDetails[index];
@@ -83,6 +99,9 @@ namespace Pulsar.Graphics
 
         #region Properties
 
+        /// <summary>
+        /// Get the current frame statistics
+        /// </summary>
         internal FrameDetail CurrentFrame { get; private set; }
 
         /// <summary>
@@ -95,11 +114,17 @@ namespace Pulsar.Graphics
         /// </summary>
         public int Framerate { get; private set; }
 
+        /// <summary>
+        /// Get the most recent frame statistics
+        /// </summary>
         public FrameDetail LastFrame
         {
             get { return _frameDetails[0]; }
         }
 
+        /// <summary>
+        /// Get or set the length of frame statistics logs
+        /// </summary>
         public int HistoricLength
         {
             get { return _historicLength; }

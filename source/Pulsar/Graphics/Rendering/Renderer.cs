@@ -13,10 +13,10 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
         
-        private GraphicsDevice _graphicDevice;
-        private SpriteBatch _spriteBatch;
-        private InstanceBatchManager instancingManager;
-        private IRenderingTechnique _renderingTechnique;
+        private readonly GraphicsDevice _graphicDevice;
+        private readonly SpriteBatch _spriteBatch;
+        private readonly InstanceBatchManager _instancingManager;
+        private readonly IRenderingTechnique _renderingTechnique;
         private readonly FrameDetail _frameDetail = new FrameDetail();
 
         #endregion
@@ -29,25 +29,33 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="gDevice">Graphic device used by this instance</param>
         internal Renderer(GraphicsDevice gDevice)
         {
-            this._graphicDevice = gDevice;
-            this._spriteBatch = new SpriteBatch(_graphicDevice);
-            this.instancingManager = new InstanceBatchManager(this);
-            this._renderingTechnique = new SimpleRenderingTechnique(this);
+            _graphicDevice = gDevice;
+            _spriteBatch = new SpriteBatch(_graphicDevice);
+            _instancingManager = new InstanceBatchManager(this);
+            _renderingTechnique = new SimpleRenderingTechnique(this);
         }
 
         #endregion
 
         #region Methods
 
+        /// <summary>
+        /// Called before the rendering
+        /// </summary>
+        /// <param name="vp">Viewport in which the rendering result will be sent</param>
         private void BeginRender(Viewport vp)
         {
-            this.instancingManager.Reset();
+            _instancingManager.Reset();
             _frameDetail.Reset();
 
             if (vp.AlwaysClear) Clear(vp);
             _graphicDevice.DepthStencilState = DepthStencilState.Default;
         }
 
+        /// <summary>
+        /// Called after the rendering
+        /// </summary>
+        /// <param name="vp">Viewport in which the rendering result has been sent</param>
         private void EndRender(Viewport vp)
         {
             vp.FrameDetail.Merge(_frameDetail);
@@ -58,27 +66,44 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         private void UnsetBuffers()
         {
-            this._graphicDevice.SetVertexBuffer(null);
-            this._graphicDevice.Indices = null;
+            _graphicDevice.SetVertexBuffer(null);
+            _graphicDevice.Indices = null;
         }
 
+        /// <summary>
+        /// Clear a viewport
+        /// </summary>
+        /// <param name="vp">Viewport to clear</param>
         internal void Clear(Viewport vp)
         {
-            this._graphicDevice.SetRenderTarget(vp.RenderTarget);
-            this._graphicDevice.Clear(vp.ClearColor);
-            this._graphicDevice.SetRenderTarget(null);
+            _graphicDevice.SetRenderTarget(vp.RenderTarget);
+            _graphicDevice.Clear(vp.ClearColor);
+            _graphicDevice.SetRenderTarget(null);
         }
 
+        /// <summary>
+        /// Set a render target on the graphic device
+        /// </summary>
+        /// <param name="renderTarget">Render target to set</param>
         internal void SetRenderTarget(RenderTarget2D renderTarget)
         {
-            this._graphicDevice.SetRenderTarget(renderTarget);
+            _graphicDevice.SetRenderTarget(renderTarget);
         }
 
+        /// <summary>
+        /// Remove all render target from the graphic device
+        /// </summary>
         internal void UnsetRenderTarget()
         {
             _graphicDevice.SetRenderTarget(null);
         }
 
+        /// <summary>
+        /// Render a scene graph into a viewport
+        /// </summary>
+        /// <param name="vp">Viewport in which the rendering is sent</param>
+        /// <param name="cam">Camera representing the point of view</param>
+        /// <param name="queue">Queue of objects to render</param>
         internal void Render(Viewport vp, Camera cam, RenderQueue queue)
         {
             BeginRender(vp);
@@ -88,6 +113,10 @@ namespace Pulsar.Graphics.Rendering
             EndRender(vp);
         }
 
+        /// <summary>
+        /// Draw all viewports of a RenderTarget into its own render target
+        /// </summary>
+        /// <param name="renderTarget">RenderTarget to render</param>
         internal void RenderToTarget(RenderTarget renderTarget)
         {
             _graphicDevice.SetRenderTarget(renderTarget.Target);
@@ -110,6 +139,10 @@ namespace Pulsar.Graphics.Rendering
             _graphicDevice.SetRenderTarget(null);
         }
 
+        /// <summary>
+        /// Draw a texture on the entire screen
+        /// </summary>
+        /// <param name="texture">Texture to render</param>
         internal void DrawFullQuad(Texture2D texture)
         {
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp,
@@ -122,42 +155,48 @@ namespace Pulsar.Graphics.Rendering
             _frameDetail.AddDrawCall(4, 2, 1);
         }
 
+        /// <summary>
+        /// Render a geometric shape
+        /// </summary>
+        /// <param name="geometry">Geometric object</param>
         internal void DrawGeometry(IRenderable geometry)
         {
-            if (geometry.RenderInfo.useIndexes)
+            if (geometry.RenderInfo.UseIndexes)
             {
-                this.DrawIndexedGeometry(geometry);
+                DrawIndexedGeometry(geometry);
             }
             else
             {
-                this.DrawNonIndexedGeometry(geometry);
+                DrawNonIndexedGeometry(geometry);
             }
         }
 
         /// <summary>
-        /// Draw a IRenderable instance
+        /// Draw a geometric shape which use index buffer
         /// </summary>
-        /// <param name="geometry">IRenderable instance</param>
-        /// <param name="view">View matrix</param>
-        /// <param name="projection">Projection matrix</param>
+        /// <param name="geometry">Geometric shape</param>
         internal void DrawIndexedGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
-            this._graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
-            this._graphicDevice.Indices = renderInfo.indexData.Buffer;
-            this._graphicDevice.DrawIndexedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount,
-                renderInfo.startIndex, renderInfo.triangleCount);
-            this.UnsetBuffers();
+            _graphicDevice.SetVertexBuffers(renderInfo.VertexData.VertexBindings);
+            _graphicDevice.Indices = renderInfo.IndexData.Buffer;
+            _graphicDevice.DrawIndexedPrimitives(renderInfo.PrimitiveType, 0, 0, renderInfo.VertexCount,
+                renderInfo.StartIndex, renderInfo.PrimitiveCount);
+            UnsetBuffers();
 
             _frameDetail.AddDrawCall((uint)renderInfo.VertexCount, (uint)renderInfo.PrimitiveCount, 1);
         }
 
+        /// <summary>
+        /// Draw a geometric shape which doesn't use index buffer
+        /// </summary>
+        /// <param name="geometry">Geometric shape</param>
         internal void DrawNonIndexedGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
-            this._graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
-            this._graphicDevice.DrawPrimitives(renderInfo.primitive, renderInfo.startIndex, renderInfo.triangleCount);
-            this.UnsetBuffers();
+            _graphicDevice.SetVertexBuffers(renderInfo.VertexData.VertexBindings);
+            _graphicDevice.DrawPrimitives(renderInfo.PrimitiveType, renderInfo.StartIndex, renderInfo.PrimitiveCount);
+            UnsetBuffers();
 
             _frameDetail.AddDrawCall((uint)renderInfo.VertexCount, (uint)renderInfo.PrimitiveCount, 1);
         }
@@ -165,18 +204,18 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Draw a geometry batch
         /// </summary>
-        /// <param name="batch">Geometry batch to draw</param>
+        /// <param name="batch">Bztch of geometric shapes</param>
         internal void DrawInstancedGeometry(InstanceBatch batch)
         {
             if (batch.InstanceCount == 0)
                 return;
 
             RenderingInfo renderInfo = batch.RenderInfo;
-            this._graphicDevice.SetVertexBuffers(renderInfo.vertexData.VertexBindings);
-            this._graphicDevice.Indices = renderInfo.indexData.Buffer;
-            this._graphicDevice.DrawInstancedPrimitives(renderInfo.primitive, 0, 0, renderInfo.vertexCount, 
-                renderInfo.startIndex, renderInfo.triangleCount, batch.InstanceCount);
-            this.UnsetBuffers();
+            _graphicDevice.SetVertexBuffers(renderInfo.VertexData.VertexBindings);
+            _graphicDevice.Indices = renderInfo.IndexData.Buffer;
+            _graphicDevice.DrawInstancedPrimitives(renderInfo.PrimitiveType, 0, 0, renderInfo.VertexCount,
+                renderInfo.StartIndex, renderInfo.PrimitiveCount, batch.InstanceCount);
+            UnsetBuffers();
 
             int instanceCount = batch.InstanceCount;
             _frameDetail.AddDrawCall((uint)(renderInfo.VertexCount * instanceCount), (uint)(renderInfo.PrimitiveCount * instanceCount), 
@@ -192,7 +231,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         internal GraphicsDevice GraphicsDevice
         {
-            get { return this._graphicDevice; }
+            get { return _graphicDevice; }
         }
 
         /// <summary>
@@ -200,7 +239,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         internal InstanceBatchManager InstancingManager
         {
-            get { return this.instancingManager; }
+            get { return _instancingManager; }
         }
 
         #endregion

@@ -155,7 +155,7 @@ namespace Pulsar.Assets.Graphics.Models
             IndexBufferObject ibo = this.engine.BufferManager.CreateIndexBuffer(BufferType.StaticWriteOnly,
                 IndexElementSize.SixteenBits, verticesCount);
             ibo.SetData(indices);
-            iData.indexBuffer = ibo;
+            iData.IndexBufferObj = ibo;
 
             SubMesh sub = mesh.CreateSubMesh();
             sub.SetRenderingInfo(PrimitiveType.TriangleList, 0, (verticesCount / 3), verticesCount);

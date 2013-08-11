@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsar.Graphics.Rendering
 {
@@ -12,7 +10,7 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
 
-        internal IndexBufferObject indexBuffer;
+        internal IndexBufferObject IndexBufferObj;
 
         #endregion
 
@@ -23,8 +21,8 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public IndexBufferObject IndexBuffer
         {
-            get { return this.indexBuffer; }
-            set { this.indexBuffer = value; }
+            get { return IndexBufferObj; }
+            set { IndexBufferObj = value; }
         }
 
         /// <summary>
@@ -32,7 +30,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         internal IndexBuffer Buffer
         {
-            get { return this.indexBuffer.Buffer; }
+            get { return IndexBufferObj.Buffer; }
         }
 
         #endregion

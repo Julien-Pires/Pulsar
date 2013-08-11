@@ -7,13 +7,13 @@ namespace Pulsar.Graphics.Rendering
     /// <summary>
     /// Base class for a wrapper of vertex buffer
     /// </summary>
-    /// <typeparam name="T">Type of vertex buffer stored in the wrapper</typeparam>
-    internal abstract class VertexBufferWrapper<T> : IVertexBufferWrapper where T : VertexBuffer
+    /// <typeparam name="TBuffer">Type of vertex buffer stored in the wrapper</typeparam>
+    internal abstract class VertexBufferWrapper<TBuffer> : IVertexBufferWrapper where TBuffer : VertexBuffer
     {
         #region Fields
 
-        protected readonly T buffer;
-        private bool disposed;
+        protected readonly TBuffer Buffer;
+        private bool _disposed;
 
         #endregion
 
@@ -23,13 +23,10 @@ namespace Pulsar.Graphics.Rendering
         /// Constructor of VertexBufferWrapper class
         /// </summary>
         /// <param name="buffer">Vertex buffer stored in the wrapper</param>
-        public VertexBufferWrapper(T buffer)
+        protected VertexBufferWrapper(TBuffer buffer)
         {
-            if (buffer == null)
-            {
-                throw new ArgumentNullException("Buffer cannot be null");
-            }
-            this.buffer = buffer;
+            if (buffer == null) throw new ArgumentNullException("buffer");
+            Buffer = buffer;
         }
 
         #endregion
@@ -37,13 +34,13 @@ namespace Pulsar.Graphics.Rendering
         #region Operators
 
         /// <summary>
-        /// Cast implicitly a VertexBufferWrapper to a VertexBuffer
+        /// Casts implicitly a VertexBufferWrapper to a VertexBuffer
         /// </summary>
         /// <param name="wrapper">Wrapper to cast</param>
         /// <returns>Return a VertexBuffer</returns>
-        public static implicit operator VertexBuffer(VertexBufferWrapper<T> wrapper)
+        public static implicit operator VertexBuffer(VertexBufferWrapper<TBuffer> wrapper)
         {
-            return wrapper.buffer;
+            return wrapper.Buffer;
         }
 
         #endregion
@@ -51,47 +48,55 @@ namespace Pulsar.Graphics.Rendering
         #region Methods
 
         /// <summary>
-        /// Dispose the wrapper
+        /// Disposes resources
         /// </summary>
         public void Dispose()
         {
-            if (!this.disposed)
-            {
-                this.buffer.Dispose();
-            }
-            this.disposed = true;
+            Dispose(true);
         }
 
         /// <summary>
-        /// Get the data stored in the buffer
+        /// Disposes resources
         /// </summary>
-        /// <typeparam name="Y">Type of vertex in the buffer</typeparam>
-        /// <param name="data">Array in which to store data</param>
-        public void GetData<Y>(Y[] data) where Y : struct
+        /// <param name="disposing">Indicates whether the methods is called from IDisposable.Dispose</param>
+        protected virtual void Dispose(bool disposing)
         {
-            this.buffer.GetData(data);
+            if (_disposed) return;
+
+            if (disposing) Buffer.Dispose();
+            _disposed = true;
         }
 
         /// <summary>
-        /// Set the data stored in the buffer
+        /// Gets the data stored in the buffer
         /// </summary>
-        /// <typeparam name="Y">Type of vertex stored in the buffer</typeparam>
+        /// <typeparam name="T">Type of vertex in the buffer</typeparam>
+        /// <param name="data">Array in which to store data</param>
+        public void GetData<T>(T[] data) where T : struct
+        {
+            Buffer.GetData(data);
+        }
+
+        /// <summary>
+        /// Sets the data stored in the buffer
+        /// </summary>
+        /// <typeparam name="T">Type of vertex stored in the buffer</typeparam>
         /// <param name="data">Data to set</param>
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
-        public abstract void SetData<Y>(Y[] data, int startIdx, int elementCount, SetDataOptions option) where Y : struct;
+        public abstract void SetData<T>(T[] data, int startIdx, int elementCount, SetDataOptions option) where T : struct;
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Get the vertex buffer
+        /// Gets the vertex buffer
         /// </summary>
-        public VertexBuffer Buffer 
+        public VertexBuffer VertexBuffer 
         {
-            get { return this.buffer; }
+            get { return Buffer; }
         }
 
         #endregion
@@ -117,16 +122,16 @@ namespace Pulsar.Graphics.Rendering
         #region Methods
 
         /// <summary>
-        /// Set the data stored in the buffer
+        /// Sets the data stored in the buffer
         /// </summary>
-        /// <typeparam name="Y">Type of vertex stored in the buffer</typeparam>
+        /// <typeparam name="T">Type of vertex stored in the buffer</typeparam>
         /// <param name="data">Data to set</param>
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
         public override void SetData<T>(T[] data, int startIdx, int elementCount, SetDataOptions option)
         {
-            this.buffer.SetData(data, startIdx, elementCount);
+            Buffer.SetData(data, startIdx, elementCount);
         }
 
         #endregion
@@ -152,16 +157,16 @@ namespace Pulsar.Graphics.Rendering
         #region Methods
 
         /// <summary>
-        /// Set the data stored in the buffer
+        /// Sets the data stored in the buffer
         /// </summary>
-        /// <typeparam name="Y">Type of vertex stored in the buffer</typeparam>
+        /// <typeparam name="T">Type of vertex stored in the buffer</typeparam>
         /// <param name="data">Data to set</param>
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
         public override void SetData<T>(T[] data, int startIdx, int elementCount, SetDataOptions option)
         {
-            this.buffer.SetData(data, startIdx, elementCount, option);
+            Buffer.SetData(data, startIdx, elementCount, option);
         }
 
         #endregion

@@ -1,107 +1,16 @@
 ﻿using System;
 
-using System.Collections.Generic;
-
-using Pulsar.Assets.Graphics.Materials;
-
 namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// List of render queue ID
     /// </summary>
-    public enum RenderQueueGroupID
+    public enum RenderQueueGroupId
     {
         Background = 0,
         Default = 5,
         Overlay = 10,
         Count = 11
-    }
-
-    /// <summary>
-    /// Class describing a group of the render queue
-    /// This class do distinction between solids objects and transparents
-    /// </summary>
-    internal sealed class RenderQueueGroup
-    {
-        #region Fields
-
-        private int groupID;
-        private List<IRenderable> solids = new List<IRenderable>();
-        private List<IRenderable> transparents = new List<IRenderable>();
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Constructor of the RenderQueueGroup class
-        /// </summary>
-        /// <param name="id">ID of this group</param>
-        public RenderQueueGroup(int id)
-        {
-            this.groupID = id;
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Clear this group
-        /// </summary>
-        internal void Clear()
-        {
-            this.solids.Clear();
-            this.transparents.Clear();
-        }
-
-        /// <summary>
-        /// Add a IRenderable to this group
-        /// </summary>
-        /// <param name="renderable">IRenderable instance</param>
-        internal void AddRenderable(IRenderable renderable)
-        {
-            Material material = renderable.Material;
-
-            if (!material.IsTransparent)
-            {
-                this.solids.Add(renderable);
-            }
-            else if (material.IsTransparent)
-            {
-                this.transparents.Add(renderable);
-            }
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Get the list of transparent object
-        /// </summary>
-        public List<IRenderable> TransparentList
-        {
-            get { return this.transparents; }
-        }
-
-        /// <summary>
-        /// Get the list of solid object
-        /// </summary>
-        public List<IRenderable> SolidList
-        {
-            get { return this.solids; }
-        }
-
-        /// <summary>
-        /// Get the ID of this group
-        /// </summary>
-        public int ID
-        {
-            get { return this.groupID; }
-        }
-
-        #endregion
     }
 
     /// <summary>
@@ -111,7 +20,7 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
-        private RenderQueueGroup[] queueGroups = new RenderQueueGroup[(int)RenderQueueGroupID.Count];
+        private readonly RenderQueueGroup[] _queueGroups = new RenderQueueGroup[(int)RenderQueueGroupId.Count];
 
         #endregion
 
@@ -123,17 +32,17 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="renderable">IRenderable instance</param>
         internal void AddRenderable(IRenderable renderable)
         {
-            this.AddRenderable(renderable, renderable.RenderQueueID);
+            AddRenderable(renderable, renderable.RenderQueueId);
         }
 
         /// <summary>
         /// Add a IRenderable in the render queue at a specific position
         /// </summary>
         /// <param name="renderable">IRenderable instance</param>
-        /// <param name="groupID">Render queue id to attached the IRenderable</param>
-        internal void AddRenderable(IRenderable renderable, int groupID)
+        /// <param name="groupId">Render queue id to attached the IRenderable</param>
+        internal void AddRenderable(IRenderable renderable, int groupId)
         {
-            RenderQueueGroup group = this.GetGroup(groupID);
+            RenderQueueGroup group = GetGroup(groupId);
 
             group.AddRenderable(renderable);
         }
@@ -143,12 +52,11 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         internal void Clear()
         {
-            for (int i = 0; i < this.queueGroups.Length; i++)
+            for (int i = 0; i < _queueGroups.Length; i++)
             {
-                RenderQueueGroup group = this.queueGroups[i];
+                RenderQueueGroup group = _queueGroups[i];
 
-                if(group != null)
-                    group.Clear();
+                if(group != null) group.Clear();
             }
         }
 
@@ -161,10 +69,7 @@ namespace Pulsar.Graphics.SceneGraph
         {
             movObj.NotifyCurrentCamera(cam);
 
-            if (movObj.IsRendered)
-            {
-                movObj.UpdateRenderQueue(this);
-            }
+            if (movObj.IsRendered) movObj.UpdateRenderQueue(this);
         }
 
         /// <summary>
@@ -174,21 +79,12 @@ namespace Pulsar.Graphics.SceneGraph
         /// <returns>Returns an RenderQueueGroup</returns>
         private RenderQueueGroup GetGroup(int id)
         {
-            if (id > (int)RenderQueueGroupID.Count)
-                throw new Exception();
+            if (id > (int)RenderQueueGroupId.Count) throw new Exception();
 
-            RenderQueueGroup group;
-            
-            if (this.queueGroups[id] != null)
-            {
-                group = this.queueGroups[id];
-            }
-            else
-            {
-                group = new RenderQueueGroup(id);
+            if (_queueGroups[id] != null) return _queueGroups[id];
 
-                this.AddNewRenderGroup(group);
-            }
+            RenderQueueGroup group = new RenderQueueGroup(id);
+            AddNewRenderGroup(group);
 
             return group;
         }
@@ -199,7 +95,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="renderGroup"></param>
         private void AddNewRenderGroup(RenderQueueGroup renderGroup)
         {
-            this.queueGroups[renderGroup.ID] = renderGroup;
+            _queueGroups[renderGroup.Id] = renderGroup;
         }
 
         #endregion
@@ -211,7 +107,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         internal RenderQueueGroup[] QueueGroupList
         {
-            get { return this.queueGroups; }
+            get { return _queueGroups; }
         }
 
         #endregion

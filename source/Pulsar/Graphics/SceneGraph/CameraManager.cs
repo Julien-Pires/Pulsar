@@ -9,8 +9,8 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
-        private Dictionary<string, Camera> cameras = new Dictionary<string, Camera>();
-        private SceneTree owner;
+        private readonly Dictionary<string, Camera> _cameras = new Dictionary<string, Camera>();
+        private readonly SceneTree _owner;
 
         #endregion
 
@@ -21,7 +21,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         internal CameraManager(SceneTree owner)
         {
-            this.owner = owner;
+            _owner = owner;
         }
 
         #endregion
@@ -31,31 +31,36 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Add a camera to the manager
         /// </summary>
-        /// <param name="camera">The camera to add</param>
+        /// <param name="name">Name of the camera</param>
         public Camera CreateCamera(string name)
         {
             Camera cam;
-            if (this.cameras.TryGetValue(name, out cam)) return cam;
+            if (_cameras.TryGetValue(name, out cam)) return cam;
 
-            cam = new Camera(name, this.owner);
-            this.cameras.Add(name, cam);
+            cam = new Camera(name, _owner);
+            _cameras.Add(name, cam);
 
             return cam;
         }
 
         /// <summary>
-        /// Remove a camera from the manager
+        /// Remove a camera
         /// </summary>
         /// <param name="camera">Camera to remove</param>
-        /// <returns>Return true if the camera was removed, else false</returns>
+        /// <returns>Return true if the camera was removed, otherwise false</returns>
         public bool RemoveCamera(Camera camera)
         {
-            return this.cameras.Remove(camera.Name);
+            return _cameras.Remove(camera.Name);
         }
 
+        /// <summary>
+        /// Remove a camera with its name
+        /// </summary>
+        /// <param name="name">Name of the camera</param>
+        /// <returns>Return true if the camera was removed, otherwise false</returns>
         public bool RemoveCamera(string name)
         {
-            return this.cameras.Remove(name);
+            return _cameras.Remove(name);
         }
 
         #endregion

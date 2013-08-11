@@ -145,7 +145,7 @@ namespace Pulsar.Assets.Graphics.Models
             }
             if (ibo != null)
             {
-                iData.indexBuffer = ibo;
+                iData.IndexBufferObj = ibo;
             }
 
             for (int i = 0; i < model.Meshes.Count; i++)

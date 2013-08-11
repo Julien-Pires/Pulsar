@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,9 +10,21 @@ namespace Pulsar.Graphics.Rendering
     /// </summary>
     public enum BufferType
     {
+        /// <summary>
+        /// A buffer used for static vertices
+        /// </summary>
         Static,
+        /// <summary>
+        /// A buffer used for static vertices in write only mode
+        /// </summary>
         StaticWriteOnly,
+        /// <summary>
+        /// A buffer used when vertices are often replaced
+        /// </summary>
         Dynamic,
+        /// <summary>
+        /// A buffer used when vertices are often replaced and is used only in write mode
+        /// </summary>
         DynamicWriteOnly
     }
 
@@ -24,7 +35,7 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
 
-        private GraphicsDeviceManager deviceManager;
+        private readonly GraphicsDeviceManager _deviceManager;
 
         #endregion
 
@@ -36,11 +47,8 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="deviceManager">GraphicsDeviceManager used to create buffers</param>
         internal BufferManager(GraphicsDeviceManager deviceManager)
         {
-            if (deviceManager == null)
-            {
-                throw new ArgumentNullException("GraphicsDeviceManager cannot be null");
-            }
-            this.deviceManager = deviceManager;
+            if (deviceManager == null) throw new ArgumentNullException("deviceManager");
+            _deviceManager = deviceManager;
         }
 
         #endregion
@@ -59,27 +67,22 @@ namespace Pulsar.Graphics.Rendering
             VertexBuffer buffer = null;
             switch (bufferType)
             {
-                case BufferType.Static: buffer = new VertexBuffer(this.deviceManager.GraphicsDevice, vertexType,
+                case BufferType.Static: buffer = new VertexBuffer(_deviceManager.GraphicsDevice, vertexType,
                     vertexCount, BufferUsage.None);
                     break;
-                case BufferType.StaticWriteOnly: buffer = new VertexBuffer(this.deviceManager.GraphicsDevice, vertexType,
+                case BufferType.StaticWriteOnly: buffer = new VertexBuffer(_deviceManager.GraphicsDevice, vertexType,
                     vertexCount, BufferUsage.WriteOnly);
                     break;
-                case BufferType.Dynamic: buffer = new DynamicVertexBuffer(this.deviceManager.GraphicsDevice, vertexType,
+                case BufferType.Dynamic: buffer = new DynamicVertexBuffer(_deviceManager.GraphicsDevice, vertexType,
                     vertexCount, BufferUsage.None);
                     break;
-                case BufferType.DynamicWriteOnly: buffer = new DynamicVertexBuffer(this.deviceManager.GraphicsDevice, vertexType,
+                case BufferType.DynamicWriteOnly: buffer = new DynamicVertexBuffer(_deviceManager.GraphicsDevice, vertexType,
                     vertexCount, BufferUsage.WriteOnly);
                     break;
             }
-            if (buffer == null)
-            {
-                throw new Exception("Failed to create buffer, wrong buffer type provided");
-            }
-            
-            VertexBufferObject vbo = new VertexBufferObject(buffer);
+            if (buffer == null) throw new Exception("Failed to create buffer, wrong buffer type provided");
 
-            return vbo;
+            return new VertexBufferObject(buffer);
         }
 
         /// <summary>
@@ -94,27 +97,22 @@ namespace Pulsar.Graphics.Rendering
             IndexBuffer buffer = null;
             switch (bufferType)
             {
-                case BufferType.Static: buffer = new IndexBuffer(this.deviceManager.GraphicsDevice, elementSize,
+                case BufferType.Static: buffer = new IndexBuffer(_deviceManager.GraphicsDevice, elementSize,
                     indexCount, BufferUsage.None);
                     break;
-                case BufferType.StaticWriteOnly: buffer = new IndexBuffer(this.deviceManager.GraphicsDevice, elementSize,
+                case BufferType.StaticWriteOnly: buffer = new IndexBuffer(_deviceManager.GraphicsDevice, elementSize,
                     indexCount, BufferUsage.WriteOnly);
                     break;
-                case BufferType.Dynamic: buffer = new DynamicIndexBuffer(this.deviceManager.GraphicsDevice, elementSize,
+                case BufferType.Dynamic: buffer = new DynamicIndexBuffer(_deviceManager.GraphicsDevice, elementSize,
                     indexCount, BufferUsage.None);
                     break;
-                case BufferType.DynamicWriteOnly: buffer = new DynamicIndexBuffer(this.deviceManager.GraphicsDevice, elementSize,
+                case BufferType.DynamicWriteOnly: buffer = new DynamicIndexBuffer(_deviceManager.GraphicsDevice, elementSize,
                     indexCount, BufferUsage.WriteOnly);
                     break;
             }
-            if (buffer == null)
-            {
-                throw new Exception("Failed to create buffer, wrong buffer type provided");
-            }
+            if (buffer == null) throw new Exception("Failed to create buffer, wrong buffer type provided");
 
-            IndexBufferObject ibo = new IndexBufferObject(buffer);
-
-            return ibo;
+            return new IndexBufferObject(buffer);
         }
 
         /// <summary>
@@ -124,9 +122,7 @@ namespace Pulsar.Graphics.Rendering
         /// <returns>Return a VertexBufferObject</returns>
         internal VertexBufferObject CreateVertexBuffer(VertexBuffer buffer)
         {
-            VertexBufferObject vbo = new VertexBufferObject(buffer);
-
-            return vbo;
+            return new VertexBufferObject(buffer);
         }
 
         /// <summary>
@@ -136,9 +132,7 @@ namespace Pulsar.Graphics.Rendering
         /// <returns>Return an IndexBufferObject</returns>
         internal IndexBufferObject CreateIndexBuffer(IndexBuffer buffer)
         {
-            IndexBufferObject ibo = new IndexBufferObject(buffer);
-
-            return ibo;
+            return new IndexBufferObject(buffer);
         }
 
         #endregion

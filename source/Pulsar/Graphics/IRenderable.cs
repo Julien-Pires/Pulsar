@@ -1,10 +1,4 @@
-﻿using System;
-using System.Text;
-
-using System.Collections.Generic;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 
 using Pulsar.Assets.Graphics.Materials;
 using Pulsar.Graphics.Rendering;
@@ -21,7 +15,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Get the ID of this renderable
         /// </summary>
-        uint BatchID { get; }
+        uint BatchId { get; }
 
         /// <summary>
         /// Get the name of this instance
@@ -36,7 +30,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Get the ID of the render queue to be attached on
         /// </summary>
-        int RenderQueueID { get; }
+        int RenderQueueId { get; }
 
         /// <summary>
         /// Get the full transform matrix

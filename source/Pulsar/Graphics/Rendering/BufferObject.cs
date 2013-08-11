@@ -7,13 +7,13 @@ namespace Pulsar.Graphics.Rendering
     /// <summary>
     /// Base class for all buffer objects
     /// </summary>
-    /// <typeparam name="T">Type of buffer wrapper used</typeparam>
-    public abstract class BufferObject<T> where T : IBufferWrapper, IDisposable
+    /// <typeparam name="TWrapper">Type of buffer wrapper used</typeparam>
+    public abstract class BufferObject<TWrapper> where TWrapper : IBufferWrapper, IDisposable
     {
         #region Fields
 
-        protected T wrapper;
-        private bool disposed;
+        protected TWrapper Wrapper;
+        private bool _disposed;
 
         #endregion
 
@@ -24,7 +24,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
         }
 
         /// <summary>
@@ -33,56 +33,56 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!_disposed)
             {
-                this.wrapper.Dispose();
+                Wrapper.Dispose();
             }
-            this.disposed = true;
+            _disposed = true;
         }
 
         /// <summary>
         /// Get the data stored in the buffer
         /// </summary>
-        /// <typeparam name="Y">Type of data</typeparam>
+        /// <typeparam name="T">Type of data</typeparam>
         /// <param name="data">Array in which to store data</param>
-        public void GetData<Y>(Y[] data) where Y : struct
+        public void GetData<T>(T[] data) where T : struct
         {
-            this.wrapper.GetData(data);
+            Wrapper.GetData(data);
         }
 
         /// <summary>
         /// Set the data stored in the buffer
         /// </summary>
-        /// <typeparam name="Y">Type of data</typeparam>
+        /// <typeparam name="T">Type of data</typeparam>
         /// <param name="data">Array in which to store data</param>
-        public void SetData<Y>(Y[] data) where Y : struct
+        public void SetData<T>(T[] data) where T : struct
         {
-            this.wrapper.SetData(data, 0, data.Length, SetDataOptions.Discard);
+            Wrapper.SetData(data, 0, data.Length, SetDataOptions.Discard);
         }
 
         /// <summary>
         /// Set the data stored in the buffer
         /// </summary>
-        /// <typeparam name="Y">Type of data</typeparam>
+        /// <typeparam name="T">Type of data</typeparam>
         /// <param name="data">Array in which to store data</param>
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
-        public void SetData<Y>(Y[] data, int startIdx, int elementCount) where Y : struct
+        public void SetData<T>(T[] data, int startIdx, int elementCount) where T : struct
         {
-            this.wrapper.SetData(data, startIdx, elementCount, SetDataOptions.Discard);
+            Wrapper.SetData(data, startIdx, elementCount, SetDataOptions.Discard);
         }
 
         /// <summary>
         /// Set the data stored in the buffer
         /// </summary>
-        /// <typeparam name="Y">Type of data</typeparam>
+        /// <typeparam name="T">Type of data</typeparam>
         /// <param name="data">Array in which to store data</param>
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
-        public void SetData<Y>(Y[] data, int startIdx, int elementCount, SetDataOptions option) where Y : struct
+        public void SetData<T>(T[] data, int startIdx, int elementCount, SetDataOptions option) where T : struct
         {
-            this.wrapper.SetData(data, startIdx, elementCount, option);
+            Wrapper.SetData(data, startIdx, elementCount, option);
         }
 
         #endregion

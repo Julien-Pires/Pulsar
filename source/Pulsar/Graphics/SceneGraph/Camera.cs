@@ -270,11 +270,11 @@ namespace Pulsar.Graphics.SceneGraph
         {
             if (_parent != null)
             {
-                if((_isDirtyView) || ((_lastNodeOrientation != _parent.FullOrientation) ||
-                    (_lastNodePosition != _parent.FullPosition)))
+                if((_isDirtyView) || ((_lastNodeOrientation != _parent.AbsoluteOrientation) ||
+                    (_lastNodePosition != _parent.AbsolutePosition)))
                 {
-                    _lastNodeOrientation = _parent.FullOrientation;
-                    _lastNodePosition = _parent.FullPosition;
+                    _lastNodeOrientation = _parent.AbsoluteOrientation;
+                    _lastNodePosition = _parent.AbsolutePosition;
                     Quaternion.Multiply(ref _lastNodeOrientation, ref _orientation, out _fullOrientation);
                     _fullPosition = Vector3.Add(Vector3.Transform(_position, _lastNodeOrientation), _lastNodePosition);
 

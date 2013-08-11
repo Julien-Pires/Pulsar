@@ -17,20 +17,11 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="buffer">Vertex buffer managed by the buffe object</param>
         internal VertexBufferObject(VertexBuffer buffer)
         {
-            if (buffer == null)
-            {
-                throw new ArgumentNullException("Buffer cannot be null");
-            }
+            if (buffer == null) throw new ArgumentNullException("buffer");
 
             DynamicVertexBuffer dynBuffer = buffer as DynamicVertexBuffer;
-            if (dynBuffer == null)
-            {
-                this.wrapper = new StaticVertexBufferWrapper(buffer);
-            }
-            else
-            {
-                this.wrapper = new DynamicVertexBufferWrapper(buffer as DynamicVertexBuffer);
-            }
+            if (dynBuffer == null) Wrapper = new StaticVertexBufferWrapper(buffer);
+            else Wrapper = new DynamicVertexBufferWrapper(dynBuffer);
         }
 
         #endregion
@@ -38,27 +29,27 @@ namespace Pulsar.Graphics.Rendering
         #region Properties
 
         /// <summary>
-        /// Get the number of vertices in the buffer
+        /// Gets the number of vertices in the buffer
         /// </summary>
         public int VerticesCount
         {
-            get { return this.wrapper.Buffer.VertexCount; }
+            get { return Wrapper.VertexBuffer.VertexCount; }
         }
 
         /// <summary>
-        /// Get the vertex declaration associated with the buffer
+        /// Gets the vertex declaration associated with the buffer
         /// </summary>
         public VertexDeclaration Declaration
         {
-            get { return this.Buffer.VertexDeclaration; }
+            get { return Buffer.VertexDeclaration; }
         }
 
         /// <summary>
-        /// Get the vertex buffer
+        /// Gets the vertex buffer
         /// </summary>
         internal VertexBuffer Buffer
         {
-            get { return this.wrapper.Buffer; }
+            get { return Wrapper.VertexBuffer; }
         }
 
         #endregion

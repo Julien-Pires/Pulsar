@@ -44,6 +44,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         /// <summary>
         /// Render the GBuffer pass
         /// </summary>
+        /// <param name="vp">Target viewport for the rendering</param>
         /// <param name="queue">Render queue containing objects to draw</param>
         /// <param name="cam">Camera to use for rendering</param>
         public void Render(Viewport vp, Camera cam, RenderQueue queue)
@@ -52,11 +53,10 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
             _shader.SetViewProj(ref cam.ViewMatrix, ref cam.ProjectionMatrix);
 
             RenderQueueGroup[] queueGroups = queue.QueueGroupList;
-            for (int i = 0; i < (int)RenderQueueGroupID.Count; i++)
+            for (int i = 0; i < (int)RenderQueueGroupId.Count; i++)
             {
                 RenderQueueGroup group = queueGroups[i];
-                if (group == null)
-                    continue;
+                if (group == null) continue;
 
                 RenderGroup(group);
             }
@@ -74,7 +74,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
             RenderObjects(solids);
             RenderObjects(transparents);
 
-            IEnumerable<InstanceBatch> instances = _renderer.InstancingManager.GetBatchList(group.ID);
+            IEnumerable<InstanceBatch> instances = _renderer.InstancingManager.GetBatchList(group.Id);
             foreach (InstanceBatch b in instances)
             {
                 RenderInstancedObjects(b);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using Pulsar.Assets.Graphics.Materials;
 using Pulsar.Assets.Graphics.Shaders;
 
@@ -86,10 +87,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
             _world.SetValue(world);
 
             Texture diffuse = material.DiffuseMap;
-            if (diffuse != null)
-            {
-                _diffuse.SetValue(diffuse.Image);
-            }
+            if (diffuse != null) _diffuse.SetValue(diffuse.Image);
         }
 
         /// <summary>
