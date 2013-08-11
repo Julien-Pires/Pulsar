@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="ValidateSolutionConfiguration;ValidateToolsVersions;ValidateProjects" DefaultTargets="Build">
+  <PropertyGroup>
+    <SDK35ToolsPath>C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\</SDK35ToolsPath>
+    <MSBuildToolsPath32>C:\Windows\Microsoft.NET\Framework\v4.0.30319\</MSBuildToolsPath32>
+    <MSBuildToolsRoot>C:\Windows\Microsoft.NET\Framework\</MSBuildToolsRoot>
+    <FrameworkSDKRoot>C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\</FrameworkSDKRoot>
+    <MSBuildRuntimeVersion>4.0.30319</MSBuildRuntimeVersion>
+    <SDK40ToolsPath>C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\</SDK40ToolsPath>
+    <VCTargetsPath>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\v110\</VCTargetsPath>
+    <VisualStudioVersion>11.0</VisualStudioVersion>
+    <WindowsSDK80Path>C:\Program Files (x86)\Windows Kits\8.0\</WindowsSDK80Path>
+    <VCTargetsPath10>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\</VCTargetsPath10>
+    <VCTargetsPath11>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\</VCTargetsPath11>
+    <Configuration>Debug</Configuration>
+    <Platform>Mixed Platforms</Platform>
+    <AspNetConfiguration>Debug</AspNetConfiguration>
+    <SolutionDir>D:\Users\Takumi\Documents\GitHub\Pulsar\source\</SolutionDir>
+    <SolutionExt>.sln</SolutionExt>
+    <SolutionFileName>Pulsar.sln</SolutionFileName>
+    <SolutionName>Pulsar</SolutionName>
+    <SolutionPath>D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar.sln</SolutionPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <CurrentSolutionConfigurationContents>
+      <SolutionConfiguration xmlns="">
+  <ProjectConfiguration Project="{2323EEAF-3931-4685-B3AB-91FD67BAD3F0}" AbsolutePath="D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar.csproj" BuildProjectInSolution="True">Debug|x86</ProjectConfiguration>
+  <ProjectConfiguration Project="{601008E0-0394-4AAC-914A-E714A7D127BF}" AbsolutePath="D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarPipeline\PulsarPipeline.csproj" BuildProjectInSolution="True">Debug|x86</ProjectConfiguration>
+  <ProjectConfiguration Project="{46175482-6368-40F3-82D6-EEE05C59C09C}" AbsolutePath="D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarContent\PulsarContent.contentproj" BuildProjectInSolution="False">Debug|AnyCPU</ProjectConfiguration>
+  <ProjectConfiguration Project="{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}" AbsolutePath="D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar Xbox 360.csproj" BuildProjectInSolution="True">Debug|Xbox 360</ProjectConfiguration>
+  <ProjectConfiguration Project="{266852A9-B8D8-48D3-8533-0A6E981894A1}" AbsolutePath="D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime.csproj" BuildProjectInSolution="True">Debug|x86</ProjectConfiguration>
+  <ProjectConfiguration Project="{7E857BC8-D357-43E1-91C3-863EB2D19B49}" AbsolutePath="D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime Xbox 360.csproj" BuildProjectInSolution="True">Debug|Xbox 360</ProjectConfiguration>
+</SolutionConfiguration>
+    </CurrentSolutionConfigurationContents>
+  </PropertyGroup>
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar.csproj">
+      <ToolsVersion>
+      </ToolsVersion>
+      <SkipNonexistentProjects>False</SkipNonexistentProjects>
+      <AdditionalProperties>Configuration=Debug; Platform=x86; VisualStudioVersion=11.0</AdditionalProperties>
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectReference>
+    <ProjectReference Include="D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarPipeline\PulsarPipeline.csproj">
+      <ToolsVersion>
+      </ToolsVersion>
+      <SkipNonexistentProjects>False</SkipNonexistentProjects>
+      <AdditionalProperties>Configuration=Debug; Platform=x86; VisualStudioVersion=11.0</AdditionalProperties>
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectReference>
+    <ProjectReference Include="D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar Xbox 360.csproj">
+      <ToolsVersion>
+      </ToolsVersion>
+      <SkipNonexistentProjects>False</SkipNonexistentProjects>
+      <AdditionalProperties>Configuration=Debug; Platform=Xbox 360; VisualStudioVersion=11.0</AdditionalProperties>
+      <Configuration>Debug</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectReference>
+    <ProjectReference Include="D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime.csproj">
+      <ToolsVersion>
+      </ToolsVersion>
+      <SkipNonexistentProjects>False</SkipNonexistentProjects>
+      <AdditionalProperties>Configuration=Debug; Platform=x86; VisualStudioVersion=11.0</AdditionalProperties>
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectReference>
+    <ProjectReference Include="D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime Xbox 360.csproj">
+      <ToolsVersion>
+      </ToolsVersion>
+      <SkipNonexistentProjects>False</SkipNonexistentProjects>
+      <AdditionalProperties>Configuration=Debug; Platform=Xbox 360; VisualStudioVersion=11.0</AdditionalProperties>
+      <Configuration>Debug</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectReference>
+  </ItemGroup>
+  <Target Name="ValidateSolutionConfiguration">
+    <Error Condition="('$(CurrentSolutionConfigurationContents)' == '') and ('$(SkipInvalidConfigurations)' != 'true')" Text="La configuration de solution spécifiée &quot;$(Configuration)|$(Platform)&quot; n'est pas valide. Spécifiez une configuration de solution valide à l'aide des propriétés Configuration et Platform (exemple : MSBuild.exe Solution.sln /p:Configuration=Debug /p:Platform=&quot;Any CPU&quot;) ou laissez ces propriétés vides si vous voulez utiliser la configuration de solution par défaut." Code="MSB4126" HelpKeyword="MSBuild.SolutionInvalidSolutionConfiguration" />
+    <Warning Condition="('$(CurrentSolutionConfigurationContents)' == '') and ('$(SkipInvalidConfigurations)' == 'true')" Text="La configuration de solution spécifiée &quot;$(Configuration)|$(Platform)&quot; n'est pas valide. Spécifiez une configuration de solution valide à l'aide des propriétés Configuration et Platform (exemple : MSBuild.exe Solution.sln /p:Configuration=Debug /p:Platform=&quot;Any CPU&quot;) ou laissez ces propriétés vides si vous voulez utiliser la configuration de solution par défaut." Code="MSB4126" HelpKeyword="MSBuild.SolutionInvalidSolutionConfiguration" />
+    <Message Condition="'$(CurrentSolutionConfigurationContents)' != ''" Text="Génération de la configuration de solution &quot;$(Configuration)|$(Platform)&quot;." />
+  </Target>
+  <Target Name="ValidateToolsVersions">
+    <Error Condition="'$(MSBuildToolsVersion)' == '2.0' and ('$(ProjectToolsVersion)' != '2.0' and '$(ProjectToolsVersion)' != '')" Text="La version des outils &quot;$(MSBuildToolsVersion)&quot; de la solution ne prend pas en charge la génération de projets avec une autre version d'outils." Code="MSB4149" HelpKeyword="MSBuild.SolutionToolsVersionDoesNotSupportProjectToolsVersion" />
+  </Target>
+  <Target Name="ValidateProjects">
+    <Message Condition=" ('$(Configuration)' == 'Debug') and ('$(Platform)' == 'Any CPU') " Text="Le projet &quot;PulsarContent&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Debug|Any CPU&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Debug') and ('$(Platform)' == 'Mixed Platforms') " Text="Le projet &quot;PulsarContent&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Debug|Mixed Platforms&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Debug') and ('$(Platform)' == 'x86') " Text="Le projet &quot;PulsarContent&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Debug|x86&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Debug') and ('$(Platform)' == 'Xbox 360') " Text="Le projet &quot;PulsarContent&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Debug|Xbox 360&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Release') and ('$(Platform)' == 'Any CPU') " Text="Le projet &quot;PulsarContent&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Release|Any CPU&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Release') and ('$(Platform)' == 'Mixed Platforms') " Text="Le projet &quot;PulsarContent&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Release|Mixed Platforms&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Release') and ('$(Platform)' == 'x86') " Text="Le projet &quot;PulsarContent&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Release|x86&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Release') and ('$(Platform)' == 'Xbox 360') " Text="Le projet &quot;PulsarContent&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Release|Xbox 360&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Debug') and ('$(Platform)' == 'x86') " Text="Le projet &quot;Pulsar Xbox 360&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Debug|x86&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Release') and ('$(Platform)' == 'x86') " Text="Le projet &quot;Pulsar Xbox 360&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Release|x86&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Debug') and ('$(Platform)' == 'x86') " Text="Le projet &quot;PulsarRuntime Xbox 360&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Debug|x86&quot;." />
+    <Message Condition=" ('$(Configuration)' == 'Release') and ('$(Platform)' == 'x86') " Text="Le projet &quot;PulsarRuntime Xbox 360&quot; n%27est pas sélectionné dans le cadre d%27une génération dans la configuration de solution &quot;Release|x86&quot;." />
+  </Target>
+  <Target Name="Build" Outputs="@(CollectedBuildOutput)">
+    <MSBuild Projects="@(ProjectReference)" BuildInParallel="True" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" SkipNonexistentProjects="%(ProjectReference.SkipNonexistentProjects)">
+      <Output TaskParameter="TargetOutputs" ItemName="CollectedBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Clean">
+    <MSBuild Projects="@(ProjectReference-&gt;Reverse())" Targets="Clean" BuildInParallel="True" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" SkipNonexistentProjects="%(ProjectReference.SkipNonexistentProjects)" />
+  </Target>
+  <Target Name="Rebuild" Outputs="@(CollectedBuildOutput)">
+    <MSBuild Projects="@(ProjectReference)" Targets="Rebuild" BuildInParallel="True" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" SkipNonexistentProjects="%(ProjectReference.SkipNonexistentProjects)">
+      <Output TaskParameter="TargetOutputs" ItemName="CollectedBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Publish">
+    <MSBuild Projects="@(ProjectReference)" Targets="Publish" BuildInParallel="True" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" SkipNonexistentProjects="%(ProjectReference.SkipNonexistentProjects)" />
+  </Target>
+  <Target Name="Pulsar" Outputs="@(PulsarBuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar.csproj'" Projects="@(ProjectReference)" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="PulsarBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Pulsar:Clean">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar.csproj'" Projects="@(ProjectReference)" Targets="Clean" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="Pulsar:Rebuild" Outputs="@(PulsarBuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar.csproj'" Projects="@(ProjectReference)" Targets="Rebuild" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="PulsarBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Pulsar:Publish">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar.csproj'" Projects="@(ProjectReference)" Targets="Publish" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="PulsarPipeline" Outputs="@(PulsarPipelineBuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarPipeline\PulsarPipeline.csproj'" Projects="@(ProjectReference)" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="PulsarPipelineBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="PulsarPipeline:Clean">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarPipeline\PulsarPipeline.csproj'" Projects="@(ProjectReference)" Targets="Clean" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="PulsarPipeline:Rebuild" Outputs="@(PulsarPipelineBuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarPipeline\PulsarPipeline.csproj'" Projects="@(ProjectReference)" Targets="Rebuild" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="PulsarPipelineBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="PulsarPipeline:Publish">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarPipeline\PulsarPipeline.csproj'" Projects="@(ProjectReference)" Targets="Publish" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="Pulsar Xbox 360" Outputs="@(Pulsar_Xbox_360BuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar Xbox 360.csproj'" Projects="@(ProjectReference)" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=Xbox 360;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="Pulsar_Xbox_360BuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Pulsar Xbox 360:Clean">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar Xbox 360.csproj'" Projects="@(ProjectReference)" Targets="Clean" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=Xbox 360;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="Pulsar Xbox 360:Rebuild" Outputs="@(Pulsar_Xbox_360BuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar Xbox 360.csproj'" Projects="@(ProjectReference)" Targets="Rebuild" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=Xbox 360;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="Pulsar_Xbox_360BuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Pulsar Xbox 360:Publish">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\Pulsar\Pulsar Xbox 360.csproj'" Projects="@(ProjectReference)" Targets="Publish" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=Xbox 360;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="PulsarRuntime" Outputs="@(PulsarRuntimeBuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime.csproj'" Projects="@(ProjectReference)" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="PulsarRuntimeBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="PulsarRuntime:Clean">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime.csproj'" Projects="@(ProjectReference)" Targets="Clean" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="PulsarRuntime:Rebuild" Outputs="@(PulsarRuntimeBuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime.csproj'" Projects="@(ProjectReference)" Targets="Rebuild" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="PulsarRuntimeBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="PulsarRuntime:Publish">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime.csproj'" Projects="@(ProjectReference)" Targets="Publish" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="PulsarRuntime Xbox 360" Outputs="@(PulsarRuntime_Xbox_360BuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime Xbox 360.csproj'" Projects="@(ProjectReference)" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=Xbox 360;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="PulsarRuntime_Xbox_360BuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="PulsarRuntime Xbox 360:Clean">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime Xbox 360.csproj'" Projects="@(ProjectReference)" Targets="Clean" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=Xbox 360;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="PulsarRuntime Xbox 360:Rebuild" Outputs="@(PulsarRuntime_Xbox_360BuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime Xbox 360.csproj'" Projects="@(ProjectReference)" Targets="Rebuild" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=Xbox 360;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="PulsarRuntime_Xbox_360BuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="PulsarRuntime Xbox 360:Publish">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'D:\Users\Takumi\Documents\GitHub\Pulsar\source\PulsarRuntime\PulsarRuntime Xbox 360.csproj'" Projects="@(ProjectReference)" Targets="Publish" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Debug; Platform=Xbox 360;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+</Project>
