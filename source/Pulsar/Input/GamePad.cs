@@ -207,7 +207,8 @@ namespace Pulsar.Input
                 }
             }
 
-            if (_currentState.IsConnected)
+            if (!_currentState.IsConnected) return;
+            if (_previousState.PacketNumber != _currentState.PacketNumber)
             {
                 GamePadThumbSticks prevThumb = _previousState.ThumbSticks;
                 GamePadThumbSticks currThumb = _currentState.ThumbSticks;
