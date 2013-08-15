@@ -78,7 +78,6 @@ namespace Pulsar.Input
         private bool down = false;
         private float pressedValue = 0.0f;
         private float deadZone = 0.0f;
-        private short player = 0;
 
         #endregion
 
@@ -117,12 +116,12 @@ namespace Pulsar.Input
                 AbstractButton btn = this.hardwareButtons[i].Button;
                 if (btn.Type == ButtonType.Digital)
                 {
-                    this.pressedValue = btn.GetValue(this.player);
+                    this.pressedValue = btn.GetValue(Owner.PlayerIndex.GamePadIndex);
                     this.down = this.pressedValue > 0.0f;
                 }
                 else
                 {
-                    this.pressedValue = btn.GetValue(this.player);
+                    this.pressedValue = btn.GetValue(Owner.PlayerIndex.GamePadIndex);
                     this.down = this.pressedValue > this.deadZone;
                 }
                 activated = this.down;
@@ -147,22 +146,6 @@ namespace Pulsar.Input
         /// Get the owner of the button
         /// </summary>
         public VirtualInput Owner { get; internal set; }
-
-        /// <summary>
-        /// Get or set the player index
-        /// </summary>
-        public short PlayerIndex
-        {
-            get { return this.player; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new Exception("Player index can't be inferior to zero");
-                }
-                this.player = value;
-            }
-        }
 
         /// <summary>
         /// Get or set the deadzone

@@ -1,5 +1,4 @@
 ﻿using System;
-
 using System.Collections.Generic;
 
 namespace Pulsar.Input
@@ -12,12 +11,15 @@ namespace Pulsar.Input
         #region Fields
 
         internal List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
+        internal readonly PlayerIndex PlayerIndex;
+
         private Dictionary<string, int> buttonsMap = new Dictionary<string, int>();
         private Dictionary<string, int> axesMap = new Dictionary<string, int>();
         private Dictionary<string, int> actionsMap = new Dictionary<string, int>();
         private List<Button> buttons = new List<Button>();
         private List<Axis> axes = new List<Axis>();
         private List<InputEvent> actions = new List<InputEvent>();
+        
 
         #endregion
 
@@ -26,8 +28,9 @@ namespace Pulsar.Input
         /// <summary>
         /// Constructor of VirtualInput class
         /// </summary>
-        internal VirtualInput()
+        internal VirtualInput(PlayerIndex playerIndex)
         {
+            PlayerIndex = playerIndex;
         }
 
         #endregion
@@ -69,7 +72,6 @@ namespace Pulsar.Input
         /// Create a new action
         /// </summary>
         /// <param name="name">Name of the action</param>
-        /// <param name="actionDelegate">Delegate to call when the action is triggered</param>
         /// <returns>Return an InputEvent instance</returns>
         public InputEvent CreateAction(string name)
         {

@@ -86,7 +86,6 @@ namespace Pulsar.Input
         private float value;
         private bool inverse;
         private float deadZone = 0.0f;
-        private short player = 0;
         private float sensitivity = 1.0f;
 
         #endregion
@@ -140,8 +139,8 @@ namespace Pulsar.Input
                 AbstractButton positive = binding.positive;
                 if (positive.Type == ButtonType.Digital)
                 {
-                    rawValue += positive.GetValue(this.player);
-                    rawValue -= binding.negative.GetValue(this.player);
+                    rawValue += positive.GetValue(Owner.PlayerIndex.GamePadIndex);
+                    rawValue -= binding.negative.GetValue(Owner.PlayerIndex.GamePadIndex);
 
                     if (rawValue != 0.0f)
                     {
@@ -154,7 +153,7 @@ namespace Pulsar.Input
                 }
                 else
                 {
-                    rawValue = positive.GetValue(this.player);
+                    rawValue = positive.GetValue(Owner.PlayerIndex.GamePadIndex);
 
                     if (positive.Device == InputDevice.GamePad)
                     {
@@ -196,22 +195,6 @@ namespace Pulsar.Input
         /// Get the owner of the axis
         /// </summary>
         public VirtualInput Owner { get; internal set; }
-
-        /// <summary>
-        /// Get or set the player index
-        /// </summary>
-        public short PlayerIndex
-        {
-            get { return this.player; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new Exception("Player index can't be inferior to zero");
-                }
-                this.player = value;
-            }
-        }
 
         /// <summary>
         /// Get or set a value that indicates of the axis is inversed

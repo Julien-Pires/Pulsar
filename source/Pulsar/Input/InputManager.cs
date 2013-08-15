@@ -27,7 +27,7 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private Dictionary<short, PlayerInput> players = new Dictionary<short, PlayerInput>();
+        private Dictionary<short, Player> players = new Dictionary<short, Player>();
         private AbstractButton[] allButtons;
 
         #endregion
@@ -38,18 +38,15 @@ namespace Pulsar.Input
         /// Create a new player
         /// </summary>
         /// <param name="player">Index of the player</param>
-        /// <returns>Return a PlayerInput instance</returns>
-        public PlayerInput CreatePlayer(short player)
+        /// <returns>Return a Player instance</returns>
+        public Player CreatePlayer(short player)
         {
             if (this.players.ContainsKey(player))
             {
                 throw new Exception(string.Format("Failed to create the player {0}, he already exists", player));
             }
 
-            PlayerInput input = new PlayerInput()
-            {
-                PlayerIndex = player
-            };
+            Player input = new Player(player);
             this.players.Add(player, input);
 
             return input;
@@ -77,8 +74,8 @@ namespace Pulsar.Input
         /// Get a player
         /// </summary>
         /// <param name="player">Index of the player</param>
-        /// <returns>Return a PlayerInput instance</returns>
-        public PlayerInput GetPlayer(short player)
+        /// <returns>Return a Player instance</returns>
+        public Player GetPlayer(short player)
         {
             return this.players[player];
         }
@@ -94,7 +91,7 @@ namespace Pulsar.Input
             Keyboard.Update();
             GamePad.UpdatePads();
 
-            foreach (PlayerInput plInput in this.players.Values)
+            foreach (Player plInput in this.players.Values)
             {
                 plInput.Update();
             }

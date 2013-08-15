@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using XnaGamePad = Microsoft.Xna.Framework.Input.GamePad;
+using XnaPlayerIndex = Microsoft.Xna.Framework.PlayerIndex;
 
 #if XBOX
 using Pulsar.Extension;
@@ -31,13 +32,14 @@ namespace Pulsar.Input
     {
         #region Fields
 
+        public const short GamePadCount = 4;
+
         internal static List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
 
-        private const short GamePadCount = 4;
         private static readonly Buttons[] AllDigital;
         private static readonly GamePad[] GamePads = new GamePad[GamePadCount];
 
-        private readonly PlayerIndex _gamePadIndex;
+        private readonly XnaPlayerIndex _gamePadIndex;
         private GamePadState _previousState;
         private GamePadState _currentState;
         private Vector2 _thumbRightDelta = Vector2.Zero;
@@ -63,7 +65,7 @@ namespace Pulsar.Input
         {
             for (short i = 0; i < GamePadCount; i++)
             {
-                GamePad pad = new GamePad((PlayerIndex)i);
+                GamePad pad = new GamePad((XnaPlayerIndex)i);
                 GamePads[i] = pad;
             }
 #if !XBOX
@@ -81,7 +83,7 @@ namespace Pulsar.Input
         /// Constructor of GamePad class
         /// </summary>
         /// <param name="index"></param>
-        internal GamePad(PlayerIndex index)
+        internal GamePad(XnaPlayerIndex index)
         {
             _gamePadIndex = index;
         }
