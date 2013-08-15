@@ -8,7 +8,7 @@ namespace Pulsar.Input
     /// Enumerate all input devices
     /// </summary>
     [Flags]
-    public enum InputDevice 
+    public enum InputDevice : byte
     { 
         None = 0,
         Mouse = 1,

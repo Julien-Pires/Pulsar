@@ -5,7 +5,7 @@ namespace Pulsar.Input
     /// <summary>
     /// Describe a type of button
     /// </summary>
-    public enum ButtonType
+    public enum ButtonType : byte
     {
         Analog,
         Digital
