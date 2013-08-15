@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-
-using Pulsar.Extension;
-
 using XnaGamePad = Microsoft.Xna.Framework.Input.GamePad;
+
+#if XBOX
+using Pulsar.Extension;
+#endif
 
 namespace Pulsar.Input
 {
@@ -30,18 +31,19 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private const short gamePadCount = 4;
-        private static Buttons[] AllDigital;
         internal static List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
-        private static GamePad[] gamePads = new GamePad[GamePad.gamePadCount];
 
-        private PlayerIndex gamePadIndex;
-        private GamePadState previousState;
-        private GamePadState currentState;
-        private Vector2 thumbRightDelta = Vector2.Zero;
-        private Vector2 thumbLeftDelta = Vector2.Zero;
-        private float triggerRightDelta = 0.0f;
-        private float triggerLeftDelta = 0.0f;
+        private const short GamePadCount = 4;
+        private static readonly Buttons[] AllDigital;
+        private static readonly GamePad[] GamePads = new GamePad[GamePadCount];
+
+        private readonly PlayerIndex _gamePadIndex;
+        private GamePadState _previousState;
+        private GamePadState _currentState;
+        private Vector2 _thumbRightDelta = Vector2.Zero;
+        private Vector2 _thumbLeftDelta = Vector2.Zero;
+        private float _triggerRightDelta;
+        private float _triggerLeftDelta;
 
         #endregion
 
@@ -52,20 +54,28 @@ namespace Pulsar.Input
 
         #endregion
 
-        #region Constructors
+        #region Static constructors
 
         /// <summary>
         /// Static constructor of GamePad class
         /// </summary>
         static GamePad()
         {
-            for (short i = 0; i < GamePad.gamePadCount; i++)
+            for (short i = 0; i < GamePadCount; i++)
             {
                 GamePad pad = new GamePad((PlayerIndex)i);
-                GamePad.gamePads[i] = pad;
+                GamePads[i] = pad;
             }
-            GamePad.Initialize();
+#if !XBOX
+            AllDigital = (Buttons[])Enum.GetValues(typeof(Buttons));
+#else
+            AllDigital = EnumExtension.GetValues<Buttons>();
+#endif
         }
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Constructor of GamePad class
@@ -73,45 +83,31 @@ namespace Pulsar.Input
         /// <param name="index"></param>
         internal GamePad(PlayerIndex index)
         {
-            this.gamePadIndex = index;
+            _gamePadIndex = index;
         }
 
         #endregion
 
-        #region Methods
-
-        /// <summary>
-        /// Initialize static GamePad
-        /// </summary>
-        internal static void Initialize()
-        {
-#if !XBOX
-            GamePad.AllDigital = (Buttons[])Enum.GetValues(typeof(Buttons));
-#else
-            GamePad.AllDigital = EnumExtension.GetValues<Buttons>();
-#endif
-        }
+        #region Static methods
 
         /// <summary>
         /// Update the four gamepad
         /// </summary>
         internal static void UpdatePads()
         {
-            GamePad.ButtonPressed.Clear(); 
-            for (short i = 0; i < GamePad.gamePadCount; i++)
+            ButtonPressed.Clear();
+            for (short i = 0; i < GamePadCount; i++)
             {
-                GamePad pad = GamePad.gamePads[i];
+                GamePad pad = GamePads[i];
                 pad.Update();
 
                 if (pad.IsConnected)
                 {
-                    for (short j = 0; j < GamePad.AllDigital.Length; j++)
+                    for (short j = 0; j < AllDigital.Length; j++)
                     {
-                        if (pad.IsPressed(GamePad.AllDigital[j]))
-                        {
-                            AbstractButton btn = new AbstractButton(GamePad.AllDigital[j]);
-                            GamePad.ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, i));
-                        }
+                        if (!pad.IsPressed(AllDigital[j])) continue;
+                        AbstractButton btn = new AbstractButton(AllDigital[j]);
+                        ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, i));
                     }
                 }
             }
@@ -123,18 +119,18 @@ namespace Pulsar.Input
         /// <returns>Return true if any key has been pressed otherwise false</returns>
         public static bool AnyKeyPressed()
         {
-            return GamePad.ButtonPressed.Count > 0;
+            return ButtonPressed.Count > 0;
         }
 
         /// <summary>
         /// Hook a delegate to the gamepad connected event
         /// </summary>
         /// <param name="listener">Delegate to trigger</param>
-        public static void HookConnectedEvent(EventHandler<GamePadEventArgs> listener)
+        public static void AddListenerConnectedEvent(EventHandler<GamePadEventArgs> listener)
         {
-            for (int i = 0; i < GamePad.gamePadCount; i++)
+            for (int i = 0; i < GamePadCount; i++)
             {
-                GamePad.gamePads[i].Connected += listener;
+                GamePads[i].Connected += listener;
             }
         }
 
@@ -142,11 +138,11 @@ namespace Pulsar.Input
         /// Unhook a delegate to the gamepad connected event
         /// </summary>
         /// <param name="listener">Delegate to trigger</param>
-        public static void UnhookConnectedEvent(EventHandler<GamePadEventArgs> listener)
+        public static void RemoveListenerConnectedEvent(EventHandler<GamePadEventArgs> listener)
         {
-            for (int i = 0; i < GamePad.gamePadCount; i++)
+            for (int i = 0; i < GamePadCount; i++)
             {
-                GamePad.gamePads[i].Connected -= listener;
+                GamePads[i].Connected -= listener;
             }
         }
 
@@ -154,11 +150,11 @@ namespace Pulsar.Input
         /// Hook a delegate to the gamepad disconnected event
         /// </summary>
         /// <param name="listener">Delegate to trigger</param>
-        public static void HookDisconnectedEvent(EventHandler<GamePadEventArgs> listener)
+        public static void AddListenerDisconnectedEvent(EventHandler<GamePadEventArgs> listener)
         {
-            for (int i = 0; i < GamePad.gamePadCount; i++)
+            for (int i = 0; i < GamePadCount; i++)
             {
-                GamePad.gamePads[i].Disconnected += listener;
+                GamePads[i].Disconnected += listener;
             }
         }
 
@@ -166,11 +162,11 @@ namespace Pulsar.Input
         /// Unhook a delegate to the gamepad disconnected event
         /// </summary>
         /// <param name="listener">Delegate to trigger</param>
-        public static void UnhookDisconnectedEvent(EventHandler<GamePadEventArgs> listener)
+        public static void RemoveListenerDisconnectedEvent(EventHandler<GamePadEventArgs> listener)
         {
-            for (int i = 0; i < GamePad.gamePadCount; i++)
+            for (int i = 0; i < GamePadCount; i++)
             {
-                GamePad.gamePads[i].Disconnected -= listener;
+                GamePads[i].Disconnected -= listener;
             }
         }
 
@@ -181,49 +177,47 @@ namespace Pulsar.Input
         /// <returns>Return an instance of GamePad class</returns>
         public static GamePad GetGamePad(int player)
         {
-            return GamePad.gamePads[player];
+            return GamePads[player];
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Update one gamepad state
         /// </summary>
         internal void Update()
         {
-            this.previousState = this.currentState;
-            this.currentState = XnaGamePad.GetState(this.gamePadIndex);
+            _previousState = _currentState;
+            _currentState = XnaGamePad.GetState(_gamePadIndex);
 
-            if (!this.previousState.IsConnected)
+            if (!_previousState.IsConnected)
             {
-                if (this.currentState.IsConnected)
+                if (_currentState.IsConnected)
                 {
-                    if (this.Connected != null)
-                    {
-                        this.Connected(this, new GamePadEventArgs(this));
-                    }
+                    if (Connected != null) Connected(this, new GamePadEventArgs(this));
                 }
             }
             else
             {
-                if (!this.currentState.IsConnected)
+                if (!_currentState.IsConnected)
                 {
-                    if (this.Disconnected != null)
-                    {
-                        this.Disconnected(this, new GamePadEventArgs(this));
-                    }
+                    if (Disconnected != null) Disconnected(this, new GamePadEventArgs(this));
                 }
             }
 
-            if (this.currentState.IsConnected)
+            if (_currentState.IsConnected)
             {
-                GamePadThumbSticks prevThumb = this.previousState.ThumbSticks;
-                GamePadThumbSticks currThumb = this.currentState.ThumbSticks;
-                this.thumbRightDelta = Vector2.Subtract(currThumb.Right, prevThumb.Right);
-                this.thumbLeftDelta = Vector2.Subtract(currThumb.Left, prevThumb.Left);
+                GamePadThumbSticks prevThumb = _previousState.ThumbSticks;
+                GamePadThumbSticks currThumb = _currentState.ThumbSticks;
+                _thumbRightDelta = Vector2.Subtract(currThumb.Right, prevThumb.Right);
+                _thumbLeftDelta = Vector2.Subtract(currThumb.Left, prevThumb.Left);
 
-                GamePadTriggers prevTrigger = this.previousState.Triggers;
-                GamePadTriggers currTrigger = this.currentState.Triggers;
-                this.triggerRightDelta = currTrigger.Right - prevTrigger.Right;
-                this.triggerLeftDelta = currTrigger.Left - prevTrigger.Left;
+                GamePadTriggers prevTrigger = _previousState.Triggers;
+                GamePadTriggers currTrigger = _currentState.Triggers;
+                _triggerRightDelta = currTrigger.Right - prevTrigger.Right;
+                _triggerLeftDelta = currTrigger.Left - prevTrigger.Left;
             }
         }
 
@@ -234,23 +228,24 @@ namespace Pulsar.Input
         /// <returns>Return the value of the button</returns>
         public float GetValue(AnalogButtons btn)
         {
+            float result = 0.0f;
             switch (btn)
             {
-                case AnalogButtons.LeftThumbStickX: return this.currentState.ThumbSticks.Left.X;
+                case AnalogButtons.LeftThumbStickX: result = _currentState.ThumbSticks.Left.X;
                     break;
-                case AnalogButtons.LeftThumbStickY: return this.currentState.ThumbSticks.Left.Y;
+                case AnalogButtons.LeftThumbStickY: result = _currentState.ThumbSticks.Left.Y;
                     break;
-                case AnalogButtons.RightThumbStickX: return this.currentState.ThumbSticks.Right.X;
+                case AnalogButtons.RightThumbStickX: result = _currentState.ThumbSticks.Right.X;
                     break;
-                case AnalogButtons.RightThumbStickY: return this.currentState.ThumbSticks.Right.Y;
+                case AnalogButtons.RightThumbStickY: result = _currentState.ThumbSticks.Right.Y;
                     break;
-                case AnalogButtons.LeftTrigger: return this.currentState.Triggers.Left;
+                case AnalogButtons.LeftTrigger: result = _currentState.Triggers.Left;
                     break;
-                case AnalogButtons.RightTrigger: return this.currentState.Triggers.Right;
+                case AnalogButtons.RightTrigger: result = _currentState.Triggers.Right;
                     break;
             }
 
-            return 0.0f;
+            return result;
         }
 
         /// <summary>
@@ -260,7 +255,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the button has just been pressed otherwise false</returns>
         public bool IsPressed(Buttons button)
         {
-            return (this.previousState.IsButtonUp(button)) && (this.currentState.IsButtonDown(button));
+            return (_previousState.IsButtonUp(button)) && (_currentState.IsButtonDown(button));
         }
 
         /// <summary>
@@ -270,7 +265,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the button has just been released otherwise false</returns>
         public bool IsReleased(Buttons button)
         {
-            return (this.previousState.IsButtonDown(button)) && (this.currentState.IsButtonUp(button));
+            return (_previousState.IsButtonDown(button)) && (_currentState.IsButtonUp(button));
         }
 
         /// <summary>
@@ -280,7 +275,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the button is down otherwise false</returns>
         public bool IsDown(Buttons button)
         {
-            return this.currentState.IsButtonDown(button);
+            return _currentState.IsButtonDown(button);
         }
 
         /// <summary>
@@ -290,7 +285,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the button is up otherwise false</returns>
         public bool IsUp(Buttons button)
         {
-            return this.currentState.IsButtonUp(button);
+            return _currentState.IsButtonUp(button);
         }
 
         #endregion
@@ -302,7 +297,7 @@ namespace Pulsar.Input
         /// </summary>
         public Vector2 ThumbLeftPosition
         {
-            get { return this.currentState.ThumbSticks.Left; }
+            get { return _currentState.ThumbSticks.Left; }
         }
 
         /// <summary>
@@ -310,7 +305,7 @@ namespace Pulsar.Input
         /// </summary>
         public Vector2 ThumbRightPosition
         {
-            get { return this.currentState.ThumbSticks.Right; }
+            get { return _currentState.ThumbSticks.Right; }
         }
 
         /// <summary>
@@ -318,7 +313,7 @@ namespace Pulsar.Input
         /// </summary>
         public Vector2 ThumbLeftDelta
         {
-            get { return this.thumbLeftDelta; }
+            get { return _thumbLeftDelta; }
         }
 
         /// <summary>
@@ -326,7 +321,7 @@ namespace Pulsar.Input
         /// </summary>
         public Vector2 ThumbRightDelta
         {
-            get { return this.thumbRightDelta; }
+            get { return _thumbRightDelta; }
         }
 
         /// <summary>
@@ -334,7 +329,7 @@ namespace Pulsar.Input
         /// </summary>
         public float LeftTrigger
         {
-            get { return this.currentState.Triggers.Left; }
+            get { return _currentState.Triggers.Left; }
         }
 
         /// <summary>
@@ -342,7 +337,7 @@ namespace Pulsar.Input
         /// </summary>
         public float RightTrigger
         {
-            get { return this.currentState.Triggers.Right; }
+            get { return _currentState.Triggers.Right; }
         }
 
         /// <summary>
@@ -350,7 +345,7 @@ namespace Pulsar.Input
         /// </summary>
         public float LeftTriggerDelta
         {
-            get { return this.triggerLeftDelta; }
+            get { return _triggerLeftDelta; }
         }
 
         /// <summary>
@@ -358,7 +353,7 @@ namespace Pulsar.Input
         /// </summary>
         public float RightTriggerDelta
         {
-            get { return this.triggerRightDelta; }
+            get { return _triggerRightDelta; }
         }
 
         /// <summary>
@@ -366,7 +361,7 @@ namespace Pulsar.Input
         /// </summary>
         public bool IsConnected
         {
-            get { return this.currentState.IsConnected; }
+            get { return _currentState.IsConnected; }
         }
 
         #endregion
