@@ -17,10 +17,10 @@ namespace Pulsar.Input
         {
             #region Fields
 
-            public readonly short Priority;
-            public readonly AbstractButton negative;
-            public readonly AbstractButton positive;
-            private readonly bool digital;
+            public readonly AbstractButton Negative;
+            public readonly AbstractButton Positive;
+
+            private readonly short _priority;
 
             #endregion
 
@@ -29,12 +29,12 @@ namespace Pulsar.Input
             /// <summary>
             /// Constructor of AxisBinding class
             /// </summary>
-            /// <param name="button">AbstractButton instance</param>
+            /// <param name="positive">AbstractButton instance</param>
             /// <param name="priority">Priority of the button</param>
-            internal AxisBinding(AbstractButton button, short priority)
+            internal AxisBinding(AbstractButton positive, short priority)
             {
-                this.positive = button;
-                this.Priority = priority;
+                Positive = positive;
+                _priority = priority;
             }
 
             /// <summary>
@@ -45,10 +45,9 @@ namespace Pulsar.Input
             /// <param name="priority">Priority of the button</param>
             internal AxisBinding(AbstractButton negative, AbstractButton positive, short priority)
             {
-                this.negative = negative;
-                this.positive = positive;
-                this.Priority = priority;
-                this.digital = true;
+                Negative = negative;
+                Positive = positive;
+                _priority = priority;
             }
 
             #endregion
@@ -63,14 +62,8 @@ namespace Pulsar.Input
             /// <returns>Return a value indicating the position of the first instance</returns>
             internal int Comparison(AxisBinding first, AxisBinding second)
             {
-                if (first.Priority < second.Priority)
-                {
-                    return -1;
-                }
-                else if (first.Priority > second.Priority)
-                {
-                    return 1;
-                }
+                if (first._priority < second._priority) return -1;
+                if (first._priority > second._priority) return 1;
 
                 return 0;
             }
@@ -82,39 +75,44 @@ namespace Pulsar.Input
 
         #region Fields
 
-        private List<AxisBinding> hardwareButtons = new List<AxisBinding>();
-        private float value;
-        private bool inverse;
-        private float deadZone = 0.0f;
-        private float sensitivity = 1.0f;
+        private readonly List<AxisBinding> _hardwareButtons = new List<AxisBinding>();
+        private float _value;
+        private bool _inverse;
+        private float _deadZone;
+        private float _sensitivity = 1.0f;
 
         #endregion
 
         #region Methods
 
         /// <summary>
-        /// Link a new button to the axis
+        /// Link an analog button to the axis
         /// </summary>
-        /// <param name="btn">AbstractButton instance</param>
+        /// <param name="button">Analog button</param>
         /// <param name="priority">Priority of the button</param>
-        public void AddButton(AbstractButton btn, short priority)
+        public void AddAnalogButton(AbstractButton button, short priority)
         {
-            AxisBinding binding = new AxisBinding(btn, priority);
-            this.hardwareButtons.Add(binding);
-            this.hardwareButtons.Sort(binding.Comparison);
+            if (button.Type != ButtonType.Analog) throw new ArgumentException("Provided button is not analog");
+
+            AxisBinding binding = new AxisBinding(button, priority);
+            _hardwareButtons.Add(binding);
+            _hardwareButtons.Sort(binding.Comparison);
         }
 
         /// <summary>
-        /// Link two button to the axis
+        /// Link two digital button to the axis
         /// </summary>
         /// <param name="negative">Button used to go in negative range</param>
         /// <param name="positive">Button used to go in positive range</param>
         /// <param name="priority">Priority of the button</param>
-        public void AddButton(AbstractButton negative, AbstractButton positive, short priority)
+        public void AddDigitalButton(AbstractButton negative, AbstractButton positive, short priority)
         {
+            if((negative.Type != ButtonType.Digital)) throw new ArgumentException("Negative button is not digital");
+            if ((positive.Type != ButtonType.Digital)) throw new ArgumentException("Positive button is not digital");
+
             AxisBinding binding = new AxisBinding(negative, positive, priority);
-            this.hardwareButtons.Add(binding);
-            this.hardwareButtons.Sort(binding.Comparison);
+            _hardwareButtons.Add(binding);
+            _hardwareButtons.Sort(binding.Comparison);
         }
 
         /// <summary>
@@ -122,7 +120,7 @@ namespace Pulsar.Input
         /// </summary>
         public void RemoveAllButtons()
         {
-            this.hardwareButtons.Clear();
+            _hardwareButtons.Clear();
         }
 
         /// <summary>
@@ -133,22 +131,20 @@ namespace Pulsar.Input
             float rawValue = 0.0f;
 
             bool activated = false;
-            for (int i = 0; i < this.hardwareButtons.Count; i++)
+            for (int i = 0; i < _hardwareButtons.Count; i++)
             {
-                AxisBinding binding = this.hardwareButtons[i];
-                AbstractButton positive = binding.positive;
+                AxisBinding binding = _hardwareButtons[i];
+                AbstractButton positive = binding.Positive;
                 if (positive.Type == ButtonType.Digital)
                 {
+                    AbstractButton negative = binding.Negative;
                     rawValue += positive.GetValue(Owner.PlayerIndex.GamePadIndex);
-                    rawValue -= binding.negative.GetValue(Owner.PlayerIndex.GamePadIndex);
+                    rawValue -= negative.GetValue(Owner.PlayerIndex.GamePadIndex);
 
-                    if (rawValue != 0.0f)
+                    if (Math.Abs(rawValue) > 0.0f)
                     {
                         activated = true;
-                        if (this.inverse)
-                        {
-                            rawValue *= -1.0f;
-                        }
+                        if (_inverse) rawValue *= -1.0f;
                     }
                 }
                 else
@@ -157,28 +153,19 @@ namespace Pulsar.Input
 
                     if (positive.Device == InputDevice.GamePad)
                     {
-                        if ((rawValue < this.deadZone) && (rawValue > -this.deadZone))
-                        {
-                            rawValue = 0.0f;
-                        }
+                        if ((rawValue < _deadZone) && (rawValue > -_deadZone)) rawValue = 0.0f;
                     }
 
-                    if (rawValue != 0.0f)
+                    if (Math.Abs(rawValue) > 0.0f)
                     {
                         activated = true;
-                        if (this.inverse)
-                        {
-                            rawValue *= -1.0f;
-                        }
-                        rawValue *= this.sensitivity;
+                        if (_inverse) rawValue *= -1.0f;
+                        rawValue *= _sensitivity;
                     }
                 }
-                this.value = rawValue;
+                _value = rawValue;
 
-                if (activated)
-                {
-                    break;
-                }
+                if (activated) break;
             }
         }
 
@@ -201,8 +188,8 @@ namespace Pulsar.Input
         /// </summary>
         public bool Inverse
         {
-            get { return this.inverse; }
-            set { this.inverse = value; }
+            get { return _inverse; }
+            set { _inverse = value; }
         }
 
         /// <summary>
@@ -210,8 +197,8 @@ namespace Pulsar.Input
         /// </summary>
         public float Sensitivity
         {
-            get { return this.sensitivity; }
-            set { this.sensitivity = value; }
+            get { return _sensitivity; }
+            set { _sensitivity = value; }
         }
 
         /// <summary>
@@ -219,8 +206,8 @@ namespace Pulsar.Input
         /// </summary>
         public float DeadZone
         {
-            get { return this.deadZone; }
-            set { this.deadZone = value; }
+            get { return _deadZone; }
+            set { _deadZone = value; }
         }
 
         /// <summary>
@@ -228,7 +215,7 @@ namespace Pulsar.Input
         /// </summary>
         public float Value
         {
-            get { return this.value; }
+            get { return _value; }
         }
 
         #endregion

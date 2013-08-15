@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Pulsar.Input
 {
@@ -18,14 +17,11 @@ namespace Pulsar.Input
             #region Fields
 
             /// <summary>
-            /// Priority of the button
-            /// </summary>
-            public readonly short Priority;
-
-            /// <summary>
             /// Button used by the binding
             /// </summary>
             public readonly AbstractButton Button;
+
+            private readonly short _priority;
 
             #endregion
 
@@ -38,8 +34,8 @@ namespace Pulsar.Input
             /// <param name="priority">Priority of the button</param>
             internal ButtonBinding(AbstractButton btn, short priority)
             {
-                this.Button = btn;
-                this.Priority = priority;
+                Button = btn;
+                _priority = priority;
             }
 
             #endregion
@@ -54,14 +50,8 @@ namespace Pulsar.Input
             /// <returns>Return a value indicating the position of the first instance</returns>
             internal int Comparison(ButtonBinding first, ButtonBinding second)
             {
-                if (first.Priority < second.Priority)
-                {
-                    return -1;
-                }
-                else if (first.Priority > second.Priority)
-                {
-                    return 1;
-                }
+                if (first._priority < second._priority) return -1;
+                if (first._priority > second._priority) return 1;
 
                 return 0;
             }
@@ -73,11 +63,10 @@ namespace Pulsar.Input
 
         #region Fields
 
-        private List<ButtonBinding> hardwareButtons = new List<ButtonBinding>();
-        private bool previousDown = false;
-        private bool down = false;
-        private float pressedValue = 0.0f;
-        private float deadZone = 0.0f;
+        private readonly List<ButtonBinding> _hardwareButtons = new List<ButtonBinding>();
+        private bool _previousDown;
+        private bool _down;
+        private float _pressedValue;
 
         #endregion
 
@@ -91,8 +80,8 @@ namespace Pulsar.Input
         public void AddButton(AbstractButton btn, short priority)
         {
             ButtonBinding binding = new ButtonBinding(btn, priority);
-            this.hardwareButtons.Add(binding);
-            this.hardwareButtons.Sort(binding.Comparison);
+            _hardwareButtons.Add(binding);
+            _hardwareButtons.Sort(binding.Comparison);
         }
 
         /// <summary>
@@ -100,7 +89,7 @@ namespace Pulsar.Input
         /// </summary>
         public void RemoveAllButtons()
         {
-            this.hardwareButtons.Clear();
+            _hardwareButtons.Clear();
         }
 
         /// <summary>
@@ -108,28 +97,22 @@ namespace Pulsar.Input
         /// </summary>
         internal void Update()
         {
-            this.previousDown = this.down;
+            _previousDown = _down;
 
-            bool activated = false;
-            for (int i = 0; i < this.hardwareButtons.Count; i++)
+            for (int i = 0; i < _hardwareButtons.Count; i++)
             {
-                AbstractButton btn = this.hardwareButtons[i].Button;
+                AbstractButton btn = _hardwareButtons[i].Button;
                 if (btn.Type == ButtonType.Digital)
                 {
-                    this.pressedValue = btn.GetValue(Owner.PlayerIndex.GamePadIndex);
-                    this.down = this.pressedValue > 0.0f;
+                    _pressedValue = btn.GetValue(Owner.PlayerIndex.GamePadIndex);
+                    _down = _pressedValue > 0.0f;
                 }
                 else
                 {
-                    this.pressedValue = btn.GetValue(Owner.PlayerIndex.GamePadIndex);
-                    this.down = this.pressedValue > this.deadZone;
+                    _pressedValue = btn.GetValue(Owner.PlayerIndex.GamePadIndex);
+                    _down = _pressedValue > DeadZone;
                 }
-                activated = this.down;
-
-                if (activated)
-                {
-                    break;
-                }
+                if (_down) break;
             }
         }
 
@@ -150,18 +133,14 @@ namespace Pulsar.Input
         /// <summary>
         /// Get or set the deadzone
         /// </summary>
-        public float DeadZone
-        {
-            get { return this.deadZone; }
-            set { this.deadZone = value; }
-        }
+        public float DeadZone { get; set; }
 
         /// <summary>
         /// Get a value that indicates if the button is down
         /// </summary>
         public bool IsDown
         {
-            get { return this.down; }
+            get { return _down; }
         }
 
         /// <summary>
@@ -169,7 +148,7 @@ namespace Pulsar.Input
         /// </summary>
         public bool IsUp
         {
-            get { return !this.down; }
+            get { return !_down; }
         }
 
         /// <summary>
@@ -177,7 +156,7 @@ namespace Pulsar.Input
         /// </summary>
         public bool IsPressed
         {
-            get { return !this.previousDown && this.down; }
+            get { return !_previousDown && _down; }
         }
 
         /// <summary>
@@ -185,7 +164,7 @@ namespace Pulsar.Input
         /// </summary>
         public bool IsReleased
         {
-            get { return this.previousDown && !this.down; }
+            get { return _previousDown && !_down; }
         }
 
         /// <summary>
@@ -193,7 +172,7 @@ namespace Pulsar.Input
         /// </summary>
         public float Value
         {
-            get { return this.pressedValue; }
+            get { return _pressedValue; }
         }
 
         #endregion
