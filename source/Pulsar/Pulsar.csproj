@@ -145,7 +145,7 @@
     <Compile Include="Input\IInputCommand.cs" />
     <Compile Include="Input\IInputProvider.cs" />
     <Compile Include="Input\InputManager.cs" />
-    <Compile Include="Input\InputAction.cs" />
+    <Compile Include="Input\InputEvent.cs" />
     <Compile Include="Input\InputService.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\Mouse.cs" />

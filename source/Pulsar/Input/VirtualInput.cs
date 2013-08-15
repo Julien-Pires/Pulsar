@@ -17,7 +17,7 @@ namespace Pulsar.Input
         private Dictionary<string, int> actionsMap = new Dictionary<string, int>();
         private List<Button> buttons = new List<Button>();
         private List<Axis> axes = new List<Axis>();
-        private List<InputAction> actions = new List<InputAction>();
+        private List<InputEvent> actions = new List<InputEvent>();
 
         #endregion
 
@@ -70,15 +70,15 @@ namespace Pulsar.Input
         /// </summary>
         /// <param name="name">Name of the action</param>
         /// <param name="actionDelegate">Delegate to call when the action is triggered</param>
-        /// <returns>Return an InputAction instance</returns>
-        public InputAction CreateAction(string name, InputActionFired actionDelegate)
+        /// <returns>Return an InputEvent instance</returns>
+        public InputEvent CreateAction(string name)
         {
             if (this.actionsMap.ContainsKey(name))
             {
                 throw new Exception(string.Format("An action named {0} already exists", name));
             }
 
-            InputAction action = new InputAction(name, actionDelegate, this);
+            InputEvent action = new InputEvent(name, this);
             this.actions.Add(action);
             this.actionsMap.Add(name, this.actions.Count - 1);
 
@@ -108,8 +108,8 @@ namespace Pulsar.Input
         /// Get an action
         /// </summary>
         /// <param name="name">Name of the action</param>
-        /// <returns>Return an InputAction instance</returns>
-        public InputAction GetAction(string name)
+        /// <returns>Return an InputEvent instance</returns>
+        public InputEvent GetAction(string name)
         {
             int idx;
             if (!this.actionsMap.TryGetValue(name, out idx))
