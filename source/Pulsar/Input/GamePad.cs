@@ -34,7 +34,7 @@ namespace Pulsar.Input
 
         public const short GamePadCount = 4;
 
-        internal static List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
+        internal static readonly List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
 
         private static readonly Buttons[] AllDigital;
         private static readonly GamePad[] GamePads = new GamePad[GamePadCount];
