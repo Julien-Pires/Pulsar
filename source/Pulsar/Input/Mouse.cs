@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-
-using Pulsar.Extension;
-
 using XnaMouse = Microsoft.Xna.Framework.Input.Mouse;
+
+#if XBOX
+using Pulsar.Extension;
+#endif
 
 namespace Pulsar.Input
 {

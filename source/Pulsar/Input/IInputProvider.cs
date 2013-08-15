@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pulsar.Input
+﻿namespace Pulsar.Input
 {
     /// <summary>
     /// Interface for input service provider

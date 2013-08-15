@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pulsar.Input
+﻿namespace Pulsar.Input
 {
     /// <summary>
     /// Contains data about a button that have been triggered (Pressed or Released)
