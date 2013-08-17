@@ -3,10 +3,11 @@
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Input;
-
-using Pulsar.Extension;
-
 using XnaKeyboard = Microsoft.Xna.Framework.Input.Keyboard;
+
+#if XBOX
+using Pulsar.Extension;
+#endif
 
 namespace Pulsar.Input
 {

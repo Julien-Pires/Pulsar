@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pulsar.Input
+﻿namespace Pulsar.Input
 {
     /// <summary>
     /// Contains data about a button that have been triggered (Pressed or Released)
@@ -35,9 +33,9 @@ namespace Pulsar.Input
         /// <param name="eventType">Type of event</param>
         public ButtonEvent(AbstractButton button, ButtonEventType eventType)
         {
-            this.Button = button;
-            this.Index = -1;
-            this.Event = eventType;
+            Button = button;
+            Index = -1;
+            Event = eventType;
         }
 
         /// <summary>
@@ -48,9 +46,9 @@ namespace Pulsar.Input
         /// <param name="index">Index of the device</param>
         public ButtonEvent(AbstractButton button, ButtonEventType eventType, short index)
         {
-            this.Button = button;
-            this.Index = index;
-            this.Event = eventType;
+            Button = button;
+            Index = index;
+            Event = eventType;
         }
 
         #endregion

@@ -134,12 +134,13 @@
     <Compile Include="Input\GamePadEventArgs.cs" />
     <Compile Include="Input\IInputCommand.cs" />
     <Compile Include="Input\IInputProvider.cs" />
-    <Compile Include="Input\InputAction.cs" />
+    <Compile Include="Input\InputEvent.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\InputService.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\Mouse.cs" />
-    <Compile Include="Input\PlayerInput.cs" />
+    <Compile Include="Input\Player.cs" />
+    <Compile Include="Input\PlayerIndex.cs" />
     <Compile Include="Input\VirtualInput.cs" />
     <Compile Include="Mathematic\MatrixHelpers.cs" />
     <Compile Include="Mathematic\QuaternionHelpers.cs" />

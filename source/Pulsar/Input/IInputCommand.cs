@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pulsar.Input
+﻿namespace Pulsar.Input
 {
     /// <summary>
     /// Delegate used to check the state of a command
