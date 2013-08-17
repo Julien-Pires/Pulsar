@@ -19,7 +19,7 @@ namespace Pulsar.Core
 
         private object payload;
 
-        private GameTime time;
+        private long _timestamp;
 
         private object sender;
 
@@ -31,29 +31,28 @@ namespace Pulsar.Core
         /// Constructor of Message struct
         /// </summary>
         /// <param name="eventType">Type of event</param>
-        /// <param name="time">Time at which the message was sent</param>
         /// <param name="sender">Sender of the message</param>
-        public Message(EventType eventType, GameTime time, object sender)
+        public Message(EventType eventType, object sender)
         {
             this.eventType = eventType;
             this.sender = sender;
-            this.time = time;
-            this.payload = null;
+            payload = null;
+            _timestamp = 0;
         }
 
         /// <summary>
         /// Constructor of Message struct
         /// </summary>
         /// <param name="eventType">Type of event</param>
-        /// <param name="time">Time at which the message was sent</param>
         /// <param name="sender">Sender of the message</param>
         /// <param name="payload">Payload data</param>
-        public Message(EventType eventType, GameTime time, object sender, object payload)
+        public Message(EventType eventType, object sender, object payload)
         {
             this.eventType = eventType;
             this.sender = sender;
-            this.time = time;
             this.payload = payload;
+            _timestamp = 0;
+            
         }
 
         #endregion
@@ -79,9 +78,10 @@ namespace Pulsar.Core
         /// <summary>
         /// Get the time at which the message was sent
         /// </summary>
-        public GameTime Time
+        public long Timestamp
         {
-            get { return this.time; }
+            get { return _timestamp; }
+            internal set { _timestamp = value; }
         }
 
         /// <summary>

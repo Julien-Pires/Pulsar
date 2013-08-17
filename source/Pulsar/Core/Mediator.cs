@@ -175,6 +175,8 @@ namespace Pulsar.Core
             while (processedQueue.Count > 0)
             {
                 Message msg = processedQueue.Dequeue();
+                msg.Timestamp = currentTime;
+
                 List<IEventHandler> listeners;
                 this.eventListenersMap.TryGetValue(msg.Event.eventHash, out listeners);
                 if ((listeners == null) || (listeners.Count == 0))
