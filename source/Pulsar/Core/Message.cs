@@ -1,10 +1,4 @@
-﻿using System;
-
-using System.Collections.Generic;
-
-using Microsoft.Xna.Framework;
-
-namespace Pulsar.Core
+﻿namespace Pulsar.Core
 {
     /// <summary>
     /// Struct for message used in event system
@@ -15,13 +9,13 @@ namespace Pulsar.Core
     {
         #region Fields
 
-        private EventType eventType;
+        private readonly EventType _eventType;
 
-        private object payload;
+        private readonly object _payload;
 
         private long _timestamp;
 
-        private object sender;
+        private readonly object _sender;
 
         #endregion
 
@@ -34,9 +28,9 @@ namespace Pulsar.Core
         /// <param name="sender">Sender of the message</param>
         public Message(EventType eventType, object sender)
         {
-            this.eventType = eventType;
-            this.sender = sender;
-            payload = null;
+            _eventType = eventType;
+            _sender = sender;
+            _payload = null;
             _timestamp = 0;
         }
 
@@ -48,9 +42,9 @@ namespace Pulsar.Core
         /// <param name="payload">Payload data</param>
         public Message(EventType eventType, object sender, object payload)
         {
-            this.eventType = eventType;
-            this.sender = sender;
-            this.payload = payload;
+            _eventType = eventType;
+            _sender = sender;
+            _payload = payload;
             _timestamp = 0;
             
         }
@@ -64,7 +58,7 @@ namespace Pulsar.Core
         /// </summary>
         public EventType Event
         {
-            get { return this.eventType; }
+            get { return _eventType; }
         }
 
         /// <summary>
@@ -72,7 +66,7 @@ namespace Pulsar.Core
         /// </summary>
         public object Payload
         {
-            get { return this.payload; }
+            get { return _payload; }
         }
 
         /// <summary>
@@ -89,7 +83,7 @@ namespace Pulsar.Core
         /// </summary>
         public object Sender
         {
-            get { return this.sender; }
+            get { return _sender; }
         }
 
         #endregion
