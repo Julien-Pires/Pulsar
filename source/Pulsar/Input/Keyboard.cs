@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using XnaKeyboard = Microsoft.Xna.Framework.Input.Keyboard;
 
-#if XBOX
 using Pulsar.Extension;
-#endif
 
 namespace Pulsar.Input
 {
@@ -31,11 +29,7 @@ namespace Pulsar.Input
         /// </summary>
         static Keyboard()
         {
-#if !XBOX
-            Keyboard.AllDigital = (Keys[])Enum.GetValues(typeof(Keys));
-#else
-            Keyboard.AllDigital = EnumExtension.GetValues<Keys>();
-#endif
+            AllDigital = EnumExtension.GetValues<Keys>();
         }
 
         #endregion

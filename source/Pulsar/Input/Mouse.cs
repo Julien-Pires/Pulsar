@@ -5,9 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using XnaMouse = Microsoft.Xna.Framework.Input.Mouse;
 
-#if XBOX
 using Pulsar.Extension;
-#endif
 
 namespace Pulsar.Input
 {
@@ -42,7 +40,7 @@ namespace Pulsar.Input
 
         internal static readonly List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
 
-        private static MouseButtons[] _allDigital;
+        private static readonly MouseButtons[] AllDigital;
         private static MouseState _previousState;
         private static MouseState _currentState;
         private static Vector2 _previousPosition = Vector2.Zero;
@@ -58,24 +56,12 @@ namespace Pulsar.Input
         /// </summary>
         static Mouse()
         {
-            Initialize();
+            AllDigital = EnumExtension.GetValues<MouseButtons>();
         }
 
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Initialize the mouse
-        /// </summary>
-        internal static void Initialize()
-        {
-#if !XBOX
-            _allDigital = (MouseButtons[])Enum.GetValues(typeof(MouseButtons));
-#else
-            _allDigital = EnumExtension.GetValues<MouseButtons>();
-#endif
-        }
 
         /// <summary>
         /// Update mouse states
@@ -91,10 +77,10 @@ namespace Pulsar.Input
             WheelDelta = _currentState.ScrollWheelValue - _previousState.ScrollWheelValue;
 
             ButtonPressed.Clear();
-            for (int i = 0; i < _allDigital.Length; i++)
+            for (int i = 0; i < AllDigital.Length; i++)
             {
-                if (!IsPressed(_allDigital[i])) continue;
-                AbstractButton btn = new AbstractButton(_allDigital[i]);
+                if (!IsPressed(AllDigital[i])) continue;
+                AbstractButton btn = new AbstractButton(AllDigital[i]);
                 ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed));
             }
         }
