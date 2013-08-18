@@ -50,7 +50,7 @@ namespace Pulsar.Core
         private List<IEventHandler> GetListeners(EventType evType)
         {
             List<IEventHandler> listeners;
-            _eventListenersMap.TryGetValue(evType.eventHash, out listeners);
+            _eventListenersMap.TryGetValue(evType.EventHash, out listeners);
 
             return listeners;
         }
@@ -66,7 +66,7 @@ namespace Pulsar.Core
             if (listeners != null) return listeners;
 
             listeners = new List<IEventHandler>();
-            _eventListenersMap.Add(evType.eventHash, listeners);
+            _eventListenersMap.Add(evType.EventHash, listeners);
 
             return listeners;
         }
@@ -79,9 +79,9 @@ namespace Pulsar.Core
         private bool UnregisterEvent(EventType evType)
         {
             List<IEventHandler> listeners;
-            _eventListenersMap.TryGetValue(evType.eventHash, out listeners);
+            _eventListenersMap.TryGetValue(evType.EventHash, out listeners);
 
-            return (listeners != null) && _eventListenersMap.Remove(evType.eventHash);
+            return (listeners != null) && _eventListenersMap.Remove(evType.EventHash);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Pulsar.Core
         public void Register(EventType evType, IEventHandler listener)
         {
             List<IEventHandler> listeners = RegisterEvent(evType);
-            if (listeners.Contains(listener)) throw new Exception(string.Format("Listener {0} already listen to event {1}", listener, evType.eventName));
+            if (listeners.Contains(listener)) throw new Exception(string.Format("Listener {0} already listen to event {1}", listener, evType.EventName));
 
             listeners.Add(listener);
         }
@@ -131,7 +131,7 @@ namespace Pulsar.Core
         public void QueueEvent(Message msg)
         {
             List<IEventHandler> listeners;
-            _eventListenersMap.TryGetValue(msg.Event.eventHash, out listeners);
+            _eventListenersMap.TryGetValue(msg.Event.EventHash, out listeners);
             if (listeners == null) return;
 
             _queueList[_activeQueue].Enqueue(msg);
@@ -144,7 +144,7 @@ namespace Pulsar.Core
         public void Trigger(Message msg)
         {
             List<IEventHandler> listeners;
-            _eventListenersMap.TryGetValue(msg.Event.eventHash, out listeners);
+            _eventListenersMap.TryGetValue(msg.Event.EventHash, out listeners);
             if ((listeners == null) || (listeners.Count == 0)) return;
 
             for (int i = 0; i < listeners.Count; i++)
@@ -173,7 +173,7 @@ namespace Pulsar.Core
                 msg.Timestamp = currentTime;
 
                 List<IEventHandler> listeners;
-                _eventListenersMap.TryGetValue(msg.Event.eventHash, out listeners);
+                _eventListenersMap.TryGetValue(msg.Event.EventHash, out listeners);
                 if ((listeners == null) || (listeners.Count == 0)) continue;
 
                 for (int i = 0; i < listeners.Count; i++)
