@@ -10,7 +10,11 @@ namespace Pulsar.Graphics.SceneGraph
     /// <summary>
     /// Determine the type of projection to be used by a camera
     /// </summary>
-    public enum ProjectionType { Perspective, Orthographic }
+    public enum ProjectionType
+    {
+        Perspective, 
+        Orthographic
+    }
 
     /// <summary>
     /// Base class for a camera
@@ -45,6 +49,7 @@ namespace Pulsar.Graphics.SceneGraph
         private Viewport _viewport;
         private BoundingFrustum _frustum = new BoundingFrustum(Matrix.Identity);
         private SpeedFrustum _spdFrustum;
+        private readonly Vector3[] _tempDirAxis = new Vector3[3];
 
         #endregion
 
@@ -222,32 +227,25 @@ namespace Pulsar.Graphics.SceneGraph
             }
             else
             {
-                Vector3[] axes;
                 UpdateView();
-                _fullOrientation.GetAxes(out axes);
+                _fullOrientation.GetAxes(_tempDirAxis);
 
                 Quaternion rotationQuat;
-                if ((axes[2] + adjustZ).LengthSquared() < 0.00005f)
+                if ((_tempDirAxis[2] + adjustZ).LengthSquared() < 0.00005f)
                 {
-                    Quaternion.CreateFromAxisAngle(ref axes[1], MathHelper.ToRadians(MathHelper.Pi), out rotationQuat);
+                    Quaternion.CreateFromAxisAngle(ref _tempDirAxis[1], MathHelper.ToRadians(MathHelper.Pi), out rotationQuat);
                 }
                 else
                 {
                     Vector3 fallB = Vector3.Zero;
-                    axes[2].GetArcRotation(ref adjustZ, ref fallB, out rotationQuat);
+                    _tempDirAxis[2].GetArcRotation(ref adjustZ, ref fallB, out rotationQuat);
                 }
 
                 Quaternion.Multiply(ref rotationQuat, ref _fullOrientation, out targetOrientation);
             }
 
-            if (_parent != null)
-            {
-                _orientation = Quaternion.Inverse(_parent.Orientation) * targetOrientation;
-            }
-            else
-            {
-                _orientation = targetOrientation;
-            }
+            if (_parent != null) _orientation = Quaternion.Inverse(_parent.Orientation) * targetOrientation;
+            else _orientation = targetOrientation;
 
             InvalidateView();
         }
