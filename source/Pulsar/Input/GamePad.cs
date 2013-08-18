@@ -6,9 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using XnaGamePad = Microsoft.Xna.Framework.Input.GamePad;
 using XnaPlayerIndex = Microsoft.Xna.Framework.PlayerIndex;
 
-#if XBOX
 using Pulsar.Extension;
-#endif
 
 namespace Pulsar.Input
 {
@@ -68,11 +66,7 @@ namespace Pulsar.Input
                 GamePad pad = new GamePad((XnaPlayerIndex)i);
                 GamePads[i] = pad;
             }
-#if !XBOX
-            AllDigital = (Buttons[])Enum.GetValues(typeof(Buttons));
-#else
             AllDigital = EnumExtension.GetValues<Buttons>();
-#endif
         }
 
         #endregion
