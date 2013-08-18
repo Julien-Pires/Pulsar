@@ -20,9 +20,9 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private ButtonEventType buttonEvent;
-        private Button button;
-        private CheckCommandState checkMethod;
+        private readonly ButtonEventType _buttonEvent;
+        private readonly Button _button;
+        private CheckCommandState _checkMethod;
 
         #endregion
 
@@ -35,9 +35,9 @@ namespace Pulsar.Input
         /// <param name="btnEvent">Type of event</param>
         internal ButtonCommand(Button btn, ButtonEventType btnEvent)
         {
-            this.button = btn;
-            this.buttonEvent = btnEvent;
-            this.AssignCheckMethod();
+            _button = btn;
+            _buttonEvent = btnEvent;
+            AssignCheckMethod();
         }
 
         #endregion
@@ -49,18 +49,17 @@ namespace Pulsar.Input
         /// </summary>
         private void AssignCheckMethod()
         {
-            switch (this.buttonEvent)
+            switch (_buttonEvent)
             {
-                case ButtonEventType.IsPressed: this.checkMethod = this.IsPressed;
+                case ButtonEventType.IsPressed: _checkMethod = IsPressed;
                     break;
-                case ButtonEventType.IsReleased: this.checkMethod = this.IsReleased;
+                case ButtonEventType.IsReleased: _checkMethod = IsReleased;
                     break;
-                case ButtonEventType.IsDown: this.checkMethod = this.IsDown;
+                case ButtonEventType.IsDown: _checkMethod = IsDown;
                     break;
-                case ButtonEventType.IsUp: this.checkMethod = this.IsUp;
+                case ButtonEventType.IsUp: _checkMethod = IsUp;
                     break;
                 default: throw new Exception("Invalid command event code provided");
-                    break;
             }
         }
 
@@ -70,7 +69,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         private bool IsPressed()
         {
-            return this.button.IsPressed;
+            return _button.IsPressed;
         }
 
         /// <summary>
@@ -79,7 +78,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         private bool IsReleased()
         {
-            return this.button.IsReleased;
+            return _button.IsReleased;
         }
 
         /// <summary>
@@ -88,7 +87,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         private bool IsDown()
         {
-            return this.button.IsDown;
+            return _button.IsDown;
         }
 
         /// <summary>
@@ -97,7 +96,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         private bool IsUp()
         {
-            return this.button.IsUp;
+            return _button.IsUp;
         }
 
         #endregion
@@ -109,7 +108,7 @@ namespace Pulsar.Input
         /// </summary>
         public bool IsTriggered
         {
-            get { return this.checkMethod(); }
+            get { return _checkMethod(); }
         }
 
         #endregion

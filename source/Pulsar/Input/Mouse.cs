@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -49,7 +48,7 @@ namespace Pulsar.Input
 
         #endregion
 
-        #region Constructors
+        #region Static Constructors
 
         /// <summary>
         /// Static constructor of Mouse class
@@ -61,7 +60,7 @@ namespace Pulsar.Input
 
         #endregion
 
-        #region Methods
+        #region Static methods
 
         /// <summary>
         /// Update mouse states
