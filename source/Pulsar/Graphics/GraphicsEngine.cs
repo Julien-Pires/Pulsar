@@ -11,7 +11,7 @@ namespace Pulsar.Graphics
     /// <summary>
     /// Class used as an entry point for the Graphics system
     /// </summary>
-    public sealed class GraphicsEngine
+    public sealed class GraphicsEngine : IDisposable
     {
         #region Fields
 
@@ -43,6 +43,12 @@ namespace Pulsar.Graphics
         #endregion
 
         #region Methods
+
+        public void Dispose()
+        {
+            _window.Dispose();
+            _renderer.Dispose();
+        }
 
         /// <summary>
         /// Render the current frame

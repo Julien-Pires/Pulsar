@@ -1,5 +1,4 @@
 ﻿using System;
-
 using System.Collections.Generic;
 
 namespace Pulsar.Core
@@ -11,18 +10,17 @@ namespace Pulsar.Core
     {
         #region Fields
 
-        private static Dictionary<string, EventType> availableEvent = 
-            new Dictionary<string, EventType>();
+        private static readonly Dictionary<string, EventType> AvailableEvent = new Dictionary<string, EventType>();
 
         /// <summary>
         /// Name of the event
         /// </summary>
-        public readonly string eventName;
+        public readonly string EventName;
 
         /// <summary>
         /// Hash of the event generated from the name
         /// </summary>
-        public readonly int eventHash;
+        public readonly int EventHash;
 
         #endregion
 
@@ -34,8 +32,8 @@ namespace Pulsar.Core
         /// <param name="name">Name of the event</param>
         private EventType(string name)
         {
-            this.eventName = name;
-            this.eventHash = name.GetHashCode();
+            EventName = name;
+            EventHash = name.GetHashCode();
         }
 
         #endregion
@@ -49,18 +47,14 @@ namespace Pulsar.Core
         /// <returns>Return an instance of EventType</returns>
         public static EventType CreateEvent(string name)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException("Event name can't be null or empty");
-            }
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name");
 
             EventType ev;
-            EventType.availableEvent.TryGetValue(name, out ev);
-            if (ev == null)
-            {
-                ev = new EventType(name);
-                EventType.availableEvent.Add(name, ev);
-            }
+            AvailableEvent.TryGetValue(name, out ev);
+            if (ev != null) return ev;
+
+            ev = new EventType(name);
+            AvailableEvent.Add(name, ev);
 
             return ev;
         }

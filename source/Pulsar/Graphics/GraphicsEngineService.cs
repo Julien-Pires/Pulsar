@@ -1,11 +1,13 @@
 ﻿using System;
 
+using XnaGame = Microsoft.Xna.Framework.Game;
+
 namespace Pulsar.Graphics
 {
     /// <summary>
     /// Service containing the graphic engine
     /// </summary>
-    public sealed class GraphicsEngineService : IGraphicsEngineService
+    public sealed class GraphicsEngineService : IGraphicsEngineService, IDisposable
     {
         #region Fields
 
@@ -19,14 +21,22 @@ namespace Pulsar.Graphics
         /// Constructor of GraphicsEngineService class
         /// </summary>
         /// <param name="game">Instance of Game class</param>
-        public GraphicsEngineService(Microsoft.Xna.Framework.Game game)
+        public GraphicsEngineService(XnaGame game)
         {
             if (game == null) throw new ArgumentNullException("game");
-            if (game.Services.GetService(typeof(IGraphicsEngineService)) != null) 
-                throw new ArgumentException("GraphicsEngineService already present");
+            if (game.Services.GetService(typeof(IGraphicsEngineService)) != null) throw new ArgumentException("GraphicsEngineService already present");
 
             game.Services.AddService(typeof(IGraphicsEngineService), this);
             _engine = new GraphicsEngine(game.Services);
+        }
+
+        #endregion
+
+        #region Methods
+
+        public void Dispose()
+        {
+            _engine.Dispose();
         }
 
         #endregion

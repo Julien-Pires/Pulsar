@@ -124,6 +124,14 @@ namespace Pulsar.Input
             return ButtonPressed.Count > 0;
         }
 
+        public static void ReleaseAllListeners()
+        {
+            for (int i = 0; i < GamePadCount; i++)
+            {
+                GamePads[i].ReleaseListeners();
+            }
+        }
+
         /// <summary>
         /// Hook a delegate to the gamepad connected event
         /// </summary>
@@ -185,6 +193,12 @@ namespace Pulsar.Input
         #endregion
 
         #region Methods
+
+        public void ReleaseListeners()
+        {
+            Connected = null;
+            Disconnected = null;
+        }
 
         /// <summary>
         /// Update one gamepad state

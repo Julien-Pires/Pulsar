@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Graphics.Rendering.RenderingTechnique;
@@ -9,7 +11,7 @@ namespace Pulsar.Graphics.Rendering
     /// <summary>
     /// GraphicsRenderer is used to do operations on graphic device
     /// </summary>
-    public sealed class Renderer
+    public sealed class Renderer : IDisposable
     {
         #region Fields
         
@@ -38,6 +40,11 @@ namespace Pulsar.Graphics.Rendering
         #endregion
 
         #region Methods
+
+        public void Dispose()
+        {
+            _spriteBatch.Dispose();
+        }
 
         /// <summary>
         /// Called before the rendering
