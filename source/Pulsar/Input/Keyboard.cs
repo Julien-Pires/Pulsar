@@ -1,5 +1,4 @@
 ﻿using System;
-
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Input;
@@ -32,24 +31,16 @@ namespace Pulsar.Input
         /// </summary>
         static Keyboard()
         {
-            Keyboard.Initialize();
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Initialize the keyboard
-        /// </summary>
-        internal static void Initialize()
-        {
 #if !XBOX
             Keyboard.AllDigital = (Keys[])Enum.GetValues(typeof(Keys));
 #else
             Keyboard.AllDigital = EnumExtension.GetValues<Keys>();
 #endif
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Update keyboard states
