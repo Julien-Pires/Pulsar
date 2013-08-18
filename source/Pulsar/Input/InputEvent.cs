@@ -16,7 +16,7 @@ namespace Pulsar.Input
     {
         #region Fields
         
-        private List<IInputCommand> commands = new List<IInputCommand>();
+        private readonly List<IInputCommand> _commands = new List<IInputCommand>();
         private readonly List<InputEventFired> _listeners = new List<InputEventFired>();
 
         #endregion
@@ -30,8 +30,8 @@ namespace Pulsar.Input
         /// <param name="owner">Owner of the input action</param>
         internal InputEvent(string name, VirtualInput owner)
         {
-            this.Name = name;
-            this.Owner = owner;
+            Name = name;
+            Owner = owner;
         }
 
         #endregion
@@ -44,19 +44,17 @@ namespace Pulsar.Input
         internal void Update()
         {
             bool isTriggered = true;
-            for (int i = 0; i < this.commands.Count; i++)
+            for (int i = 0; i < _commands.Count; i++)
             {
-                isTriggered &= this.commands[i].IsTriggered;
+                isTriggered &= _commands[i].IsTriggered;
             }
+            if (!isTriggered) return;
 
-            if (isTriggered)
+            bool propagate = true;
+            for (int i = 0; i < _listeners.Count; i++)
             {
-                bool propagate = true;
-                for (int i = 0; i < _listeners.Count; i++)
-                {
-                    _listeners[i](this, ref propagate);
-                    if(!propagate) break;
-                }
+                _listeners[i](this, ref propagate);
+                if(!propagate) break;
             }
         }
 
@@ -77,9 +75,9 @@ namespace Pulsar.Input
         /// <param name="btnEvent">Event to check for</param>
         public void AddCommand(string buttonName, ButtonEventType btnEvent)
         {
-            Button btn = this.Owner.GetButton(buttonName);
+            Button btn = Owner.GetButton(buttonName);
             ButtonCommand command = new ButtonCommand(btn, btnEvent);
-            this.commands.Add(command);
+            _commands.Add(command);
         }
 
         /// <summary>
@@ -89,9 +87,9 @@ namespace Pulsar.Input
         /// <param name="axisEvent">Event to check for</param>
         public void AddCommand(string axisName, AxisEventType axisEvent)
         {
-            Axis axis = this.Owner.GetAxis(axisName);
+            Axis axis = Owner.GetAxis(axisName);
             AxisCommand command = new AxisCommand(axis, axisEvent);
-            this.commands.Add(command);
+            _commands.Add(command);
         }
 
         /// <summary>
@@ -99,7 +97,7 @@ namespace Pulsar.Input
         /// </summary>
         public void Clear()
         {
-            this.commands.Clear();
+            _commands.Clear();
         }
 
         #endregion

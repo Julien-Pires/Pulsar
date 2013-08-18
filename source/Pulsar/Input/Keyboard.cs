@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Input;
 using XnaKeyboard = Microsoft.Xna.Framework.Input.Keyboard;
@@ -15,14 +14,15 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private static Keys[] AllDigital;
         internal static List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
-        private static KeyboardState previousState;
-        private static KeyboardState currentState;
+
+        private static readonly Keys[] AllDigital;
+        private static KeyboardState _previousState;
+        private static KeyboardState _currentState;
 
         #endregion
 
-        #region Constructors
+        #region Static constructors
 
         /// <summary>
         /// Static constructor of Keyboard class
@@ -34,24 +34,22 @@ namespace Pulsar.Input
 
         #endregion
 
-        #region Methods
+        #region Static Methods
 
         /// <summary>
         /// Update keyboard states
         /// </summary>
         internal static void Update()
         {
-            Keyboard.previousState = Keyboard.currentState;
-            Keyboard.currentState = XnaKeyboard.GetState();
+            _previousState = _currentState;
+            _currentState = XnaKeyboard.GetState();
 
-            Keyboard.ButtonPressed.Clear();
-            for (int i = 0; i < Keyboard.AllDigital.Length; i++)
+            ButtonPressed.Clear();
+            for (int i = 0; i < AllDigital.Length; i++)
             {
-                if(Keyboard.IsPressed(Keyboard.AllDigital[i]))
-                {
-                    AbstractButton btn = new AbstractButton(Keyboard.AllDigital[i]);
-                    Keyboard.ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed));
-                }
+                if (!IsPressed(AllDigital[i])) continue;
+                AbstractButton btn = new AbstractButton(AllDigital[i]);
+                ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed));
             }
         }
 
@@ -61,7 +59,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         public static bool AnyKeyPressed()
         {
-            return Keyboard.ButtonPressed.Count > 0;
+            return ButtonPressed.Count > 0;
         }
 
         /// <summary>
@@ -71,7 +69,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the key has been pressed otherwise false</returns>
         public static bool IsPressed(Keys key)
         {
-            return Keyboard.previousState.IsKeyUp(key) && Keyboard.currentState.IsKeyDown(key);
+            return _previousState.IsKeyUp(key) && _currentState.IsKeyDown(key);
         }
 
         /// <summary>
@@ -81,7 +79,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the key has been released otherwise false</returns>
         public static bool IsReleased(Keys key)
         {
-            return Keyboard.previousState.IsKeyDown(key) && Keyboard.currentState.IsKeyUp(key);
+            return _previousState.IsKeyDown(key) && _currentState.IsKeyUp(key);
         }
 
         /// <summary>
@@ -91,7 +89,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the key is down otherwise false</returns>
         public static bool IsDown(Keys key)
         {
-            return Keyboard.currentState.IsKeyDown(key);
+            return _currentState.IsKeyDown(key);
         }
 
         /// <summary>
@@ -101,7 +99,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the key is up otherwise false</returns>
         public static bool IsUp(Keys key)
         {
-            return Keyboard.currentState.IsKeyUp(key);
+            return _currentState.IsKeyUp(key);
         }
 
         #endregion

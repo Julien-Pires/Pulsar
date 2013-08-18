@@ -18,9 +18,9 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private AxisEventType axisEvent;
-        private Axis axis;
-        private CheckCommandState checkMethod;
+        private readonly AxisEventType _axisEvent;
+        private readonly Axis _axis;
+        private CheckCommandState _checkMethod;
 
         #endregion
 
@@ -33,9 +33,9 @@ namespace Pulsar.Input
         /// <param name="axisEvent">Event to check for</param>
         internal AxisCommand(Axis axis, AxisEventType axisEvent)
         {
-            this.axis = axis;
-            this.axisEvent = axisEvent;
-            this.AssignCheckMethod();
+            _axis = axis;
+            _axisEvent = axisEvent;
+            AssignCheckMethod();
         }
 
         #endregion
@@ -47,14 +47,13 @@ namespace Pulsar.Input
         /// </summary>
         private void AssignCheckMethod()
         {
-            switch (this.axisEvent)
+            switch (_axisEvent)
             {
-                case AxisEventType.IsInactive: this.checkMethod = this.IsInactive;
+                case AxisEventType.IsInactive: _checkMethod = IsInactive;
                     break;
-                case AxisEventType.IsActive: this.checkMethod = this.IsActive;
+                case AxisEventType.IsActive: _checkMethod = IsActive;
                     break;
                 default: throw new Exception("Invalid command event code provided");
-                    break;
             }
         }
 
@@ -64,7 +63,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the axis is inactive othterwise false</returns>
         private bool IsInactive()
         {
-            return this.axis.Value == 0.0f;
+            return !(_axis.Value > 0.0f);
         }
 
         /// <summary>
@@ -73,7 +72,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the axis is active otherwise false</returns>
         private bool IsActive()
         {
-            return this.axis.Value > 0.0f;
+            return _axis.Value > 0.0f;
         }
 
         #endregion
@@ -85,7 +84,7 @@ namespace Pulsar.Input
         /// </summary>
         public bool IsTriggered
         {
-            get { return this.checkMethod(); }
+            get { return _checkMethod(); }
         }
 
         #endregion

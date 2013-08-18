@@ -11,8 +11,8 @@ namespace Pulsar.Input
         #region Fields
 
         private readonly PlayerIndex _playerIndex = new PlayerIndex();
-        private Dictionary<string, VirtualInput> contextMap = new Dictionary<string, VirtualInput>();
-        private VirtualInput currentContext;
+        private readonly Dictionary<string, VirtualInput> _contextMap = new Dictionary<string, VirtualInput>();
+        private VirtualInput _currentContext;
 
         #endregion
 
@@ -35,10 +35,10 @@ namespace Pulsar.Input
         /// </summary>
         internal void Update()
         {
-            if (this.currentContext != null)
+            if (_currentContext != null)
             {
-                this.currentContext.Update();
-                this.DispatchButtonEvent();
+                _currentContext.Update();
+                DispatchButtonEvent();
             }
         }
 
@@ -47,13 +47,13 @@ namespace Pulsar.Input
         /// </summary>
         private void DispatchButtonEvent()
         {
-            InputDevice device = this.currentContext.AssociatedDevice;
+            InputDevice device = _currentContext.AssociatedDevice;
 #if WINDOWS
             if ((device & InputDevice.Mouse) == InputDevice.Mouse)
             {
                 for (short i = 0; i < Mouse.ButtonPressed.Count; i++)
                 {
-                    this.currentContext.ButtonPressed.Add(Mouse.ButtonPressed[i]);
+                    _currentContext.ButtonPressed.Add(Mouse.ButtonPressed[i]);
                 }
             }
 #endif
@@ -61,7 +61,7 @@ namespace Pulsar.Input
             {
                 for (short i = 0; i < Keyboard.ButtonPressed.Count; i++)
                 {
-                    this.currentContext.ButtonPressed.Add(Keyboard.ButtonPressed[i]);
+                    _currentContext.ButtonPressed.Add(Keyboard.ButtonPressed[i]);
                 }
             }
             if ((device & InputDevice.GamePad) == InputDevice.GamePad)
@@ -71,7 +71,7 @@ namespace Pulsar.Input
                     ButtonEvent btnEvent = GamePad.ButtonPressed[i];
                     if (btnEvent.Index == _playerIndex.GamePadIndex)
                     {
-                        this.currentContext.ButtonPressed.Add(btnEvent);
+                        _currentContext.ButtonPressed.Add(btnEvent);
                     }
                 }
             }
@@ -79,7 +79,7 @@ namespace Pulsar.Input
             {
                 for (short i = 0; i < GamePad.ButtonPressed.Count; i++)
                 {
-                    this.currentContext.ButtonPressed.Add(GamePad.ButtonPressed[i]);
+                    _currentContext.ButtonPressed.Add(GamePad.ButtonPressed[i]);
                 }
             }
         }
@@ -89,8 +89,8 @@ namespace Pulsar.Input
         /// </summary>
         public void Reset()
         {
-            this.contextMap.Clear();
-            this.currentContext = null;
+            _contextMap.Clear();
+            _currentContext = null;
         }
 
         /// <summary>
@@ -100,12 +100,9 @@ namespace Pulsar.Input
         /// <returns>Return a VirtualInput instance</returns>
         public VirtualInput CreateContext(string name)
         {
-            if (this.contextMap.ContainsKey(name))
-            {
-                throw new Exception(string.Format("A context named {0} already exists", name));
-            }
+            if (_contextMap.ContainsKey(name)) throw new Exception(string.Format("A context named {0} already exists", name));
             VirtualInput vInput = new VirtualInput(_playerIndex);
-            this.contextMap.Add(name, vInput);
+            _contextMap.Add(name, vInput);
 
             return vInput;
         }
@@ -117,7 +114,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the context is removed otherwise false</returns>
         public bool RemoveContext(string name)
         {
-            return this.contextMap.Remove(name);
+            return _contextMap.Remove(name);
         }
 
         /// <summary>
@@ -128,10 +125,7 @@ namespace Pulsar.Input
         public VirtualInput GetContext(string name)
         {
             VirtualInput input;
-            if (!this.contextMap.TryGetValue(name, out input))
-            {
-                throw new Exception(string.Format("Failed to find a context named {0}", name));
-            }
+            if (!_contextMap.TryGetValue(name, out input)) throw new Exception(string.Format("Failed to find a context named {0}", name));
 
             return input;
         }
@@ -143,12 +137,9 @@ namespace Pulsar.Input
         public void SetCurrentContext(string name)
         {
             VirtualInput input;
-            if (!this.contextMap.TryGetValue(name, out input))
-            {
-                throw new Exception(string.Format("Failed to find a context named {0}", name));
-            }
+            if (!_contextMap.TryGetValue(name, out input)) throw new Exception(string.Format("Failed to find a context named {0}", name));
 
-            this.currentContext = input;
+            _currentContext = input;
         }
 
         /// <summary>
@@ -158,12 +149,9 @@ namespace Pulsar.Input
         /// <returns>Return a Button instance</returns>
         public Button GetButton(string name)
         {
-            if (this.currentContext == null)
-            {
-                throw new Exception("No current context set");
-            }
+            if (_currentContext == null) throw new Exception("No current context set");
 
-            return this.currentContext.GetButton(name);
+            return _currentContext.GetButton(name);
         }
 
         /// <summary>
@@ -173,12 +161,9 @@ namespace Pulsar.Input
         /// <returns>Return an axis instance</returns>
         public Axis GetAxis(string name)
         {
-            if (this.currentContext == null)
-            {
-                throw new Exception("No current context set");
-            }
+            if (_currentContext == null) throw new Exception("No current context set");
 
-            return this.currentContext.GetAxis(name);
+            return _currentContext.GetAxis(name);
         }
         
         #endregion
@@ -198,7 +183,7 @@ namespace Pulsar.Input
             get { return _playerIndex.GamePadIndex; }
             set
             {
-                if(value > (GamePad.GamePadCount - 1)) throw new ArgumentOutOfRangeException("value");
+                if(value > (GamePad.GamePadCount - 1) || (value < 0)) throw new ArgumentOutOfRangeException("value");
                 _playerIndex.GamePadIndex = value;
             }
         }
@@ -208,7 +193,7 @@ namespace Pulsar.Input
         /// </summary>
         public VirtualInput CurrentContext
         {
-            get { return this.currentContext; }
+            get { return _currentContext; }
         }
 
         #endregion

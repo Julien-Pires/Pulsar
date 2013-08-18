@@ -97,14 +97,12 @@ namespace Pulsar.Input
                 GamePad pad = GamePads[i];
                 pad.Update();
 
-                if (pad.IsConnected)
+                if (!pad.IsConnected) continue;
+                for (short j = 0; j < AllDigital.Length; j++)
                 {
-                    for (short j = 0; j < AllDigital.Length; j++)
-                    {
-                        if (!pad.IsPressed(AllDigital[j])) continue;
-                        AbstractButton btn = new AbstractButton(AllDigital[j]);
-                        ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, i));
-                    }
+                    if (!pad.IsPressed(AllDigital[j])) continue;
+                    AbstractButton btn = new AbstractButton(AllDigital[j]);
+                    ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, i));
                 }
             }
         }

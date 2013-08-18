@@ -1,5 +1,4 @@
 ﻿using System;
-
 using System.Collections.Generic;
 
 namespace Pulsar.Input
@@ -24,8 +23,7 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private Dictionary<short, Player> players = new Dictionary<short, Player>();
-        private AbstractButton[] allButtons;
+        private readonly Dictionary<short, Player> _players = new Dictionary<short, Player>();
 
         #endregion
 
@@ -38,13 +36,10 @@ namespace Pulsar.Input
         /// <returns>Return a Player instance</returns>
         public Player CreatePlayer(short player)
         {
-            if (this.players.ContainsKey(player))
-            {
-                throw new Exception(string.Format("Failed to create the player {0}, he already exists", player));
-            }
+            if (_players.ContainsKey(player)) throw new Exception(string.Format("Failed to create the player {0}, he already exists", player));
 
             Player input = new Player(player);
-            this.players.Add(player, input);
+            _players.Add(player, input);
 
             return input;
         }
@@ -56,7 +51,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the player is removed otherwise false</returns>
         public bool RemovePlayer(short player)
         {
-            return this.players.Remove(player);
+            return _players.Remove(player);
         }
 
         /// <summary>
@@ -64,7 +59,7 @@ namespace Pulsar.Input
         /// </summary>
         public void RemoveAllPlayers()
         {
-            this.players.Clear();
+            _players.Clear();
         }
 
         /// <summary>
@@ -74,7 +69,7 @@ namespace Pulsar.Input
         /// <returns>Return a Player instance</returns>
         public Player GetPlayer(short player)
         {
-            return this.players[player];
+            return _players[player];
         }
 
         /// <summary>
@@ -88,7 +83,7 @@ namespace Pulsar.Input
             Keyboard.Update();
             GamePad.UpdatePads();
 
-            foreach (Player plInput in this.players.Values)
+            foreach (Player plInput in _players.Values)
             {
                 plInput.Update();
             }
