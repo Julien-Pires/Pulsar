@@ -79,7 +79,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="vp">Viewport in which to render the scene</param>
         public void Render(Viewport vp)
         {
-            if (vp != _viewport) Viewport = vp;
+            if (vp != _viewport) CurrentViewport = vp;
             _owner.RenderScene(vp, this);
         }
 
@@ -419,7 +419,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Get or set the viewport in wich this camera will render
         /// </summary>
-        public Viewport Viewport
+        public Viewport CurrentViewport
         {
             get { return _viewport; }
             internal set
