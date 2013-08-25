@@ -71,6 +71,17 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         /// </summary>
         /// <param name="view">View matrix</param>
         /// <param name="proj">Projection matrix</param>
+        public void SetViewProj(Matrix view, Matrix proj)
+        {
+            _view.SetValue(view);
+            _projection.SetValue(proj);
+        }
+
+        /// <summary>
+        /// Set the view and projection matrix
+        /// </summary>
+        /// <param name="view">View matrix</param>
+        /// <param name="proj">Projection matrix</param>
         public void SetViewProj(ref Matrix view, ref Matrix proj)
         {
             _view.SetValue(view);
