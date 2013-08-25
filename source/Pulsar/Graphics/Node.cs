@@ -501,7 +501,7 @@ namespace Pulsar.Graphics
         public string Name { get; internal set; }
 
         /// <summary>
-        /// Get the full transform matrix
+        /// Get the transform matrix
         /// </summary>
         public virtual Matrix Transform
         {
@@ -510,6 +510,45 @@ namespace Pulsar.Graphics
                 UpdateTransform();
 
                 return _fullTransform;
+            }
+        }
+
+        /// <summary>
+        /// Get the scale matrix
+        /// </summary>
+        public virtual Matrix ScaleTransform
+        {
+            get
+            {
+                UpdateTransform();
+
+                return _scaleTransform;
+            }
+        }
+
+        /// <summary>
+        /// Get the orientation matrix
+        /// </summary>
+        public virtual Matrix OrientationTransform
+        {
+            get
+            {
+                UpdateTransform();
+
+                return _orientationTransform;
+            }
+        }
+
+        /// <summary>
+        /// Get the position matrix
+        /// </summary>
+        public virtual Matrix PositionTransform
+        {
+            get
+            {
+                UpdateTransform();
+
+                return _positionTransform;
             }
         }
 
