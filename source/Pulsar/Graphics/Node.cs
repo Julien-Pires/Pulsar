@@ -111,10 +111,19 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Set a new position for this scene node
         /// </summary>
-        /// <param name="newPos">Vector for the new position</param>
-        public virtual void SetPosition(Vector3 newPos)
+        /// <param name="position">Vector for the new position</param>
+        public virtual void SetPosition(Vector3 position)
         {
-            NodePosition = newPos;
+            SetPosition(ref position);
+        }
+
+        /// <summary>
+        /// Set a new position for this scene node
+        /// </summary>
+        /// <param name="position">Vector for the new position</param>
+        public virtual void SetPosition(ref Vector3 position)
+        {
+            NodePosition = position;
             NeedUpdate(false);
         }
 
@@ -124,6 +133,16 @@ namespace Pulsar.Graphics
         /// <param name="v">Translation vector</param>
         /// <param name="space">Space used to perform the operartion relative to</param>
         public virtual void Translate(Vector3 v, TransformSpace space)
+        {
+            Translate(ref v, space);
+        }
+
+        /// <summary>
+        /// Translate this scene node
+        /// </summary>
+        /// <param name="v">Translation vector</param>
+        /// <param name="space">Space used to perform the operartion relative to</param>
+        public virtual void Translate(ref Vector3 v, TransformSpace space)
         {
             switch (space)
             {
@@ -180,7 +199,6 @@ namespace Pulsar.Graphics
             Rotate(angle, Vector3.UnitZ, space);
         }
 
-
         /// <summary>
         /// Rotate this scene node about an axis
         /// </summary>
@@ -189,10 +207,21 @@ namespace Pulsar.Graphics
         /// <param name="space">Space used to perform the operartion relative to</param>
         public virtual void Rotate(float angle, Vector3 axis, TransformSpace space)
         {
+            Rotate(angle, ref axis, space);
+        }
+
+        /// <summary>
+        /// Rotate this scene node about an axis
+        /// </summary>
+        /// <param name="angle">Angle of the rotation</param>
+        /// <param name="axis">Axis used to perform the rotation</param>
+        /// <param name="space">Space used to perform the operartion relative to</param>
+        public virtual void Rotate(float angle, ref Vector3 axis, TransformSpace space)
+        {
             Quaternion q;
             Quaternion.CreateFromAxisAngle(ref axis, angle, out q);
 
-            Rotate(q, space);
+            Rotate(ref q, space);
         }
 
         /// <summary>
@@ -202,23 +231,34 @@ namespace Pulsar.Graphics
         /// <param name="space">Space used to perform the operartion relative to</param>
         protected virtual void Rotate(Quaternion q, TransformSpace space)
         {
-            q.Normalize();
+            Rotate(ref q, space);
+        }
+
+        /// <summary>
+        /// Rotate this scene node using a quaternion
+        /// </summary>
+        /// <param name="q">Quaternion containing the rotation information</param>
+        /// <param name="space">Space used to perform the operartion relative to</param>
+        protected virtual void Rotate(ref Quaternion q, TransformSpace space)
+        {
+            Quaternion inverted;
+            Quaternion.Normalize(ref q, out inverted);
 
             switch (space)
             {
                 case TransformSpace.World:
-                    Quaternion.Multiply(ref q, ref NodeOrientation, out NodeOrientation);
+                    Quaternion.Multiply(ref inverted, ref NodeOrientation, out NodeOrientation);
                     break;
                 case TransformSpace.Parent:
                     Quaternion w;
                     Quaternion.Inverse(ref FullOrientation, out w);
                     Quaternion.Multiply(ref NodeOrientation, ref w, out w);
-                    Quaternion.Multiply(ref w, ref q, out w);
+                    Quaternion.Multiply(ref w, ref inverted, out w);
                     Quaternion.Multiply(ref w, ref FullOrientation, out w);
                     NodeOrientation = w;
                     break;
                 case TransformSpace.Local:
-                    Quaternion.Multiply(ref NodeOrientation, ref q, out NodeOrientation);
+                    Quaternion.Multiply(ref NodeOrientation, ref inverted, out NodeOrientation);
                     break;
             }
 
@@ -254,7 +294,16 @@ namespace Pulsar.Graphics
         /// <param name="v">Vector containing scale factor for each axis</param>
         public virtual void DoScale(Vector3 v)
         {
-            NodeScale *= v;
+            DoScale(ref v);
+        }
+
+        /// <summary>
+        /// Scale this scene node with a scale vector
+        /// </summary>
+        /// <param name="v">Vector containing scale factor for each axis</param>
+        public virtual void DoScale(ref Vector3 v)
+        {
+            Vector3.Multiply(ref NodeScale, ref v, out NodeScale);
             NeedUpdate(false);
         }
 
@@ -375,23 +424,56 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Apply the transform matrix of this node to a vector
         /// </summary>
-        /// <param name="pos">Origin vector</param>
-        /// <param name="result">Result vector</param>
-        public void ApplyTransform(ref Vector3 pos, out Vector3 result)
+        /// <param name="v">Vector</param>
+        public Vector3 ApplyTransform(Vector3 v)
         {
-            Vector3.Multiply(ref pos, ref FullScale, out result);
-            Vector3.Transform(ref result, ref FullOrientation, out result);
-            Vector3.Add(ref result, ref FullPosition, out result);
+            if (NeedParentUpdate) UpdateWithParent();
+            UpdateTransform();
+
+            Vector3 result;
+            Vector3.Transform(ref v, ref FullTransform, out result);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Apply the transform matrix of this node to a vector
+        /// </summary>
+        /// <param name="v">Vector</param>
+        /// <param name="result">Result vector</param>
+        public void ApplyTransform(ref Vector3 v, out Vector3 result)
+        {
+            if(NeedParentUpdate) UpdateWithParent();
+            UpdateTransform();
+
+            Vector3.Transform(ref v, ref FullTransform, out result);
         }
 
         /// <summary>
         /// Apply the scale and position of this node to a vector
         /// </summary>
-        /// <param name="pos">Origin vector</param>
-        /// <param name="result">Result vector</param>
-        public void ApplyScalePos(ref Vector3 pos, out Vector3 result)
+        /// <param name="v">Origin vector</param>
+        public Vector3 ApplyScalePosition(Vector3 v)
         {
-            Vector3.Multiply(ref pos, ref FullScale, out result);
+            if (NeedParentUpdate) UpdateWithParent();
+
+            Vector3 result;
+            Vector3.Multiply(ref v, ref FullScale, out result);
+            Vector3.Add(ref result, ref FullPosition, out result);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Apply the scale and position of this node to a vector
+        /// </summary>
+        /// <param name="v">Origin vector</param>
+        /// <param name="result">Result vector</param>
+        public void ApplyScalePosition(ref Vector3 v, out Vector3 result)
+        {
+            if (NeedParentUpdate) UpdateWithParent();
+
+            Vector3.Multiply(ref v, ref FullScale, out result);
             Vector3.Add(ref result, ref FullPosition, out result);
         }
 
@@ -413,7 +495,7 @@ namespace Pulsar.Graphics
         public string Name { get; protected set; }
 
         /// <summary>
-        /// Get the the full transform matrix
+        /// Get the full transform matrix
         /// </summary>
         public virtual Matrix Transform
         {
