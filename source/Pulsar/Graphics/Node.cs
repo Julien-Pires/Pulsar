@@ -19,20 +19,23 @@ namespace Pulsar.Graphics
 
         protected bool NeedUpdateTransform = true;
         protected bool NeedParentUpdate = true;
-        protected bool NeedUpdateChild = false;
-        protected bool ParentAskedForUpdate = false;
+        protected bool NeedUpdateChild;
+        protected bool ParentAskedForUpdate;
+        protected Matrix ScaleTransform = Matrix.Identity;
+        protected Matrix OrientationTransform = Matrix.Identity;
+        protected Matrix PositionTransform = Matrix.Identity;
         protected Matrix ScaleOrientTransform = Matrix.Identity;
         protected Matrix FullTransform = Matrix.Identity;
         protected Quaternion NodeOrientation = Quaternion.Identity;
-        protected Vector3 NodeScale = Vector3.One;
-        protected Vector3 NodePosition = Vector3.Zero;
         protected Quaternion FullOrientation = Quaternion.Identity;
+        protected Vector3 NodeScale = Vector3.One;
+        protected Vector3 NodePosition;
         protected Vector3 FullScale = Vector3.One;
-        protected Vector3 FullPosition = Vector3.Zero;
-        protected Node ParentNode = null;
-        protected Dictionary<string, Node> ChildrensMap = new Dictionary<string, Node>();
-        protected List<Node> ChildrensList = new List<Node>();
-        protected List<Node> ChildldrensToUpdate = new List<Node>();
+        protected Vector3 FullPosition;
+        protected Node ParentNode;
+        protected readonly Dictionary<string, Node> ChildrensMap = new Dictionary<string, Node>();
+        protected readonly List<Node> ChildrensList = new List<Node>();
+        protected readonly List<Node> ChildldrensToUpdate = new List<Node>();
 
         #endregion
 
@@ -62,9 +65,7 @@ namespace Pulsar.Graphics
             Node child;
             ChildrensMap.TryGetValue(name, out child);
             if(child != null)
-            {
                 throw new Exception(string.Format("A child with the name {0} already exist", name));
-            }
 
             child = CreateChildIntern(name);
             child.ParentNode = this;
@@ -83,14 +84,8 @@ namespace Pulsar.Graphics
         {
             Node child;
             ChildrensMap.TryGetValue(name, out child);
-            if (child == null)
-            {
-                return false;
-            }
-            if (!RemoveChildIntern(name))
-            {
-                return false;
-            }
+            if (child == null) return false;
+            if (!RemoveChildIntern(name)) return false;
 
             child.ParentNode = null;
             ChildrensMap.Remove(name);
@@ -120,7 +115,6 @@ namespace Pulsar.Graphics
         public virtual void SetPosition(Vector3 newPos)
         {
             NodePosition = newPos;
-
             NeedUpdate(false);
         }
 
@@ -134,18 +128,22 @@ namespace Pulsar.Graphics
             switch (space)
             {
                 case TransformSpace.Local:
-                    NodePosition += Vector3.Transform(v, NodeOrientation);
+                    Vector3 move;
+                    Vector3.Transform(ref v, ref NodeOrientation, out move);
+                    Vector3.Add(ref NodePosition, ref move, out NodePosition);
                     break;
                 case TransformSpace.Parent:
                     if (ParentNode != null)
                     {
-                        NodePosition += Vector3.Transform(v, Quaternion.Inverse(ParentNode.AbsoluteOrientation))
-                            / ParentNode.AbsoluteScale;
+                        Quaternion invertedOrient;
+                        Quaternion.Inverse(ref ParentNode.FullOrientation, out invertedOrient);
+                        Vector3 transformedMove;
+                        Vector3.Transform(ref v, ref invertedOrient, out transformedMove);
+                        Vector3.Divide(ref transformedMove, ref ParentNode.FullScale, out transformedMove);
+                        Vector3.Add(ref NodePosition, ref transformedMove, out NodePosition);
                     }
                     else
-                    {
-                        NodePosition += v;
-                    }
+                        Vector3.Add(ref NodePosition, ref v, out NodePosition);
                     break;
             }
 
@@ -191,7 +189,8 @@ namespace Pulsar.Graphics
         /// <param name="space">Space used to perform the operartion relative to</param>
         public virtual void Rotate(float angle, Vector3 axis, TransformSpace space)
         {
-            Quaternion q = Quaternion.CreateFromAxisAngle(axis, angle);
+            Quaternion q;
+            Quaternion.CreateFromAxisAngle(ref axis, angle, out q);
 
             Rotate(q, space);
         }
@@ -211,7 +210,12 @@ namespace Pulsar.Graphics
                     Quaternion.Multiply(ref q, ref NodeOrientation, out NodeOrientation);
                     break;
                 case TransformSpace.Parent:
-                    NodeOrientation = NodeOrientation * Quaternion.Inverse(AbsoluteOrientation) * q * AbsoluteOrientation;
+                    Quaternion w;
+                    Quaternion.Inverse(ref FullOrientation, out w);
+                    Quaternion.Multiply(ref NodeOrientation, ref w, out w);
+                    Quaternion.Multiply(ref w, ref q, out w);
+                    Quaternion.Multiply(ref w, ref FullOrientation, out w);
+                    NodeOrientation = w;
                     break;
                 case TransformSpace.Local:
                     Quaternion.Multiply(ref NodeOrientation, ref q, out NodeOrientation);
@@ -298,10 +302,7 @@ namespace Pulsar.Graphics
         {
             ParentAskedForUpdate = false;
 
-            if (NeedParentUpdate || parentHasChanged)
-            {
-                UpdateWithParent();
-            }
+            if (NeedParentUpdate || parentHasChanged) UpdateWithParent();
 
             if (updateChild)
             {
@@ -328,17 +329,22 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Update values(rotation, scale, ...) relative to the parent
         /// </summary>
+        /// <remarks>
+        /// ParentNode.AbsoluteScale will trigger UpdateWithParent() of parent, so we can bypass AbsoluteOrientation 
+        /// and AbsolutePosition properties and use fields directly because parent will be up to date 
+        /// </remarks>
         protected void UpdateWithParent()
         {
             if (ParentNode != null)
             {
-                Vector3 parentPos = ParentNode.AbsolutePosition;
                 Vector3 parentScale = ParentNode.AbsoluteScale;
-                Quaternion parentOri = ParentNode.AbsoluteOrientation;
+                Vector3.Multiply(ref parentScale, ref NodeScale, out FullScale);
+                Quaternion.Multiply(ref ParentNode.FullOrientation, ref NodeOrientation, out FullOrientation);
 
-                FullScale = parentScale * NodeScale;
-                FullOrientation = parentOri * NodeOrientation;
-                FullPosition = Vector3.Transform((parentScale * NodePosition), parentOri) + parentPos;
+                Vector3 v;
+                Vector3.Multiply(ref parentScale, ref NodePosition, out v);
+                Vector3.Transform(ref v, ref ParentNode.FullOrientation, out v);
+                Vector3.Add(ref v, ref ParentNode.FullPosition, out FullPosition);
             }
             else
             {
@@ -356,13 +362,14 @@ namespace Pulsar.Graphics
         /// </summary>
         private void UpdateTransform()
         {
-            if (NeedUpdateTransform)
-            {
-                ScaleOrientTransform = Matrix.CreateScale(FullScale) * Matrix.CreateFromQuaternion(FullOrientation);
-                FullTransform = ScaleOrientTransform * Matrix.CreateTranslation(FullPosition);
+            if (!NeedUpdateTransform) return;
 
-                NeedUpdateTransform = false;
-            }
+            Matrix.CreateScale(ref FullScale, out ScaleTransform);
+            Matrix.CreateFromQuaternion(ref FullOrientation, out OrientationTransform);
+            Matrix.CreateTranslation(ref FullPosition, out PositionTransform);
+            Matrix.Multiply(ref ScaleTransform, ref OrientationTransform, out ScaleOrientTransform);
+            Matrix.Multiply(ref ScaleOrientTransform, ref PositionTransform, out FullTransform);
+            NeedUpdateTransform = false;
         }
 
         /// <summary>
