@@ -89,6 +89,7 @@
     <Compile Include="Graphics\GraphicsEngineService.cs" />
     <Compile Include="Graphics\IGraphicsEngineService.cs" />
     <Compile Include="Graphics\Node.cs" />
+    <Compile Include="Graphics\Rendering\BufferAllocatedEventArgs.cs" />
     <Compile Include="Graphics\Rendering\BufferManager.cs" />
     <Compile Include="Graphics\Rendering\BufferObject.cs" />
     <Compile Include="Graphics\Rendering\IBufferWrapper.cs" />

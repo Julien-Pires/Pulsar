@@ -3,34 +3,33 @@
 namespace Pulsar.Graphics.Rendering
 {
     /// <summary>
-    /// Used to manage an IndexBufferObject. 
-    /// This class is used to find index buffer during rendering operation.
+    /// Manages informations about an index buffer and how to use it during rendering operation
     /// </summary>
     public sealed class IndexData
     {
-        #region Fields
-
-        internal IndexBufferObject IndexBufferObj;
-
-        #endregion
-
         #region Properties
 
         /// <summary>
-        /// Get or the managed IndexBufferObject
+        /// Gets or sets the starting index in the index buffer
         /// </summary>
-        public IndexBufferObject IndexBuffer
-        {
-            get { return IndexBufferObj; }
-            set { IndexBufferObj = value; }
-        }
+        public int StartIndex { get; set; }
 
         /// <summary>
-        /// Get the associated IndexBuffer
+        /// Gets or sets the number of elements used
         /// </summary>
-        internal IndexBuffer Buffer
+        public int IndexCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the index buffer
+        /// </summary>
+        public IndexBufferObject IndexBuffer { get; set; }
+
+        /// <summary>
+        /// Gets the hardware index buffer
+        /// </summary>
+        internal IndexBuffer HardwareBuffer
         {
-            get { return IndexBufferObj.Buffer; }
+            get { return IndexBuffer.Buffer; }
         }
 
         #endregion

@@ -1,29 +1,25 @@
 ﻿using System;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
-using PulsarRuntime.Graphics;
-
-using Pulsar.Graphics;
 using Pulsar.Graphics.Rendering;
 using Pulsar.Assets.Graphics.Materials;
 
 namespace Pulsar.Assets.Graphics.Models
 {
     /// <summary>
-    /// Class representing a part of a 3D mesh
-    /// A SubMesh is the smallest unit of a mesh, one SubMesh means one draw call
+    /// Represents a part of a 3D mesh
+    /// A SubMesh is the smallest unit of a mesh
     /// </summary>
-    public sealed class SubMesh
+    public sealed class SubMesh : IDisposable
     {
         #region Fields
 
-        private Mesh parent;
-        private BoundingData bounds;
-        private RenderingInfo renderData = new RenderingInfo();
-        private bool shareVertexBuffer = true;
-        private VertexData vertexData;
+        private readonly Mesh _parent;
+        private readonly RenderingInfo _renderData = new RenderingInfo();
+        private readonly VertexData _vertexData = new VertexData();
+        private readonly IndexData _indexData = new IndexData();
+        private bool _disposed;
 
         #endregion
 
@@ -35,7 +31,9 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="parent">Parent of the submesh</param>
         internal SubMesh(Mesh parent)
         {
-            this.parent = parent;
+            _parent = parent;
+            _renderData.VertexData = _vertexData;
+            _renderData.IndexData = _indexData;
         }
 
         #endregion
@@ -43,42 +41,23 @@ namespace Pulsar.Assets.Graphics.Models
         #region Methods
 
         /// <summary>
-        /// Set rendering data
+        /// Disposes all resources
         /// </summary>
-        /// <param name="pType">Ordering type for vertex rendering</param>
-        /// <param name="startIdx">First index to use when accessing index buffer</param>
-        /// <param name="primitiveCount">Number of primitive to render</param>
-        /// <param name="numVertices">Number of vertices used during the draw call</param>
-        /// <param name="vertexOffset">Offset from the beginning of the vertex buffer</param>
-        public void SetRenderingInfo(PrimitiveType pType, int startIdx, int primitiveCount, int numVertices)
+        public void Dispose()
         {
-            this.renderData.PrimitiveType = pType;
-            this.renderData.StartIndex = startIdx;
-            this.renderData.PrimitiveCount = primitiveCount;
-            this.renderData.VertexCount = numVertices;
-            this.parent.ComputeData();
-        }
+            if (_disposed) return;
 
-        /// <summary>
-        /// Set bounding volumes
-        /// </summary>
-        /// <param name="aabb">AABB for this submesh</param>
-        /// <param name="sphere">Bounding sphere for this submesh</param>
-        public void SetBoundingVolume(BoundingBox aabb, BoundingSphere sphere)
-        {
-            this.bounds.BoundingBox = aabb;
-            this.bounds.BoundingSphere = sphere;
-        }
-
-        /// <summary>
-        /// Set bounding volumes
-        /// </summary>
-        /// <param name="aabb">AABB for this submesh</param>
-        /// <param name="sphere">Bounding sphere for this submesh</param>
-        public void SetBoundingVolume(ref BoundingBox aabb, ref BoundingSphere sphere)
-        {
-            this.bounds.BoundingBox = aabb;
-            this.bounds.BoundingSphere = sphere;
+            if (!ShareVertexBuffer && (_vertexData.BufferCount > 0))
+            {
+                _vertexData.GetBuffer(0).Dispose();
+                _vertexData.UnsetBinding(0);
+            }
+            if (!ShareIndexBuffer && (_vertexData.BufferCount > 0))
+            {
+                _indexData.IndexBuffer.Dispose();
+                _indexData.IndexBuffer = null;
+            }
+            _disposed = true;
         }
 
         #endregion
@@ -86,79 +65,66 @@ namespace Pulsar.Assets.Graphics.Models
         #region Properties
 
         /// <summary>
-        /// Get the ID of this instance
+        /// Gets the ID of this instance
         /// </summary>
-        public uint ID
+        public uint Id
         {
-            get { return this.renderData.Id; }
+            get { return _renderData.Id; }
+        }        
+
+        /// <summary>
+        /// Gets the information to render this sub mesh
+        /// </summary>
+        public RenderingInfo RenderInfo 
+        {
+            get { return _renderData; }  
         }
 
         /// <summary>
-        /// Get the index to find the bone attached to this sub mesh
+        /// Gets the index used to find the bone attached to this sub mesh
         /// </summary>
         public int BoneIndex { get; internal set; }
 
         /// <summary>
-        /// Get the information to render this sub mesh
+        /// Gets the VertexData instance
         /// </summary>
-        internal RenderingInfo RenderInfo 
-        {
-            get 
-            {
-                this.renderData.VertexData = this.shareVertexBuffer ? this.parent.vertexData : this.vertexData;
-                this.renderData.IndexData = this.UseIndexes ? this.parent.indexData : null;
-
-                return this.renderData;
-            }  
-        }
-
         public VertexData VertexData
         {
-            get { return this.vertexData; }
-            set { this.vertexData = value; }
-        }
-
-        public bool ShareVertexBuffer
-        {
-            get { return this.shareVertexBuffer; }
-            set { this.shareVertexBuffer = value; }
-        }
-
-        public bool UseIndexes
-        {
-            get { return this.renderData.UseIndexes; }
-            set { this.renderData.UseIndexes = value; }
+            get { return _vertexData; }
         }
 
         /// <summary>
-        /// Get or set the material attached to this sub mesh
+        /// Gets the IndexData instance
+        /// </summary>
+        public IndexData IndexData
+        {
+            get { return _indexData; }
+        }
+
+        /// <summary>
+        /// Gets a value that indicates if this submesh share a vertex buffer
+        /// </summary>
+        public bool ShareVertexBuffer { get; set; }
+
+        /// <summary>
+        /// Gets a value that indicates if this submesh share an index buffer
+        /// </summary>
+        public bool ShareIndexBuffer { get; set; }
+
+        /// <summary>
+        /// Gets or set the material attached to this sub mesh
         /// </summary>
         public Material Material { get; set; }
 
         /// <summary>
-        /// Get or set the bounding volume data
+        /// Gets the aabb of this sub mesh
         /// </summary>
-        internal BoundingData BoundingVolume
-        {
-            get { return this.bounds; }
-            set { this.bounds = value; }
-        }
+        public BoundingBox AxisAlignedBoundingBox { get; set; }
 
         /// <summary>
-        /// Get the aabb of this sub mesh
+        /// Gets the bounding sphere of this sub mesh
         /// </summary>
-        public BoundingBox AxisAlignedBoundingBox
-        {
-            get { return this.bounds.BoundingBox; }
-        }
-
-        /// <summary>
-        /// Get the bounding sphere of this sub mesh
-        /// </summary>
-        public BoundingSphere BoundingSphere
-        {
-            get { return this.bounds.BoundingSphere; }
-        }
+        public BoundingSphere BoundingSphere { get; set; }
 
         #endregion
     }

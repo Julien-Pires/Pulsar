@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Pulsar.Graphics.Rendering
 {
     /// <summary>
-    /// Abstract the use of an index buffer
+    /// Abstracts the use of an index buffer
     /// </summary>
     /// <typeparam name="TBuffer">Type of index buffer used</typeparam>
     internal abstract class IndexBufferWrapper<TBuffer> : IIndexBufferWrapper where TBuffer : IndexBuffer
@@ -13,6 +13,7 @@ namespace Pulsar.Graphics.Rendering
         #region Fields
 
         protected readonly TBuffer Buffer;
+
         private bool _disposed;
 
         #endregion
@@ -34,10 +35,10 @@ namespace Pulsar.Graphics.Rendering
         #region Operators
 
         /// <summary>
-        /// Cast implicitly the wrapper to an IndexBuffer
+        /// Casts implicitly the wrapper to an IndexBuffer
         /// </summary>
         /// <param name="wrapper">Wrapper to cast</param>
-        /// <returns>Return an IndexBuffer</returns>
+        /// <returns>Returns an IndexBuffer</returns>
         public static implicit operator IndexBuffer(IndexBufferWrapper<TBuffer> wrapper)
         {
             return wrapper.Buffer;
@@ -68,31 +69,52 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Get the data stored in the buffer
+        /// Gets the elements stored in the buffer from a starting index
         /// </summary>
         /// <typeparam name="T">Type of index stored in the buffer</typeparam>
+        /// <param name="bufferOffset">Starting offset in the buffer</param>
         /// <param name="data">Array in which to store the data</param>
-        public void GetData<T>(T[] data) where T : struct
+        /// <param name="startIndex">First element to get</param>
+        /// <param name="elementCount">Number of element to get</param>
+        public void GetData<T>(int bufferOffset, T[] data, int startIndex, int elementCount) where T : struct
         {
-            Buffer.GetData(data);
+            int offsetInByte = bufferOffset * ElementSizeInByte;
+            Buffer.GetData(offsetInByte, data, startIndex, elementCount);
         }
 
         /// <summary>
-        /// Set the data stored in the buffer
+        /// Sets the data stored in the buffer
         /// </summary>
         /// <typeparam name="T">Type of data stored in the buffer</typeparam>
+        /// <param name="bufferOffset"></param>
         /// <param name="data">Data to set</param>
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
-        public abstract void SetData<T>(T[] data, int startIdx, int elementCount, SetDataOptions option) where T : struct;
+        public abstract void SetData<T>(int bufferOffset, T[] data, int startIdx, int elementCount, SetDataOptions option) where T : struct;
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Get the index buffer
+        /// Gets the size in byte of one index in the buffer
+        /// </summary>
+        public int ElementSizeInByte
+        {
+            get { return (Buffer.IndexElementSize == IndexElementSize.SixteenBits) ? 2 : 4; }
+        }
+
+        /// <summary>
+        /// Gets the number of elements in the buffer
+        /// </summary>
+        public int ElementCount
+        {
+            get { return Buffer.IndexCount; }
+        }
+
+        /// <summary>
+        /// Gets the index buffer
         /// </summary>
         public IndexBuffer IndexBuffer 
         {
@@ -103,7 +125,7 @@ namespace Pulsar.Graphics.Rendering
     }
 
     /// <summary>
-    /// Wrapper for a static index buffer
+    /// Encapsulates a static index buffer
     /// </summary>
     internal sealed class StaticIndexBufferWrapper : IndexBufferWrapper<IndexBuffer>
     {
@@ -122,23 +144,25 @@ namespace Pulsar.Graphics.Rendering
         #region Methods
 
         /// <summary>
-        /// Set the data stored in the buffer
+        /// Sets the data stored in the buffer
         /// </summary>
         /// <typeparam name="T">Type of index stored in the buffer</typeparam>
+        /// <param name="bufferOffset">Starting offset in the buffer</param>
         /// <param name="data">Data to set</param>
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
-        public override void SetData<T>(T[] data, int startIdx, int elementCount, SetDataOptions option)
+        public override void SetData<T>(int bufferOffset, T[] data, int startIdx, int elementCount, SetDataOptions option)
         {
-            Buffer.SetData(data, startIdx, elementCount);
+            int offsetInByte = bufferOffset * ElementSizeInByte;
+            Buffer.SetData(offsetInByte, data, startIdx, elementCount);
         }
 
         #endregion
     }
 
     /// <summary>
-    /// Wrapper for a dynamic index buffer
+    /// Encapsulates a dynamic index buffer
     /// </summary>
     internal sealed class DynamicIndexBufferWrapper : IndexBufferWrapper<DynamicIndexBuffer>
     {
@@ -160,13 +184,15 @@ namespace Pulsar.Graphics.Rendering
         /// Set the data stored in the buffer
         /// </summary>
         /// <typeparam name="T">Type of index stored in the buffer</typeparam>
+        /// <param name="bufferOffset">Starting offset in the buffer</param>
         /// <param name="data">Data to set</param>
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
-        public override void SetData<T>(T[] data, int startIdx, int elementCount, SetDataOptions option)
+        public override void SetData<T>(int bufferOffset, T[] data, int startIdx, int elementCount, SetDataOptions option)
         {
-            Buffer.SetData(data, startIdx, elementCount, option);
+            int offsetInByte = bufferOffset * ElementSizeInByte;
+            Buffer.SetData(offsetInByte, data, startIdx, elementCount, option);
         }
 
         #endregion
