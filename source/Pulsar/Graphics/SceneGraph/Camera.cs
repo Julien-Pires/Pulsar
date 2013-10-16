@@ -89,7 +89,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         /// <param name="cam">Current camera</param>
         /// <exception cref="NotImplementedException">Camera doesn't need to be notified about other cameras</exception>
-        public void NotifyCurrentCamera(Camera cam)
+        public void CheckVisibilityWithCamera(Camera cam)
         {
             throw new NotImplementedException();
         }
