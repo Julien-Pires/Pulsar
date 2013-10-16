@@ -30,6 +30,7 @@ namespace Pulsar.Graphics.SceneGraph
         private bool _isDirtyFrustum = true;
         private bool _isDirtyBoundingFrustum = true;
         private bool _useFixedYaw = true;
+        private bool _automaticAspect = true;
         private float _near = 1.0f;
         private float _far = 1000.0f;
         private float _aspectRatio = 16.0f/9.0f;
@@ -488,6 +489,8 @@ namespace Pulsar.Graphics.SceneGraph
             internal set
             {
                 _viewport = value;
+                if (!_automaticAspect) return;
+
                 _aspectRatio = _viewport.AspectRatio;
                 InvalidateFrustum();
             }
@@ -504,6 +507,25 @@ namespace Pulsar.Graphics.SceneGraph
                 _projectionType = value;
                 InvalidateFrustum();
             }
+        }
+
+        /// <summary>
+        /// Gets or sets a value that indicates if the aspect ratio is automatically computed 
+        /// by the viewport associated with this camera
+        /// </summary>
+        public bool AutomaticAspectRatio
+        {
+            get { return _automaticAspect; }
+            set { _automaticAspect = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the aspect ratio
+        /// </summary>
+        public float AspectRatio
+        {
+            get { return _aspectRatio; }
+            set { _aspectRatio = value; }
         }
 
         /// <summary>
