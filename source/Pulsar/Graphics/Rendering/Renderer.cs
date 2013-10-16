@@ -9,7 +9,7 @@ using Pulsar.Graphics.SceneGraph;
 namespace Pulsar.Graphics.Rendering
 {
     /// <summary>
-    /// GraphicsRenderer is used to do operations on graphic device
+    /// Performs all rendering operations on a graphics device
     /// </summary>
     public sealed class Renderer : IDisposable
     {
@@ -28,7 +28,7 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Constructor of the GraphicsRenderer class
         /// </summary>
-        /// <param name="gDevice">Graphic device used by this instance</param>
+        /// <param name="gDevice">Graphics device used by this instance</param>
         internal Renderer(GraphicsDevice gDevice)
         {
             _graphicDevice = gDevice;
@@ -41,15 +41,18 @@ namespace Pulsar.Graphics.Rendering
 
         #region Methods
 
+        /// <summary>
+        /// Disposes ressources
+        /// </summary>
         public void Dispose()
         {
             _spriteBatch.Dispose();
         }
 
         /// <summary>
-        /// Called before the rendering
+        /// Prepares rendering operations
         /// </summary>
-        /// <param name="vp">Viewport in which the rendering result will be sent</param>
+        /// <param name="vp">Viewport in which the rendering result is sent</param>
         private void BeginRender(Viewport vp)
         {
             _instancingManager.Reset();
@@ -60,16 +63,16 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Called after the rendering
+        /// Ends all rendering operations
         /// </summary>
-        /// <param name="vp">Viewport in which the rendering result has been sent</param>
+        /// <param name="vp">Viewport in which the rendering result is sent</param>
         private void EndRender(Viewport vp)
         {
             vp.FrameDetail.Merge(_frameDetail);
         }
 
         /// <summary>
-        /// Clear graphic device buffers(Vertex, Index, ...)
+        /// Resets current graphic device vertex and index buffers
         /// </summary>
         private void UnsetBuffers()
         {
@@ -78,7 +81,7 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Clear a viewport
+        /// Clears a viewport
         /// </summary>
         /// <param name="vp">Viewport to clear</param>
         internal void Clear(Viewport vp)
@@ -89,7 +92,7 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Set a render target on the graphic device
+        /// Sets a render target on the graphic device
         /// </summary>
         /// <param name="renderTarget">Render target to set</param>
         internal void SetRenderTarget(RenderTarget2D renderTarget)
@@ -98,7 +101,7 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Remove all render target from the graphic device
+        /// Removes all render target from the graphic device
         /// </summary>
         internal void UnsetRenderTarget()
         {
@@ -106,7 +109,7 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Render a scene graph into a viewport
+        /// Renders a scene graph into a viewport
         /// </summary>
         /// <param name="vp">Viewport in which the rendering is sent</param>
         /// <param name="cam">Camera representing the point of view</param>
@@ -121,7 +124,7 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Draw all viewports of a RenderTarget into its own render target
+        /// Draws all viewports of a RenderTarget into its own render target
         /// </summary>
         /// <param name="renderTarget">RenderTarget to render</param>
         internal void RenderToTarget(RenderTarget renderTarget)
@@ -147,7 +150,7 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Draw a texture on the entire screen
+        /// Draws a texture on the entire screen
         /// </summary>
         /// <param name="texture">Texture to render</param>
         internal void DrawFullQuad(Texture2D texture)
@@ -163,53 +166,48 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Render a geometric shape
+        /// Renders a geometric shape
         /// </summary>
         /// <param name="geometry">Geometric object</param>
         internal void DrawGeometry(IRenderable geometry)
         {
-            if (geometry.RenderInfo.UseIndexes)
-            {
-                DrawIndexedGeometry(geometry);
-            }
-            else
-            {
-                DrawNonIndexedGeometry(geometry);
-            }
+            if (geometry.RenderInfo.UseIndexes) DrawIndexedGeometry(geometry);
+            else DrawNonIndexedGeometry(geometry);
         }
 
         /// <summary>
-        /// Draw a geometric shape which use index buffer
+        /// Draws a geometric shape which use index buffer
         /// </summary>
         /// <param name="geometry">Geometric shape</param>
         internal void DrawIndexedGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
             _graphicDevice.SetVertexBuffers(renderInfo.VertexData.VertexBindings);
-            _graphicDevice.Indices = renderInfo.IndexData.Buffer;
+            IndexData indexData = renderInfo.IndexData;
+            _graphicDevice.Indices = indexData.HardwareBuffer;
             _graphicDevice.DrawIndexedPrimitives(renderInfo.PrimitiveType, 0, 0, renderInfo.VertexCount,
-                renderInfo.StartIndex, renderInfo.PrimitiveCount);
+                indexData.StartIndex, renderInfo.PrimitiveCount);
             UnsetBuffers();
 
             _frameDetail.AddDrawCall((uint)renderInfo.VertexCount, (uint)renderInfo.PrimitiveCount, 1);
         }
 
         /// <summary>
-        /// Draw a geometric shape which doesn't use index buffer
+        /// Draws a geometric shape which doesn't use index buffer
         /// </summary>
         /// <param name="geometry">Geometric shape</param>
         internal void DrawNonIndexedGeometry(IRenderable geometry)
         {
             RenderingInfo renderInfo = geometry.RenderInfo;
             _graphicDevice.SetVertexBuffers(renderInfo.VertexData.VertexBindings);
-            _graphicDevice.DrawPrimitives(renderInfo.PrimitiveType, renderInfo.StartIndex, renderInfo.PrimitiveCount);
+            _graphicDevice.DrawPrimitives(renderInfo.PrimitiveType, 0, renderInfo.PrimitiveCount);
             UnsetBuffers();
 
             _frameDetail.AddDrawCall((uint)renderInfo.VertexCount, (uint)renderInfo.PrimitiveCount, 1);
         }
 
         /// <summary>
-        /// Draw a geometry batch
+        /// Draws a geometry batch
         /// </summary>
         /// <param name="batch">Bztch of geometric shapes</param>
         internal void DrawInstancedGeometry(InstanceBatch batch)
@@ -219,9 +217,10 @@ namespace Pulsar.Graphics.Rendering
 
             RenderingInfo renderInfo = batch.RenderInfo;
             _graphicDevice.SetVertexBuffers(renderInfo.VertexData.VertexBindings);
-            _graphicDevice.Indices = renderInfo.IndexData.Buffer;
+            IndexData indexData = renderInfo.IndexData;
+            _graphicDevice.Indices = indexData.HardwareBuffer;
             _graphicDevice.DrawInstancedPrimitives(renderInfo.PrimitiveType, 0, 0, renderInfo.VertexCount,
-                renderInfo.StartIndex, renderInfo.PrimitiveCount, batch.InstanceCount);
+                indexData.StartIndex, renderInfo.PrimitiveCount, batch.InstanceCount);
             UnsetBuffers();
 
             int instanceCount = batch.InstanceCount;
@@ -234,7 +233,7 @@ namespace Pulsar.Graphics.Rendering
         #region Properties
 
         /// <summary>
-        /// Get the graphic device used by this renderer
+        /// Gets the graphic device used by this renderer
         /// </summary>
         internal GraphicsDevice GraphicsDevice
         {
@@ -242,7 +241,7 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Get the InstanceBatch manager
+        /// Gets the InstanceBatch manager
         /// </summary>
         internal InstanceBatchManager InstancingManager
         {

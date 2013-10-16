@@ -30,6 +30,7 @@ namespace Pulsar.Graphics.SceneGraph
         private bool _isDirtyFrustum = true;
         private bool _isDirtyBoundingFrustum = true;
         private bool _useFixedYaw = true;
+        private bool _automaticAspect = true;
         private float _near = 1.0f;
         private float _far = 1000.0f;
         private float _aspectRatio = 16.0f/9.0f;
@@ -116,24 +117,46 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Move the camera's position by a specific vector in the world coordinate
+        /// Translate the camera in a specific transform space
         /// </summary>
-        /// <param name="v">Vector to add for translate</param>
-        public void Translate(Vector3 v)
+        /// <param name="v">Translation vector</param>
+        /// <param name="space">Transform space used to translate</param>
+        public void Translate(Vector3 v, TransformSpace space)
         {
-            Vector3.Add(ref _position, ref v, out _position);
-            InvalidateView();
+            Translate(ref v, space);
         }
 
         /// <summary>
-        /// Move the camera's position by a specific vector in the local coordinate
+        /// Translate the camera in a specific transform space
         /// </summary>
-        /// <param name="v">Vector to add for translate</param>
-        public void TranslateRelative(Vector3 v)
+        /// <param name="v">Translation vector</param>
+        /// <param name="space">Transform space used to translate</param>
+        public void Translate(ref Vector3 v, TransformSpace space)
         {
-            Vector3 move;
-            Vector3.Transform(ref v, ref _orientation, out move);
-            Vector3.Add(ref _position, ref move, out _position);
+            switch (space)
+            {
+                case TransformSpace.Local:
+                    Vector3 move;
+                    Vector3.Transform(ref v, ref _orientation, out move);
+                    Vector3.Add(ref _position, ref move, out _position);
+                    break;
+                case TransformSpace.Parent:
+                    Vector3.Add(ref _position, ref v, out _position);
+                    break;
+                case TransformSpace.World:
+                    if (_parent != null)
+                    {
+                        Quaternion invertedOrientation = Quaternion.Inverse(_parent.AbsoluteOrientation);
+                        Vector3 transformedMove;
+                        Vector3.Transform(ref v, ref invertedOrientation, out transformedMove);
+                        transformedMove = Vector3.Divide(transformedMove, _parent.AbsoluteScale);
+                        Vector3.Add(ref _position, ref transformedMove, out _position);
+                    }
+                    else
+                        Vector3.Add(ref _position, ref v, out _position);
+                    break;
+            }
+            InvalidateView();
         }
 
         /// <summary>
@@ -176,6 +199,16 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="angle">Angle to rotate</param>
         public void Rotate(Vector3 axis, float angle)
         {
+            Rotate(ref axis, angle);
+        }
+
+        /// <summary>
+        /// Rotate around an axis
+        /// </summary>
+        /// <param name="axis">Axis to rotate around</param>
+        /// <param name="angle">Angle to rotate</param>
+        public void Rotate(ref Vector3 axis, float angle)
+        {
             Quaternion q;
             Quaternion.CreateFromAxisAngle(ref axis, angle, out q);
             Rotate(q);
@@ -184,10 +217,20 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Rotate around an axis with a quaternion
         /// </summary>
-        /// <param name="q">Quaternion used for rotation</param>
-        public void Rotate(Quaternion q)
+        /// <param name="rotation">Quaternion used for rotation</param>
+        public void Rotate(Quaternion rotation)
         {
-            q.Normalize();
+            Rotate(ref rotation);
+        }
+
+        /// <summary>
+        /// Rotate around an axis with a quaternion
+        /// </summary>
+        /// <param name="rotation">Quaternion used for rotation</param>
+        public void Rotate(ref Quaternion rotation)
+        {
+            Quaternion q;
+            Quaternion.Normalize(ref rotation, out q);
             Quaternion.Multiply(ref q, ref _orientation, out _orientation);
             InvalidateView();
         }
@@ -198,18 +241,39 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="target">Direction to look for</param>
         public void LookAt(Vector3 target)
         {
+            LookAt(ref target);
+        }
+
+        /// <summary>
+        /// Set a direction on wich the camera is looking
+        /// </summary>
+        /// <param name="target">Direction to look for</param>
+        public void LookAt(ref Vector3 target)
+        {
             UpdateView();
-            SetDirection(target - _fullPosition);
+            Vector3 direction;
+            Vector3.Subtract(ref target, ref _fullPosition, out direction);
+            SetDirection(ref direction);
         }
 
         /// <summary>
         /// Set the direction where the camera is watching
         /// </summary>
-        /// <param name="v">Direction vector</param>
-        public void SetDirection(Vector3 v)
+        /// <param name="direction">Direction vector</param>
+        public void SetDirection(Vector3 direction)
+        {
+            SetDirection(ref direction);
+        }
+
+        /// <summary>
+        /// Set the direction where the camera is watching
+        /// </summary>
+        /// <param name="direction">Direction vector</param>
+        public void SetDirection(ref Vector3 direction)
         {
             Quaternion targetOrientation;
-            Vector3 adjustZ = -v;
+            Vector3 adjustZ;
+            Vector3.Negate(ref direction, out adjustZ);
             adjustZ.Normalize();
 
             if (_useFixedYaw)
@@ -224,7 +288,7 @@ namespace Pulsar.Graphics.SceneGraph
 
                 Matrix rotation;
                 MatrixExtension.CreateFromAxes(ref vecX, ref vecY, ref adjustZ, out rotation);
-                Quaternion.CreateFromRotationMatrix(ref rotation, out targetOrientation); 
+                Quaternion.CreateFromRotationMatrix(ref rotation, out targetOrientation);
             }
             else
             {
@@ -280,7 +344,7 @@ namespace Pulsar.Graphics.SceneGraph
 
                     Vector3 orientedPosition;
                     Vector3.Transform(ref _position, ref _lastNodeOrientation, out orientedPosition);
-                    Vector3.Add(ref _fullPosition, ref _lastNodePosition, out _fullPosition);
+                    Vector3.Add(ref orientedPosition, ref _lastNodePosition, out _fullPosition);
 
                     InvalidateView();
                 }
@@ -425,6 +489,8 @@ namespace Pulsar.Graphics.SceneGraph
             internal set
             {
                 _viewport = value;
+                if (!_automaticAspect) return;
+
                 _aspectRatio = _viewport.AspectRatio;
                 InvalidateFrustum();
             }
@@ -441,6 +507,25 @@ namespace Pulsar.Graphics.SceneGraph
                 _projectionType = value;
                 InvalidateFrustum();
             }
+        }
+
+        /// <summary>
+        /// Gets or sets a value that indicates if the aspect ratio is automatically computed 
+        /// by the viewport associated with this camera
+        /// </summary>
+        public bool AutomaticAspectRatio
+        {
+            get { return _automaticAspect; }
+            set { _automaticAspect = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the aspect ratio
+        /// </summary>
+        public float AspectRatio
+        {
+            get { return _aspectRatio; }
+            set { _aspectRatio = value; }
         }
 
         /// <summary>

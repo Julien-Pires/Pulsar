@@ -156,7 +156,6 @@ namespace Pulsar.Graphics.SceneGraph
             {
                 IMovable obj = _movablesList[i];
                 BoundingBox objBox = obj.WorldBoundingBox;
-
                 BoundingBox.CreateMerged(ref _boundingBox, ref objBox, out _boundingBox);
             }
 

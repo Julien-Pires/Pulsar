@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -10,8 +11,7 @@ using Pulsar.Graphics.Rendering;
 namespace Pulsar.Graphics.Debugger
 {
     /// <summary>
-    /// Class to create an draw a bounding box
-    /// Used only for debugging
+    /// Creates a wireframe bounding box used for debugging
     /// </summary>
     internal sealed class MeshBoundingBox : IRenderable
     {
@@ -42,12 +42,14 @@ namespace Pulsar.Graphics.Debugger
         #region Methods
 
         /// <summary>
-        /// Initialize all the buffers
+        /// Initializes all the buffers
         /// </summary>
         private void InitBuffers()
         {
-            GraphicsEngineService engineService = GameApplication.GameServices.GetService(typeof(IGraphicsEngineService)) as GraphicsEngineService;
-            if (engineService == null) throw new NullReferenceException("GraphicsEngineService cannot be found");
+            GraphicsEngineService engineService = GameApplication.GameServices.GetService(typeof(IGraphicsEngineService)) 
+                as GraphicsEngineService;
+            if (engineService == null) 
+                throw new NullReferenceException("GraphicsEngineService cannot be found");
 
             BufferManager bufferMngr = engineService.Engine.BufferManager;
             VertexData vData = new VertexData();
@@ -59,12 +61,9 @@ namespace Pulsar.Graphics.Debugger
             _ibo = bufferMngr.CreateIndexBuffer(BufferType.DynamicWriteOnly, IndexElementSize.SixteenBits,
                 VerticesCount);
             _ibo.SetData(_indices);
-            iData.IndexBufferObj = _ibo;
+            iData.IndexBuffer = _ibo;
 
-            for (short i = 0; i < VerticesCount; i++)
-            {
-                _indices[i] = i;
-            }
+            for (short i = 0; i < VerticesCount; i++) _indices[i] = i;
             
             RenderInfo = new RenderingInfo
             {
@@ -79,7 +78,7 @@ namespace Pulsar.Graphics.Debugger
         }
 
         /// <summary>
-        /// Update the buffers
+        /// Updates the buffers
         /// </summary>
         /// <param name="box">Boundig box used to update buffers data</param>
         internal void UpdateBox(ref BoundingBox box)
@@ -128,7 +127,7 @@ namespace Pulsar.Graphics.Debugger
         #region Properties
 
         /// <summary>
-        /// Get the name of this instace
+        /// Gets the name of this instace
         /// </summary>
         public string Name 
         {
@@ -136,7 +135,7 @@ namespace Pulsar.Graphics.Debugger
         }
 
         /// <summary>
-        /// Get or set a boolean to enable instancing
+        /// Gets or set a boolean to enable instancing
         /// </summary>
         public bool UseInstancing 
         {
@@ -145,7 +144,7 @@ namespace Pulsar.Graphics.Debugger
         }
 
         /// <summary>
-        /// Get the batch ID of this instance
+        /// Gets the batch ID of this instance
         /// </summary>
         public uint BatchId 
         {
@@ -153,7 +152,7 @@ namespace Pulsar.Graphics.Debugger
         }
 
         /// <summary>
-        /// Get the render qeue ID of this instance
+        /// Gets the render qeue ID of this instance
         /// </summary>
         public int RenderQueueId 
         {
@@ -161,7 +160,7 @@ namespace Pulsar.Graphics.Debugger
         }
 
         /// <summary>
-        /// Get the transform matrix of this instance
+        /// Gets the transform matrix of this instance
         /// </summary>
         public Matrix Transform 
         {
@@ -169,12 +168,12 @@ namespace Pulsar.Graphics.Debugger
         }
 
         /// <summary>
-        /// Get the rendering info of this instance
+        /// Gets the rendering info of this instance
         /// </summary>
         public RenderingInfo RenderInfo { get; private set; }
 
         /// <summary>
-        /// Get the material associated to this instance
+        /// Gets the material associated to this instance
         /// </summary>
         public Material Material { get; private set; }
 
