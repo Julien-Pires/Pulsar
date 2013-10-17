@@ -14,9 +14,11 @@ namespace Pulsar.Graphics.Rendering
     public sealed class Renderer : IDisposable
     {
         #region Fields
-        
-        private readonly GraphicsDevice _graphicDevice;
-        private readonly SpriteBatch _spriteBatch;
+
+        private bool _disposed;
+        private readonly GraphicsDeviceManager _graphicsDeviceManager;
+        private GraphicsDevice _graphicDevice;
+        private SpriteBatch _spriteBatch;
         private readonly InstanceBatchManager _instancingManager;
         private readonly IRenderingTechnique _renderingTechnique;
         private readonly FrameDetail _frameDetail = new FrameDetail();
@@ -28,10 +30,13 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Constructor of the GraphicsRenderer class
         /// </summary>
-        /// <param name="gDevice">Graphics device used by this instance</param>
-        internal Renderer(GraphicsDevice gDevice)
+        /// <param name="deviceManager">Graphics device manager</param>
+        internal Renderer(GraphicsDeviceManager deviceManager)
         {
-            _graphicDevice = gDevice;
+            _graphicsDeviceManager = deviceManager;
+            _graphicDevice = deviceManager.GraphicsDevice;
+            deviceManager.DeviceCreated += GraphicsDeviceCreated;
+
             _spriteBatch = new SpriteBatch(_graphicDevice);
             _instancingManager = new InstanceBatchManager(this);
             _renderingTechnique = new SimpleRenderingTechnique(this);
@@ -46,7 +51,20 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public void Dispose()
         {
-            _spriteBatch.Dispose();
+            if(_disposed) return;
+
+            _graphicsDeviceManager.DeviceCreated -= GraphicsDeviceCreated;
+            if(_spriteBatch != null) _spriteBatch.Dispose();
+
+            _disposed = true;
+        }
+
+        private void GraphicsDeviceCreated(object sender, EventArgs e)
+        {
+            _graphicDevice = _graphicsDeviceManager.GraphicsDevice;
+
+            if(_spriteBatch != null) _spriteBatch.Dispose();
+            _spriteBatch = new SpriteBatch(_graphicDevice);
         }
 
         /// <summary>

@@ -37,7 +37,7 @@ namespace Pulsar.Graphics
             if (deviceService == null) 
                 throw new NullReferenceException("No Graphics device service found");
 
-            _renderer = new Renderer(deviceService.GraphicsDevice);
+            _renderer = new Renderer(deviceService);
             _window = new Window(deviceService, _renderer);
             _bufferManager = new BufferManager(deviceService);
         }
