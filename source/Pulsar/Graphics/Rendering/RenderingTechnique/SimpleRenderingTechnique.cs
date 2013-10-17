@@ -96,7 +96,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
                     _shader.UseDefaultTechnique();
                     _shader.SetRenderable(geoInstance.Transform, geoInstance.Material);
                     _shader.Apply();
-                    _renderer.DrawGeometry(geoInstance);
+                    _renderer.Draw(geoInstance);
                 }
                 else
                 {

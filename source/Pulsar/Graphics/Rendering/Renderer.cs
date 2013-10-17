@@ -184,44 +184,28 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Renders a geometric shape
+        /// Renders one 3D geometric shape
         /// </summary>
-        /// <param name="geometry">Geometric object</param>
-        internal void DrawGeometry(IRenderable geometry)
+        /// <param name="geometry"></param>
+        internal void Draw(IRenderable geometry)
         {
-            if (geometry.RenderInfo.UseIndexes) DrawIndexedGeometry(geometry);
-            else DrawNonIndexedGeometry(geometry);
-        }
+            RenderingInfo renderingInfo = geometry.RenderInfo;
 
-        /// <summary>
-        /// Draws a geometric shape which use index buffer
-        /// </summary>
-        /// <param name="geometry">Geometric shape</param>
-        internal void DrawIndexedGeometry(IRenderable geometry)
-        {
-            RenderingInfo renderInfo = geometry.RenderInfo;
-            _graphicDevice.SetVertexBuffers(renderInfo.VertexData.VertexBindings);
-            IndexData indexData = renderInfo.IndexData;
-            _graphicDevice.Indices = indexData.HardwareBuffer;
-            _graphicDevice.DrawIndexedPrimitives(renderInfo.PrimitiveType, 0, 0, renderInfo.VertexCount,
-                indexData.StartIndex, renderInfo.PrimitiveCount);
+            _graphicDevice.SetVertexBuffers(renderingInfo.VertexData.VertexBindings);
+            if (renderingInfo.UseIndexes)
+            {
+                IndexData indexData = renderingInfo.IndexData;
+                _graphicDevice.Indices = indexData.HardwareBuffer;
+                _graphicDevice.DrawIndexedPrimitives(renderingInfo.PrimitiveType, 0, 0,
+                    renderingInfo.VertexCount, indexData.StartIndex, renderingInfo.PrimitiveCount);
+            }
+            else
+            {
+                _graphicDevice.DrawPrimitives(renderingInfo.PrimitiveType, 0, renderingInfo.PrimitiveCount);
+            }
             UnsetBuffers();
 
-            _frameDetail.AddDrawCall((uint)renderInfo.VertexCount, (uint)renderInfo.PrimitiveCount, 1);
-        }
-
-        /// <summary>
-        /// Draws a geometric shape which doesn't use index buffer
-        /// </summary>
-        /// <param name="geometry">Geometric shape</param>
-        internal void DrawNonIndexedGeometry(IRenderable geometry)
-        {
-            RenderingInfo renderInfo = geometry.RenderInfo;
-            _graphicDevice.SetVertexBuffers(renderInfo.VertexData.VertexBindings);
-            _graphicDevice.DrawPrimitives(renderInfo.PrimitiveType, 0, renderInfo.PrimitiveCount);
-            UnsetBuffers();
-
-            _frameDetail.AddDrawCall((uint)renderInfo.VertexCount, (uint)renderInfo.PrimitiveCount, 1);
+            _frameDetail.AddDrawCall((uint)renderingInfo.VertexCount, (uint)renderingInfo.PrimitiveCount, 1);
         }
 
         /// <summary>
