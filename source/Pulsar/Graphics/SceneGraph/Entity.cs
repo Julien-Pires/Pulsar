@@ -100,7 +100,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// Notifies this Entity of the current camera
         /// </summary>
         /// <param name="cam">Current camera</param>
-        public void NotifyCurrentCamera(Camera cam)
+        public void CheckVisibilityWithCamera(Camera cam)
         {
             SpeedFrustum frustCull = cam.FastFrustum;
             UpdateBounds();

@@ -14,9 +14,11 @@ namespace Pulsar.Graphics.Rendering
     public sealed class Renderer : IDisposable
     {
         #region Fields
-        
-        private readonly GraphicsDevice _graphicDevice;
-        private readonly SpriteBatch _spriteBatch;
+
+        private bool _disposed;
+        private readonly GraphicsDeviceManager _graphicsDeviceManager;
+        private GraphicsDevice _graphicDevice;
+        private SpriteBatch _spriteBatch;
         private readonly InstanceBatchManager _instancingManager;
         private readonly IRenderingTechnique _renderingTechnique;
         private readonly FrameDetail _frameDetail = new FrameDetail();
@@ -28,10 +30,13 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Constructor of the GraphicsRenderer class
         /// </summary>
-        /// <param name="gDevice">Graphics device used by this instance</param>
-        internal Renderer(GraphicsDevice gDevice)
+        /// <param name="deviceManager">Graphics device manager</param>
+        internal Renderer(GraphicsDeviceManager deviceManager)
         {
-            _graphicDevice = gDevice;
+            _graphicsDeviceManager = deviceManager;
+            _graphicDevice = deviceManager.GraphicsDevice;
+            deviceManager.DeviceCreated += GraphicsDeviceCreated;
+
             _spriteBatch = new SpriteBatch(_graphicDevice);
             _instancingManager = new InstanceBatchManager(this);
             _renderingTechnique = new SimpleRenderingTechnique(this);
@@ -46,7 +51,20 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public void Dispose()
         {
-            _spriteBatch.Dispose();
+            if(_disposed) return;
+
+            _graphicsDeviceManager.DeviceCreated -= GraphicsDeviceCreated;
+            if(_spriteBatch != null) _spriteBatch.Dispose();
+
+            _disposed = true;
+        }
+
+        private void GraphicsDeviceCreated(object sender, EventArgs e)
+        {
+            _graphicDevice = _graphicsDeviceManager.GraphicsDevice;
+
+            if(_spriteBatch != null) _spriteBatch.Dispose();
+            _spriteBatch = new SpriteBatch(_graphicDevice);
         }
 
         /// <summary>
@@ -166,44 +184,28 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Renders a geometric shape
+        /// Renders one 3D geometric shape
         /// </summary>
-        /// <param name="geometry">Geometric object</param>
-        internal void DrawGeometry(IRenderable geometry)
+        /// <param name="geometry"></param>
+        internal void Draw(IRenderable geometry)
         {
-            if (geometry.RenderInfo.UseIndexes) DrawIndexedGeometry(geometry);
-            else DrawNonIndexedGeometry(geometry);
-        }
+            RenderingInfo renderingInfo = geometry.RenderInfo;
 
-        /// <summary>
-        /// Draws a geometric shape which use index buffer
-        /// </summary>
-        /// <param name="geometry">Geometric shape</param>
-        internal void DrawIndexedGeometry(IRenderable geometry)
-        {
-            RenderingInfo renderInfo = geometry.RenderInfo;
-            _graphicDevice.SetVertexBuffers(renderInfo.VertexData.VertexBindings);
-            IndexData indexData = renderInfo.IndexData;
-            _graphicDevice.Indices = indexData.HardwareBuffer;
-            _graphicDevice.DrawIndexedPrimitives(renderInfo.PrimitiveType, 0, 0, renderInfo.VertexCount,
-                indexData.StartIndex, renderInfo.PrimitiveCount);
+            _graphicDevice.SetVertexBuffers(renderingInfo.VertexData.VertexBindings);
+            if (renderingInfo.UseIndexes)
+            {
+                IndexData indexData = renderingInfo.IndexData;
+                _graphicDevice.Indices = indexData.HardwareBuffer;
+                _graphicDevice.DrawIndexedPrimitives(renderingInfo.PrimitiveType, 0, 0,
+                    renderingInfo.VertexCount, indexData.StartIndex, renderingInfo.PrimitiveCount);
+            }
+            else
+            {
+                _graphicDevice.DrawPrimitives(renderingInfo.PrimitiveType, 0, renderingInfo.PrimitiveCount);
+            }
             UnsetBuffers();
 
-            _frameDetail.AddDrawCall((uint)renderInfo.VertexCount, (uint)renderInfo.PrimitiveCount, 1);
-        }
-
-        /// <summary>
-        /// Draws a geometric shape which doesn't use index buffer
-        /// </summary>
-        /// <param name="geometry">Geometric shape</param>
-        internal void DrawNonIndexedGeometry(IRenderable geometry)
-        {
-            RenderingInfo renderInfo = geometry.RenderInfo;
-            _graphicDevice.SetVertexBuffers(renderInfo.VertexData.VertexBindings);
-            _graphicDevice.DrawPrimitives(renderInfo.PrimitiveType, 0, renderInfo.PrimitiveCount);
-            UnsetBuffers();
-
-            _frameDetail.AddDrawCall((uint)renderInfo.VertexCount, (uint)renderInfo.PrimitiveCount, 1);
+            _frameDetail.AddDrawCall((uint)renderingInfo.VertexCount, (uint)renderingInfo.PrimitiveCount, 1);
         }
 
         /// <summary>
