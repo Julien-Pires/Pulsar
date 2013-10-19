@@ -44,6 +44,8 @@ New feature: Manual mesh
   - InputEvent can now accepts more than one listeners, a boolean is passed to allow stopping next method calls
   - Player index and gamepad index can be different with the PlayerIndex class
   - GamePad class has a static and a non-static methods to release all listeners of events on them
+- **Miscellaneous:**
+  - Some bug fixes
 
 ## 0.3.2 (August 11, 2013)
 
