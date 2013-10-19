@@ -3,46 +3,47 @@
 New feature: Manual mesh
 
 - **Core:**
-	- Message struct use a timestamp instead of a GameTime instance
-	- Services providers implements IDisposable
+  - Message struct use a timestamp instead of a GameTime instance
+  - Services providers implements IDisposable
 - **Extension:**
-	- Method GetValues in EnumExtension class works now for both Windows and Xbox 360
-	- ArrayExtension provides new methods to manipulate arrays
+  - Method GetValues in EnumExtension class works now for both Windows and Xbox 360
+  - ArrayExtension provides new methods to manipulate arrays
 - **Math:**
-	- Method GetAxes signature has changed in QuaternionHelpers class
+  - Method GetAxes signature has changed in QuaternionHelpers class
 - **Graphics:**
   - Mesh can be generated manually with helper methods (Begin/Update/End)
-		- Begin/Update method create a new submesh or start editing an existing one
-		- End validates and generates the submesh and all datas necessary to make it work
-		- Position, Normal, Texture, Index, Triangle, Quad can be used to create new data for the SubMesh currently edited,
-		those methods should be call after Begin/Update
-	- Mesh class has two new methods: UpdateMeshInfo to update Mesh informations (PrimitiveCount, ...) and
-	UpdateBounds to update Mesh bounding volumes, those methods could be called when Mesh are not loaded from a file
-	or generated with helper methods
-	- BufferObject can now resize automatically, if a set of data is too large the buffer object will allocate a new buffer 
-	with enough space and copy data from the old buffer to the new one, the old one will be destroyed
-	- BufferObject class provides new methods to manipulate data in a buffer
-	- VertexBufferObject and IndexBufferObject class provides an event to listen for when a new block of memory has been allocated
-	- VertexData and IndexData properties on Mesh and SubMesh class are now read-only
-	- SubMesh class implements IDisposable
-	- RenderingInfo class has a new method ComputePrimitiveCount to compute the number of primitive used by this instance
-	- BoundingVolume class provides new methods to do intersection test
-	- Camera class has new methods using ref/out parameters (Translate, Scale, ...)
-	- Viewport property in Camera class has been renamed CurrentViewport
-	- Camera class can override Viewport aspect ratio when rendering, AutomaticAspectRatio property tell the camera
-	to use its own AspectRatio instead of Viewport one
-	- Node class has new methods using ref/out parameters (Translate, Scale, ...)
-	- Fields in Node class are now private
-	- Node class has new properties to get specific Matrix (ScaleTransform, OrientationTransform, ...)
-	- GraphicsEngine class has a method to destroy a SceneGraph
-	- NotifyCurrentCamera method in IMovable interface has been renamed to CheckVisibilityWithCamera
+    - Begin/Update method create a new submesh or start editing an existing one
+    - End validates and generates the submesh and all datas necessary to make it work
+    - Position, Normal, Texture, Index, Triangle, Quad can be used to create new data for the SubMesh currently edited,
+    those methods should be call after Begin/Update
+  - Mesh class has two new methods: UpdateMeshInfo to update Mesh informations (PrimitiveCount, ...) and
+  UpdateBounds to update Mesh bounding volumes, those methods could be called when Mesh are not loaded from a file
+  or generated with helper methods
+  - BufferObject can now resize automatically, if a set of data is too large the buffer object will allocate a new buffer 
+  with enough space and copy data from the old buffer to the new one, the old one will be destroyed
+  - BufferObject class provides new methods to manipulate data in a buffer
+  - VertexBufferObject and IndexBufferObject class provides an event to listen for when a new block of memory has been allocated
+  - VertexData and IndexData properties on Mesh and SubMesh class are now read-only
+  - SubMesh class implements IDisposable
+  - SubMesh use its own VertexData and IndexData instance but VBO and IBO can be shared with parent Mesh
+  - RenderingInfo class has a new method ComputePrimitiveCount to compute the number of primitive used by this instance
+  - BoundingVolume class provides new methods to do intersection test
+  - Camera class has new methods using ref/out parameters (Translate, Scale, ...)
+  - Viewport property in Camera class has been renamed CurrentViewport
+  - Camera class can override Viewport aspect ratio when rendering, AutomaticAspectRatio property tell the camera
+  to use its own AspectRatio instead of Viewport one
+  - Node class has new methods using ref/out parameters (Translate, Scale, ...)
+  - Fields in Node class are now private
+  - Node class has new properties to get specific Matrix (ScaleTransform, OrientationTransform, ...)
+  - GraphicsEngine class has a method to destroy a SceneGraph
+  - NotifyCurrentCamera method in IMovable interface has been renamed to CheckVisibilityWithCamera
 - **Input:**
   - InputAction class has been renamed InputEvent
-	- PlayerInput class has been renamed Player
-	- ButtonType enum and InputDevice enum are byte type
-	- InputEvent can now accepts more than one listeners, a boolean is passed to allow stopping next method calls
-	- Player index and gamepad index can be different with the PlayerIndex class
-	- GamePad class has a static and a non-static methods to release all listeners of events on them
+  - PlayerInput class has been renamed Player
+  - ButtonType enum and InputDevice enum are byte type
+  - InputEvent can now accepts more than one listeners, a boolean is passed to allow stopping next method calls
+  - Player index and gamepad index can be different with the PlayerIndex class
+  - GamePad class has a static and a non-static methods to release all listeners of events on them
 
 ## 0.3.2 (August 11, 2013)
 
