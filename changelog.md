@@ -6,10 +6,10 @@ New feature: Manual mesh
   - Message struct use a timestamp instead of a GameTime instance
   - Services providers implements IDisposable
 - **Extension:**
-  - Method GetValues in EnumExtension class works now for both Windows and Xbox 360
+  - GetValues in EnumExtension class works now for both Windows and Xbox 360
   - ArrayExtension provides new methods to manipulate arrays
 - **Math:**
-  - Method GetAxes signature has changed in QuaternionHelpers class
+  - GetAxes signature has changed in QuaternionHelpers class
 - **Graphics:**
   - **New:** Mesh can be generated manually with helper methods (Begin/Update/End)
       - Begin/Update method create a new submesh or start editing an existing one
