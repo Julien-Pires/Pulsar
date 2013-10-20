@@ -67,7 +67,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="movObj">IMovable instance</param>
         internal void ProcessVisibleObject(Camera cam, IMovable movObj)
         {
-            movObj.NotifyCurrentCamera(cam);
+            movObj.CheckVisibilityWithCamera(cam);
 
             if (movObj.IsRendered) movObj.UpdateRenderQueue(this);
         }

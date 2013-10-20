@@ -50,7 +50,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         public void Render(Viewport vp, Camera cam, RenderQueue queue)
         {
             _renderer.SetRenderTarget(vp.RenderTarget);
-            _shader.SetViewProj(ref cam.ViewMatrix, ref cam.ProjectionMatrix);
+            _shader.SetViewProj(cam.ViewTransform, cam.ProjectionTransform);
 
             RenderQueueGroup[] queueGroups = queue.QueueGroupList;
             for (int i = 0; i < (int)RenderQueueGroupId.Count; i++)
@@ -96,7 +96,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
                     _shader.UseDefaultTechnique();
                     _shader.SetRenderable(geoInstance.Transform, geoInstance.Material);
                     _shader.Apply();
-                    _renderer.DrawGeometry(geoInstance);
+                    _renderer.Draw(geoInstance);
                 }
                 else
                 {

@@ -5,16 +5,19 @@ namespace Pulsar.Graphics
     /// <summary>
     /// Enum for bounding volume type
     /// </summary>
-    public enum BoundingType { Aabb, Sphere };
+    public enum BoundingType
+    {
+        Aabb, 
+        Sphere
+    };
 
     /// <summary>
-    /// Manage various type of bounding volume
+    /// Manages various type of bounding volume
     /// </summary>
     public sealed class BoundingVolume
     {
         #region Fields
 
-        private BoundingType _boundType = BoundingType.Aabb;
         private BoundingBox _initialBox;
         private BoundingSphere _initialSphere;
         private BoundingSphere _realSphere;
@@ -48,41 +51,66 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Update bounding volumes
+        /// Updates bounding volumes
+        /// </summary>
+        /// <param name="transform">Matrix transform</param>
+        public void Update(Matrix transform)
+        {
+            Update(ref transform);
+        }
+
+        /// <summary>
+        /// Updates bounding volumes
         /// </summary>
         /// <param name="transform">Matrix transform</param>
         public void Update(ref Matrix transform)
         {
-            switch (_boundType)
-            {
-                case BoundingType.Aabb: UpdateAabb(ref transform);
-                    break;
-                case BoundingType.Sphere: UpdateSphere(ref transform);
-                    break;
-            }
+            UpdateAabb(ref transform);
+            UpdateSphere(ref transform);
         }
 
         /// <summary>
-        /// Performs intersection with a frustum
+        /// Performs intersection between a frustum and the AABB
         /// </summary>
         /// <param name="frustum">Frustum</param>
         /// <returns>Returns true if the bounding volume intersect with the frustum otherwise false</returns>
-        public bool FrustumIntersect(ref SpeedFrustum frustum)
+        public bool FrustumToAabbIntersect(SpeedFrustum frustum)
         {
-            bool result = false;
-            switch (_boundType)
-            {
-                case BoundingType.Aabb: result = frustum.Intersects(ref _realBox);
-                    break;
-                case BoundingType.Sphere: result = frustum.Intersects(ref _realSphere);
-                    break;
-            }
-
-            return result;
+            return frustum.Intersects(ref _realBox);
         }
 
         /// <summary>
-        /// Update the AABB
+        /// Performs intersection between a frustum and the AABB
+        /// </summary>
+        /// <param name="frustum">Frustum</param>
+        /// <returns>Returns true if the bounding volume intersect with the frustum otherwise false</returns>
+        public bool FrustumToAabbIntersect(ref SpeedFrustum frustum)
+        {
+            return frustum.Intersects(ref _realBox);
+        }
+
+        /// <summary>
+        /// Performs intersection between a frustum and the bouding sphere
+        /// </summary>
+        /// <param name="frustum">Frustum</param>
+        /// <returns>Returns true if the bounding volume intersect with the frustum otherwise false</returns>
+        public bool FrustumToSphereIntersect(SpeedFrustum frustum)
+        {
+            return frustum.Intersects(ref _realSphere);
+        }
+
+        /// <summary>
+        /// Performs intersection between a frustum and the bouding sphere
+        /// </summary>
+        /// <param name="frustum">Frustum</param>
+        /// <returns>Returns true if the bounding volume intersect with the frustum otherwise false</returns>
+        public bool FrustumToSphereIntersect(ref SpeedFrustum frustum)
+        {
+            return frustum.Intersects(ref _realSphere);
+        }
+
+        /// <summary>
+        /// Updates the AABB
         /// </summary>
         /// <param name="transform">Matrix transform</param>
         private void UpdateAabb(ref Matrix transform)
@@ -108,7 +136,7 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Update the bounding sphere
+        /// Updates the bounding sphere
         /// </summary>
         /// <param name="transform">Matrix transform</param>
         private void UpdateSphere(ref Matrix transform)
@@ -121,16 +149,7 @@ namespace Pulsar.Graphics
         #region Properties
 
         /// <summary>
-        /// Get or set the type of bounding volume used
-        /// </summary>
-        public BoundingType Type
-        {
-            get { return _boundType; }
-            set { _boundType = value; }
-        }
-
-        /// <summary>
-        /// Get the AABB
+        /// Gets the AABB
         /// </summary>
         public BoundingBox Box
         {
@@ -138,7 +157,7 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Get the bounding sphere
+        /// Gets the bounding sphere
         /// </summary>
         public BoundingSphere Sphere
         {
@@ -146,7 +165,7 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Get the initial AABB
+        /// Gets the initial AABB
         /// </summary>
         public BoundingBox InitialBox
         {
@@ -155,7 +174,7 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Get the initial bounding sphere
+        /// Gets the initial bounding sphere
         /// </summary>
         public BoundingSphere InitialSphere
         {

@@ -3,7 +3,7 @@
 namespace Pulsar.Graphics.Rendering
 {
     /// <summary>
-    /// Class containing all information about a geometry object
+    /// Contains information used to draw a 3D shape
     /// </summary>
     public sealed class RenderingInfo
     {
@@ -23,7 +23,6 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         internal RenderingInfo()
         {
-            PrimitiveType = PrimitiveType.TriangleList;
             Id = _idCounter++;
         }
 
@@ -32,7 +31,35 @@ namespace Pulsar.Graphics.Rendering
         #region Methods
 
         /// <summary>
-        /// Copy this instance of rendering info to an another
+        /// Computes number of primtives that composed the 3D shape
+        /// </summary>
+        public void ComputePrimitiveCount()
+        {
+            if (VertexCount == 0)
+            {
+                PrimitiveCount = 0;
+                return;
+            }
+
+            switch (PrimitiveType)
+            {
+                case PrimitiveType.LineList:
+                    PrimitiveCount = (UseIndexes ? IndexData.IndexCount : VertexCount) / 2;
+                    break;
+                case PrimitiveType.LineStrip:
+                    PrimitiveCount = (UseIndexes ? IndexData.IndexCount : VertexCount) - 1;
+                    break;
+                case PrimitiveType.TriangleList:
+                    PrimitiveCount = (UseIndexes ? IndexData.IndexCount : VertexCount) / 3;
+                    break;
+                case PrimitiveType.TriangleStrip:
+                    PrimitiveCount = (UseIndexes ? IndexData.IndexCount : VertexCount) - 2;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Copies this instance of rendering info to an another
         /// </summary>
         /// <param name="other">Rendering info instance receiving all data of this instance</param>
         public void CopyTo(RenderingInfo other)
@@ -40,7 +67,6 @@ namespace Pulsar.Graphics.Rendering
             other.VertexData = VertexData;
             other.IndexData = IndexData;
             other.PrimitiveType = PrimitiveType;
-            other.StartIndex = StartIndex;
             other.PrimitiveCount = PrimitiveCount;
             other.VertexCount = VertexCount;
         }
@@ -50,34 +76,29 @@ namespace Pulsar.Graphics.Rendering
         #region Properties
 
         /// <summary>
-        /// Get the Id
+        /// Gets the Id
         /// </summary>
         public uint Id { get; internal set; }
 
         /// <summary>
-        /// Get the primitive type used for rendering
+        /// Gets the primitive type used for rendering
         /// </summary>
-        public PrimitiveType PrimitiveType { get; internal set; }
+        public PrimitiveType PrimitiveType { get; set; }
 
         /// <summary>
-        /// Get the start index
+        /// Gets the number of primitive
         /// </summary>
-        public int StartIndex { get; internal set; }
+        public int PrimitiveCount { get; set; }
 
         /// <summary>
-        /// Get the number of primitive
+        /// Gets the number of vertex
         /// </summary>
-        public int PrimitiveCount { get; internal set; }
+        public int VertexCount { get; set; }
 
         /// <summary>
-        /// Get the number of vertex
+        /// Gets a value indicating if an index buffer is used
         /// </summary>
-        public int VertexCount { get; internal set; }
-
-        /// <summary>
-        /// Get a value indicating if index buffer is used
-        /// </summary>
-        public bool UseIndexes { get; internal set; }
+        public bool UseIndexes { get; set; }
 
         #endregion
     }

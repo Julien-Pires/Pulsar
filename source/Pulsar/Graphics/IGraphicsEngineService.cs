@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface describing a service managing a graphic engine
     /// </summary>
-    interface IGraphicsEngineService
+    public interface IGraphicsEngineService
     {
         #region Fields
 

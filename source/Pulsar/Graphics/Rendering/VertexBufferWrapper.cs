@@ -13,6 +13,7 @@ namespace Pulsar.Graphics.Rendering
         #region Fields
 
         protected readonly TBuffer Buffer;
+
         private bool _disposed;
 
         #endregion
@@ -67,14 +68,11 @@ namespace Pulsar.Graphics.Rendering
             _disposed = true;
         }
 
-        /// <summary>
-        /// Gets the data stored in the buffer
-        /// </summary>
-        /// <typeparam name="T">Type of vertex in the buffer</typeparam>
-        /// <param name="data">Array in which to store data</param>
-        public void GetData<T>(T[] data) where T : struct
+        public void GetData<T>(int bufferOffset, T[] data, int startIndex, int elementCount) where T : struct
         {
-            Buffer.GetData(data);
+            int vertexStride = Buffer.VertexDeclaration.VertexStride;
+            int offsetInByte = bufferOffset * vertexStride;
+            Buffer.GetData(offsetInByte, data, startIndex, elementCount, vertexStride);
         }
 
         /// <summary>
@@ -85,11 +83,16 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
-        public abstract void SetData<T>(T[] data, int startIdx, int elementCount, SetDataOptions option) where T : struct;
+        public abstract void SetData<T>(int bufferOffset, T[] data, int startIdx, int elementCount, SetDataOptions option) where T : struct;
 
         #endregion
 
         #region Properties
+
+        public int ElementCount
+        {
+            get { return Buffer.VertexCount; }
+        }
 
         /// <summary>
         /// Gets the vertex buffer
@@ -129,9 +132,11 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
-        public override void SetData<T>(T[] data, int startIdx, int elementCount, SetDataOptions option)
+        public override void SetData<T>(int bufferOffset, T[] data, int startIdx, int elementCount, SetDataOptions option)
         {
-            Buffer.SetData(data, startIdx, elementCount);
+            int vertexStride = Buffer.VertexDeclaration.VertexStride;
+            int offsetInByte = bufferOffset * vertexStride;
+            Buffer.SetData(offsetInByte, data, startIdx, elementCount, vertexStride);
         }
 
         #endregion
@@ -164,9 +169,11 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="startIdx">Starting index in the buffer</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
-        public override void SetData<T>(T[] data, int startIdx, int elementCount, SetDataOptions option)
+        public override void SetData<T>(int bufferOffset, T[] data, int startIdx, int elementCount, SetDataOptions option)
         {
-            Buffer.SetData(data, startIdx, elementCount, option);
+            int vertexStride = Buffer.VertexDeclaration.VertexStride;
+            int offsetInByte = bufferOffset * vertexStride;
+            Buffer.SetData(offsetInByte, data, startIdx, elementCount, vertexStride, option);
         }
 
         #endregion

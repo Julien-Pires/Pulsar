@@ -24,7 +24,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// Notify this instance of the current camera
         /// </summary>
         /// <param name="cam">Current camera</param>
-        void NotifyCurrentCamera(Camera cam);
+        void CheckVisibilityWithCamera(Camera cam);
 
         /// <summary>
         /// Update the render queue

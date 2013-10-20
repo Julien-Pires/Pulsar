@@ -11,7 +11,7 @@ namespace Pulsar.Graphics
     /// <summary>
     /// Class used as an entry point for the Graphics system
     /// </summary>
-    public sealed class GraphicsEngine
+    public sealed class GraphicsEngine : IDisposable
     {
         #region Fields
 
@@ -32,10 +32,12 @@ namespace Pulsar.Graphics
         {
             if (services == null) throw new ArgumentNullException("services");
 
-            GraphicsDeviceManager deviceService = services.GetService(typeof(IGraphicsDeviceManager)) as GraphicsDeviceManager;
-            if (deviceService == null) throw new NullReferenceException("No Graphics device service found");
+            GraphicsDeviceManager deviceService = services.GetService(typeof(IGraphicsDeviceManager)) 
+                as GraphicsDeviceManager;
+            if (deviceService == null) 
+                throw new NullReferenceException("No Graphics device service found");
 
-            _renderer = new Renderer(deviceService.GraphicsDevice);
+            _renderer = new Renderer(deviceService);
             _window = new Window(deviceService, _renderer);
             _bufferManager = new BufferManager(deviceService);
         }
@@ -45,7 +47,16 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Render the current frame
+        /// Disposes all resources
+        /// </summary>
+        public void Dispose()
+        {
+            _window.Dispose();
+            _renderer.Dispose();
+        }
+
+        /// <summary>
+        /// Renders the current frame
         /// </summary>
         /// <param name="time">Time since last update</param>
         public void Render(GameTime time)
@@ -54,7 +65,7 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Create a scene graph
+        /// Creates a scene graph
         /// </summary>
         /// <param name="name">Name of the scene graph</param>
         /// <returns>Returns an instance of SceneGraph class</returns>
@@ -67,7 +78,17 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Get a scene graph by his name
+        /// Removes a scene graph
+        /// </summary>
+        /// <param name="name">Name of the scene graph</param>
+        /// <returns>Returns true if the scene graph is removed otherwise false</returns>
+        public bool RemoveSceneGraph(string name)
+        {
+            return _scenes.Remove(name);
+        }
+
+        /// <summary>
+        /// Gets a scene graph by its name
         /// </summary>
         /// <param name="name">Name of the scene graph</param>
         /// <returns>Returns an instance of SceneGraph</returns>
@@ -81,7 +102,7 @@ namespace Pulsar.Graphics
         #region Properties
 
         /// <summary>
-        /// Get statistics about drawn frames
+        /// Gets statistics about drawn frames
         /// </summary>
         public FrameStatistics FrameStatistics
         {
@@ -89,7 +110,7 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Get the window
+        /// Gets the window
         /// </summary>
         public Window Window
         {
@@ -97,7 +118,7 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Get the buffer manager
+        /// Gets the buffer manager
         /// </summary>
         public BufferManager BufferManager
         {
@@ -105,7 +126,7 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Get the renderer
+        /// Gets the renderer
         /// </summary>
         internal Renderer Renderer
         {

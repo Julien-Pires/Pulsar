@@ -10,8 +10,7 @@ using Pulsar.Graphics.Debugger;
 namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
-    /// An Entity represent a complete mesh object in the 3D scene. 
-    /// The Entity is composed of multiple SubEntity wich represent a subpart of the mesh.
+    /// Represents and manipulates a mesh in a 3D scene graph
     /// </summary>
     public sealed class Entity : IMovable
     {
@@ -40,7 +39,6 @@ namespace Pulsar.Graphics.SceneGraph
         internal Entity()
         {
             Visible = true;
-            _bounds.Type = BoundingType.Aabb;
         }
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace Pulsar.Graphics.SceneGraph
         #region Methods
 
         /// <summary>
-        /// Process the mesh associated to this entity to extract data
+        /// Extracts data from the associated mesh
         /// </summary>
         private void ProcessMesh()
         {
@@ -70,7 +68,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Reset the entity
+        /// Resets the entity
         /// </summary>
         private void Reset()
         {
@@ -80,7 +78,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Attach this object to a scene node
+        /// Attachs this object to a scene node
         /// <remarks>(Used internally)</remarks>
         /// </summary>
         /// <param name="parent">Node parent</param>
@@ -90,7 +88,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Detach this object from a scene node
+        /// Detachs this object from a scene node
         /// <remarks>(Used internally)</remarks>
         /// </summary>
         public void DetachParent()
@@ -99,19 +97,19 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Notify this Entity of the current camera
+        /// Notifies this Entity of the current camera
         /// </summary>
         /// <param name="cam">Current camera</param>
-        public void NotifyCurrentCamera(Camera cam)
+        public void CheckVisibilityWithCamera(Camera cam)
         {
             SpeedFrustum frustCull = cam.FastFrustum;
             UpdateBounds();
 
-            _isRendered = _bounds.FrustumIntersect(ref frustCull);
+            _isRendered = _bounds.FrustumToAabbIntersect(ref frustCull);
         }
 
         /// <summary>
-        /// Merge the bounding box of the entity with another one
+        /// Merges the bounding box of the entity with another one
         /// </summary>
         /// <param name="original">Bounding box to merge with the box of the entity</param>
         /// <exception cref="NotImplementedException"></exception>
@@ -122,7 +120,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Update the given render queue with all the sub-entities of this Entity
+        /// Updates the given render queue with all the sub-entities of this Entity
         /// </summary>
         /// <param name="queue">RenderQueue to fill</param>
         public void UpdateRenderQueue(RenderQueue queue)
@@ -133,14 +131,12 @@ namespace Pulsar.Graphics.SceneGraph
                 queue.AddRenderable(sub);
             }
 
-            if (RenderAabb)
-            {
-                if (_meshAabb == null) _meshAabb = new MeshBoundingBox();
+            if (!RenderAabb) return;
 
-                BoundingBox aabb = _bounds.Box;
-                _meshAabb.UpdateBox(ref aabb);
-                queue.AddRenderable(_meshAabb);
-            }
+            if (_meshAabb == null) _meshAabb = new MeshBoundingBox();
+            BoundingBox aabb = _bounds.Box;
+            _meshAabb.UpdateBox(ref aabb);
+            queue.AddRenderable(_meshAabb);
         }
 
         /// <summary>
@@ -166,7 +162,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Create all the sub-entities for this Entity
+        /// Creates all the sub-entities for this Entity
         /// </summary>
         private void CreateSubEntities()
         {
@@ -175,14 +171,14 @@ namespace Pulsar.Graphics.SceneGraph
             for (int i = 0; i < subMeshes.Count; i++)
             {
                 SubMesh meshPart = subMeshes[i];
-                SubEntity subEnt = new SubEntity(meshPart.ID.ToString(CultureInfo.InvariantCulture), this, meshPart);
+                SubEntity subEnt = new SubEntity(meshPart.Id.ToString(CultureInfo.InvariantCulture), this, meshPart);
 
                 _subEntities.Add(subEnt);
             }
         }
 
         /// <summary>
-        /// Compute the entity bounding box
+        /// Updates the entity bounding box
         /// </summary>
         private void UpdateBounds()
         {
@@ -195,12 +191,12 @@ namespace Pulsar.Graphics.SceneGraph
         #region Properties
 
         /// <summary>
-        /// Get or set a boolean indicating if this entity use batch for draw calls
+        /// Gets or sets a value indicating if this entity use instancing for draw calls
         /// </summary>
         public bool UseInstancing { get; set; }
 
         /// <summary>
-        /// Set the model attached to this Entity
+        /// Sets the model attached to this Entity
         /// </summary>
         public Mesh Mesh
         {
@@ -214,7 +210,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get the AABB of the entity
+        /// Gets the AABB of the entity
         /// </summary>
         public BoundingBox WorldBoundingBox
         {
@@ -227,7 +223,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get a boolean indicating if this object is attached to a scene node
+        /// Gets a value indicating if this object is attached to a scene node
         /// </summary>
         public bool IsAttached
         {
@@ -235,7 +231,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get the name of this Entity
+        /// Gets the name of this Entity
         /// </summary>
         public string Name
         {
@@ -243,12 +239,12 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get or set a boolean indicating if this object is visible
+        /// Gets or sets a value indicating if this object is visible
         /// </summary>
         public bool Visible { get; set; }
 
         /// <summary>
-        /// Get a boolean indicating if this entity is rendered
+        /// Gets a value indicating if this entity is rendered
         /// </summary>
         public bool IsRendered
         {
@@ -256,12 +252,12 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get a boolean indicating if the parent has changed
+        /// Gets a value indicating if the parent has changed
         /// </summary>
         public bool HasParentChanged { get; set; }
 
         /// <summary>
-        /// Get the parent scene node
+        /// Gets the parent scene node
         /// </summary>
         public SceneNode Parent
         {
@@ -269,7 +265,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get the transform matrix of this object
+        /// Gets the transform matrix of this object
         /// </summary>
         public Matrix Transform
         {
@@ -280,7 +276,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get the list of all sub entity
+        /// Gets the list of all sub entity
         /// </summary>
         internal List<SubEntity> SubEntities
         {

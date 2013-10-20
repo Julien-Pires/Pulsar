@@ -29,7 +29,7 @@ namespace Pulsar.Graphics.Rendering
     }
 
     /// <summary>
-    /// Used to create buffer object on a graphics device
+    /// Creates buffer object on a graphics device
     /// </summary>
     public sealed class BufferManager
     {
@@ -53,86 +53,86 @@ namespace Pulsar.Graphics.Rendering
 
         #endregion
 
+        #region Static methods
+
+        /// <summary>
+        /// Resolves buffer type from a vertex buffer instance
+        /// </summary>
+        /// <param name="buffer">Vertex buffer</param>
+        /// <returns>Returns a value of BufferType corresponding to the vertex buffer</returns>
+        public static BufferType ResolveBufferType(VertexBuffer buffer)
+        {
+            DynamicVertexBuffer dynBuffer = buffer as DynamicVertexBuffer;
+            if (dynBuffer != null)
+                return (dynBuffer.BufferUsage == BufferUsage.None) ? BufferType.Dynamic : BufferType.DynamicWriteOnly;
+
+            return (buffer.BufferUsage == BufferUsage.None) ? BufferType.Static : BufferType.StaticWriteOnly;
+        }
+
+        /// <summary>
+        /// Resolves buffer type from an index buffer instance
+        /// </summary>
+        /// <param name="buffer">Index buffer</param>
+        /// <returns>Returns a value of BufferType corresponding to the index buffer</returns>
+        public static BufferType ResolveBufferType(IndexBuffer buffer)
+        {
+            DynamicIndexBuffer dynBuffer = buffer as DynamicIndexBuffer;
+            if (dynBuffer != null)
+                return (dynBuffer.BufferUsage == BufferUsage.None) ? BufferType.Dynamic : BufferType.DynamicWriteOnly;
+
+            return (buffer.BufferUsage == BufferUsage.None) ? BufferType.Static : BufferType.StaticWriteOnly;
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
-        /// Create a new VertexBufferObject
+        /// Creates a new VertexBufferObject
         /// </summary>
         /// <param name="bufferType">Type of buffer to create</param>
         /// <param name="vertexType">Type of vertex stored in the buffer</param>
         /// <param name="vertexCount">Number of vertices stored in the buffer</param>
-        /// <returns>Return a VertexBufferObject</returns>
+        /// <returns>Returns a VertexBufferObject</returns>
         public VertexBufferObject CreateVertexBuffer(BufferType bufferType, Type vertexType, int vertexCount)
         {
-            VertexBuffer buffer = null;
-            switch (bufferType)
-            {
-                case BufferType.Static: buffer = new VertexBuffer(_deviceManager.GraphicsDevice, vertexType,
-                    vertexCount, BufferUsage.None);
-                    break;
-                case BufferType.StaticWriteOnly: buffer = new VertexBuffer(_deviceManager.GraphicsDevice, vertexType,
-                    vertexCount, BufferUsage.WriteOnly);
-                    break;
-                case BufferType.Dynamic: buffer = new DynamicVertexBuffer(_deviceManager.GraphicsDevice, vertexType,
-                    vertexCount, BufferUsage.None);
-                    break;
-                case BufferType.DynamicWriteOnly: buffer = new DynamicVertexBuffer(_deviceManager.GraphicsDevice, vertexType,
-                    vertexCount, BufferUsage.WriteOnly);
-                    break;
-            }
-            if (buffer == null) throw new Exception("Failed to create buffer, wrong buffer type provided");
-
-            return new VertexBufferObject(buffer);
+            return new VertexBufferObject(_deviceManager.GraphicsDevice, bufferType, vertexType, vertexCount);
         }
 
         /// <summary>
-        /// Create a new IndexBufferObject
+        /// Creates a new IndexBufferObject
         /// </summary>
         /// <param name="bufferType">Type of buffer to create</param>
         /// <param name="elementSize">Size of index stored in the buffer</param>
         /// <param name="indexCount">Number of indices in the buffer</param>
-        /// <returns>Return an IndexBufferObject</returns>
+        /// <returns>Returns an IndexBufferObject</returns>
         public IndexBufferObject CreateIndexBuffer(BufferType bufferType, IndexElementSize elementSize, int indexCount)
         {
-            IndexBuffer buffer = null;
-            switch (bufferType)
-            {
-                case BufferType.Static: buffer = new IndexBuffer(_deviceManager.GraphicsDevice, elementSize,
-                    indexCount, BufferUsage.None);
-                    break;
-                case BufferType.StaticWriteOnly: buffer = new IndexBuffer(_deviceManager.GraphicsDevice, elementSize,
-                    indexCount, BufferUsage.WriteOnly);
-                    break;
-                case BufferType.Dynamic: buffer = new DynamicIndexBuffer(_deviceManager.GraphicsDevice, elementSize,
-                    indexCount, BufferUsage.None);
-                    break;
-                case BufferType.DynamicWriteOnly: buffer = new DynamicIndexBuffer(_deviceManager.GraphicsDevice, elementSize,
-                    indexCount, BufferUsage.WriteOnly);
-                    break;
-            }
-            if (buffer == null) throw new Exception("Failed to create buffer, wrong buffer type provided");
-
-            return new IndexBufferObject(buffer);
+            return new IndexBufferObject(_deviceManager.GraphicsDevice, bufferType, elementSize, indexCount);
         }
 
         /// <summary>
-        /// Create a new VertexBufferObject
+        /// Creates a new VertexBufferObject
         /// </summary>
         /// <param name="buffer">VertexBuffer used by the VertexBufferObject</param>
-        /// <returns>Return a VertexBufferObject</returns>
+        /// <returns>Returns a VertexBufferObject</returns>
         internal VertexBufferObject CreateVertexBuffer(VertexBuffer buffer)
         {
-            return new VertexBufferObject(buffer);
+            BufferType bufferType = ResolveBufferType(buffer);
+
+            return new VertexBufferObject(_deviceManager.GraphicsDevice, bufferType, buffer);
         }
 
         /// <summary>
-        /// Create a new IndexBufferObject
+        /// Creates a new IndexBufferObject
         /// </summary>
         /// <param name="buffer">IndexBuffer used by the IndexBufferObject</param>
-        /// <returns>Return an IndexBufferObject</returns>
+        /// <returns>Returns an IndexBufferObject</returns>
         internal IndexBufferObject CreateIndexBuffer(IndexBuffer buffer)
         {
-            return new IndexBufferObject(buffer);
+            BufferType bufferType = ResolveBufferType(buffer);
+
+            return new IndexBufferObject(_deviceManager.GraphicsDevice, bufferType, buffer);
         }
 
         #endregion

@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace Pulsar.Mathematic
 {
@@ -20,7 +18,6 @@ namespace Pulsar.Mathematic
         {
             Matrix rotation;
             Matrix.CreateFromQuaternion(ref q, out rotation);
-
             Vector3[] axes = new Vector3[3];
             
             axes[0].X = rotation.M11;
@@ -43,12 +40,10 @@ namespace Pulsar.Mathematic
         /// </summary>
         /// <param name="q">Quaternion instance</param>
         /// <param name="axes">An array containing the three axis</param>
-        public static void GetAxes(this Quaternion q, out Vector3[] axes)
+        public static void GetAxes(this Quaternion q, Vector3[] axes)
         {
             Matrix rotation;
             Matrix.CreateFromQuaternion(ref q, out rotation);
-
-            axes = new Vector3[3];
 
             axes[0].X = rotation.M11;
             axes[0].Y = rotation.M21;

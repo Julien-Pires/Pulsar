@@ -14,6 +14,8 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
 
+        public Camera Camera;
+
         private float _width;
         private float _height;
         private float _topPosition;
@@ -21,7 +23,6 @@ namespace Pulsar.Graphics.Rendering
         private bool _disposed;
         private bool _isDirty = true;
         private readonly RenderTarget _parentTarget;
-        public Camera Camera;
         private readonly FrameDetail _frameDetail = new FrameDetail();
 
         #endregion

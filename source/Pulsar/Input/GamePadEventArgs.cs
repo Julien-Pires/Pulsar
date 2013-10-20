@@ -24,7 +24,7 @@ namespace Pulsar.Input
         /// <param name="pad">Gamepad associated with the event</param>
         public GamePadEventArgs(GamePad pad)
         {
-            this.GamePad = pad;
+            GamePad = pad;
         }
 
         #endregion

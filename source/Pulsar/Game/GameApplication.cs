@@ -1,11 +1,7 @@
-﻿using System;
-using System.Text;
-
-using System.Collections.Generic;
+﻿using System.Threading;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Input;
 using Pulsar.Graphics;
@@ -21,10 +17,9 @@ namespace Pulsar.Game
     {
         #region Fields
 
-        protected GraphicsDeviceManager gDeviceMngr;
-        protected GraphicsEngineService gEngine;
-        protected InputService inputService;
-        protected SpriteBatch spriteBatch;
+        private GraphicsEngineService _graphicsEngineService;
+        private InputService _inputService;
+        private GraphicsDeviceManager _deviceManager;
 
         #endregion
 
@@ -35,10 +30,10 @@ namespace Pulsar.Game
         /// </summary>
         public GameApplication()
         {
-            GameApplication.GameServices = this.Services;
-            this.Content.RootDirectory = "Content";
-            this.Services.AddService(typeof(ContentManager), this.Content);
-            this.gDeviceMngr = new GraphicsDeviceManager(this);
+            GameServices = Services;
+            Content.RootDirectory = "Content";
+            Services.AddService(typeof(ContentManager), Content);
+            _deviceManager = new GraphicsDeviceManager(this);
         }
 
         #endregion
@@ -50,26 +45,38 @@ namespace Pulsar.Game
         /// </summary>
         protected override void Initialize()
         {
-            this.gEngine = new GraphicsEngineService(this);
-            this.inputService = new InputService(this);
+            _graphicsEngineService = new GraphicsEngineService(this);
+            _inputService = new InputService(this);
 
             base.Initialize();
         }
 
-        /// <summary>
-        /// Load the content
-        /// </summary>
-        protected override void LoadContent()
+        protected override void Dispose(bool disposing)
         {
-            base.LoadContent();
-        }
-
-        /// <summary>
-        /// Unload the content
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            base.UnloadContent();
+            base.Dispose(disposing);
+            if (disposing)
+            {
+#if WINDOWS
+                bool locked = false;
+#elif XBOX
+                Monitor.Enter(this);
+#endif
+                try
+                {
+#if WINDOWS
+                    Monitor.Enter(this, ref locked);
+#endif
+                    _graphicsEngineService.Dispose();
+                }
+                finally
+                {
+#if WINDOWS
+                    if (locked) Monitor.Exit(this);
+#elif XBOX
+                    Monitor.Exit(this);
+#endif
+                }
+            }
         }
 
         /// <summary>
@@ -79,7 +86,7 @@ namespace Pulsar.Game
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            this.inputService.Input.Update();
+            _inputService.Input.Update();
         }
 
         /// <summary>
@@ -89,12 +96,22 @@ namespace Pulsar.Game
         protected override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
-            this.gEngine.Engine.Render(gameTime);
+            _graphicsEngineService.Engine.Render(gameTime);
         }
 
         #endregion
 
         #region Properties
+
+        public GraphicsEngine GraphicsEngine
+        {
+            get { return _graphicsEngineService.Engine; }
+        }
+
+        public InputManager InputEngine
+        {
+            get { return _inputService.Input; }
+        }
 
         /// <summary>
         /// Get the service container

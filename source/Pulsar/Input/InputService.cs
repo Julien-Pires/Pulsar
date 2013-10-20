@@ -11,8 +11,7 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private InputManager input;
-        private XnaGame game;
+        private readonly InputManager _input;
 
         #endregion
 
@@ -24,17 +23,10 @@ namespace Pulsar.Input
         /// <param name="game">Game instance</param>
         public InputService(XnaGame game)
         {
-            if (game == null)
-            {
-                throw new ArgumentNullException("game", "game cannot be null");
-            }
-            this.game = game;
-            if (this.game.Services.GetService(typeof(IInputService)) != null)
-            {
-                throw new ArgumentException("InputManager already present");
-            }
-            this.game.Services.AddService(typeof(IInputService), this);
-            this.input = new InputManager();
+            if (game == null) throw new ArgumentNullException("game", "Cannot be null");
+            if (game.Services.GetService(typeof(IInputService)) != null) throw new ArgumentException("InputManager already present");
+            game.Services.AddService(typeof(IInputService), this);
+            _input = new InputManager();
         }
 
         #endregion
@@ -46,7 +38,7 @@ namespace Pulsar.Input
         /// </summary>
         public InputManager Input
         {
-            get { return this.input; }
+            get { return _input; }
         }
 
         #endregion

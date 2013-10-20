@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-
 using System.Collections.Generic;
 
 namespace Pulsar.Core
@@ -16,12 +15,12 @@ namespace Pulsar.Core
     {
         #region Fields
 
-        private const long infiniteTime = long.MaxValue;
-        private const int countQueue = 2;
+        private const long InfiniteTime = long.MaxValue;
+        private const int CountQueue = 2;
         
-        private int activeQueue = 0;
-        private Queue<Message>[] queueList = new Queue<Message>[Mediator.countQueue];
-        private Dictionary<int, List<IEventHandler>> eventListenersMap =
+        private int _activeQueue;
+        private readonly Queue<Message>[] _queueList = new Queue<Message>[CountQueue];
+        private readonly Dictionary<int, List<IEventHandler>> _eventListenersMap =
             new Dictionary<int, List<IEventHandler>>();
 
         #endregion
@@ -33,9 +32,9 @@ namespace Pulsar.Core
         /// </summary>
         public Mediator()
         {
-            for (int i = 0; i < Mediator.countQueue; i++)
+            for (int i = 0; i < CountQueue; i++)
             {
-                this.queueList[i] = new Queue<Message>();
+                _queueList[i] = new Queue<Message>();
             }
         }
 
@@ -44,21 +43,32 @@ namespace Pulsar.Core
         #region Methods
 
         /// <summary>
+        /// Get list of listeners for a specific event
+        /// </summary>
+        /// <param name="evType">Event type</param>
+        /// <returns>Returns a list of listeners if found otherwise null</returns>
+        private List<IEventHandler> GetListeners(EventType evType)
+        {
+            List<IEventHandler> listeners;
+            _eventListenersMap.TryGetValue(evType.EventHash, out listeners);
+
+            return listeners;
+        }
+
+        /// <summary>
         /// Register a new event managed by the mediator, it will dispatches messages
         /// for this event
         /// </summary>
         /// <param name="evType">Event to register</param>
-        private void RegisterEvent(EventType evType)
+        private List<IEventHandler> RegisterEvent(EventType evType)
         {
-            List<IEventHandler> listeners;
-            this.eventListenersMap.TryGetValue(evType.eventHash, out listeners);
-            if (listeners != null)
-            {
-                return;
-            }
+            List<IEventHandler> listeners = GetListeners(evType);
+            if (listeners != null) return listeners;
 
             listeners = new List<IEventHandler>();
-            this.eventListenersMap.Add(evType.eventHash, listeners);
+            _eventListenersMap.Add(evType.EventHash, listeners);
+
+            return listeners;
         }
 
         /// <summary>
@@ -69,13 +79,9 @@ namespace Pulsar.Core
         private bool UnregisterEvent(EventType evType)
         {
             List<IEventHandler> listeners;
-            this.eventListenersMap.TryGetValue(evType.eventHash, out listeners);
-            if (listeners == null)
-            {
-                return false;
-            }
+            _eventListenersMap.TryGetValue(evType.EventHash, out listeners);
 
-            return this.eventListenersMap.Remove(evType.eventHash);
+            return (listeners != null) && _eventListenersMap.Remove(evType.EventHash);
         }
 
         /// <summary>
@@ -85,13 +91,8 @@ namespace Pulsar.Core
         /// <param name="listener">Listener receiving messages for the specified event</param>
         public void Register(EventType evType, IEventHandler listener)
         {
-            List<IEventHandler> listeners;
-            this.RegisterEvent(evType);
-            this.eventListenersMap.TryGetValue(evType.eventHash, out listeners);
-            if (listeners.Contains(listener))
-            {
-                throw new Exception(string.Format("Listener {0} already listen to event {1}", listener, evType.eventName));
-            }
+            List<IEventHandler> listeners = RegisterEvent(evType);
+            if (listeners.Contains(listener)) throw new Exception(string.Format("Listener {0} already listen to event {1}", listener, evType.EventName));
 
             listeners.Add(listener);
         }
@@ -104,8 +105,8 @@ namespace Pulsar.Core
         /// <returns>Return true if the listener stop listening, otherwise false</returns>
         public bool Unregister(EventType evType, IEventHandler listener)
         {
-            List<IEventHandler> listeners;
-            this.eventListenersMap.TryGetValue(evType.eventHash, out listeners);
+            List<IEventHandler> listeners = GetListeners(evType);
+            if (listeners == null) return false;
 
             return listeners.Remove(listener);
         }
@@ -116,7 +117,7 @@ namespace Pulsar.Core
         /// <param name="listener">Listener</param>
         public void Unregister(IEventHandler listener)
         {
-            Dictionary<int, List<IEventHandler>>.ValueCollection listenerSets = this.eventListenersMap.Values;
+            Dictionary<int, List<IEventHandler>>.ValueCollection listenerSets = _eventListenersMap.Values;
             foreach(List<IEventHandler> handlerList in listenerSets)
             {
                 handlerList.Remove(listener);
@@ -130,13 +131,10 @@ namespace Pulsar.Core
         public void QueueEvent(Message msg)
         {
             List<IEventHandler> listeners;
-            this.eventListenersMap.TryGetValue(msg.Event.eventHash, out listeners);
-            if (listeners == null)
-            {
-                return;
-            }
+            _eventListenersMap.TryGetValue(msg.Event.EventHash, out listeners);
+            if (listeners == null) return;
 
-            this.queueList[this.activeQueue].Enqueue(msg);
+            _queueList[_activeQueue].Enqueue(msg);
         }
 
         /// <summary>
@@ -146,11 +144,8 @@ namespace Pulsar.Core
         public void Trigger(Message msg)
         {
             List<IEventHandler> listeners;
-            this.eventListenersMap.TryGetValue(msg.Event.eventHash, out listeners);
-            if ((listeners == null) || (listeners.Count == 0))
-            {
-                return;
-            }
+            _eventListenersMap.TryGetValue(msg.Event.EventHash, out listeners);
+            if ((listeners == null) || (listeners.Count == 0)) return;
 
             for (int i = 0; i < listeners.Count; i++)
             {
@@ -165,22 +160,21 @@ namespace Pulsar.Core
         public void Tick(long maxProcessTime)
         {
             long currentTime = Stopwatch.GetTimestamp();
-            long maxTime = (maxProcessTime == Mediator.infiniteTime) ? Mediator.infiniteTime : (currentTime + maxProcessTime);
+            long maxTime = (maxProcessTime == InfiniteTime) ? InfiniteTime : (currentTime + maxProcessTime);
 
-            int queueToProcessIdx = this.activeQueue;
-            this.activeQueue = (this.activeQueue + 1) % Mediator.countQueue;
-            this.queueList[this.activeQueue].Clear();
+            int queueToProcessIdx = _activeQueue;
+            _activeQueue = (_activeQueue + 1) % CountQueue;
+            _queueList[_activeQueue].Clear();
 
-            Queue<Message> processedQueue = this.queueList[queueToProcessIdx];
+            Queue<Message> processedQueue = _queueList[queueToProcessIdx];
             while (processedQueue.Count > 0)
             {
                 Message msg = processedQueue.Dequeue();
+                msg.Timestamp = currentTime;
+
                 List<IEventHandler> listeners;
-                this.eventListenersMap.TryGetValue(msg.Event.eventHash, out listeners);
-                if ((listeners == null) || (listeners.Count == 0))
-                {
-                    continue;
-                }
+                _eventListenersMap.TryGetValue(msg.Event.EventHash, out listeners);
+                if ((listeners == null) || (listeners.Count == 0)) continue;
 
                 for (int i = 0; i < listeners.Count; i++)
                 {
@@ -188,23 +182,17 @@ namespace Pulsar.Core
                 }
 
                 currentTime = Stopwatch.GetTimestamp();
-                if (maxProcessTime != Mediator.infiniteTime)
-                {
-                    if (currentTime >= maxTime)
-                    {
-                        break;
-                    }
-                }
+                if (maxProcessTime == InfiniteTime) continue;
+                if (currentTime >= maxTime) break;
             }
 
             bool emptyQueue = (processedQueue.Count == 0);
-            if (!emptyQueue)
+            if (emptyQueue) return;
+
+            while (processedQueue.Count > 0)
             {
-                while (processedQueue.Count > 0)
-                {
-                    Message remainingMsg = processedQueue.Dequeue();
-                    this.queueList[this.activeQueue].Enqueue(remainingMsg);
-                }
+                Message remainingMsg = processedQueue.Dequeue();
+                _queueList[_activeQueue].Enqueue(remainingMsg);
             }
         }
 

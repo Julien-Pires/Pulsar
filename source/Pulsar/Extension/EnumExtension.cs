@@ -1,5 +1,8 @@
 ﻿using System;
+
+#if XBOX || XBOX360
 using System.Reflection;
+#endif
 
 namespace Pulsar.Extension
 {
@@ -17,6 +20,9 @@ namespace Pulsar.Extension
         /// <returns>Return an array with enum values</returns>
         public static T[] GetValues<T>()
         {
+#if WINDOWS
+            return Enum.GetValues(typeof (T)) as T[];
+#elif XBOX || XBOX360
             Type t = typeof(T);
             if (t.IsEnum)
             {
@@ -31,8 +37,8 @@ namespace Pulsar.Extension
             }
 
             return new T[0];
+#endif
         }
-
         #endregion
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-
 using System.Collections.Generic;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace Pulsar.Input
 {
@@ -11,7 +7,7 @@ namespace Pulsar.Input
     /// Enumerate all input devices
     /// </summary>
     [Flags]
-    public enum InputDevice 
+    public enum InputDevice : byte
     { 
         None = 0,
         Mouse = 1,
@@ -27,8 +23,7 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        private Dictionary<short, PlayerInput> players = new Dictionary<short, PlayerInput>();
-        private AbstractButton[] allButtons;
+        private readonly Dictionary<short, Player> _players = new Dictionary<short, Player>();
 
         #endregion
 
@@ -38,19 +33,13 @@ namespace Pulsar.Input
         /// Create a new player
         /// </summary>
         /// <param name="player">Index of the player</param>
-        /// <returns>Return a PlayerInput instance</returns>
-        public PlayerInput CreatePlayer(short player)
+        /// <returns>Return a Player instance</returns>
+        public Player CreatePlayer(short player)
         {
-            if (this.players.ContainsKey(player))
-            {
-                throw new Exception(string.Format("Failed to create the player {0}, he already exists", player));
-            }
+            if (_players.ContainsKey(player)) throw new Exception(string.Format("Failed to create the player {0}, he already exists", player));
 
-            PlayerInput input = new PlayerInput()
-            {
-                PlayerIndex = player
-            };
-            this.players.Add(player, input);
+            Player input = new Player(player);
+            _players.Add(player, input);
 
             return input;
         }
@@ -62,7 +51,7 @@ namespace Pulsar.Input
         /// <returns>Return true if the player is removed otherwise false</returns>
         public bool RemovePlayer(short player)
         {
-            return this.players.Remove(player);
+            return _players.Remove(player);
         }
 
         /// <summary>
@@ -70,17 +59,17 @@ namespace Pulsar.Input
         /// </summary>
         public void RemoveAllPlayers()
         {
-            this.players.Clear();
+            _players.Clear();
         }
 
         /// <summary>
         /// Get a player
         /// </summary>
         /// <param name="player">Index of the player</param>
-        /// <returns>Return a PlayerInput instance</returns>
-        public PlayerInput GetPlayer(short player)
+        /// <returns>Return a Player instance</returns>
+        public Player GetPlayer(short player)
         {
-            return this.players[player];
+            return _players[player];
         }
 
         /// <summary>
@@ -94,7 +83,7 @@ namespace Pulsar.Input
             Keyboard.Update();
             GamePad.UpdatePads();
 
-            foreach (PlayerInput plInput in this.players.Values)
+            foreach (Player plInput in _players.Values)
             {
                 plInput.Update();
             }
