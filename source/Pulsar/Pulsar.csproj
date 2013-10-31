@@ -79,6 +79,7 @@
     <Compile Include="Components\GameObjectEventArgs.cs" />
     <Compile Include="Components\GameObjectManager.cs" />
     <Compile Include="Core\EventType.cs" />
+    <Compile Include="Core\Transform.cs" />
     <Compile Include="Extension\ArrayExtension.cs" />
     <Compile Include="Extension\EnumExtension.cs" />
     <Compile Include="Game\GameApplication.cs" />
