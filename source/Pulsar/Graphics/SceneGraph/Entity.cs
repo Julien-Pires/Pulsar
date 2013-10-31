@@ -182,7 +182,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void UpdateBounds()
         {
-            Matrix transform = _parent.Transform;
+            Matrix transform = _parent.LocalToWorld;
             _bounds.Update(ref transform);
         }
 
@@ -271,7 +271,7 @@ namespace Pulsar.Graphics.SceneGraph
         {
             get
             {
-                return (_parent != null) ? _parent.Transform : Matrix.Identity;
+                return (_parent != null) ? _parent.LocalToWorld : Matrix.Identity;
             }
         }
 
