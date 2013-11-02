@@ -50,8 +50,9 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         public void Render(Viewport vp, Camera cam, RenderQueue queue)
         {
             _renderer.SetRenderTarget(vp.RenderTarget);
-            _shader.SetViewProj(cam.View, cam.Projection);
+            if(vp.AlwaysClear) _renderer.Clear(vp.ClearColor);
 
+            _shader.SetViewProj(cam.View, cam.Projection);
             RenderQueueGroup[] queueGroups = queue.QueueGroupList;
             for (int i = 0; i < (int)RenderQueueGroupId.Count; i++)
             {

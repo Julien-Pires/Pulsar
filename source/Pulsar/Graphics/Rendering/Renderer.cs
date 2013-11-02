@@ -59,6 +59,11 @@ namespace Pulsar.Graphics.Rendering
             _disposed = true;
         }
 
+        /// <summary>
+        /// Called each time graphics device is created
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Arguments</param>
         private void GraphicsDeviceCreated(object sender, EventArgs e)
         {
             _graphicDevice = _graphicsDeviceManager.GraphicsDevice;
@@ -70,13 +75,10 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Prepares rendering operations
         /// </summary>
-        /// <param name="vp">Viewport in which the rendering result is sent</param>
-        private void BeginRender(Viewport vp)
+        private void BeginRender()
         {
             _instancingManager.Reset();
             _frameDetail.Reset();
-
-            if (vp.AlwaysClear) Clear(vp);
             _graphicDevice.DepthStencilState = DepthStencilState.Default;
         }
 
@@ -99,14 +101,12 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Clears a viewport
+        /// Clears the back buffer
         /// </summary>
-        /// <param name="vp">Viewport to clear</param>
-        internal void Clear(Viewport vp)
+        /// <param name="clearColor">Color used to clear</param>
+        internal void Clear(Color clearColor)
         {
-            _graphicDevice.SetRenderTarget(vp.RenderTarget);
-            _graphicDevice.Clear(vp.ClearColor);
-            _graphicDevice.SetRenderTarget(null);
+            _graphicDevice.Clear(clearColor);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="queue">Queue of objects to render</param>
         internal void Render(Viewport vp, Camera cam, RenderQueue queue)
         {
-            BeginRender(vp);
+            BeginRender();
 
             _renderingTechnique.Render(vp, cam, queue);
 
@@ -200,9 +200,7 @@ namespace Pulsar.Graphics.Rendering
                     renderingInfo.VertexCount, indexData.StartIndex, renderingInfo.PrimitiveCount);
             }
             else
-            {
                 _graphicDevice.DrawPrimitives(renderingInfo.PrimitiveType, 0, renderingInfo.PrimitiveCount);
-            }
             UnsetBuffers();
 
             _frameDetail.AddDrawCall((uint)renderingInfo.VertexCount, (uint)renderingInfo.PrimitiveCount, 1);
