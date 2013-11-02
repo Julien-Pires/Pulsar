@@ -1,13 +1,10 @@
 ﻿using System;
-
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
 namespace Pulsar.Components
 {
-    using HandlersTypeMap = System.Collections.Generic.Dictionary<System.Type, Pulsar.Components.ComponentHandler>;
-
     /// <summary>
     /// A ComponentHandlerSystem is the master system for all ComponentHandler. This class is 
     /// responsible for intializing, updating and disposing ComponentHandler. 
@@ -17,10 +14,11 @@ namespace Pulsar.Components
     {
         #region Fields
 
-        private bool isDisposed;
-        private GameObjectManager goManager;
-        private HandlersTypeMap handlersMap = new HandlersTypeMap();
-        private Dictionary<Type, HandlersTypeMap> handlersMapByComponent = new Dictionary<Type, HandlersTypeMap>();
+        private bool _isDisposed;
+        private readonly GameObjectManager _goManager;
+        private readonly Dictionary<Type, ComponentHandler> _handlersMap = new Dictionary<Type, ComponentHandler>();
+        private readonly Dictionary<Type, List<ComponentHandler>> _handlersMapByComponent =
+            new Dictionary<Type, List<ComponentHandler>>();
 
         #endregion
 
@@ -29,12 +27,12 @@ namespace Pulsar.Components
         /// <summary>
         /// Constructor of ComponentHandlerSystem class
         /// </summary>
-        /// <param name="goMngr">Associated game object manager</param>
-        public ComponentHandlerSystem(GameObjectManager goMngr)
+        /// <param name="goManager">Associated game object manager</param>
+        public ComponentHandlerSystem(GameObjectManager goManager)
         {
-            this.goManager = goMngr;
-            this.goManager.ComponentAdded += this.OnComponentAdded;
-            this.goManager.ComponentRemoved += this.OnComponentRemoved;
+            _goManager = goManager;
+            _goManager.ComponentAdded += ComponentAdded;
+            _goManager.ComponentRemoved += ComponentRemoved;
         }
 
         #endregion
@@ -42,213 +40,227 @@ namespace Pulsar.Components
         #region Methods
 
         /// <summary>
-        /// Initialize this instance
+        /// Initializes this instance
         /// </summary>
         public void Initialize()
         {
-            foreach (ComponentHandler hnd in this.handlersMap.Values)
-            {
-                hnd.Initialize();
-            }
+            foreach (ComponentHandler handler in _handlersMap.Values) 
+                handler.Initialize();
         }
 
         /// <summary>
-        /// Dispose this instance
+        /// Disposes resources
         /// </summary>
         public void Dispose()
         {
-            foreach (ComponentHandler hnd in this.handlersMap.Values)
-            {
-                hnd.Dispose();
-                hnd.Owner = null;
-            }
+            if(_isDisposed) return;
 
-            this.goManager.ComponentAdded -= this.OnComponentAdded;
-            this.goManager.ComponentRemoved -= this.OnComponentRemoved;
-            this.handlersMap.Clear();
-            this.handlersMap = null;
-            this.isDisposed = true;
+            _goManager.ComponentAdded -= ComponentAdded;
+            _goManager.ComponentRemoved -= ComponentRemoved;
+
+            foreach (List<ComponentHandler> listeners in _handlersMapByComponent.Values)
+                listeners.Clear();
+            _handlersMapByComponent.Clear();
+
+            foreach (ComponentHandler handler in _handlersMap.Values)
+            {
+                handler.Dispose();
+                handler.Owner = null;
+            }
+            _handlersMap.Clear();
+            _handlersMapByComponent.Clear();
+
+            _isDisposed = true;
         }
 
         /// <summary>
-        /// Add a ComponentHandler
+        /// Adds a ComponentHandler
         /// </summary>
-        /// <param name="hnd">ComponentHandler to add</param>
-        public void Add(ComponentHandler hnd)
+        /// <param name="handler">ComponentHandler to add</param>
+        public void Add(ComponentHandler handler)
         {
-            if (hnd.Owner != null)
+            if(handler == null)
+                throw new ArgumentNullException("handler");
+
+            if (handler.Owner != null)
             {
-                if (hnd.Owner != this)
-                {
-                    if (!hnd.Owner.Remove(hnd))
-                    {
-                        throw new Exception(string.Format("Failed to remove {0} from its current owner", hnd));
-                    }
-                }
-                else
-                {
-                    return;
-                }
+                if (handler.Owner == this) return;
+                throw new ArgumentException("Component handler already attached to another ComponentHandlerSystem", "handler");
             }
 
-            Type handlerType = hnd.GetType();
-            if (this.handlersMap.ContainsKey(handlerType))
-            {
-                throw new Exception(string.Format("This system of component handler already have a handler of type {0}", hnd));
-            }
-            this.handlersMap.Add(handlerType, hnd);
-            this.AddComponentListener(hnd);
-            hnd.Owner = this;
-        }
+            Type handlerType = handler.GetType();
+            if (_handlersMap.ContainsKey(handlerType))
+                throw new Exception(string.Format("Failed to add, a {0} " +
+                                                  "already attached to this ComponentHandlerSystem", handlerType));
 
-        /// <summary>
-        /// Add a component handler to listen for add component event
-        /// </summary>
-        /// <param name="hnd">ComponentHandler listening</param>
-        private void AddComponentListener(ComponentHandler hnd)
-        {
-            Type[] allCompoTypes = hnd.ComponentTypes;
-            if (allCompoTypes != null)
-            {
-                for (int i = 0; i < allCompoTypes.Length; i++)
-                {
-                    Type compoType = allCompoTypes[i];
-                    if (!compoType.IsSubclassOf(typeof(Component)))
-                    {
-                        throw new Exception("The type provided by ComponentHandler instance doesn't inherit Component class");
-                    }
-                    this.AddComponentListener(compoType, hnd);
-                }
-            }
+            handler.Owner = this;
+            _handlersMap.Add(handlerType, handler);
+            if(handler.ComponentTypes != null)
+                RegisterListener(handler, handler.ComponentTypes);
             else
-            {
-                this.AddComponentListener(typeof(Component), hnd);
-            }
+                RegisterListener(handler, typeof(Component));
         }
 
         /// <summary>
-        /// Add a ComponentHandler to listen for add component event
+        /// Adds a ComponentHandler to listen for a specific component
         /// </summary>
-        /// <param name="compoType">Type of component to listen for</param>
-        /// <param name="hnd">ComponentHandler listening</param>
-        private void AddComponentListener(Type compoType, ComponentHandler hnd)
+        /// <param name="handler">ComponentHandler as a listener</param>
+        /// <param name="componentType">Type of component to listen for</param>
+        private void RegisterListener(ComponentHandler handler, Type componentType)
         {
-            HandlersTypeMap map;
-            this.handlersMapByComponent.TryGetValue(compoType, out map);
-            if (map == null)
-            {
-                map = new HandlersTypeMap();
-                this.handlersMapByComponent.Add(compoType, map);
-            }
-
-            Type handlerType = hnd.GetType();
-            if (!map.ContainsKey(handlerType))
-            {
-                map.Add(handlerType, hnd);
-            }
+            List<ComponentHandler> listeners = EnsureListeners(componentType);
+            listeners.Add(handler);
         }
 
         /// <summary>
-        /// Remove a ComponentHandler listener
+        /// Adds a ComponentHandler to listen for multiple components
         /// </summary>
-        /// <param name="hnd">ComponentHandler which want to stop to listen</param>
-        /// <returns>Return true if the ComponentHandler stops to listen otherwise false</returns>
-        private bool RemoveComponentListener(ComponentHandler hnd)
+        /// <param name="handler">ComponentHandler as a listener</param>
+        /// <param name="componentTypes">Array of type of components to listen for</param>
+        private void RegisterListener(ComponentHandler handler, Type[] componentTypes)
         {
-            bool result = true;
-            Type handlerType = hnd.GetType();
-            Type[] allCompoTypes = hnd.ComponentTypes;
-            if (allCompoTypes != null)
-            {
-                for (int i = 0; i < allCompoTypes.Length; i++)
-                {
-                    Type compoType = allCompoTypes[i];
-                    result &= this.RemoveComponentListener(compoType, hnd);
-                }
-            }
-            else
-            {
-                Type compoType = typeof(Component);
-                result &= this.RemoveComponentListener(compoType, hnd);   
-            }
+            if(componentTypes == null) return;
 
-            return result;
+            for (int i = 0; i < componentTypes.Length; i++)
+            {
+                Type compoType = componentTypes[i];
+                if (!compoType.IsSubclassOf(typeof(Component)))
+                    throw new Exception("Provided type doesn't inherit Component class");
+
+                List<ComponentHandler> listeners = EnsureListeners(compoType);
+                listeners.Add(handler);
+            }
         }
 
         /// <summary>
-        /// Remove a ComponentHandler listener for a specific component type
+        /// Removes a ComponentHandler
         /// </summary>
-        /// <param name="compoType">Component type</param>
-        /// <param name="hnd">ComponentHandler which want to stop to listen</param>
-        /// <returns>Return true if the ComponentHandler stops to listen otherwise false</returns>
-        private bool RemoveComponentListener(Type compoType, ComponentHandler hnd)
-        {
-            HandlersTypeMap map;
-            this.handlersMapByComponent.TryGetValue(compoType, out map);
-            if (map != null)
-            {
-                return map.Remove(hnd.GetType());
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Remove a ComponentHandler from this system
-        /// </summary>
-        /// <param name="hnd">ComponentHandler to remove</param>
+        /// <param name="handler">ComponentHandler to remove</param>
         /// <returns>Return true if the ComponentHandler is removed successfully otherwise false</returns>
-        public bool Remove(ComponentHandler hnd)
+        public bool Remove(ComponentHandler handler)
         {
-            return this.Remove(hnd.GetType());
+            if(handler == null)
+                throw new ArgumentNullException("handler");
+
+            return Remove(handler.GetType());
         }
 
         /// <summary>
-        /// Remove a ComponentHandler from this system
+        /// Removes a ComponentHandler from its type
         /// </summary>
         /// <typeparam name="T">Type of ComponentHandler to remove</typeparam>
         /// <returns>Return true if the ComponentHandler is removed successfully otherwise false</returns>
         public bool Remove<T>() where T : ComponentHandler
         {
-            return this.Remove(typeof(T));
+            return Remove(typeof(T));
         }
 
         /// <summary>
-        /// Remove a ComponentHandler from this system
+        /// Removes a ComponentHandler from its type
         /// </summary>
         /// <param name="type">Type of ComponentHandler to remove</param>
         /// <returns>Return true if the ComponentHandler is removed successfully otherwise false</returns>
         public bool Remove(Type type)
         {
-            ComponentHandler hnd;
-            this.handlersMap.TryGetValue(type, out hnd);
-            if (hnd == null)
-            {
-                return false;
-            }
+            if(type == null)
+                throw new ArgumentNullException("type");
 
-            bool result = this.handlersMap.Remove(type);
-            if (result)
-            {
-                this.RemoveComponentListener(hnd);
-                hnd.Owner = null;
-            }
+            ComponentHandler handler = GetComponentHandler(type);
+            if (handler == null) return false;
+            if(handler.ComponentTypes != null)
+                UnregisterListener(handler, handler.ComponentTypes);
+            else
+                UnregisterListener(handler, typeof(Component));
+            handler.Owner = null;
 
-            return result;
+            return true;
         }
 
         /// <summary>
-        /// Update all ComponentHandler
+        /// Removes a ComponentHandler to stop listening for a specific component
+        /// </summary>
+        /// <param name="handler">ComponentHandler as a listener</param>
+        /// <param name="componentType">Type of component to stop listening for</param>
+        private void UnregisterListener(ComponentHandler handler, Type componentType)
+        {
+            List<ComponentHandler> listeners = GetListeners(componentType);
+            if(listeners == null) return;
+            listeners.Remove(handler);
+        }
+
+        /// <summary>
+        /// Removes a ComponentHandler to stop listening for multiple components
+        /// </summary>
+        /// <param name="handler">ComponentHandler as a listener</param>
+        /// <param name="componentTypes">Array of type of components to listening for</param>
+        private void UnregisterListener(ComponentHandler handler, Type[] componentTypes)
+        {
+            if (componentTypes == null) return;
+
+            for (int i = 0; i < componentTypes.Length; i++)
+            {
+                Type compoType = componentTypes[i];
+                if (!compoType.IsSubclassOf(typeof(Component)))
+                    throw new Exception("Provided type doesn't inherit Component class");
+
+                List<ComponentHandler> listeners = GetListeners(compoType);
+                if(listeners == null) continue;
+                listeners.Add(handler);
+            }
+        }
+
+        /// <summary>
+        /// Gets a component handler attached to this manager
+        /// </summary>
+        /// <param name="handlerType">Type of component handler</param>
+        /// <returns>Returns a ComponentHandler instance if found otherwise null</returns>
+        public ComponentHandler GetComponentHandler(Type handlerType)
+        {
+            ComponentHandler handler;
+            _handlersMap.TryGetValue(handlerType, out handler);
+
+            return handler;
+        }
+
+        /// <summary>
+        /// Gets a list of listeners for a specific type of component
+        /// </summary>
+        /// <param name="componentType">Type of component</param>
+        /// <returns>Returns a list of component handler that listen for the specified type of component otherwise null</returns>
+        private List<ComponentHandler> GetListeners(Type componentType)
+        {
+            List<ComponentHandler> handlersList;
+            _handlersMapByComponent.TryGetValue(componentType, out handlersList);
+
+            return handlersList;
+        }
+
+        /// <summary>
+        /// Gets a list of listener, or create it if it doesn't exist, for a specific type of component
+        /// </summary>
+        /// <param name="componentType">Type of component</param>
+        /// <returns>Returns a list of listener otherwise null</returns>
+        private List<ComponentHandler> EnsureListeners(Type componentType)
+        {
+            List<ComponentHandler> handlersList = GetListeners(componentType);
+            if (handlersList != null) return handlersList;
+
+            handlersList = new List<ComponentHandler>();
+            _handlersMapByComponent.Add(componentType, handlersList);
+
+            return handlersList;
+        }
+
+        /// <summary>
+        /// Updates all component handler
         /// </summary>
         /// <param name="time">Elapsed time since the last frame</param>
         public void Tick(GameTime time)
         {
-            foreach (ComponentHandler hnd in this.handlersMap.Values)
+            foreach (ComponentHandler handler in _handlersMap.Values)
             {
-                if (hnd.IsEnabled)
-                {
-                    hnd.Tick(time);
-                }
+                if (handler.IsEnabled) 
+                    handler.Tick(time);
             }
         }
 
@@ -257,28 +269,21 @@ namespace Pulsar.Components
         /// </summary>
         /// <param name="sender">Sender of the event</param>
         /// <param name="e">Argument for the event</param>
-        private void OnComponentAdded(object sender, ComponentEventArgs e)
+        private void ComponentAdded(object sender, ComponentEventArgs e)
         {
             Component component = e.Component;
-            Type compoType = typeof(Component);
-            HandlersTypeMap map;
-            this.handlersMapByComponent.TryGetValue(compoType, out map);
-            if (map != null)
+            List<ComponentHandler> listeners = GetListeners(typeof(Component));
+            if (listeners != null)
             {
-                foreach (ComponentHandler hnd in map.Values)
-                {
-                    hnd.Register(component);
-                }
+                for(int i = 0; i < listeners.Count; i++) 
+                    listeners[i].Register(component);
             }
 
-            compoType = component.GetType();
-            this.handlersMapByComponent.TryGetValue(compoType, out map);
-            if (map != null)
+            listeners = GetListeners(component.GetType());
+            if (listeners != null)
             {
-                foreach (ComponentHandler hnd in map.Values)
-                {
-                    hnd.Register(component);
-                }
+                for (int i = 0; i < listeners.Count; i++)
+                    listeners[i].Register(component);
             }
         }
 
@@ -287,28 +292,21 @@ namespace Pulsar.Components
         /// </summary>
         /// <param name="sender">Sender of the event</param>
         /// <param name="e">Argument for the event</param>
-        private void OnComponentRemoved(object sender, ComponentEventArgs e)
+        private void ComponentRemoved(object sender, ComponentEventArgs e)
         {
             Component component = e.Component;
-            Type compoType = typeof(Component);
-            HandlersTypeMap map;
-            this.handlersMapByComponent.TryGetValue(compoType, out map);
-            if (map != null)
+            List<ComponentHandler> listeners = GetListeners(typeof(Component));
+            if (listeners != null)
             {
-                foreach (ComponentHandler hnd in map.Values)
-                {
-                    hnd.Unregister(component);
-                }
+                for (int i = 0; i < listeners.Count; i++)
+                    listeners[i].Unregister(component);
             }
 
-            compoType = component.GetType();
-            this.handlersMapByComponent.TryGetValue(compoType, out map);
-            if (map != null)
+            listeners = GetListeners(component.GetType());
+            if (listeners != null)
             {
-                foreach (ComponentHandler hnd in map.Values)
-                {
-                    hnd.Unregister(component);
-                }
+                for (int i = 0; i < listeners.Count; i++)
+                    listeners[i].Unregister(component);
             }
         }
 
@@ -317,11 +315,11 @@ namespace Pulsar.Components
         #region Properties
 
         /// <summary>
-        /// Get a value indicating if this instance is disposed
+        /// Gets a value indicating if this instance is disposed
         /// </summary>
         public bool IsDisposed
         {
-            get { return this.isDisposed; }
+            get { return _isDisposed; }
         }
 
         #endregion
