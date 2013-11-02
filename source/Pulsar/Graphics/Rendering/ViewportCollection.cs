@@ -8,94 +8,10 @@ namespace Pulsar.Graphics.Rendering
     /// </summary>
     public sealed class ViewportCollection : IDisposable
     {
-        #region Nested
-
-        /// <summary>
-        /// Used to order the viewports
-        /// </summary>
-        internal sealed class ViewportBinding
-        {
-            #region Fields
-
-            private readonly int _id;
-            private ushort _zOrder;
-            private readonly Viewport _viewport;
-
-            #endregion
-
-            #region Constructor
-
-            /// <summary>
-            /// Constructor of ViewportBinding class
-            /// </summary>
-            /// <param name="id">Id of the viewport</param>
-            /// <param name="vp">Viewport</param>
-            public ViewportBinding(int id, Viewport vp)
-            {
-                _id = id;
-                _viewport = vp;
-                ZOrder = 0;
-            }
-
-            #endregion
-
-            #region Static methods
-
-            /// <summary>
-            /// Compares the order of two viewports
-            /// </summary>
-            /// <param name="objOne">First ViewportBinding instance</param>
-            /// <param name="objTwo">Second ViewportBinding instance</param>
-            /// <returns>Returns -1 if the first viewport is on top of the second, 1 if it is under and 0 if they have the same z-order</returns>
-            public static int CompareByZOrder(ViewportBinding objOne, ViewportBinding objTwo)
-            {
-                if (objOne._zOrder < objTwo._zOrder) return -1;
-
-                return (objOne._zOrder > objTwo._zOrder) ? 1 : 0;
-            }
-
-            #endregion
-
-            #region Properties
-
-            /// <summary>
-            /// Gets the Id
-            /// </summary>
-            public int Id
-            {
-                get { return _id; }
-            }
-
-            /// <summary>
-            /// Gets the viewport
-            /// </summary>
-            public Viewport Viewport
-            {
-                get { return _viewport; }
-            }
-
-            /// <summary>
-            /// Sets the z-order
-            /// </summary>
-            public ushort ZOrder
-            {
-                set
-                {
-                    _zOrder = value;
-                    _viewport.ZOrder = value;
-                }
-            }
-
-            #endregion
-        }
-
-        #endregion
-
         #region Fields
 
         private bool _disposed;
-        private int _viewportCounter;
-        private readonly List<ViewportBinding> _viewports = new List<ViewportBinding>();
+        private readonly List<Viewport> _viewports = new List<Viewport>();
         private readonly RenderTarget _owner;
 
         #endregion
@@ -113,6 +29,23 @@ namespace Pulsar.Graphics.Rendering
 
         #endregion
 
+        #region Static method
+
+        /// <summary>
+        /// Compares two viewports by theirs Z-order
+        /// </summary>
+        /// <param name="vpOne">First viewport</param>
+        /// <param name="vpTwo">Second viewport</param>
+        /// <returns>Returns -1 if the first viewport is lower, 1 if higher otherwise 0 if equals</returns>
+        public static int CompareByZOrder(Viewport vpOne, Viewport vpTwo)
+        {
+            if (vpOne.ZOrder < vpTwo.ZOrder) return -1;
+
+            return (vpOne.ZOrder > vpTwo.ZOrder) ? 1 : 0;
+        }
+
+        #endregion
+
         #region Method
 
         /// <summary>
@@ -122,20 +55,19 @@ namespace Pulsar.Graphics.Rendering
         /// <returns>Returns a viewport</returns>
         public Viewport this[int index]
         {
-            get { return _viewports[index].Viewport; }
+            get { return _viewports[index]; }
         }
 
         /// <summary>
-        /// Dispose resources
+        /// Disposes resources
         /// </summary>
         public void Dispose()
         {
             if (_disposed) return;
 
             for (int i = 0; i < _viewports.Count; i++)
-            {
-                _viewports[i].Viewport.Dispose();
-            }
+                _viewports[i].Dispose();
+
             _disposed = true;
         }
 
@@ -143,17 +75,18 @@ namespace Pulsar.Graphics.Rendering
         /// Creates a viewport that occupies entirely the render target
         /// </summary>
         /// <returns>Returns a viewport</returns>
-        public int CreateViewport()
+        public Viewport CreateViewport(ushort zOrder)
         {
-            return CreateViewport(1.0f, 1.0f, 0.0f, 0.0f);
+            return CreateViewport(1.0f, 1.0f, 0.0f, 0.0f, zOrder);
         }
 
         /// <summary>
         /// Creates a viewport with a ViewportPosition
         /// </summary>
         /// <param name="position">Position of the viewport</param>
+        /// <param name="zOrder">Z-order of the viewport</param>    
         /// <returns>Returns a viewport</returns>
-        public int CreateViewport(ViewportPosition position)
+        public Viewport CreateViewport(ViewportPosition position, ushort zOrder)
         {
             float width = 1.0f;
             float height = 1.0f;
@@ -166,9 +99,7 @@ namespace Pulsar.Graphics.Rendering
                 height -= 0.5f;
             }
             else if ((position & ViewportPosition.Top) == ViewportPosition.Top)
-            {
                 height -= 0.5f;
-            }
 
             if ((position & ViewportPosition.Right) == ViewportPosition.Right)
             {
@@ -176,11 +107,9 @@ namespace Pulsar.Graphics.Rendering
                 width -= 0.5f;
             }
             else if ((position & ViewportPosition.Left) == ViewportPosition.Left)
-            {
                 width -= 0.5f;
-            }
 
-            return CreateViewport(width, height, top, left);
+            return CreateViewport(width, height, top, left, zOrder);
         }
 
         /// <summary>
@@ -190,13 +119,14 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="height">Pixel height</param>
         /// <param name="top">Top position</param>
         /// <param name="left">Left position</param>
+        /// <param name="zOrder">Z-order of the viewport</param>
         /// <returns>Returns a viewport</returns>
-        public int CreateViewport(int width, int height, float top, float left)
+        public Viewport CreateViewport(int width, int height, float top, float left, ushort zOrder)
         {
             float normWidth = (float)width/_owner.Width;
             float normHeight = (float)height/_owner.Height;
 
-            return CreateViewport(normWidth, normHeight, top, left);
+            return CreateViewport(normWidth, normHeight, top, left, zOrder);
         }
 
         /// <summary>
@@ -206,83 +136,91 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="height">Normalized height</param>
         /// <param name="top">Top position</param>
         /// <param name="left">Left position</param>
+        /// <param name="zOrder">Z-order of the viewport</param>
         /// <returns>Returns a viewport</returns>
-        public int CreateViewport(float width, float height, float top, float left)
+        public Viewport CreateViewport(float width, float height, float top, float left, ushort zOrder)
         {
-            Viewport vp = new Viewport(_owner, width, height, top, left);
-            ViewportBinding binding = new ViewportBinding(_viewportCounter++, vp);
-            _viewports.Add(binding);
-            _viewports.Sort(ViewportBinding.CompareByZOrder);
+            if(GetViewportIndex(zOrder) > -1)
+                throw new ArgumentException(string.Format("Viewport with zOrder {0} already exist", zOrder));
 
-            return binding.Id;
+            Viewport vp = new Viewport(_owner, width, height, top, left)
+            {
+                ZOrder = zOrder
+            };
+            _viewports.Add(vp);
+            _viewports.Sort(CompareByZOrder);
+
+            return vp;
         }
 
         /// <summary>
-        /// Destroy a viewport from this collection
+        /// Destroys a viewport from its Z-order
         /// </summary>
-        /// <param name="id">Id of the viewport</param>
-        /// <returns>Returns true if the viewport is destroyed otherwise false</returns>
-        public bool DestroyViewport(int id)
+        /// <param name="zOrder">Z-order of the viewport</param>
+        public void DestroyViewport(ushort zOrder)
         {
-            int idx = -1;
+            int index = GetViewportIndex(zOrder);
+            if(index == -1)
+                throw new Exception(string.Format("No viewport found with zOrder {0}", zOrder));
+
+            DestroyViewport(index);
+        }
+
+        /// <summary>
+        /// Destroys a viewport at the specified index
+        /// </summary>
+        /// <param name="index">Index of the viewport</param>
+        public void DestroyViewport(int index)
+        {
+            Viewport vp = _viewports[index];
+            _viewports.RemoveAt(index);
+            vp.Dispose();
+        }
+
+        /// <summary>
+        /// Gets the index of a viewport from its Z-order
+        /// </summary>
+        /// <param name="zOrder">Z-order of the viewport</param>
+        /// <returns>Returns the index of the viewport if it exists, otherwise -1</returns>
+        private int GetViewportIndex(ushort zOrder)
+        {
+            int index = -1;
             for (int i = 0; i < _viewports.Count; i++)
             {
-                ViewportBinding current = _viewports[i];
-                if (current.Id != id) continue;
-                idx = i;
+                if(_viewports[i].ZOrder != zOrder) continue;
+
+                index = i;
                 break;
             }
 
-            if (idx <= -1) return false;
-            ViewportBinding vpBind = _viewports[idx];
-            _viewports.RemoveAt(idx);
-            vpBind.Viewport.Dispose();
-
-            return true;
+            return index;
         }
 
         /// <summary>
-        /// Gets a viewport with a specified Id
+        /// Gets a viewport with a specified Z-order
         /// </summary>
-        /// <param name="id">Id of the viewport</param>
-        /// <returns>Returns the viewport with the specified Id if it exists, otherwise null</returns>
-        public Viewport GetViewport(int id)
+        /// <param name="zOrder">Z-order of the viewport</param>
+        /// <returns>Returns the viewport with the specified Z-order if it exists, otherwise null</returns>
+        public Viewport GetViewport(ushort zOrder)
         {
-            ViewportBinding binding = GetViewportBinding(id);
+            int index = GetViewportIndex(zOrder);
 
-            return binding == null ? null : binding.Viewport;
+            return (index == -1) ? null : _viewports[index];
         }
 
         /// <summary>
-        /// Gets a ViewportBinding with a specified Id
+        /// Sets a new Z-order for a viewport with a specified Z-order
         /// </summary>
-        /// <param name="id">Id of the viewport</param>
-        /// <returns>Returns a ViewportBinding</returns>
-        private ViewportBinding GetViewportBinding(int id)
+        /// <param name="oldZOrder">Old Z-order of the viewport</param>
+        /// <param name="newZOrder">New Z-order value</param>
+        public void UpdateViewportZOrder(ushort oldZOrder, ushort newZOrder)
         {
-            ViewportBinding binding = null;
-            for (int i = 0; i < _viewports.Count; i++)
-            {
-                ViewportBinding current = _viewports[i];
-                if (current.Id != id) continue;
-                binding = current;
-                break;
-            }
+            int index = GetViewportIndex(oldZOrder);
+            if(index == -1)
+                throw new Exception(string.Format("No viewport found with zOrder {0}", oldZOrder));
 
-            return binding;
-        }
-
-        /// <summary>
-        /// Sets the z-order of a viewport with a specified Id
-        /// </summary>
-        /// <param name="id">Id of the viewport</param>
-        /// <param name="z">Z-order</param>
-        public void SetZOrder(int id, ushort z)
-        {
-            ViewportBinding binding = GetViewportBinding(id);
-            if (binding == null) return;
-            binding.ZOrder = z;
-            _viewports.Sort(ViewportBinding.CompareByZOrder);
+            _viewports[index].ZOrder = newZOrder;
+            _viewports.Sort(CompareByZOrder);
         }
 
         #endregion
