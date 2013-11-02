@@ -52,7 +52,7 @@ namespace Pulsar.Assets.Graphics.Models
                 _vertexData.GetBuffer(0).Dispose();
                 _vertexData.UnsetBinding(0);
             }
-            if (!ShareIndexBuffer && (_vertexData.BufferCount > 0))
+            if (!ShareIndexBuffer && (_indexData.IndexBuffer != null))
             {
                 _indexData.IndexBuffer.Dispose();
                 _indexData.IndexBuffer = null;
