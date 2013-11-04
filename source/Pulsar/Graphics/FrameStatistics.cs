@@ -76,9 +76,7 @@ namespace Pulsar.Graphics
             if (_historicLength > 1)
             {
                 for (int i = lastIdx; i > 0; i--)
-                {
                     _frameDetails[i] = _frameDetails[i - 1];
-                }
             }
             newCurrent.Reset();
             _frameDetails[0] = CurrentFrame;

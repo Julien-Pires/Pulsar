@@ -113,7 +113,6 @@
     <Compile Include="Graphics\Rendering\VertexBufferWrapper.cs" />
     <Compile Include="Graphics\Rendering\VertexData.cs" />
     <Compile Include="Graphics\Rendering\Viewport.cs" />
-    <Compile Include="Graphics\Rendering\ViewportCollection.cs" />
     <Compile Include="Graphics\Rendering\Window.cs" />
     <Compile Include="Graphics\Rendering\WindowDisplayModeChangedEventArgs.cs" />
     <Compile Include="Graphics\Rendering\WindowFullScreenSwitchedEventArgs.cs" />

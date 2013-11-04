@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -54,7 +55,8 @@ namespace Pulsar.Graphics.Rendering
             if(_disposed) return;
 
             _graphicsDeviceManager.DeviceCreated -= GraphicsDeviceCreated;
-            if(_spriteBatch != null) _spriteBatch.Dispose();
+            if(_spriteBatch != null) 
+                _spriteBatch.Dispose();
 
             _disposed = true;
         }
@@ -68,7 +70,8 @@ namespace Pulsar.Graphics.Rendering
         {
             _graphicDevice = _graphicsDeviceManager.GraphicsDevice;
 
-            if(_spriteBatch != null) _spriteBatch.Dispose();
+            if(_spriteBatch != null) 
+                _spriteBatch.Dispose();
             _spriteBatch = new SpriteBatch(_graphicDevice);
         }
 
@@ -148,9 +151,10 @@ namespace Pulsar.Graphics.Rendering
         internal void RenderToTarget(RenderTarget renderTarget)
         {
             _graphicDevice.SetRenderTarget(renderTarget.Target);
-            if(renderTarget.AlwaysClear) _graphicDevice.Clear(renderTarget.ClearColor);
+            if(renderTarget.AlwaysClear) 
+                _graphicDevice.Clear(renderTarget.ClearColor);
 
-            ViewportCollection viewports = renderTarget.Viewports;
+            List<Viewport> viewports = renderTarget.Viewports;
             if (viewports.Count > 0)
             {
                 _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp,
