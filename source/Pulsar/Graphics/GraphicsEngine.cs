@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 using Pulsar.Graphics.SceneGraph;
@@ -20,6 +20,7 @@ namespace Pulsar.Graphics
         private readonly BufferManager _bufferManager;
         private readonly Dictionary<string, SceneTree> _scenes = new Dictionary<string, SceneTree>();
         private readonly FrameStatistics _frameStats = new FrameStatistics();
+        private readonly Stopwatch _watch = new Stopwatch();
 
         #endregion
 
@@ -63,9 +64,14 @@ namespace Pulsar.Graphics
         /// <param name="time">Time since last update</param>
         public void Render(GameTime time)
         {
+            _watch.Reset();
+            _watch.Start();
             _window.Render(time);
+            _watch.Stop();
 
-            _frameStats.CurrentFrame.Merge(_window.FrameDetail);
+            FrameDetail currentFrame = _frameStats.CurrentFrame;
+            currentFrame.Elapsed = _watch.Elapsed.TotalMilliseconds;
+            currentFrame.Merge(_window.FrameDetail);
             _frameStats.SaveCurrentFrame();
             _frameStats.Framecount++;
             _frameStats.ComputeFramerate(time);

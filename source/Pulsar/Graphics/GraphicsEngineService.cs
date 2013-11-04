@@ -23,8 +23,11 @@ namespace Pulsar.Graphics
         /// <param name="game">Instance of Game class</param>
         public GraphicsEngineService(XnaGame game)
         {
-            if (game == null) throw new ArgumentNullException("game");
-            if (game.Services.GetService(typeof(IGraphicsEngineService)) != null) throw new ArgumentException("GraphicsEngineService already present");
+            if (game == null) 
+                throw new ArgumentNullException("game");
+
+            if (game.Services.GetService(typeof(IGraphicsEngineService)) != null) 
+                throw new ArgumentException("GraphicsEngineService already present");
 
             game.Services.AddService(typeof(IGraphicsEngineService), this);
             _engine = new GraphicsEngine(game.Services);
