@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
 
 namespace Pulsar.Graphics
@@ -16,6 +17,7 @@ namespace Pulsar.Graphics
         private double _elapsedTime;
         private int _historicLength = 1;
         private FrameDetail[] _frameDetails;
+        private FrameDetail _currentFrame;
 
         #endregion
 
@@ -25,12 +27,10 @@ namespace Pulsar.Graphics
         /// </summary>
         internal FrameStatistics()
         {
-            CurrentFrame = new FrameDetail();
             _frameDetails = new FrameDetail[_historicLength];
             for (int i = 0; i < _historicLength; i++)
-            {
                 _frameDetails[i] = new FrameDetail();
-            }
+            _currentFrame = _frameDetails[_historicLength - 1];
         }
 
         #endregion
@@ -38,7 +38,7 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Resize logs of frames statistics 
+        /// Resizes logs of frames statistics 
         /// </summary>
         private void Resize()
         {
@@ -46,14 +46,16 @@ namespace Pulsar.Graphics
             int previousLength = _frameDetails.Length;
             for (int i = 0; i < _historicLength; i++)
             {
-                if(i < previousLength) newDetails[i] = _frameDetails[i];
-                else newDetails[i] = new FrameDetail();
+                if(i < previousLength) 
+                    newDetails[i] = _frameDetails[i];
+                else 
+                    newDetails[i] = new FrameDetail();
             }
             _frameDetails = newDetails;
         }
 
         /// <summary>
-        /// Update the framerate
+        /// Updates the framerate
         /// </summary>
         /// <param name="time">Time since the last update</param>
         internal void ComputeFramerate(GameTime time)
@@ -67,7 +69,7 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Push the current frame at the top of the logs
+        /// Pushs the current frame at the top of the logs
         /// </summary>
         internal void SaveCurrentFrame()
         {
@@ -78,13 +80,13 @@ namespace Pulsar.Graphics
                 for (int i = lastIdx; i > 0; i--)
                     _frameDetails[i] = _frameDetails[i - 1];
             }
-            newCurrent.Reset();
-            _frameDetails[0] = CurrentFrame;
-            CurrentFrame = newCurrent;
+            _frameDetails[0] = _currentFrame;
+            _currentFrame = newCurrent;
+            _currentFrame.Reset();
         }
 
         /// <summary>
-        /// Get a specific frame
+        /// Gets a specific frame
         /// </summary>
         /// <param name="index">Index of the frame</param>
         /// <returns>Return the frame statistics at the specified index</returns>
@@ -98,22 +100,25 @@ namespace Pulsar.Graphics
         #region Properties
 
         /// <summary>
-        /// Get the current frame statistics
+        /// Gets the current frame statistics
         /// </summary>
-        internal FrameDetail CurrentFrame { get; private set; }
+        internal FrameDetail CurrentFrame
+        {
+            get { return _currentFrame; }
+        }
 
         /// <summary>
-        /// Get or set the number of frame drawn since the last reset
+        /// Gets or set the number of frame drawn since the last reset
         /// </summary>
         internal int Framecount { get; set; }
 
         /// <summary>
-        /// Get the number of frame drawn by seconds
+        /// Gets the number of frame drawn by seconds
         /// </summary>
         public int Framerate { get; private set; }
 
         /// <summary>
-        /// Get the most recent frame statistics
+        /// Gets the most recent frame statistics
         /// </summary>
         public FrameDetail LastFrame
         {
@@ -121,14 +126,16 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Get or set the length of frame statistics logs
+        /// Gets or sets the length of frame statistics logs
         /// </summary>
         public int HistoricLength
         {
             get { return _historicLength; }
             set
             {
-                if (value <= 0) throw new Exception("HistoricLength cannot be inferior or equal to zero");
+                if (value <= 0) 
+                    throw new Exception("HistoricLength cannot be inferior or equal to zero");
+
                 _historicLength = value;
                 Resize();
             }

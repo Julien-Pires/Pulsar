@@ -45,7 +45,7 @@ namespace Pulsar.Graphics.Rendering
         private bool _mipmap;
         private bool _disposed;
         private bool _isDirty = true;
-        private readonly FrameStatistics _frameStatistics = new FrameStatistics();
+        private readonly FrameDetail _frameDetail = new FrameDetail();
 
         #endregion
 
@@ -131,24 +131,20 @@ namespace Pulsar.Graphics.Rendering
             if (_isDirty) 
                 ApplyChanges();
 
+            _frameDetail.Reset();
             if (Viewports.Count > 0)
             {
-                FrameDetail currentFrame = _frameStatistics.CurrentFrame;
                 for (int i = 0; i < Viewports.Count; i++)
                 {
                     Viewport vp = Viewports[i];
                     vp.Render();
-                    currentFrame.Merge(vp.FrameDetail);
+                    _frameDetail.Merge(vp.FrameDetail);
                 }
             }
             if (Target != null) 
                 Renderer.RenderToTarget(this);
 
             PostRender();
-
-            _frameStatistics.SaveCurrentFrame();
-            _frameStatistics.Framecount++;
-            _frameStatistics.ComputeFramerate(time);
         }
 
         /// <summary>
@@ -425,9 +421,9 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Gets frame statistics
         /// </summary>
-        public FrameStatistics FrameStatistics
+        public FrameDetail FrameDetail
         {
-            get { return _frameStatistics; }
+            get { return _frameDetail; }
         }
 
         /// <summary>

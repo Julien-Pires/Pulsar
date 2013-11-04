@@ -19,6 +19,7 @@ namespace Pulsar.Graphics
         private readonly Renderer _renderer;
         private readonly BufferManager _bufferManager;
         private readonly Dictionary<string, SceneTree> _scenes = new Dictionary<string, SceneTree>();
+        private readonly FrameStatistics _frameStats = new FrameStatistics();
 
         #endregion
 
@@ -30,7 +31,8 @@ namespace Pulsar.Graphics
         /// <param name="services">GameServiceContainer used by the engine</param>
         public GraphicsEngine(IServiceProvider services)
         {
-            if (services == null) throw new ArgumentNullException("services");
+            if (services == null) 
+                throw new ArgumentNullException("services");
 
             GraphicsDeviceManager deviceService = services.GetService(typeof(IGraphicsDeviceManager)) 
                 as GraphicsDeviceManager;
@@ -62,6 +64,11 @@ namespace Pulsar.Graphics
         public void Render(GameTime time)
         {
             _window.Render(time);
+
+            _frameStats.CurrentFrame.Merge(_window.FrameDetail);
+            _frameStats.SaveCurrentFrame();
+            _frameStats.Framecount++;
+            _frameStats.ComputeFramerate(time);
         }
 
         /// <summary>
@@ -104,9 +111,9 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Gets statistics about drawn frames
         /// </summary>
-        public FrameStatistics FrameStatistics
+        public FrameStatistics Statistics
         {
-            get { return _window.FrameStatistics; }
+            get { return _frameStats; }
         }
 
         /// <summary>
