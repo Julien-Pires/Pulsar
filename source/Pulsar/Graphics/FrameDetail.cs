@@ -60,24 +60,29 @@
         #region Properties
 
         /// <summary>
-        /// Get the number of draw call
+        /// Gets the number of draw call
         /// </summary>
         public uint DrawCall { get; private set; }
 
         /// <summary>
-        /// Get the number of vertices
+        /// Gets the number of vertices
         /// </summary>
         public uint Vertices { get; private set; }
 
         /// <summary>
-        /// Get the number of primitives
+        /// Gets the number of primitives
         /// </summary>
         public uint Primitives { get; private set; }
 
         /// <summary>
-        /// Get the number of sub meshes
+        /// Gets the number of sub meshes
         /// </summary>
         public uint SubMeshes { get; private set; }
+
+        /// <summary>
+        /// Gets the time in milliseconds to render the frame
+        /// </summary>
+        public double Elapsed { get; internal set; }
 
         #endregion
     }

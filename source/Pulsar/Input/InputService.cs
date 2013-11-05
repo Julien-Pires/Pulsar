@@ -23,8 +23,12 @@ namespace Pulsar.Input
         /// <param name="game">Game instance</param>
         public InputService(XnaGame game)
         {
-            if (game == null) throw new ArgumentNullException("game", "Cannot be null");
-            if (game.Services.GetService(typeof(IInputService)) != null) throw new ArgumentException("InputManager already present");
+            if (game == null) 
+                throw new ArgumentNullException("game", "Cannot be null");
+
+            if (game.Services.GetService(typeof(IInputService)) != null) 
+                throw new ArgumentException("InputManager already present");
+
             game.Services.AddService(typeof(IInputService), this);
             _input = new InputManager();
         }

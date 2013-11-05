@@ -41,7 +41,7 @@ namespace Pulsar.Graphics.SceneGraph
         private Vector3 _yawFixedAxis = Vector3.UnitY;
         private Viewport _viewport;
         private BoundingFrustum _frustum = new BoundingFrustum(Matrix.Identity);
-        private SpeedFrustum _spdFrustum;
+        private readonly SpeedFrustum _speedFrustum = new SpeedFrustum();
 
         #endregion
 
@@ -202,7 +202,7 @@ namespace Pulsar.Graphics.SceneGraph
             Matrix viewProj;
             Matrix.Multiply(ref _viewMatrix, ref _projectionMatrix, out viewProj);
             _frustum.Matrix = viewProj;
-            _spdFrustum = new SpeedFrustum(ref _frustum);
+            _speedFrustum.Update(ref _frustum);
 
             _isDirtyBoundingFrustum = false;
         }
@@ -388,7 +388,7 @@ namespace Pulsar.Graphics.SceneGraph
             {
                 UpdateBoundingFrustum();
 
-                return _spdFrustum;
+                return _speedFrustum;
             }
         }
 
