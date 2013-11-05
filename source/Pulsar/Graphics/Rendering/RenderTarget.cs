@@ -126,25 +126,20 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="time">Time since last render</param>
         internal void Render(GameTime time)
         {
+            _frameDetail.Reset();
+            Renderer.FrameDetail.Reset();
+
             PreRender();
 
             if (_isDirty) 
                 ApplyChanges();
 
-            _frameDetail.Reset();
-            if (Viewports.Count > 0)
-            {
-                for (int i = 0; i < Viewports.Count; i++)
-                {
-                    Viewport vp = Viewports[i];
-                    vp.Render();
-                    _frameDetail.Merge(vp.FrameDetail);
-                }
-            }
             if (Target != null) 
                 Renderer.RenderToTarget(this);
 
             PostRender();
+
+            _frameDetail.Merge(Renderer.FrameDetail);
         }
 
         /// <summary>

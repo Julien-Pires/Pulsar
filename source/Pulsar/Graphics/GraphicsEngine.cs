@@ -72,6 +72,7 @@ namespace Pulsar.Graphics
             FrameDetail currentFrame = _frameStats.CurrentFrame;
             currentFrame.Elapsed = _watch.Elapsed.TotalMilliseconds;
             currentFrame.Merge(_window.FrameDetail);
+
             _frameStats.SaveCurrentFrame();
             _frameStats.Framecount++;
             _frameStats.ComputeFramerate(time);

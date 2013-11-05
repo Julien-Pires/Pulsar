@@ -27,10 +27,10 @@ namespace Pulsar.Graphics
         /// </summary>
         internal FrameStatistics()
         {
+            _currentFrame = new FrameDetail();
             _frameDetails = new FrameDetail[_historicLength];
             for (int i = 0; i < _historicLength; i++)
                 _frameDetails[i] = new FrameDetail();
-            _currentFrame = _frameDetails[_historicLength - 1];
         }
 
         #endregion
