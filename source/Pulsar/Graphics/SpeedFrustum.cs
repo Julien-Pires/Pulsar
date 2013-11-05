@@ -3,34 +3,34 @@
 namespace Pulsar.Graphics
 {
     /// <summary>
-    /// Contain frustum data to compute fast intersection test
+    /// Contains frustum data to compute fast intersection test
     /// </summary>
-    public struct SpeedFrustum
+    public sealed class SpeedFrustum
     {
         #region Fields
 
-        private readonly Vector3 _nearNormal;
-        private readonly Vector3 _farNormal;
-        private readonly Vector3 _leftNormal;
-        private readonly Vector3 _rightNormal;
-        private readonly Vector3 _bottomNormal;
-        private readonly Vector3 _topNormal;
-        private readonly float _nearDist;
-        private readonly float _farDist;
-        private readonly float _leftDist;
-        private readonly float _rightDist;
-        private readonly float _bottomDist;
-        private readonly float _topDist;
+        private Vector3 _nearNormal;
+        private Vector3 _farNormal;
+        private Vector3 _leftNormal;
+        private Vector3 _rightNormal;
+        private Vector3 _bottomNormal;
+        private Vector3 _topNormal;
+        private float _nearDist;
+        private float _farDist;
+        private float _leftDist;
+        private float _rightDist;
+        private float _bottomDist;
+        private float _topDist;
 
         #endregion
 
-        #region Constructors
+        #region Methods
 
         /// <summary>
-        /// Constructor of SpeedFrustum struct
+        /// Updates with a bounding frustum
         /// </summary>
-        /// <param name="frustum">BoundingFrustum instance</param>
-        public SpeedFrustum(ref BoundingFrustum frustum)
+        /// <param name="frustum"></param>
+        public void Update(ref BoundingFrustum frustum)
         {
             _nearNormal = frustum.Near.Normal;
             _farNormal = frustum.Far.Normal;
@@ -46,10 +46,6 @@ namespace Pulsar.Graphics
             _bottomDist = frustum.Bottom.D;
             _topDist = frustum.Top.D;
         }
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// Compute intersection between the frustum and a bounding box

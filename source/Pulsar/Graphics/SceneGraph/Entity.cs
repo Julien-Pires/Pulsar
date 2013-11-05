@@ -102,10 +102,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="cam">Current camera</param>
         public void CheckVisibilityWithCamera(Camera cam)
         {
-            SpeedFrustum frustCull = cam.FastFrustum;
             UpdateBounds();
-
-            _isRendered = _bounds.FrustumToAabbIntersect(ref frustCull);
+            _isRendered = _bounds.FrustumToAabbIntersect(cam.FastFrustum);
         }
 
         /// <summary>

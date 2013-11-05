@@ -80,31 +80,11 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Performs intersection between a frustum and the AABB
-        /// </summary>
-        /// <param name="frustum">Frustum</param>
-        /// <returns>Returns true if the bounding volume intersect with the frustum otherwise false</returns>
-        public bool FrustumToAabbIntersect(ref SpeedFrustum frustum)
-        {
-            return frustum.Intersects(ref _realBox);
-        }
-
-        /// <summary>
         /// Performs intersection between a frustum and the bouding sphere
         /// </summary>
         /// <param name="frustum">Frustum</param>
         /// <returns>Returns true if the bounding volume intersect with the frustum otherwise false</returns>
         public bool FrustumToSphereIntersect(SpeedFrustum frustum)
-        {
-            return frustum.Intersects(ref _realSphere);
-        }
-
-        /// <summary>
-        /// Performs intersection between a frustum and the bouding sphere
-        /// </summary>
-        /// <param name="frustum">Frustum</param>
-        /// <returns>Returns true if the bounding volume intersect with the frustum otherwise false</returns>
-        public bool FrustumToSphereIntersect(ref SpeedFrustum frustum)
         {
             return frustum.Intersects(ref _realSphere);
         }
