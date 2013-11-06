@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Pulsar.Input
 {
     /// <summary>
-    /// Describes an axis linked to one or more button
+    /// Represents an axis linked to one or more button
     /// </summary>
     public sealed class Axis
     {
@@ -52,20 +52,19 @@ namespace Pulsar.Input
 
             #endregion
 
-            #region Methods
+            #region Static methods
 
             /// <summary>
-            /// Compare two AxisBinding instance
+            /// Compares two AxisBinding instance
             /// </summary>
             /// <param name="first">First instance</param>
             /// <param name="second">Second instance</param>
             /// <returns>Return a value indicating the position of the first instance</returns>
-            internal int Comparison(AxisBinding first, AxisBinding second)
+            internal static int Comparison(AxisBinding first, AxisBinding second)
             {
                 if (first._priority < second._priority) return -1;
-                if (first._priority > second._priority) return 1;
 
-                return 0;
+                return (first._priority > second._priority) ? 1 : 0;
             }
 
             #endregion
@@ -86,37 +85,41 @@ namespace Pulsar.Input
         #region Methods
 
         /// <summary>
-        /// Link an analog button to the axis
+        /// Links an analog button to the axis
         /// </summary>
         /// <param name="button">Analog button</param>
         /// <param name="priority">Priority of the button</param>
         public void AddAnalogButton(AbstractButton button, short priority)
         {
-            if (button.Type != ButtonType.Analog) throw new ArgumentException("Provided button is not analog");
+            if (button.Type != ButtonType.Analog) 
+                throw new ArgumentException("Provided button is not analog");
 
             AxisBinding binding = new AxisBinding(button, priority);
             _hardwareButtons.Add(binding);
-            _hardwareButtons.Sort(binding.Comparison);
+            _hardwareButtons.Sort(AxisBinding.Comparison);
         }
 
         /// <summary>
-        /// Link two digital button to the axis
+        /// Links two digital button to the axis
         /// </summary>
         /// <param name="negative">Button used to go in negative range</param>
         /// <param name="positive">Button used to go in positive range</param>
         /// <param name="priority">Priority of the button</param>
         public void AddDigitalButton(AbstractButton negative, AbstractButton positive, short priority)
         {
-            if((negative.Type != ButtonType.Digital)) throw new ArgumentException("Negative button is not digital");
-            if ((positive.Type != ButtonType.Digital)) throw new ArgumentException("Positive button is not digital");
+            if((negative.Type != ButtonType.Digital)) 
+                throw new ArgumentException("Negative button is not digital");
+
+            if ((positive.Type != ButtonType.Digital)) 
+                throw new ArgumentException("Positive button is not digital");
 
             AxisBinding binding = new AxisBinding(negative, positive, priority);
             _hardwareButtons.Add(binding);
-            _hardwareButtons.Sort(binding.Comparison);
+            _hardwareButtons.Sort(AxisBinding.Comparison);
         }
 
         /// <summary>
-        /// Remove all buttons
+        /// Removes all buttons
         /// </summary>
         public void RemoveAllButtons()
         {
@@ -124,12 +127,11 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Update the axis
+        /// Updates the axis
         /// </summary>
         internal void Update()
         {
             float rawValue = 0.0f;
-
             bool activated = false;
             for (int i = 0; i < _hardwareButtons.Count; i++)
             {
@@ -144,7 +146,8 @@ namespace Pulsar.Input
                     if (Math.Abs(rawValue) > 0.0f)
                     {
                         activated = true;
-                        if (_inverse) rawValue *= -1.0f;
+                        if (_inverse) 
+                            rawValue *= -1.0f;
                     }
                 }
                 else
@@ -153,13 +156,15 @@ namespace Pulsar.Input
 
                     if (positive.Device == InputDevice.GamePad)
                     {
-                        if ((rawValue < _deadZone) && (rawValue > -_deadZone)) rawValue = 0.0f;
+                        if ((rawValue < _deadZone) && (rawValue > -_deadZone)) 
+                            rawValue = 0.0f;
                     }
 
                     if (Math.Abs(rawValue) > 0.0f)
                     {
                         activated = true;
-                        if (_inverse) rawValue *= -1.0f;
+                        if (_inverse)
+                            rawValue *= -1.0f;
                         rawValue *= _sensitivity;
                     }
                 }
@@ -174,17 +179,17 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Get or set the name of the axis
+        /// Gets or sets the name of the axis
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Get the owner of the axis
+        /// Gets the owner of the axis
         /// </summary>
         public VirtualInput Owner { get; internal set; }
 
         /// <summary>
-        /// Get or set a value that indicates of the axis is inversed
+        /// Gets or sets a value that indicates of the axis is inversed
         /// </summary>
         public bool Inverse
         {
@@ -193,7 +198,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get or set the sensitivity
+        /// Gets or sets the sensitivity
         /// </summary>
         public float Sensitivity
         {
@@ -202,7 +207,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get or set the deadzone
+        /// Gets or sets the deadzone
         /// </summary>
         public float DeadZone
         {
@@ -211,7 +216,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the value of the axis
+        /// Gets the value of the axis
         /// </summary>
         public float Value
         {
