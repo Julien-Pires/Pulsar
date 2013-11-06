@@ -45,7 +45,6 @@ namespace Pulsar.Input
         /// </summary>
         internal void Update()
         {
-            InternalButtonPressed.Clear();
             for (int i = 0; i < _buttons.Count; i++)
                 _buttons[i].Update();
 
