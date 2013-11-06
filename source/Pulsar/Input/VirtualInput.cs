@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Pulsar.Input
 {
@@ -10,7 +11,9 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        internal List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
+        public readonly ReadOnlyCollection<ButtonEvent> ButtonPressed;
+
+        internal readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
         internal readonly PlayerIndex PlayerIndex;
 
         private readonly Dictionary<string, int> _buttonsMap = new Dictionary<string, int>();
@@ -19,7 +22,6 @@ namespace Pulsar.Input
         private readonly List<Button> _buttons = new List<Button>();
         private readonly List<Axis> _axes = new List<Axis>();
         private readonly List<InputEvent> _events = new List<InputEvent>();
-        
 
         #endregion
 
@@ -31,6 +33,7 @@ namespace Pulsar.Input
         internal VirtualInput(PlayerIndex playerIndex)
         {
             PlayerIndex = playerIndex;
+            ButtonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
         }
 
         #endregion
@@ -42,7 +45,7 @@ namespace Pulsar.Input
         /// </summary>
         internal void Update()
         {
-            ButtonPressed.Clear();
+            InternalButtonPressed.Clear();
             for (int i = 0; i < _buttons.Count; i++)
                 _buttons[i].Update();
 
@@ -59,7 +62,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         public bool AnyKeyPressed()
         {
-            return ButtonPressed.Count > 0;
+            return InternalButtonPressed.Count > 0;
         }
 
         /// <summary>

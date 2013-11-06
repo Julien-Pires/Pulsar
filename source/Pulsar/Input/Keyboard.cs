@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework.Input;
 using XnaKeyboard = Microsoft.Xna.Framework.Input.Keyboard;
 
@@ -14,7 +14,9 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        internal static List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
+        public static readonly ReadOnlyCollection<ButtonEvent> ButtonPressed;
+
+        internal static readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
 
         private static readonly Keys[] AllDigital;
         private static KeyboardState _previousState;
@@ -30,6 +32,7 @@ namespace Pulsar.Input
         static Keyboard()
         {
             AllDigital = EnumExtension.GetValues<Keys>();
+            ButtonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
         }
 
         #endregion
@@ -44,12 +47,12 @@ namespace Pulsar.Input
             _previousState = _currentState;
             _currentState = XnaKeyboard.GetState();
 
-            ButtonPressed.Clear();
+            InternalButtonPressed.Clear();
             for (int i = 0; i < AllDigital.Length; i++)
             {
                 if (!IsPressed(AllDigital[i])) continue;
                 AbstractButton btn = new AbstractButton(AllDigital[i]);
-                ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed));
+                InternalButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed));
             }
         }
 
@@ -59,7 +62,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         public static bool AnyKeyPressed()
         {
-            return ButtonPressed.Count > 0;
+            return InternalButtonPressed.Count > 0;
         }
 
         /// <summary>

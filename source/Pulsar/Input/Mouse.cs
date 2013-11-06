@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using XnaMouse = Microsoft.Xna.Framework.Input.Mouse;
 
 using Pulsar.Extension;
 
 namespace Pulsar.Input
 {
+    using XnaMouse = Microsoft.Xna.Framework.Input.Mouse;
+
     /// <summary>
     /// Enumerates digital mouse button
     /// </summary>
@@ -37,7 +39,9 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        internal static readonly List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
+        public static readonly ReadOnlyCollection<ButtonEvent> ButtonPressed;
+
+        internal static readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
 
         private static readonly MouseButtons[] AllDigital;
         private static MouseState _previousState;
@@ -56,6 +60,7 @@ namespace Pulsar.Input
         static Mouse()
         {
             AllDigital = EnumExtension.GetValues<MouseButtons>();
+            ButtonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
         }
 
         #endregion
@@ -75,12 +80,12 @@ namespace Pulsar.Input
             Vector2.Subtract(ref _currentPosition, ref _previousPosition, out _positionDelta);
             WheelDelta = _currentState.ScrollWheelValue - _previousState.ScrollWheelValue;
 
-            ButtonPressed.Clear();
+            InternalButtonPressed.Clear();
             for (int i = 0; i < AllDigital.Length; i++)
             {
                 if (!IsPressed(AllDigital[i])) continue;
                 AbstractButton btn = new AbstractButton(AllDigital[i]);
-                ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed));
+                InternalButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed));
             }
         }
 
@@ -90,7 +95,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         public static bool AnyKeyPressed()
         {
-            return ButtonPressed.Count > 0;
+            return InternalButtonPressed.Count > 0;
         }
 
         /// <summary>
