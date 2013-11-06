@@ -51,35 +51,35 @@ namespace Pulsar.Input
 #if WINDOWS
             if ((device & InputDevice.Mouse) == InputDevice.Mouse)
             {
-                for (short i = 0; i < Mouse.ButtonPressed.Count; i++)
+                for (short i = 0; i < Mouse.InternalButtonPressed.Count; i++)
                 {
-                    _currentContext.ButtonPressed.Add(Mouse.ButtonPressed[i]);
+                    _currentContext.InternalButtonPressed.Add(Mouse.InternalButtonPressed[i]);
                 }
             }
 #endif
             if ((device & InputDevice.Keyboard) == InputDevice.Keyboard)
             {
-                for (short i = 0; i < Keyboard.ButtonPressed.Count; i++)
+                for (short i = 0; i < Keyboard.InternalButtonPressed.Count; i++)
                 {
-                    _currentContext.ButtonPressed.Add(Keyboard.ButtonPressed[i]);
+                    _currentContext.InternalButtonPressed.Add(Keyboard.InternalButtonPressed[i]);
                 }
             }
             if ((device & InputDevice.GamePad) == InputDevice.GamePad)
             {
-                for(short i = 0; i < GamePad.ButtonPressed.Count; i++)
+                for(short i = 0; i < GamePad.InternalButtonPressed.Count; i++)
                 {
-                    ButtonEvent btnEvent = GamePad.ButtonPressed[i];
+                    ButtonEvent btnEvent = GamePad.InternalButtonPressed[i];
                     if (btnEvent.Index == _playerIndex.GamePadIndex)
                     {
-                        _currentContext.ButtonPressed.Add(btnEvent);
+                        _currentContext.InternalButtonPressed.Add(btnEvent);
                     }
                 }
             }
             else if ((device & InputDevice.AllGamePad) == InputDevice.AllGamePad)
             {
-                for (short i = 0; i < GamePad.ButtonPressed.Count; i++)
+                for (short i = 0; i < GamePad.InternalButtonPressed.Count; i++)
                 {
-                    _currentContext.ButtonPressed.Add(GamePad.ButtonPressed[i]);
+                    _currentContext.InternalButtonPressed.Add(GamePad.InternalButtonPressed[i]);
                 }
             }
         }

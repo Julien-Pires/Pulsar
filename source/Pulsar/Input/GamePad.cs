@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using XnaGamePad = Microsoft.Xna.Framework.Input.GamePad;
-using XnaPlayerIndex = Microsoft.Xna.Framework.PlayerIndex;
 
 using Pulsar.Extension;
 
 namespace Pulsar.Input
 {
+    using XnaGamePad = Microsoft.Xna.Framework.Input.GamePad;
+    using XnaPlayerIndex = Microsoft.Xna.Framework.PlayerIndex;
+
     /// <summary>
     /// Enumerates analog buttons for a gamepad
     /// </summary>
@@ -24,7 +26,7 @@ namespace Pulsar.Input
     }
 
     /// <summary>
-    /// Allows to retrieve state of a Xbox 360 controller
+    /// Defines a Xbox 360 controller
     /// </summary>
     public sealed class GamePad
     {
@@ -32,7 +34,9 @@ namespace Pulsar.Input
 
         public const short GamePadCount = 4;
 
-        internal static readonly List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
+        public static readonly ReadOnlyCollection<ButtonEvent> ButtonPressed;
+
+        internal static readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
 
         private static readonly Buttons[] AllDigital;
         private static readonly GamePad[] GamePads = new GamePad[GamePadCount];
@@ -67,6 +71,7 @@ namespace Pulsar.Input
                 GamePads[i] = pad;
             }
             AllDigital = EnumExtension.GetValues<Buttons>();
+            ButtonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
         }
 
         #endregion
@@ -87,11 +92,11 @@ namespace Pulsar.Input
         #region Static methods
 
         /// <summary>
-        /// Update the four gamepad
+        /// Updates the four gamepad
         /// </summary>
         internal static void UpdatePads()
         {
-            ButtonPressed.Clear();
+            InternalButtonPressed.Clear();
             for (short i = 0; i < GamePadCount; i++)
             {
                 GamePad pad = GamePads[i];
@@ -102,30 +107,31 @@ namespace Pulsar.Input
                 {
                     if (!pad.IsPressed(AllDigital[j])) continue;
                     AbstractButton btn = new AbstractButton(AllDigital[j]);
-                    ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, i));
+                    InternalButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, i));
                 }
             }
         }
 
         /// <summary>
-        /// Check if any key has been pressed on any gamepad
+        /// Checks if any key has been pressed on any gamepad
         /// </summary>
         /// <returns>Return true if any key has been pressed otherwise false</returns>
         public static bool AnyKeyPressed()
         {
-            return ButtonPressed.Count > 0;
-        }
-
-        public static void ReleaseAllListeners()
-        {
-            for (int i = 0; i < GamePadCount; i++)
-            {
-                GamePads[i].ReleaseListeners();
-            }
+            return InternalButtonPressed.Count > 0;
         }
 
         /// <summary>
-        /// Hook a delegate to the gamepad connected event
+        /// Releases all listeners for all events
+        /// </summary>
+        public static void ReleaseAllListeners()
+        {
+            for (int i = 0; i < GamePadCount; i++)
+                GamePads[i].ReleaseListeners();
+        }
+
+        /// <summary>
+        /// Hooks a delegate to the gamepad connected event
         /// </summary>
         /// <param name="listener">Delegate to trigger</param>
         public static void AddListenerConnectedEvent(EventHandler<GamePadEventArgs> listener)
@@ -137,7 +143,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Unhook a delegate to the gamepad connected event
+        /// Unhooks a delegate to the gamepad connected event
         /// </summary>
         /// <param name="listener">Delegate to trigger</param>
         public static void RemoveListenerConnectedEvent(EventHandler<GamePadEventArgs> listener)
@@ -149,7 +155,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Hook a delegate to the gamepad disconnected event
+        /// Hooks a delegate to the gamepad disconnected event
         /// </summary>
         /// <param name="listener">Delegate to trigger</param>
         public static void AddListenerDisconnectedEvent(EventHandler<GamePadEventArgs> listener)
@@ -161,7 +167,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Unhook a delegate to the gamepad disconnected event
+        /// Unhooks a delegate to the gamepad disconnected event
         /// </summary>
         /// <param name="listener">Delegate to trigger</param>
         public static void RemoveListenerDisconnectedEvent(EventHandler<GamePadEventArgs> listener)
@@ -173,7 +179,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get a gamepad
+        /// Gets a gamepad
         /// </summary>
         /// <param name="player">Index of the gamepad</param>
         /// <returns>Return an instance of GamePad class</returns>
@@ -204,14 +210,16 @@ namespace Pulsar.Input
             {
                 if (_currentState.IsConnected)
                 {
-                    if (Connected != null) Connected(this, new GamePadEventArgs(this));
+                    if (Connected != null) 
+                        Connected(this, new GamePadEventArgs(this));
                 }
             }
             else
             {
                 if (!_currentState.IsConnected)
                 {
-                    if (Disconnected != null) Disconnected(this, new GamePadEventArgs(this));
+                    if (Disconnected != null) 
+                        Disconnected(this, new GamePadEventArgs(this));
                 }
             }
 
@@ -302,7 +310,7 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Get the position of the left thumbstick
+        /// Gets the position of the left thumbstick
         /// </summary>
         public Vector2 ThumbLeftPosition
         {
@@ -310,7 +318,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the position of the right thumbstick
+        /// Gets the position of the right thumbstick
         /// </summary>
         public Vector2 ThumbRightPosition
         {
@@ -318,7 +326,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the delta of the left thumbstick
+        /// Gets the delta of the left thumbstick
         /// </summary>
         public Vector2 ThumbLeftDelta
         {
@@ -326,7 +334,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the delta of the right thumbstick
+        /// Gets the delta of the right thumbstick
         /// </summary>
         public Vector2 ThumbRightDelta
         {
@@ -334,7 +342,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the value of the left trigger
+        /// Gets the value of the left trigger
         /// </summary>
         public float LeftTrigger
         {
@@ -342,7 +350,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the value of the right trigger
+        /// Gets the value of the right trigger
         /// </summary>
         public float RightTrigger
         {
@@ -350,7 +358,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the delta of the left trigger
+        /// Gets the delta of the left trigger
         /// </summary>
         public float LeftTriggerDelta
         {
@@ -358,7 +366,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the delta of the right trigger
+        /// Gets the delta of the right trigger
         /// </summary>
         public float RightTriggerDelta
         {
@@ -366,7 +374,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get a value that indicates if the gamepad is connected
+        /// Gets a value that indicates if the gamepad is connected
         /// </summary>
         public bool IsConnected
         {
