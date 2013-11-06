@@ -220,27 +220,24 @@ namespace Pulsar.Input
                         Disconnected(this, new GamePadEventArgs(this));
                 }
             }
-
             if (!_currentState.IsConnected) return;
-            if (_previousState.PacketNumber != _currentState.PacketNumber)
+
+            GamePadThumbSticks prevThumb = _previousState.ThumbSticks;
+            GamePadThumbSticks currThumb = _currentState.ThumbSticks;
+            _thumbRightDelta = Vector2.Subtract(currThumb.Right, prevThumb.Right);
+            _thumbLeftDelta = Vector2.Subtract(currThumb.Left, prevThumb.Left);
+
+            GamePadTriggers prevTrigger = _previousState.Triggers;
+            GamePadTriggers currTrigger = _currentState.Triggers;
+            _triggerRightDelta = currTrigger.Right - prevTrigger.Right;
+            _triggerLeftDelta = currTrigger.Left - prevTrigger.Left;
+
+            InternalButtonPressed.Clear();
+            for (short i = 0; i < AllDigital.Length; i++)
             {
-                GamePadThumbSticks prevThumb = _previousState.ThumbSticks;
-                GamePadThumbSticks currThumb = _currentState.ThumbSticks;
-                _thumbRightDelta = Vector2.Subtract(currThumb.Right, prevThumb.Right);
-                _thumbLeftDelta = Vector2.Subtract(currThumb.Left, prevThumb.Left);
-
-                GamePadTriggers prevTrigger = _previousState.Triggers;
-                GamePadTriggers currTrigger = _currentState.Triggers;
-                _triggerRightDelta = currTrigger.Right - prevTrigger.Right;
-                _triggerLeftDelta = currTrigger.Left - prevTrigger.Left;
-
-                InternalButtonPressed.Clear();
-                for (short i = 0; i < AllDigital.Length; i++)
-                {
-                    if (!IsPressed(AllDigital[i])) continue;
-                    AbstractButton btn = new AbstractButton(AllDigital[i]);
-                    InternalButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, (short)_gamePadIndex));
-                }
+                if (!IsPressed(AllDigital[i])) continue;
+                AbstractButton btn = new AbstractButton(AllDigital[i]);
+                InternalButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, (short)_gamePadIndex));
             }
         }
 
