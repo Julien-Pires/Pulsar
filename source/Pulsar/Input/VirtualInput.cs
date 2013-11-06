@@ -15,10 +15,10 @@ namespace Pulsar.Input
 
         private readonly Dictionary<string, int> _buttonsMap = new Dictionary<string, int>();
         private readonly Dictionary<string, int> _axesMap = new Dictionary<string, int>();
-        private readonly Dictionary<string, int> _actionsMap = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> _eventsMap = new Dictionary<string, int>();
         private readonly List<Button> _buttons = new List<Button>();
         private readonly List<Axis> _axes = new List<Axis>();
-        private readonly List<InputEvent> _actions = new List<InputEvent>();
+        private readonly List<InputEvent> _events = new List<InputEvent>();
         
 
         #endregion
@@ -38,29 +38,23 @@ namespace Pulsar.Input
         #region Methods
 
         /// <summary>
-        /// Update virtual input states
+        /// Updates virtual input states
         /// </summary>
         internal void Update()
         {
             ButtonPressed.Clear();
             for (int i = 0; i < _buttons.Count; i++)
-            {
                 _buttons[i].Update();
-            }
 
             for (int i = 0; i < _axes.Count; i++)
-            {
                 _axes[i].Update();
-            }
 
-            for (int i = 0; i < _actions.Count; i++)
-            {
-                _actions[i].Update();
-            }
+            for (int i = 0; i < _events.Count; i++)
+                _events[i].Update();
         }
 
         /// <summary>
-        /// Check if any key has been pressed
+        /// Checks if any key has been pressed
         /// </summary>
         /// <returns></returns>
         public bool AnyKeyPressed()
@@ -69,89 +63,93 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Create a new action
+        /// Creates a new event
         /// </summary>
-        /// <param name="name">Name of the action</param>
+        /// <param name="name">Name of the event</param>
         /// <returns>Return an InputEvent instance</returns>
-        public InputEvent CreateAction(string name)
+        public InputEvent CreateEvent(string name)
         {
-            if (_actionsMap.ContainsKey(name)) throw new Exception(string.Format("An action named {0} already exists", name));
+            if (_eventsMap.ContainsKey(name))
+                throw new Exception(string.Format("An event named {0} already exists", name));
 
-            InputEvent action = new InputEvent(name, this);
-            _actions.Add(action);
-            _actionsMap.Add(name, _actions.Count - 1);
+            InputEvent newEvent = new InputEvent(name, this);
+            _events.Add(newEvent);
+            _eventsMap.Add(name, _events.Count - 1);
 
-            return action;
+            return newEvent;
         }
 
         /// <summary>
-        /// Remove an action
+        /// Removes an event
         /// </summary>
-        /// <param name="name">Name of the action</param>
-        /// <returns>Return true if the action is removed otherwise false</returns>
-        public bool DestroyAction(string name)
+        /// <param name="name">Name of the event</param>
+        /// <returns>Return true if the event is removed otherwise false</returns>
+        public bool DestroyEvent(string name)
         {
             int idx;
-            if (!_actionsMap.TryGetValue(name, out idx)) return false;
+            if (!_eventsMap.TryGetValue(name, out idx)) return false;
 
-            _actions.RemoveAt(idx);
-            _actionsMap.Remove(name);
-            UpdateIndexMap(idx, _actionsMap);
+            _events.RemoveAt(idx);
+            _eventsMap.Remove(name);
+            UpdateIndexMap(idx, _eventsMap);
 
             return true;
         }
 
         /// <summary>
-        /// Get an action
+        /// Gets an event
         /// </summary>
-        /// <param name="name">Name of the action</param>
+        /// <param name="name">Name of the event</param>
         /// <returns>Return an InputEvent instance</returns>
-        public InputEvent GetAction(string name)
+        public InputEvent GetEvent(string name)
         {
             int idx;
-            if (!_actionsMap.TryGetValue(name, out idx)) throw new Exception(string.Format("Failed to find an action named {0}", name));
+            if (!_eventsMap.TryGetValue(name, out idx)) 
+                throw new Exception(string.Format("Failed to find an event named {0}", name));
 
-            return _actions[idx];
+            return _events[idx];
         }
 
         /// <summary>
-        /// Add a button
+        /// Adds a button
         /// </summary>
         /// <param name="btn">Button instance</param>
         public void AddButton(Button btn)
         {
-            if (string.IsNullOrEmpty(btn.Name)) throw new Exception("Failed to add the button, his name is null or empty");
-            if (_buttonsMap.ContainsKey(btn.Name)) throw new Exception(string.Format("A button named {0} already exists in this virtual input", btn.Name)); 
+            if (string.IsNullOrEmpty(btn.Name)) 
+                throw new Exception("Failed to add the button, his name is null or empty");
+
+            if (_buttonsMap.ContainsKey(btn.Name)) 
+                throw new Exception(string.Format("A button named {0} already exists in this virtual input", btn.Name)); 
 
             if (btn.Owner != null)
-            {
                 btn.Owner.RemoveButton(btn.Name);
-            }
             _buttons.Add(btn);
             _buttonsMap.Add(btn.Name, _buttons.Count - 1);
             btn.Owner = this;
         }
 
         /// <summary>
-        /// Add an axis
+        /// Adds an axis
         /// </summary>
         /// <param name="axis">Axis instance</param>
         public void AddAxis(Axis axis)
         {
-            if(string.IsNullOrEmpty(axis.Name)) throw new Exception("Failed to add the axis, his name is null or empty");
-            if (_axesMap.ContainsKey(axis.Name)) throw new Exception(string.Format("An axis named {0} already exists in this virtual input", axis.Name));
+            if(string.IsNullOrEmpty(axis.Name)) 
+                throw new Exception("Failed to add the axis, his name is null or empty");
+
+            if (_axesMap.ContainsKey(axis.Name)) 
+                throw new Exception(string.Format("An axis named {0} already exists in this virtual input", axis.Name));
 
             if (axis.Owner != null)
-            {
                 axis.Owner.RemoveAxis(axis.Name);
-            }
             _axes.Add(axis);
             _axesMap.Add(axis.Name, _axes.Count - 1);
             axis.Owner = this;
         }
 
         /// <summary>
-        /// Remove a button
+        /// Removes a button
         /// </summary>
         /// <param name="name">Name of the button</param>
         /// <returns>Return true if the button is removed otherwise false</returns>
@@ -170,7 +168,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Remove an axis
+        /// Removes an axis
         /// </summary>
         /// <param name="name">Name of the axis</param>
         /// <returns>Return true if the axis is removed otherwise false</returns>
@@ -189,33 +187,35 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get a button
+        /// Gets a button
         /// </summary>
         /// <param name="name">Name of the button</param>
         /// <returns>Return a button instance</returns>
         public Button GetButton(string name)
         {
             int idx;
-            if (!_buttonsMap.TryGetValue(name, out idx)) throw new Exception(string.Format("Failed to find a button named {0}", name));
+            if (!_buttonsMap.TryGetValue(name, out idx)) 
+                throw new Exception(string.Format("Failed to find a button named {0}", name));
 
             return _buttons[idx];
         }
 
         /// <summary>
-        /// Get an axis
+        /// Gets an axis
         /// </summary>
         /// <param name="name">Name of the axis</param>
         /// <returns>Return an axis instance</returns>
         public Axis GetAxis(string name)
         {
             int idx;
-            if (!_axesMap.TryGetValue(name, out idx)) throw new Exception(string.Format("Failed to find an axis named {0}", name));
+            if (!_axesMap.TryGetValue(name, out idx)) 
+                throw new Exception(string.Format("Failed to find an axis named {0}", name));
 
             return _axes[idx];
         }
 
         /// <summary>
-        /// Update a dictionary used as an index dictionary when an index is removed
+        /// Updates a dictionary used as an index dictionary when an index is removed
         /// </summary>
         /// <param name="idx">Removed index</param>
         /// <param name="map">Dictionary to update</param>
@@ -223,7 +223,8 @@ namespace Pulsar.Input
         {
             foreach (KeyValuePair<string, int> kvp in map)
             {
-                if (kvp.Value > idx) map[kvp.Key] = kvp.Value - 1;
+                if (kvp.Value > idx) 
+                    map[kvp.Key] = kvp.Value - 1;
             }
         }
 
@@ -232,7 +233,7 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Get the device enum that the virtual input is listening to
+        /// Gets the device enum that the virtual input is listening to
         /// </summary>
         public InputDevice AssociatedDevice { get; set; }
 

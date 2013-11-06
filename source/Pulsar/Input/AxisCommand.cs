@@ -12,7 +12,7 @@ namespace Pulsar.Input
     }
 
     /// <summary>
-    /// Check the state of an axis against a specific event
+    /// Checks the state of an axis for a specific event
     /// </summary>
     internal sealed class AxisCommand : IInputCommand
     {
@@ -43,22 +43,25 @@ namespace Pulsar.Input
         #region Methods
 
         /// <summary>
-        /// Assign a method that check the state of the axis
+        /// Assignes a method that check the state of the axis
         /// </summary>
         private void AssignCheckMethod()
         {
             switch (_axisEvent)
             {
-                case AxisEventType.IsInactive: _checkMethod = IsInactive;
+                case AxisEventType.IsInactive: 
+                    _checkMethod = IsInactive;
                     break;
-                case AxisEventType.IsActive: _checkMethod = IsActive;
+                case AxisEventType.IsActive: 
+                    _checkMethod = IsActive;
                     break;
-                default: throw new Exception("Invalid command event code provided");
+                default: 
+                    throw new Exception("Invalid command event code provided");
             }
         }
 
         /// <summary>
-        /// Check if an axis is inactive
+        /// Checks if an axis is inactive
         /// </summary>
         /// <returns>Return true if the axis is inactive othterwise false</returns>
         private bool IsInactive()
@@ -67,7 +70,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if an axis is active
+        /// Checks if an axis is active
         /// </summary>
         /// <returns>Return true if the axis is active otherwise false</returns>
         private bool IsActive()
@@ -80,7 +83,7 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Get a value that indicates if the command is triggered
+        /// Gets a value that indicates if the command is triggered
         /// </summary>
         public bool IsTriggered
         {
