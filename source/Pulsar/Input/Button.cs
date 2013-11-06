@@ -3,14 +3,14 @@
 namespace Pulsar.Input
 {
     /// <summary>
-    /// Describes a virtual button
+    /// Represents a virtual button linked to one or more hardware buttons
     /// </summary>
     public sealed class Button
     {
         #region Nested
 
         /// <summary>
-        /// Describe a button priority
+        /// Describes a hardware button binding
         /// </summary>
         private class ButtonBinding
         {
@@ -40,7 +40,7 @@ namespace Pulsar.Input
 
             #endregion
 
-            #region Methods
+            #region Static Methods
 
             /// <summary>
             /// Compare two instance of ButtonBinding
@@ -48,12 +48,11 @@ namespace Pulsar.Input
             /// <param name="first">First instance</param>
             /// <param name="second">Second instance</param>
             /// <returns>Return a value indicating the position of the first instance</returns>
-            internal int Comparison(ButtonBinding first, ButtonBinding second)
+            internal static int Comparison(ButtonBinding first, ButtonBinding second)
             {
                 if (first._priority < second._priority) return -1;
-                if (first._priority > second._priority) return 1;
 
-                return 0;
+                return (first._priority > second._priority) ? 1 : 0;
             }
 
             #endregion
@@ -73,7 +72,7 @@ namespace Pulsar.Input
         #region Methods
 
         /// <summary>
-        /// Link a real button to the virtual button
+        /// Links a real button to the virtual button
         /// </summary>
         /// <param name="btn">Button instance</param>
         /// <param name="priority">Priority of the button</param>
@@ -81,11 +80,11 @@ namespace Pulsar.Input
         {
             ButtonBinding binding = new ButtonBinding(btn, priority);
             _hardwareButtons.Add(binding);
-            _hardwareButtons.Sort(binding.Comparison);
+            _hardwareButtons.Sort(ButtonBinding.Comparison);
         }
 
         /// <summary>
-        /// Remove all real buttons
+        /// Removes all real buttons
         /// </summary>
         public void RemoveAllButtons()
         {
@@ -93,12 +92,11 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Update the button
+        /// Updates the button
         /// </summary>
         internal void Update()
         {
             _previousDown = _down;
-
             for (int i = 0; i < _hardwareButtons.Count; i++)
             {
                 AbstractButton btn = _hardwareButtons[i].Button;
@@ -121,22 +119,22 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Get or set the name
+        /// Gets or sets the name
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Get the owner of the button
+        /// Gets the owner of the button
         /// </summary>
         public VirtualInput Owner { get; internal set; }
 
         /// <summary>
-        /// Get or set the deadzone
+        /// Gets or sets the deadzone
         /// </summary>
         public float DeadZone { get; set; }
 
         /// <summary>
-        /// Get a value that indicates if the button is down
+        /// Gets a value that indicates if the button is down
         /// </summary>
         public bool IsDown
         {
@@ -144,7 +142,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get a value that indicates if the button is up
+        /// Gets a value that indicates if the button is up
         /// </summary>
         public bool IsUp
         {
@@ -152,7 +150,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get a value that indicates if the button has just been pressed
+        /// Gets a value that indicates if the button has just been pressed
         /// </summary>
         public bool IsPressed
         {
@@ -160,7 +158,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get a value that indicates if the button has just been released
+        /// Gets a value that indicates if the button has just been released
         /// </summary>
         public bool IsReleased
         {
@@ -168,7 +166,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the value of the button
+        /// Gets the value of the button
         /// </summary>
         public float Value
         {

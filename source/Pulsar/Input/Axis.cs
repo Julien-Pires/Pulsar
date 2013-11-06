@@ -4,14 +4,14 @@ using System.Collections.Generic;
 namespace Pulsar.Input
 {
     /// <summary>
-    /// Represents an axis linked to one or more button
+    /// Represents a virtual axis linked to one or more hardware buttons
     /// </summary>
     public sealed class Axis
     {
         #region Nested
 
         /// <summary>
-        /// Describes a set of button
+        /// Describes a hardware button binding
         /// </summary>
         private class AxisBinding
         {
