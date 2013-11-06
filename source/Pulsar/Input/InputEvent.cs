@@ -3,14 +3,14 @@
 namespace Pulsar.Input
 {
     /// <summary>
-    /// Delegate used when an input action is triggerd
+    /// Delegate used when an input event is triggerd
     /// </summary>
     /// <param name="inputEvent">InputEvent that trigger the event</param>
     /// <param name="propagate">Use to indicate that after the end of the method event should stop calling anothers</param>
     public delegate void InputEventFired(InputEvent inputEvent, ref bool propagate);
 
     /// <summary>
-    /// Allows to trigger an action when input commands are triggered
+    /// Represents an event that is triggered by a set of commands
     /// </summary>
     public sealed class InputEvent
     {
@@ -26,8 +26,8 @@ namespace Pulsar.Input
         /// <summary>
         /// Constructor of InputEvent class
         /// </summary>
-        /// <param name="name">Name of the input action</param>
-        /// <param name="owner">Owner of the input action</param>
+        /// <param name="name">Name of the input event</param>
+        /// <param name="owner">Owner of the input event</param>
         internal InputEvent(string name, VirtualInput owner)
         {
             Name = name;
@@ -39,15 +39,14 @@ namespace Pulsar.Input
         #region Methods
 
         /// <summary>
-        /// Update the state
+        /// Updates the state of the event
         /// </summary>
         internal void Update()
         {
             bool isTriggered = true;
             for (int i = 0; i < _commands.Count; i++)
-            {
                 isTriggered &= _commands[i].IsTriggered;
-            }
+
             if (!isTriggered) return;
 
             bool propagate = true;
@@ -58,22 +57,31 @@ namespace Pulsar.Input
             }
         }
 
+        /// <summary>
+        /// Adds a listener for this event
+        /// </summary>
+        /// <param name="listener">Listener</param>
         public void AddListener(InputEventFired listener)
         {
             _listeners.Add(listener);
         }
 
+        /// <summary>
+        /// Removes a listener for this event
+        /// </summary>
+        /// <param name="listener">Listener</param>
+        /// <returns>Returns true if the listener is removed otherwise false</returns>
         public bool RemoveListener(InputEventFired listener)
         {
             return _listeners.Remove(listener);
         }
 
         /// <summary>
-        /// Add a new command to check for
+        /// Adds a new command to check for
         /// </summary>
         /// <param name="buttonName">Name of the button associated with the command</param>
         /// <param name="btnEvent">Event to check for</param>
-        public void AddCommand(string buttonName, ButtonEventType btnEvent)
+        public void CreateCommand(string buttonName, ButtonEventType btnEvent)
         {
             Button btn = Owner.GetButton(buttonName);
             ButtonCommand command = new ButtonCommand(btn, btnEvent);
@@ -81,11 +89,11 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Add new command to check for
+        /// Adds a new command to check for
         /// </summary>
         /// <param name="axisName">Name of the axis associated with the command</param>
         /// <param name="axisEvent">Event to check for</param>
-        public void AddCommand(string axisName, AxisEventType axisEvent)
+        public void CreateCommand(string axisName, AxisEventType axisEvent)
         {
             Axis axis = Owner.GetAxis(axisName);
             AxisCommand command = new AxisCommand(axis, axisEvent);
@@ -93,9 +101,9 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Remove all commands
+        /// Removes all commands
         /// </summary>
-        public void Clear()
+        public void Destroy()
         {
             _commands.Clear();
         }
@@ -105,12 +113,12 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Get the name
+        /// Gets the name
         /// </summary>
         public string Name { get; internal set; }
 
         /// <summary>
-        /// Get the owner
+        /// Gets the owner
         /// </summary>
         public VirtualInput Owner { get; internal set; }
 

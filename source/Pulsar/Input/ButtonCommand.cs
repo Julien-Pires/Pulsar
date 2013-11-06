@@ -14,7 +14,7 @@ namespace Pulsar.Input
     }
 
     /// <summary>
-    /// Check the state of a button against a specific event
+    /// Checks the state of a button for a specific event
     /// </summary>
     internal sealed class ButtonCommand : IInputCommand
     {
@@ -45,26 +45,31 @@ namespace Pulsar.Input
         #region Methods
 
         /// <summary>
-        /// Assign a method that check the state of the button for a specific event
+        /// Assignes a method that check the state of the button for a specific event
         /// </summary>
         private void AssignCheckMethod()
         {
             switch (_buttonEvent)
             {
-                case ButtonEventType.IsPressed: _checkMethod = IsPressed;
+                case ButtonEventType.IsPressed: 
+                    _checkMethod = IsPressed;
                     break;
-                case ButtonEventType.IsReleased: _checkMethod = IsReleased;
+                case ButtonEventType.IsReleased:
+                    _checkMethod = IsReleased;
                     break;
-                case ButtonEventType.IsDown: _checkMethod = IsDown;
+                case ButtonEventType.IsDown: 
+                    _checkMethod = IsDown;
                     break;
-                case ButtonEventType.IsUp: _checkMethod = IsUp;
+                case ButtonEventType.IsUp: 
+                    _checkMethod = IsUp;
                     break;
-                default: throw new Exception("Invalid command event code provided");
+                default: 
+                    throw new Exception("Invalid command event code provided");
             }
         }
 
         /// <summary>
-        /// Check if the button has just been pressed
+        /// Checks if the button has just been pressed
         /// </summary>
         /// <returns></returns>
         private bool IsPressed()
@@ -73,7 +78,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if the button has just been released
+        /// Checks if the button has just been released
         /// </summary>
         /// <returns></returns>
         private bool IsReleased()
@@ -82,7 +87,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if the button is down
+        /// Checks if the button is down
         /// </summary>
         /// <returns></returns>
         private bool IsDown()
@@ -91,7 +96,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if the button is up
+        /// Checks if the button is up
         /// </summary>
         /// <returns></returns>
         private bool IsUp()
@@ -104,7 +109,7 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Get a value that indicates if the commande has been triggered
+        /// Gets a value that indicates if the commande has been triggered
         /// </summary>
         public bool IsTriggered
         {
