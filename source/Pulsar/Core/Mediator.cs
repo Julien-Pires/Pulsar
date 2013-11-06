@@ -158,6 +158,24 @@ namespace Pulsar.Core
         }
 
         /// <summary>
+        /// Cleans the message queue at a specific index
+        /// </summary>
+        /// <param name="index">Index of the message queue</param>
+        public void CleanQueue(int index)
+        {
+            _queueList[index].Clear();
+        }
+
+        /// <summary>
+        /// Cleans all message queues
+        /// </summary>
+        public void CleanAllQueue()
+        {
+            for(int i = 0; i < _queueList.Length; i++)
+                _queueList[i].Clear();
+        }
+
+        /// <summary>
         /// Sends a message immediately to concerned listeners
         /// </summary>
         /// <param name="msg">Message to send</param>
