@@ -15,8 +15,6 @@
 
         private long _timestamp;
 
-        private readonly object _sender;
-
         #endregion
 
         #region Constructors
@@ -25,11 +23,9 @@
         /// Constructor of Message struct
         /// </summary>
         /// <param name="eventType">Type of event</param>
-        /// <param name="sender">Sender of the message</param>
-        public Message(EventType eventType, object sender)
+        public Message(EventType eventType)
         {
             _eventType = eventType;
-            _sender = sender;
             _payload = null;
             _timestamp = 0;
         }
@@ -38,12 +34,10 @@
         /// Constructor of Message struct
         /// </summary>
         /// <param name="eventType">Type of event</param>
-        /// <param name="sender">Sender of the message</param>
         /// <param name="payload">Payload data</param>
-        public Message(EventType eventType, object sender, object payload)
+        public Message(EventType eventType, object payload)
         {
             _eventType = eventType;
-            _sender = sender;
             _payload = payload;
             _timestamp = 0;
             
@@ -76,14 +70,6 @@
         {
             get { return _timestamp; }
             internal set { _timestamp = value; }
-        }
-
-        /// <summary>
-        /// Get the sender of the message
-        /// </summary>
-        public object Sender
-        {
-            get { return _sender; }
         }
 
         #endregion
