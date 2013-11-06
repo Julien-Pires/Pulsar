@@ -11,11 +11,10 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        public readonly ReadOnlyCollection<ButtonEvent> ButtonPressed;
-
         internal readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
         internal readonly PlayerIndex PlayerIndex;
 
+        private readonly ReadOnlyCollection<ButtonEvent> _buttonPressed;
         private readonly Dictionary<string, int> _buttonsMap = new Dictionary<string, int>();
         private readonly Dictionary<string, int> _axesMap = new Dictionary<string, int>();
         private readonly Dictionary<string, int> _eventsMap = new Dictionary<string, int>();
@@ -33,7 +32,7 @@ namespace Pulsar.Input
         internal VirtualInput(PlayerIndex playerIndex)
         {
             PlayerIndex = playerIndex;
-            ButtonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
+            _buttonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
         }
 
         #endregion
@@ -233,6 +232,15 @@ namespace Pulsar.Input
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets all buttons that are currently being pressed for the device associated to this
+        /// virtual input
+        /// </summary>
+        public ReadOnlyCollection<ButtonEvent> ButtonPressed
+        {
+            get { return _buttonPressed; }
+        }
 
         /// <summary>
         /// Gets the device enum that the virtual input is listening to

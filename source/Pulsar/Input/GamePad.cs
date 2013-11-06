@@ -37,10 +37,9 @@ namespace Pulsar.Input
         private static readonly Buttons[] AllDigital;
         private static readonly GamePad[] GamePads = new GamePad[GamePadCount];
 
-        public readonly ReadOnlyCollection<ButtonEvent> ButtonPressed;
-
         internal readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
 
+        private readonly ReadOnlyCollection<ButtonEvent> _buttonPressed;
         private readonly XnaPlayerIndex _gamePadIndex;
         private GamePadState _previousState;
         private GamePadState _currentState;
@@ -85,7 +84,7 @@ namespace Pulsar.Input
         internal GamePad(XnaPlayerIndex index)
         {
             _gamePadIndex = index;
-            ButtonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
+            _buttonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
         }
 
         #endregion
@@ -235,9 +234,10 @@ namespace Pulsar.Input
             InternalButtonPressed.Clear();
             for (short i = 0; i < AllDigital.Length; i++)
             {
-                if (!IsPressed(AllDigital[i])) continue;
+                if(_currentState.IsButtonUp(AllDigital[i])) continue;
+                
                 AbstractButton btn = new AbstractButton(AllDigital[i]);
-                InternalButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, (short)_gamePadIndex));
+                InternalButtonPressed.Add(new ButtonEvent(btn, (short)_gamePadIndex));
             }
         }
 
@@ -311,6 +311,14 @@ namespace Pulsar.Input
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets the gamepad buttons that are currently being pressed
+        /// </summary>
+        public ReadOnlyCollection<ButtonEvent> ButtonPressed
+        {
+            get { return _buttonPressed; }
+        }
 
         /// <summary>
         /// Gets the position of the left thumbstick
