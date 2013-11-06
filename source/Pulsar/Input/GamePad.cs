@@ -34,13 +34,12 @@ namespace Pulsar.Input
 
         public const short GamePadCount = 4;
 
-        public static readonly ReadOnlyCollection<ButtonEvent> ButtonPressed;
-
-        internal static readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
-
         private static readonly Buttons[] AllDigital;
         private static readonly GamePad[] GamePads = new GamePad[GamePadCount];
 
+        internal readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
+
+        private readonly ReadOnlyCollection<ButtonEvent> _buttonPressed;
         private readonly XnaPlayerIndex _gamePadIndex;
         private GamePadState _previousState;
         private GamePadState _currentState;
@@ -71,7 +70,7 @@ namespace Pulsar.Input
                 GamePads[i] = pad;
             }
             AllDigital = EnumExtension.GetValues<Buttons>();
-            ButtonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
+            
         }
 
         #endregion
@@ -85,6 +84,7 @@ namespace Pulsar.Input
         internal GamePad(XnaPlayerIndex index)
         {
             _gamePadIndex = index;
+            _buttonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
         }
 
         #endregion
@@ -96,20 +96,8 @@ namespace Pulsar.Input
         /// </summary>
         internal static void UpdatePads()
         {
-            InternalButtonPressed.Clear();
             for (short i = 0; i < GamePadCount; i++)
-            {
-                GamePad pad = GamePads[i];
-                pad.Update();
-
-                if (!pad.IsConnected) continue;
-                for (short j = 0; j < AllDigital.Length; j++)
-                {
-                    if (!pad.IsPressed(AllDigital[j])) continue;
-                    AbstractButton btn = new AbstractButton(AllDigital[j]);
-                    InternalButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed, i));
-                }
-            }
+                GamePads[i].Update();
         }
 
         /// <summary>
@@ -118,7 +106,13 @@ namespace Pulsar.Input
         /// <returns>Return true if any key has been pressed otherwise false</returns>
         public static bool AnyKeyPressed()
         {
-            return InternalButtonPressed.Count > 0;
+            for (short i = 0; i < GamePadCount; i++)
+            {
+                if (GamePads[i].InternalButtonPressed.Count > 0)
+                    return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -192,6 +186,9 @@ namespace Pulsar.Input
 
         #region Methods
 
+        /// <summary>
+        /// Realeases all listeners for Connected/Disconnected events
+        /// </summary>
         public void ReleaseListeners()
         {
             Connected = null;
@@ -199,7 +196,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Update one gamepad state
+        /// Updates one gamepad state
         /// </summary>
         internal void Update()
         {
@@ -222,24 +219,30 @@ namespace Pulsar.Input
                         Disconnected(this, new GamePadEventArgs(this));
                 }
             }
-
             if (!_currentState.IsConnected) return;
-            if (_previousState.PacketNumber != _currentState.PacketNumber)
-            {
-                GamePadThumbSticks prevThumb = _previousState.ThumbSticks;
-                GamePadThumbSticks currThumb = _currentState.ThumbSticks;
-                _thumbRightDelta = Vector2.Subtract(currThumb.Right, prevThumb.Right);
-                _thumbLeftDelta = Vector2.Subtract(currThumb.Left, prevThumb.Left);
 
-                GamePadTriggers prevTrigger = _previousState.Triggers;
-                GamePadTriggers currTrigger = _currentState.Triggers;
-                _triggerRightDelta = currTrigger.Right - prevTrigger.Right;
-                _triggerLeftDelta = currTrigger.Left - prevTrigger.Left;
+            GamePadThumbSticks prevThumb = _previousState.ThumbSticks;
+            GamePadThumbSticks currThumb = _currentState.ThumbSticks;
+            _thumbRightDelta = Vector2.Subtract(currThumb.Right, prevThumb.Right);
+            _thumbLeftDelta = Vector2.Subtract(currThumb.Left, prevThumb.Left);
+
+            GamePadTriggers prevTrigger = _previousState.Triggers;
+            GamePadTriggers currTrigger = _currentState.Triggers;
+            _triggerRightDelta = currTrigger.Right - prevTrigger.Right;
+            _triggerLeftDelta = currTrigger.Left - prevTrigger.Left;
+
+            InternalButtonPressed.Clear();
+            for (short i = 0; i < AllDigital.Length; i++)
+            {
+                if(_currentState.IsButtonUp(AllDigital[i])) continue;
+                
+                AbstractButton btn = new AbstractButton(AllDigital[i]);
+                InternalButtonPressed.Add(new ButtonEvent(btn, (short)_gamePadIndex));
             }
         }
 
         /// <summary>
-        /// Get the value for an analog button
+        /// Gets the value for an analog button
         /// </summary>
         /// <param name="btn">Analog button to find</param>
         /// <returns>Return the value of the button</returns>
@@ -266,7 +269,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if a button has just been pressed
+        /// Checks if a button has just been pressed
         /// </summary>
         /// <param name="button">Button to check</param>
         /// <returns>Return true if the button has just been pressed otherwise false</returns>
@@ -276,7 +279,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if a button has just been released
+        /// Checks if a button has just been released
         /// </summary>
         /// <param name="button">Button to check</param>
         /// <returns>Return true if the button has just been released otherwise false</returns>
@@ -286,7 +289,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if a button is down
+        /// Checks if a button is down
         /// </summary>
         /// <param name="button">Button to check</param>
         /// <returns>Return true if the button is down otherwise false</returns>
@@ -296,7 +299,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if a button is up
+        /// Checks if a button is up
         /// </summary>
         /// <param name="button">Button to check</param>
         /// <returns>Return true if the button is up otherwise false</returns>
@@ -308,6 +311,14 @@ namespace Pulsar.Input
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets the gamepad buttons that are currently being pressed
+        /// </summary>
+        public ReadOnlyCollection<ButtonEvent> ButtonPressed
+        {
+            get { return _buttonPressed; }
+        }
 
         /// <summary>
         /// Gets the position of the left thumbstick
