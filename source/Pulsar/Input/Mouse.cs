@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using XnaMouse = Microsoft.Xna.Framework.Input.Mouse;
 
 using Pulsar.Extension;
 
 namespace Pulsar.Input
 {
+    using XnaMouse = Microsoft.Xna.Framework.Input.Mouse;
+
     /// <summary>
     /// Enumerates digital mouse button
     /// </summary>
@@ -37,8 +39,9 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        internal static readonly List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
+        internal static readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
 
+        private static readonly ReadOnlyCollection<ButtonEvent> ReadOnlyButtonPressed;
         private static readonly MouseButtons[] AllDigital;
         private static MouseState _previousState;
         private static MouseState _currentState;
@@ -56,6 +59,7 @@ namespace Pulsar.Input
         static Mouse()
         {
             AllDigital = EnumExtension.GetValues<MouseButtons>();
+            ReadOnlyButtonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
         }
 
         #endregion
@@ -75,12 +79,13 @@ namespace Pulsar.Input
             Vector2.Subtract(ref _currentPosition, ref _previousPosition, out _positionDelta);
             WheelDelta = _currentState.ScrollWheelValue - _previousState.ScrollWheelValue;
 
-            ButtonPressed.Clear();
+            InternalButtonPressed.Clear();
             for (int i = 0; i < AllDigital.Length; i++)
             {
-                if (!IsPressed(AllDigital[i])) continue;
+                if(IsUp(AllDigital[i])) continue;
+
                 AbstractButton btn = new AbstractButton(AllDigital[i]);
-                ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed));
+                InternalButtonPressed.Add(new ButtonEvent(btn));
             }
         }
 
@@ -90,7 +95,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         public static bool AnyKeyPressed()
         {
-            return ButtonPressed.Count > 0;
+            return InternalButtonPressed.Count > 0;
         }
 
         /// <summary>
@@ -103,11 +108,14 @@ namespace Pulsar.Input
             float result = 0.0f;
             switch (btn)
             {
-                case MouseAnalogButtons.MouseX: result = _currentPosition.X;
+                case MouseAnalogButtons.MouseX: 
+                    result = _currentPosition.X;
                     break;
-                case MouseAnalogButtons.MouseY: result = _currentPosition.Y;
+                case MouseAnalogButtons.MouseY: 
+                    result = _currentPosition.Y;
                     break;
-                case MouseAnalogButtons.MouseWheel: result = _currentState.ScrollWheelValue;
+                case MouseAnalogButtons.MouseWheel:
+                    result = _currentState.ScrollWheelValue;
                     break;
             }
 
@@ -124,11 +132,14 @@ namespace Pulsar.Input
             float result = 0.0f;
             switch (btn)
             {
-                case MouseAnalogButtons.MouseX: result = _positionDelta.X;
+                case MouseAnalogButtons.MouseX: 
+                    result = _positionDelta.X;
                     break;
-                case MouseAnalogButtons.MouseY: result = _positionDelta.Y;
+                case MouseAnalogButtons.MouseY: 
+                    result = _positionDelta.Y;
                     break;
-                case MouseAnalogButtons.MouseWheel: result = WheelDelta;
+                case MouseAnalogButtons.MouseWheel:
+                    result = WheelDelta;
                     break;
             }
 
@@ -145,19 +156,24 @@ namespace Pulsar.Input
             bool result = false;
             switch (btn)
             {
-                case MouseButtons.Left: result = (_previousState.LeftButton == ButtonState.Released) &&
+                case MouseButtons.Left: 
+                    result = (_previousState.LeftButton == ButtonState.Released) &&
                     (_currentState.LeftButton == ButtonState.Pressed);
                     break;
-                case MouseButtons.Right: result = (_previousState.RightButton == ButtonState.Released) &&
+                case MouseButtons.Right: 
+                    result = (_previousState.RightButton == ButtonState.Released) &&
                     (_currentState.RightButton == ButtonState.Pressed);
                     break;
-                case MouseButtons.Middle: result = (_previousState.MiddleButton == ButtonState.Released) &&
+                case MouseButtons.Middle: 
+                    result = (_previousState.MiddleButton == ButtonState.Released) &&
                     (_currentState.MiddleButton == ButtonState.Pressed);
                     break;
-                case MouseButtons.XButton1: result = (_previousState.XButton1 == ButtonState.Released) &&
+                case MouseButtons.XButton1:
+                    result = (_previousState.XButton1 == ButtonState.Released) &&
                     (_currentState.XButton1 == ButtonState.Pressed);
                     break;
-                case MouseButtons.XButton2: result = (_previousState.XButton2 == ButtonState.Released) &&
+                case MouseButtons.XButton2: 
+                    result = (_previousState.XButton2 == ButtonState.Released) &&
                     (_currentState.XButton2 == ButtonState.Pressed);
                     break;
             }
@@ -175,19 +191,24 @@ namespace Pulsar.Input
             bool result = false;
             switch (btn)
             {
-                case MouseButtons.Left: result = (_previousState.LeftButton == ButtonState.Pressed) &&
+                case MouseButtons.Left:
+                    result = (_previousState.LeftButton == ButtonState.Pressed) &&
                     (_currentState.LeftButton == ButtonState.Released);
                     break;
-                case MouseButtons.Right: result = (_previousState.RightButton == ButtonState.Pressed) &&
+                case MouseButtons.Right: 
+                    result = (_previousState.RightButton == ButtonState.Pressed) &&
                     (_currentState.RightButton == ButtonState.Released);
                     break;
-                case MouseButtons.Middle: result = (_previousState.MiddleButton == ButtonState.Pressed) &&
+                case MouseButtons.Middle:
+                    result = (_previousState.MiddleButton == ButtonState.Pressed) &&
                     (_currentState.MiddleButton == ButtonState.Released);
                     break;
-                case MouseButtons.XButton1: result = (_previousState.XButton1 == ButtonState.Pressed) &&
+                case MouseButtons.XButton1: 
+                    result = (_previousState.XButton1 == ButtonState.Pressed) &&
                     (_currentState.XButton1 == ButtonState.Released);
                     break;
-                case MouseButtons.XButton2: result = (_previousState.XButton2 == ButtonState.Pressed) &&
+                case MouseButtons.XButton2:
+                    result = (_previousState.XButton2 == ButtonState.Pressed) &&
                     (_currentState.XButton2 == ButtonState.Released);
                     break;
             }
@@ -205,15 +226,20 @@ namespace Pulsar.Input
             bool result = false;
             switch (btn)
             {
-                case MouseButtons.Left: result = _currentState.LeftButton == ButtonState.Pressed;
+                case MouseButtons.Left:
+                    result = _currentState.LeftButton == ButtonState.Pressed;
                     break;
-                case MouseButtons.Right: result = _currentState.RightButton == ButtonState.Pressed;
+                case MouseButtons.Right:
+                    result = _currentState.RightButton == ButtonState.Pressed;
                     break;
-                case MouseButtons.Middle: result = _currentState.MiddleButton == ButtonState.Pressed;
+                case MouseButtons.Middle:
+                    result = _currentState.MiddleButton == ButtonState.Pressed;
                     break;
-                case MouseButtons.XButton1: result = _currentState.XButton1 == ButtonState.Pressed;
+                case MouseButtons.XButton1: 
+                    result = _currentState.XButton1 == ButtonState.Pressed;
                     break;
-                case MouseButtons.XButton2: result = _currentState.XButton2 == ButtonState.Pressed;
+                case MouseButtons.XButton2: 
+                    result = _currentState.XButton2 == ButtonState.Pressed;
                     break;
             }
 
@@ -230,15 +256,20 @@ namespace Pulsar.Input
             bool result = false;
             switch (btn)
             {
-                case MouseButtons.Left: result = _currentState.LeftButton == ButtonState.Released;
+                case MouseButtons.Left: 
+                    result = _currentState.LeftButton == ButtonState.Released;
                     break;
-                case MouseButtons.Right: result = _currentState.RightButton == ButtonState.Released;
+                case MouseButtons.Right:
+                    result = _currentState.RightButton == ButtonState.Released;
                     break;
-                case MouseButtons.Middle: result = _currentState.MiddleButton == ButtonState.Released;
+                case MouseButtons.Middle:
+                    result = _currentState.MiddleButton == ButtonState.Released;
                     break;
-                case MouseButtons.XButton1: result = _currentState.XButton1 == ButtonState.Released;
+                case MouseButtons.XButton1:
+                    result = _currentState.XButton1 == ButtonState.Released;
                     break;
-                case MouseButtons.XButton2: result = _currentState.XButton2 == ButtonState.Released;
+                case MouseButtons.XButton2:
+                    result = _currentState.XButton2 == ButtonState.Released;
                     break;
             }
 
@@ -247,7 +278,15 @@ namespace Pulsar.Input
 
         #endregion
 
-        #region Properties
+        #region Static Properties
+
+        /// <summary>
+        /// Gets the mouse buttons that are currently being pressed
+        /// </summary>
+        public static ReadOnlyCollection<ButtonEvent> ButtonPressed
+        {
+            get { return ReadOnlyButtonPressed; }
+        }
 
         /// <summary>
         /// Get the X position of the mouse

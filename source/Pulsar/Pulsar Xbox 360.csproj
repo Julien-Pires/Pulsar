@@ -28,6 +28,7 @@
     <Optimize>true</Optimize>
     <DefineConstants>TRACE;XBOX;XBOX360</DefineConstants>
     <XnaCompressContent>true</XnaCompressContent>
+    <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Xbox 360' ">
     <OutputPath>bin\Xbox 360\Debug</OutputPath>
@@ -40,6 +41,7 @@
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE;XBOX;XBOX360</DefineConstants>
     <XnaCompressContent>true</XnaCompressContent>
+    <LangVersion>4</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\PulsarRuntime\PulsarRuntime Xbox 360.csproj">
@@ -74,6 +76,7 @@
     <Compile Include="Components\GameObjectManager.cs" />
     <Compile Include="Core\EventType.cs" />
     <Compile Include="Core\Singleton.cs" />
+    <Compile Include="Core\Transform.cs" />
     <Compile Include="Extension\ArrayExtension.cs" />
     <Compile Include="Extension\EnumExtension.cs" />
     <Compile Include="Game\GameApplication.cs" />
@@ -110,7 +113,6 @@
     <Compile Include="Graphics\Rendering\VertexBufferWrapper.cs" />
     <Compile Include="Graphics\Rendering\VertexData.cs" />
     <Compile Include="Graphics\Rendering\Viewport.cs" />
-    <Compile Include="Graphics\Rendering\ViewportCollection.cs" />
     <Compile Include="Graphics\Rendering\Window.cs" />
     <Compile Include="Graphics\Rendering\WindowDisplayModeChangedEventArgs.cs" />
     <Compile Include="Graphics\Rendering\WindowFullScreenSwitchedEventArgs.cs" />

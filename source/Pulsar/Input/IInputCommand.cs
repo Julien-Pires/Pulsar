@@ -14,7 +14,7 @@
         #region Properties
 
         /// <summary>
-        /// Get a value that indicates if the command is triggered
+        /// Gets a value that indicates if the command is triggered
         /// </summary>
         bool IsTriggered { get; }
 

@@ -102,10 +102,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="cam">Current camera</param>
         public void CheckVisibilityWithCamera(Camera cam)
         {
-            SpeedFrustum frustCull = cam.FastFrustum;
             UpdateBounds();
-
-            _isRendered = _bounds.FrustumToAabbIntersect(ref frustCull);
+            _isRendered = _bounds.FrustumToAabbIntersect(cam.FastFrustum);
         }
 
         /// <summary>
@@ -182,7 +180,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void UpdateBounds()
         {
-            Matrix transform = _parent.Transform;
+            Matrix transform = _parent.LocalToWorld;
             _bounds.Update(ref transform);
         }
 
@@ -271,7 +269,7 @@ namespace Pulsar.Graphics.SceneGraph
         {
             get
             {
-                return (_parent != null) ? _parent.Transform : Matrix.Identity;
+                return (_parent != null) ? _parent.LocalToWorld : Matrix.Identity;
             }
         }
 

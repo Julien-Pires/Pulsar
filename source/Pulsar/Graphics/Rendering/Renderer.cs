@@ -15,13 +15,14 @@ namespace Pulsar.Graphics.Rendering
     {
         #region Fields
 
+        internal readonly FrameDetail FrameDetail = new FrameDetail();
+
         private bool _disposed;
         private readonly GraphicsDeviceManager _graphicsDeviceManager;
         private GraphicsDevice _graphicDevice;
         private SpriteBatch _spriteBatch;
         private readonly InstanceBatchManager _instancingManager;
         private readonly IRenderingTechnique _renderingTechnique;
-        private readonly FrameDetail _frameDetail = new FrameDetail();
 
         #endregion
 
@@ -54,39 +55,40 @@ namespace Pulsar.Graphics.Rendering
             if(_disposed) return;
 
             _graphicsDeviceManager.DeviceCreated -= GraphicsDeviceCreated;
-            if(_spriteBatch != null) _spriteBatch.Dispose();
+            if(_spriteBatch != null) 
+                _spriteBatch.Dispose();
 
             _disposed = true;
         }
 
+        /// <summary>
+        /// Called each time graphics device is created
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Arguments</param>
         private void GraphicsDeviceCreated(object sender, EventArgs e)
         {
             _graphicDevice = _graphicsDeviceManager.GraphicsDevice;
 
-            if(_spriteBatch != null) _spriteBatch.Dispose();
+            if(_spriteBatch != null) 
+                _spriteBatch.Dispose();
             _spriteBatch = new SpriteBatch(_graphicDevice);
         }
 
         /// <summary>
         /// Prepares rendering operations
         /// </summary>
-        /// <param name="vp">Viewport in which the rendering result is sent</param>
-        private void BeginRender(Viewport vp)
+        private void BeginRender()
         {
             _instancingManager.Reset();
-            _frameDetail.Reset();
-
-            if (vp.AlwaysClear) Clear(vp);
             _graphicDevice.DepthStencilState = DepthStencilState.Default;
         }
 
         /// <summary>
         /// Ends all rendering operations
         /// </summary>
-        /// <param name="vp">Viewport in which the rendering result is sent</param>
-        private void EndRender(Viewport vp)
+        private void EndRender()
         {
-            vp.FrameDetail.Merge(_frameDetail);
         }
 
         /// <summary>
@@ -99,14 +101,12 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Clears a viewport
+        /// Clears the back buffer
         /// </summary>
-        /// <param name="vp">Viewport to clear</param>
-        internal void Clear(Viewport vp)
+        /// <param name="clearColor">Color used to clear</param>
+        internal void Clear(Color clearColor)
         {
-            _graphicDevice.SetRenderTarget(vp.RenderTarget);
-            _graphicDevice.Clear(vp.ClearColor);
-            _graphicDevice.SetRenderTarget(null);
+            _graphicDevice.Clear(clearColor);
         }
 
         /// <summary>
@@ -134,11 +134,11 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="queue">Queue of objects to render</param>
         internal void Render(Viewport vp, Camera cam, RenderQueue queue)
         {
-            BeginRender(vp);
+            BeginRender();
 
             _renderingTechnique.Render(vp, cam, queue);
 
-            EndRender(vp);
+            EndRender();
         }
 
         /// <summary>
@@ -147,17 +147,27 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="renderTarget">RenderTarget to render</param>
         internal void RenderToTarget(RenderTarget renderTarget)
         {
-            _graphicDevice.SetRenderTarget(renderTarget.Target);
-            if(renderTarget.AlwaysClear) _graphicDevice.Clear(renderTarget.ClearColor);
+            bool noViewports = (renderTarget.Viewports.Count == 0);
+            if (!noViewports)
+            {
+                for (int i = 0; i < renderTarget.Viewports.Count; i++)
+                {
+                    Viewport vp = renderTarget.Viewports[i];
+                    vp.Render();
+                }
+            }
 
-            ViewportCollection viewports = renderTarget.Viewports;
-            if (viewports.Count > 0)
+            _graphicDevice.SetRenderTarget(renderTarget.Target);
+            if(renderTarget.AlwaysClear) 
+                _graphicDevice.Clear(renderTarget.ClearColor);
+
+            if (!noViewports)
             {
                 _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp,
                     DepthStencilState.None, RasterizerState.CullCounterClockwise);
-                for (int i = 0; i < viewports.Count; i++)
+                for (int i = 0; i < renderTarget.Viewports.Count; i++)
                 {
-                    Viewport vp = viewports[i];
+                    Viewport vp = renderTarget.Viewports[i];
                     Rectangle rect = new Rectangle(vp.RealLeft, vp.RealTop, vp.RealWidth, vp.RealHeight);
                     _spriteBatch.Draw(vp.RenderTarget, rect, Color.White);
                 }
@@ -180,7 +190,7 @@ namespace Pulsar.Graphics.Rendering
             _spriteBatch.Draw(texture, rect, Color.White);
             _spriteBatch.End();
 
-            _frameDetail.AddDrawCall(4, 2, 1);
+            FrameDetail.AddDrawCall(4, 2, 1);
         }
 
         /// <summary>
@@ -200,12 +210,10 @@ namespace Pulsar.Graphics.Rendering
                     renderingInfo.VertexCount, indexData.StartIndex, renderingInfo.PrimitiveCount);
             }
             else
-            {
                 _graphicDevice.DrawPrimitives(renderingInfo.PrimitiveType, 0, renderingInfo.PrimitiveCount);
-            }
             UnsetBuffers();
 
-            _frameDetail.AddDrawCall((uint)renderingInfo.VertexCount, (uint)renderingInfo.PrimitiveCount, 1);
+            FrameDetail.AddDrawCall((uint)renderingInfo.VertexCount, (uint)renderingInfo.PrimitiveCount, 1);
         }
 
         /// <summary>
@@ -226,7 +234,7 @@ namespace Pulsar.Graphics.Rendering
             UnsetBuffers();
 
             int instanceCount = batch.InstanceCount;
-            _frameDetail.AddDrawCall((uint)(renderInfo.VertexCount * instanceCount), (uint)(renderInfo.PrimitiveCount * instanceCount), 
+            FrameDetail.AddDrawCall((uint)(renderInfo.VertexCount * instanceCount), (uint)(renderInfo.PrimitiveCount * instanceCount), 
                 (uint)instanceCount);
         }
 

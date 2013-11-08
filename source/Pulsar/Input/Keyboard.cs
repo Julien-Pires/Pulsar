@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework.Input;
 using XnaKeyboard = Microsoft.Xna.Framework.Input.Keyboard;
 
@@ -14,8 +14,9 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        internal static List<ButtonEvent> ButtonPressed = new List<ButtonEvent>();
+        internal static readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
 
+        private static readonly ReadOnlyCollection<ButtonEvent> ReadOnlyButtonPressed;
         private static readonly Keys[] AllDigital;
         private static KeyboardState _previousState;
         private static KeyboardState _currentState;
@@ -30,6 +31,7 @@ namespace Pulsar.Input
         static Keyboard()
         {
             AllDigital = EnumExtension.GetValues<Keys>();
+            ReadOnlyButtonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
         }
 
         #endregion
@@ -37,33 +39,34 @@ namespace Pulsar.Input
         #region Static Methods
 
         /// <summary>
-        /// Update keyboard states
+        /// Updates keyboard states
         /// </summary>
         internal static void Update()
         {
             _previousState = _currentState;
             _currentState = XnaKeyboard.GetState();
 
-            ButtonPressed.Clear();
+            InternalButtonPressed.Clear();
             for (int i = 0; i < AllDigital.Length; i++)
             {
-                if (!IsPressed(AllDigital[i])) continue;
+                if (_currentState.IsKeyUp(AllDigital[i])) continue;
+
                 AbstractButton btn = new AbstractButton(AllDigital[i]);
-                ButtonPressed.Add(new ButtonEvent(btn, ButtonEventType.IsPressed));
+                InternalButtonPressed.Add(new ButtonEvent(btn));
             }
         }
 
         /// <summary>
-        /// Check if any key is pressed
+        /// Checks if any key is pressed
         /// </summary>
         /// <returns></returns>
         public static bool AnyKeyPressed()
         {
-            return ButtonPressed.Count > 0;
+            return InternalButtonPressed.Count > 0;
         }
 
         /// <summary>
-        /// Check if a key is pressed
+        /// Checks if a key is pressed
         /// </summary>
         /// <param name="key">Key to check</param>
         /// <returns>Return true if the key has been pressed otherwise false</returns>
@@ -73,7 +76,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if a key has been released
+        /// Checks if a key has been released
         /// </summary>
         /// <param name="key">Key to check</param>
         /// <returns>Return true if the key has been released otherwise false</returns>
@@ -83,7 +86,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if a key is down
+        /// Checks if a key is down
         /// </summary>
         /// <param name="key">Key to check</param>
         /// <returns>Return true if the key is down otherwise false</returns>
@@ -93,13 +96,25 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if the key is up
+        /// Checks if the key is up
         /// </summary>
         /// <param name="key">Key to check</param>
         /// <returns>Return true if the key is up otherwise false</returns>
         public static bool IsUp(Keys key)
         {
             return _currentState.IsKeyUp(key);
+        }
+
+        #endregion
+
+        #region Static properties
+
+        /// <summary>
+        /// Gets the keyboard keys that are currently being pressed
+        /// </summary>
+        public static ReadOnlyCollection<ButtonEvent> ButtonPressed
+        {
+            get { return ReadOnlyButtonPressed; }
         }
 
         #endregion

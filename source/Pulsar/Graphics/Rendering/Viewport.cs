@@ -22,7 +22,7 @@ namespace Pulsar.Graphics.Rendering
         private float _leftPosition;
         private bool _disposed;
         private bool _isDirty = true;
-        private readonly RenderTarget _parentTarget;
+        private readonly RenderTarget _parent;
         private readonly FrameDetail _frameDetail = new FrameDetail();
 
         #endregion
@@ -32,14 +32,14 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Constructor of Viewport class
         /// </summary>
-        /// <param name="parentTarget">Render target that owns this viewport</param>
+        /// <param name="parent">Render target that owns this viewport</param>
         /// <param name="width">Width</param>
         /// <param name="height">Height</param>
         /// <param name="top">Top position</param>
         /// <param name="left">Left position</param>
-        internal Viewport(RenderTarget parentTarget, float width, float height, float top, float left)
+        internal Viewport(RenderTarget parent, float width, float height, float top, float left)
         {
-            _parentTarget = parentTarget;
+            _parent = parent;
             Width = width;
             Height = height;
             Top = top;
@@ -66,7 +66,9 @@ namespace Pulsar.Graphics.Rendering
         {
             if (_disposed) return;
 
-            if (disposing) RenderTarget.Dispose();
+            if (disposing) 
+                RenderTarget.Dispose();
+
             _disposed = true;
         }
 
@@ -75,9 +77,12 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public void Render()
         {
-            if (_isDirty) UpdateDimension();
+            if (_isDirty) 
+                UpdateDimension();
+
             _frameDetail.Reset();
-            if(Camera != null) Camera.Render(this);
+            if(Camera != null) 
+                Camera.Render(this);
         }
 
         /// <summary>
@@ -85,10 +90,10 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         private void UpdateDimension()
         {
-            int targetWidth = _parentTarget.Width;
-            int targetHeight = _parentTarget.Height;
-            int newWidth = (int)(targetWidth * _width);
-            int newHeight = (int)(targetHeight * _height);
+            int parentWidth = _parent.Width;
+            int parentHeight = _parent.Height;
+            int newWidth = (int)(parentWidth * _width);
+            int newHeight = (int)(parentHeight * _height);
             if ((newWidth != RealWidth) || (newHeight != RealHeight))
             {
                 RealWidth = newWidth;
@@ -96,8 +101,8 @@ namespace Pulsar.Graphics.Rendering
                 AspectRatio = (float)newWidth/newHeight;
                 CreateRenderTarget();
             }
-            RealTop = (int)(_topPosition * targetHeight);
-            RealLeft = (int) (_leftPosition * targetWidth);
+            RealTop = (int)(_topPosition * parentHeight);
+            RealLeft = (int) (_leftPosition * parentWidth);
 
             _isDirty = false;
         }
@@ -109,8 +114,8 @@ namespace Pulsar.Graphics.Rendering
         {
             if (RenderTarget != null) RenderTarget.Dispose();
 
-            RenderTarget = new RenderTarget2D(_parentTarget.GraphicsDevice, RealWidth, RealHeight, _parentTarget.MipMap,
-                _parentTarget.Pixel, _parentTarget.Depth);
+            RenderTarget = new RenderTarget2D(_parent.GraphicsDevice, RealWidth, RealHeight, _parent.MipMap,
+                _parent.Pixel, _parent.Depth);
         }
 
         #endregion
@@ -135,7 +140,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public bool AlwaysClear
         {
-            get { return _parentTarget.AlwaysClear; }
+            get { return _parent.AlwaysClear; }
         }
 
         /// <summary>
@@ -143,7 +148,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public Color ClearColor
         {
-            get { return _parentTarget.ClearColor; }
+            get { return _parent.ClearColor; }
         }
 
         /// <summary>
@@ -175,13 +180,10 @@ namespace Pulsar.Graphics.Rendering
             set
             {
                 if (value < 0.0f)
-                {
                     value = 0.0f;
-                }
                 else if (value > 1.0f)
-                {
                     value = 1.0f;
-                }
+
                 _topPosition = value;
                 _isDirty = true;
             }
@@ -196,13 +198,10 @@ namespace Pulsar.Graphics.Rendering
             set
             {
                 if (value < 0.0f)
-                {
                     value = 0.0f;
-                }
                 else if (value > 1.0f)
-                {
                     value = 1.0f;
-                }
+
                 _leftPosition = value;
                 _isDirty = true;
             }
@@ -227,13 +226,10 @@ namespace Pulsar.Graphics.Rendering
             set
             {
                 if (value < 0.0f)
-                {
                     value = 0.0f;
-                }
                 else if (value > 1.0f)
-                {
-                    value = 1.0f;   
-                }
+                    value = 1.0f;
+
                 _width = value;
                 _isDirty = true;
             }
@@ -248,13 +244,10 @@ namespace Pulsar.Graphics.Rendering
             set
             {
                 if (value < 0.0f)
-                {
                     value = 0.0f;
-                }
                 else if (value > 1.0f)
-                {
                     value = 1.0f;
-                }
+
                 _height = value;
                 _isDirty = true;
             }

@@ -108,9 +108,11 @@ namespace Pulsar.Input
             {
                 switch (Device)
                 {
-                    case InputDevice.Mouse: val = Mouse.IsDown((MouseButtons)ButtonCode) ? 1.0f : 0.0f;
+                    case InputDevice.Mouse: 
+                        val = Mouse.IsDown((MouseButtons)ButtonCode) ? 1.0f : 0.0f;
                         break;
-                    case InputDevice.Keyboard: val = Keyboard.IsDown((Keys)ButtonCode) ? 1.0f : 0.0f;
+                    case InputDevice.Keyboard:
+                        val = Keyboard.IsDown((Keys)ButtonCode) ? 1.0f : 0.0f;
                         break;
                     case InputDevice.GamePad:
                         GamePad pad = GamePad.GetGamePad(player);
@@ -122,7 +124,8 @@ namespace Pulsar.Input
             {
                 switch (Device)
                 {
-                    case InputDevice.Mouse: val = Mouse.GetDeltaValue((MouseAnalogButtons)ButtonCode);
+                    case InputDevice.Mouse:
+                        val = Mouse.GetDeltaValue((MouseAnalogButtons)ButtonCode);
                         break;
                     case InputDevice.GamePad:
                         GamePad pad = GamePad.GetGamePad(player);
@@ -141,9 +144,11 @@ namespace Pulsar.Input
             bool val = false;
             switch (Device)
             {
-                case InputDevice.Mouse: val = Mouse.IsPressed((MouseButtons)ButtonCode);
+                case InputDevice.Mouse: 
+                    val = Mouse.IsPressed((MouseButtons)ButtonCode);
                     break;
-                case InputDevice.Keyboard: val = Keyboard.IsPressed((Keys)ButtonCode);
+                case InputDevice.Keyboard:
+                    val = Keyboard.IsPressed((Keys)ButtonCode);
                     break;
                 case InputDevice.GamePad:
                     GamePad pad = GamePad.GetGamePad(player);
@@ -161,9 +166,11 @@ namespace Pulsar.Input
             bool val = false;
             switch (Device)
             {
-                case InputDevice.Mouse: val = Mouse.IsReleased((MouseButtons)ButtonCode);
+                case InputDevice.Mouse: 
+                    val = Mouse.IsReleased((MouseButtons)ButtonCode);
                     break;
-                case InputDevice.Keyboard: val = Keyboard.IsReleased((Keys)ButtonCode);
+                case InputDevice.Keyboard:
+                    val = Keyboard.IsReleased((Keys)ButtonCode);
                     break;
                 case InputDevice.GamePad:
                     GamePad pad = GamePad.GetGamePad(player);

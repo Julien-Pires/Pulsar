@@ -31,7 +31,7 @@ namespace Pulsar.Input
         #region Methods
 
         /// <summary>
-        /// Update player context
+        /// Updates player context
         /// </summary>
         internal void Update()
         {
@@ -43,43 +43,32 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Dispatch button event from device to the current context
+        /// Dispatches button event from device to the current context
         /// </summary>
         private void DispatchButtonEvent()
         {
+            _currentContext.InternalButtonPressed.Clear();
+
             InputDevice device = _currentContext.AssociatedDevice;
 #if WINDOWS
             if ((device & InputDevice.Mouse) == InputDevice.Mouse)
-            {
-                for (short i = 0; i < Mouse.ButtonPressed.Count; i++)
-                {
-                    _currentContext.ButtonPressed.Add(Mouse.ButtonPressed[i]);
-                }
-            }
+                _currentContext.InternalButtonPressed.AddRange(Mouse.InternalButtonPressed);
+
 #endif
             if ((device & InputDevice.Keyboard) == InputDevice.Keyboard)
-            {
-                for (short i = 0; i < Keyboard.ButtonPressed.Count; i++)
-                {
-                    _currentContext.ButtonPressed.Add(Keyboard.ButtonPressed[i]);
-                }
-            }
+                _currentContext.InternalButtonPressed.AddRange(Keyboard.InternalButtonPressed);
+
             if ((device & InputDevice.GamePad) == InputDevice.GamePad)
             {
-                for(short i = 0; i < GamePad.ButtonPressed.Count; i++)
-                {
-                    ButtonEvent btnEvent = GamePad.ButtonPressed[i];
-                    if (btnEvent.Index == _playerIndex.GamePadIndex)
-                    {
-                        _currentContext.ButtonPressed.Add(btnEvent);
-                    }
-                }
+                GamePad pad = GamePad.GetGamePad(_playerIndex.GamePadIndex);
+                _currentContext.InternalButtonPressed.AddRange(pad.InternalButtonPressed);
             }
             else if ((device & InputDevice.AllGamePad) == InputDevice.AllGamePad)
             {
-                for (short i = 0; i < GamePad.ButtonPressed.Count; i++)
+                for (short i = 0; i < GamePad.GamePadCount; i++)
                 {
-                    _currentContext.ButtonPressed.Add(GamePad.ButtonPressed[i]);
+                    GamePad pad = GamePad.GetGamePad(_playerIndex.GamePadIndex);
+                    _currentContext.InternalButtonPressed.AddRange(pad.InternalButtonPressed);
                 }
             }
         }

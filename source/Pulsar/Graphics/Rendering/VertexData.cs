@@ -77,7 +77,7 @@ namespace Pulsar.Graphics.Rendering
         public void SetVertexOffset(int offset, int index)
         {
             _bindings[index].VertexOffset = offset;
-            UpdateBindingArray(false);
+            UpdateBindingArray();
         }
 
         /// <summary>
@@ -113,7 +113,9 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="index">Index where to insert the binding</param>
         public void SetBinding(VertexBufferObject buffer, int vertexOffset, int frequency, int index)
         {
-            if (buffer == null) throw new ArgumentNullException("buffer");
+            if (buffer == null) 
+                throw new ArgumentNullException("buffer");
+
             BindingInfo inf = new BindingInfo
             {
                 BufferObject = buffer,
@@ -121,11 +123,13 @@ namespace Pulsar.Graphics.Rendering
                 Frequency = frequency
             };
 
-            if(index >= _bindings.Count) _bindings.Add(inf);
-            else _bindings.Insert(index, inf);
+            if(index >= _bindings.Count) 
+                _bindings.Add(inf);
+            else 
+                _bindings.Insert(index, inf);
 
             buffer.VertexBufferAllocated += BufferAllocated;
-            UpdateBindingArray(true);
+            ResizeBindingArray();
         }
 
         /// <summary>
@@ -138,7 +142,7 @@ namespace Pulsar.Graphics.Rendering
 
             _bindings[index].BufferObject.VertexBufferAllocated -= BufferAllocated;
             _bindings.RemoveAt(index);
-            UpdateBindingArray(true);
+            ResizeBindingArray();
         }
 
         /// <summary>
@@ -150,21 +154,28 @@ namespace Pulsar.Graphics.Rendering
                 _bindings[i].BufferObject.VertexBufferAllocated -= BufferAllocated;
 
             _bindings.Clear();
-            UpdateBindingArray(true);
+            ResizeBindingArray();
         }
 
         /// <summary>
-        /// Updates the binding array
+        /// Resizes the array with VertexBinding
         /// </summary>
-        private void UpdateBindingArray(bool resizeArray)
+        private void ResizeBindingArray()
         {
-            if (resizeArray || (VertexBindings == null))
+            if(_bindings.Count != VertexBindings.Length)
                 VertexBindings = new VertexBufferBinding[_bindings.Count];
+            UpdateBindingArray();
+        }
 
+        /// <summary>
+        /// Updates the array with VertexBinding
+        /// </summary>
+        private void UpdateBindingArray()
+        {
             for (int i = 0; i < VertexBindings.Length; i++)
             {
                 BindingInfo inf = _bindings[i];
-                VertexBufferBinding bufferBinding = new VertexBufferBinding(inf.BufferObject.Buffer, 
+                VertexBufferBinding bufferBinding = new VertexBufferBinding(inf.BufferObject.Buffer,
                     inf.VertexOffset, inf.Frequency);
                 VertexBindings[i] = bufferBinding;
             }
@@ -177,7 +188,7 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="e">Argument</param>
         private void BufferAllocated(object sender, BufferAllocatedEventArgs e)
         {
-            UpdateBindingArray(false);
+            UpdateBindingArray();
         }
 
         #endregion
