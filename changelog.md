@@ -1,3 +1,38 @@
+## 0.3.4 (November 8, 2013)
+
+New feature: Transform class
+
+- **Core:**
+  - **New:** Transform class, used to manipulate 3D transformation
+  - Field Sender has been removed from the Message struct
+  - In Mediator class, methods Register/Unregister has been renamed RegisterListener/UnregisterListener
+  - Mediator has a new method to remove all listener for a specific event
+  - Mediator has a new method to remove all listeners at once
+  - Mediator has new methods to remove a specific message queue or all queues
+- **Math:**
+  - MatrixHelpers has new methods to create a world matrix from three components: Position, Scale and Rotation
+  - GetArcRotation method from Vector3Helpers has been moved to QuaternionHelpers
+  - GetAxes methods has been renamed GetAxis in QuaternionHelpers
+- **Graphics:**
+  - Node and Camera class inherit Transform class
+  - RemoveChild method has been renamed DestroyChild in Node
+  - Dispose method in SubMesh releases resources correctly
+  - FrameDetail class has a new field: ElapsedTime. It represents the time to render the scene in milliseconds
+  - FrameStatistics has been moved from Window to GraphicsEngine class
+  - Fix a bug which make render target dirty before rendering
+  - ViewportCollection has been merged with RenderTarget class
+  - Id from Viewport class has been removed, now the z-Order is the new way to identify a viewport
+  - SpeedFrustum is now a class
+  - MeshBoundingBox uses an index buffer
+  - Fix a bug that prevent all draw call to be counted
+- **Input:**
+  - Hardware class and VirtualInput class have a new property: ButtonPressed
+  - ButtonPressed contains buttons that are currently down, before it was buttons that is pressed (Up -> Down, 1 frame)
+  - ButtonPressed property, for Gamepad class, is now at instance level instead of static
+  - EventType field on ButtonEvent struct has been removed
+- **Components:**
+  - ComponentHandlerSystem has a new method GetComponentHandler
+
 ## 0.3.3 (October 19, 2013)
 
 New feature: Manual mesh
