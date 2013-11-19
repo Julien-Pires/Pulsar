@@ -318,7 +318,8 @@ namespace Pulsar.Graphics.Rendering
 
             Viewport vp = new Viewport(this, width, height, top, left)
             {
-                ZOrder = zOrder
+                ZOrder = zOrder,
+                ClearColor = ClearColor
             };
             Viewports.Add(vp);
             Viewports.Sort(CompareByZOrder);
