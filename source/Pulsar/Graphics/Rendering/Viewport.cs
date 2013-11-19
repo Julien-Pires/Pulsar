@@ -144,12 +144,9 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Gets the color used to clear the viewport
+        /// Gets or sets the color used to clear the viewport
         /// </summary>
-        public Color ClearColor
-        {
-            get { return _parent.ClearColor; }
-        }
+        public Color ClearColor { get; set; }
 
         /// <summary>
         /// Gets the aspect ratio
