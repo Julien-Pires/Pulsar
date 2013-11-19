@@ -208,6 +208,11 @@ namespace Pulsar.Graphics
         #region Properties
 
         /// <summary>
+        /// Gets or sets the name of the node
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// Gets the parent transform
         /// </summary>
         public override Transform Parent
