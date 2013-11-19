@@ -69,6 +69,7 @@ namespace Pulsar.Graphics.Rendering
         {
             PreferredResizeRule = ResizeRule.None;
             Initialize();
+            CreateViewport(0);
         }
 
         #endregion
