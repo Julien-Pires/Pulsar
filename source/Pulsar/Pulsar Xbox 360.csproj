@@ -74,6 +74,7 @@
     <Compile Include="Components\GameObject.cs" />
     <Compile Include="Components\GameObjectEventArgs.cs" />
     <Compile Include="Components\GameObjectManager.cs" />
+    <Compile Include="Core\AxisAlignedBox.cs" />
     <Compile Include="Core\EventType.cs" />
     <Compile Include="Core\Singleton.cs" />
     <Compile Include="Core\Transform.cs" />
@@ -84,10 +85,10 @@
     <Compile Include="Core\Mediator.cs" />
     <Compile Include="Core\Message.cs" />
     <Compile Include="Core\Pool.cs" />
-    <Compile Include="Graphics\BoundingVolume.cs" />
     <Compile Include="Graphics\Factory.cs" />
     <Compile Include="Graphics\FrameDetail.cs" />
     <Compile Include="Graphics\FrameStatistics.cs" />
+    <Compile Include="Graphics\Frustum.cs" />
     <Compile Include="Graphics\GraphicsEngine.cs" />
     <Compile Include="Graphics\GraphicsEngineService.cs" />
     <Compile Include="Graphics\IGraphicsEngineService.cs" />
@@ -121,12 +122,12 @@
     <Compile Include="Graphics\SceneGraph\Entity.cs" />
     <Compile Include="Graphics\SceneGraph\EntityFactory.cs" />
     <Compile Include="Graphics\SceneGraph\IMovable.cs" />
+    <Compile Include="Graphics\SceneGraph\Movable.cs" />
     <Compile Include="Graphics\SceneGraph\RenderQueue.cs" />
     <Compile Include="Graphics\SceneGraph\RenderQueueGroup.cs" />
     <Compile Include="Graphics\SceneGraph\SceneNode.cs" />
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
-    <Compile Include="Graphics\SpeedFrustum.cs" />
     <Compile Include="Input\AbstractButton.cs" />
     <Compile Include="Input\Axis.cs" />
     <Compile Include="Input\AxisCommand.cs" />

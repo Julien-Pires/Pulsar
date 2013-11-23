@@ -22,8 +22,9 @@ namespace Pulsar.Core
     {
         #region Fields
 
-        protected Matrix WorldTransform = Matrix.Identity;
-        protected Matrix InverseWorldTransform = Matrix.Identity;
+        internal Matrix WorldTransform = Matrix.Identity;
+        internal Matrix InverseWorldTransform = Matrix.Identity;
+
         protected Quaternion WorldTransformRotation = Quaternion.Identity;
         protected Quaternion LocalTransformRotation = Quaternion.Identity;
         protected Vector3 WorldTransformPosition;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Microsoft.Xna.Framework;
+using Pulsar.Core;
 
 namespace Pulsar.Graphics.SceneGraph
 {
@@ -14,7 +14,7 @@ namespace Pulsar.Graphics.SceneGraph
 
         protected readonly SceneTree Owner;
 
-        private BoundingBox _boundingBox;
+        private readonly AxisAlignedBox _aabb = new AxisAlignedBox();
         private readonly Dictionary<string, IMovable> _movablesByName = new Dictionary<string, IMovable>();
         private readonly List<IMovable> _movablesList = new List<IMovable>();
 
@@ -51,7 +51,8 @@ namespace Pulsar.Graphics.SceneGraph
         protected override void DestroyChildIntern(Node child)
         {
             SceneNode node = child as SceneNode;
-            if(node == null) throw new InvalidCastException("");
+            if(node == null) 
+                throw new InvalidCastException("Must be a SceneNode instance");
 
             node.Owner.DestroyNode(node);
         }
@@ -100,7 +101,7 @@ namespace Pulsar.Graphics.SceneGraph
         internal void FindVisibleObjects(Camera cam, RenderQueue queue, bool addChildren)
         {
             for (int i = 0; i < _movablesList.Count; i++)
-                queue.ProcessVisibleObject(cam, _movablesList[i]);
+                queue.ProcessesVisibleObject(cam, _movablesList[i]);
 
             if (addChildren)
             {
@@ -125,19 +126,20 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void UpdateBounds()
         {
-            _boundingBox = new BoundingBox();
-
+            _aabb.Reset();
             for (int i = 0; i < _movablesList.Count; i++)
             {
                 IMovable obj = _movablesList[i];
-                BoundingBox objBox = obj.WorldBoundingBox;
-                BoundingBox.CreateMerged(ref _boundingBox, ref objBox, out _boundingBox);
+                obj.UpdateBounds();
+
+                AxisAlignedBox objAabb = obj.WorldAabb;
+                _aabb.Merge(objAabb);
             }
 
             for (int i = 0; i < Childrens.Count; i++)
             {
                 SceneNode node = (SceneNode)Childrens[i];
-                BoundingBox.CreateMerged(ref _boundingBox, ref node._boundingBox, out _boundingBox);
+                _aabb.Merge(node._aabb);
             }
         }
 

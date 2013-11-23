@@ -2,7 +2,7 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using Pulsar.Core;
 using Pulsar.Game;
 using Pulsar.Assets.Graphics.Materials;
 using Pulsar.Graphics.SceneGraph;
@@ -129,10 +129,10 @@ namespace Pulsar.Graphics.Debugger
         /// Updates the buffers
         /// </summary>
         /// <param name="box">Boundig box used to update buffers data</param>
-        internal void UpdateBox(ref BoundingBox box)
+        internal void UpdateBox(AxisAlignedBox box)
         {
-            Vector3 min = box.Min;
-            Vector3 max = box.Max;
+            Vector3 min = box.Minimum;
+            Vector3 max = box.Maximum;
             Vector3 xOffset = new Vector3((max.X - min.X), 0, 0);
             Vector3 zOffset = new Vector3(0, 0, (max.Z - min.Z));
 
