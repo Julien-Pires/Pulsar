@@ -44,7 +44,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Get the ID of this sub entity, the ID correspond to the ID of the submesh attached to this instance
         /// </summary>
-        public uint BatchId
+        public uint Id
         {
             get { return _subMesh.RenderInfo.Id; }
         }

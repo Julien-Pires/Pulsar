@@ -181,7 +181,7 @@ namespace Pulsar.Graphics.Debugger
         /// <summary>
         /// Gets the batch ID of this instance
         /// </summary>
-        public uint BatchId 
+        public uint Id 
         {
             get { return RenderInfo.Id; } 
         }
