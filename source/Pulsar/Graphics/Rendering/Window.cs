@@ -278,7 +278,7 @@ namespace Pulsar.Graphics.Rendering
         /// Sets the pixel format
         /// </summary>
         /// <param name="pixel">Pixel format</param>
-        public override void SetPixel(SurfaceFormat pixel)
+        protected override void SetPixel(SurfaceFormat pixel)
         {
             base.SetPixel(pixel);
             DeviceManager.PreferredBackBufferFormat = pixel;
@@ -289,7 +289,7 @@ namespace Pulsar.Graphics.Rendering
         /// Sets the depth buffer format
         /// </summary>
         /// <param name="depth">Depth buffer format</param>
-        public override void SetDepth(DepthFormat depth)
+        protected override void SetDepth(DepthFormat depth)
         {
             base.SetDepth(depth);
             DeviceManager.PreferredDepthStencilFormat = depth;
