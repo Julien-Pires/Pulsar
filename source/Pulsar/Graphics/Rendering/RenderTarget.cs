@@ -43,6 +43,7 @@ namespace Pulsar.Graphics.Rendering
         protected readonly GraphicsDeviceManager DeviceManager;
         
         private bool _mipmap;
+        private RenderTargetUsage _usage = RenderTargetUsage.DiscardContents;
         private bool _disposed;
         private bool _isDirty = true;
         private readonly FrameDetail _frameDetail = new FrameDetail();
@@ -58,8 +59,11 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="renderer"></param>
         internal RenderTarget(GraphicsDeviceManager deviceManager, Renderer renderer)
         {
-            if (deviceManager == null) throw new ArgumentNullException("deviceManager");
-            if(renderer == null) throw new ArgumentNullException("renderer");
+            if (deviceManager == null) 
+                throw new ArgumentNullException("deviceManager");
+
+            if(renderer == null) 
+                throw new ArgumentNullException("renderer");
 
             DeviceManager = deviceManager;
             Renderer = renderer;
@@ -164,7 +168,19 @@ namespace Pulsar.Graphics.Rendering
             if (Target != null) 
                 Target.Dispose();
 
-            Target = new RenderTarget2D(DeviceManager.GraphicsDevice, Width, Height, MipMap, Pixel, Depth);
+            Target = new RenderTarget2D(DeviceManager.GraphicsDevice, Width, Height, MipMap, 
+                Pixel, Depth, 0, _usage);
+            if (_usage == RenderTargetUsage.PlatformContents)
+            {
+#if XBOX || XBOX360
+                AlwaysClear = true;
+#else
+                AlwaysClear = Target.MultiSampleCount > 0;
+#endif
+            }
+            else
+                AlwaysClear = (_usage == RenderTargetUsage.DiscardContents);
+
             _isDirty = false;
         }
 
@@ -430,7 +446,7 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Gets or sets a value that indicates if the render target should always be cleared before rendering
         /// </summary>
-        public bool AlwaysClear { get; set; }
+        public bool AlwaysClear { get; private set; }
 
         /// <summary>
         /// Gets the height
@@ -464,6 +480,16 @@ namespace Pulsar.Graphics.Rendering
         /// Gets the depth buffer format
         /// </summary>
         public DepthFormat Depth { get; private set; }
+
+        public RenderTargetUsage Usage
+        {
+            get { return _usage; }
+            set
+            {
+                _usage = value;
+                _isDirty = true;
+            }
+        }
 
         /// <summary>
         /// Gets the number of viewports
