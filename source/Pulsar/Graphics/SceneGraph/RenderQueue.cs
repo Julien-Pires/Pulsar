@@ -14,7 +14,7 @@ namespace Pulsar.Graphics.SceneGraph
     }
 
     /// <summary>
-    /// Class describing a render queue
+    /// Represents a render queue
     /// </summary>
     public sealed class RenderQueue
     {
@@ -27,7 +27,7 @@ namespace Pulsar.Graphics.SceneGraph
         #region Methods
 
         /// <summary>
-        /// Add a IRenderable in the render queue
+        /// Adds a renderable object in the render queue
         /// </summary>
         /// <param name="renderable">IRenderable instance</param>
         internal void AddRenderable(IRenderable renderable)
@@ -36,40 +36,40 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Add a IRenderable in the render queue at a specific position
+        /// Adds a renderable object in the render queue at a specific position
         /// </summary>
         /// <param name="renderable">IRenderable instance</param>
         /// <param name="groupId">Render queue id to attached the IRenderable</param>
         internal void AddRenderable(IRenderable renderable, int groupId)
         {
             RenderQueueGroup group = GetGroup(groupId);
-
             group.AddRenderable(renderable);
         }
 
         /// <summary>
-        /// Clear all render queue group
+        /// Clears all render queue group
         /// </summary>
         internal void Clear()
         {
             for (int i = 0; i < _queueGroups.Length; i++)
             {
                 RenderQueueGroup group = _queueGroups[i];
-
-                if(group != null) group.Clear();
+                if(group != null) 
+                    group.Clear();
             }
         }
 
         /// <summary>
-        /// Check if an object is visible and add it to the render queue
+        /// Checks if an object is visible and adds it to the render queue
         /// </summary>
-        /// <param name="cam">Current camera</param>
-        /// <param name="movObj">IMovable instance</param>
-        internal void ProcessVisibleObject(Camera cam, IMovable movObj)
+        /// <param name="camera">Current camera</param>
+        /// <param name="movable">IMovable instance</param>
+        internal void ProcessesVisibleObject(Camera camera, IMovable movable)
         {
-            movObj.CheckVisibilityWithCamera(cam);
+            movable.FrustumCulling(camera);
 
-            if (movObj.IsRendered) movObj.UpdateRenderQueue(this);
+            if (movable.IsRendered) 
+                movable.UpdateRenderQueue(this);
         }
 
         /// <summary>
@@ -79,9 +79,11 @@ namespace Pulsar.Graphics.SceneGraph
         /// <returns>Returns an RenderQueueGroup</returns>
         private RenderQueueGroup GetGroup(int id)
         {
-            if (id > (int)RenderQueueGroupId.Count) throw new Exception();
+            if (id > (int)RenderQueueGroupId.Count) 
+                throw new ArgumentException("Invalid RenderQueueGroup id", "id");
 
-            if (_queueGroups[id] != null) return _queueGroups[id];
+            if (_queueGroups[id] != null) 
+                return _queueGroups[id];
 
             RenderQueueGroup group = new RenderQueueGroup(id);
             AddNewRenderGroup(group);
@@ -103,7 +105,7 @@ namespace Pulsar.Graphics.SceneGraph
         #region Properties
 
         /// <summary>
-        /// Get an array of RenderQueueGroup
+        /// Gets an array of RenderQueueGroup
         /// </summary>
         internal RenderQueueGroup[] QueueGroupList
         {
