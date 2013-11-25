@@ -67,7 +67,7 @@ namespace Pulsar.Graphics.Rendering
             if (_disposed) return;
 
             if (disposing) 
-                RenderTarget.Dispose();
+                Target.Dispose();
 
             _disposed = true;
         }
@@ -94,15 +94,15 @@ namespace Pulsar.Graphics.Rendering
             int parentHeight = _parent.Height;
             int newWidth = (int)(parentWidth * _width);
             int newHeight = (int)(parentHeight * _height);
-            if ((newWidth != RealWidth) || (newHeight != RealHeight))
+            if ((newWidth != PixelWidth) || (newHeight != PixelHeight))
             {
-                RealWidth = newWidth;
-                RealHeight = newHeight;
+                PixelWidth = newWidth;
+                PixelHeight = newHeight;
                 AspectRatio = (float)newWidth/newHeight;
                 CreateRenderTarget();
             }
-            RealTop = (int)(_topPosition * parentHeight);
-            RealLeft = (int) (_leftPosition * parentWidth);
+            PixelTop = (int)(_topPosition * parentHeight);
+            PixelLeft = (int) (_leftPosition * parentWidth);
 
             _isDirty = false;
         }
@@ -112,9 +112,10 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         private void CreateRenderTarget()
         {
-            if (RenderTarget != null) RenderTarget.Dispose();
+            if (Target != null) 
+                Target.Dispose();
 
-            RenderTarget = new RenderTarget2D(_parent.GraphicsDevice, RealWidth, RealHeight, _parent.MipMap,
+            Target = new RenderTarget2D(_parent.GraphicsDevice, PixelWidth, PixelHeight, _parent.MipMap,
                 _parent.Pixel, _parent.Depth);
         }
 
@@ -125,7 +126,7 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Gets the render target associated to this viewport
         /// </summary>
-        internal RenderTarget2D RenderTarget { get; private set; }
+        internal RenderTarget2D Target { get; private set; }
 
         /// <summary>
         /// Gets the statistics about the last rendered scene
@@ -161,12 +162,12 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Gets the top position in pixel
         /// </summary>
-        public int RealTop { get; private set; }
+        public int PixelTop { get; private set; }
 
         /// <summary>
         /// Gets the left position in pixel
         /// </summary>
-        public int RealLeft { get; private set; }
+        public int PixelLeft { get; private set; }
 
         /// <summary>
         /// Gets the normalized top position
@@ -207,12 +208,12 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Gets the width in pixel
         /// </summary>
-        public int RealWidth { get; private set; }
+        public int PixelWidth { get; private set; }
 
         /// <summary>
         /// Gets the height in pixel
         /// </summary>
-        public int RealHeight { get; private set; }
+        public int PixelHeight { get; private set; }
 
         /// <summary>
         /// Gets the normalized width
