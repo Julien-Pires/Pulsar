@@ -113,10 +113,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         public void Dispose()
         {
-            if (_disposed) return;
-
             Dispose(true);
-            _disposed = true;
         }
 
         /// <summary>
@@ -125,12 +122,15 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="disposing">Indicate if the method is called from dispose</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing) return;
+            if (_disposed) return;
+            if (disposing)
+            {
+                for (int i = 0; i < Viewports.Count; i++)
+                    Viewports[i].Dispose();
 
-            for (int i = 0; i < Viewports.Count; i++)
-                Viewports[i].Dispose();
-
-            Target.Dispose();
+                Target.Dispose();
+            }
+            _disposed = true;
         }
 
         /// <summary>
