@@ -168,8 +168,8 @@ namespace Pulsar.Graphics.Rendering
                 for (int i = 0; i < renderTarget.Viewports.Count; i++)
                 {
                     Viewport vp = renderTarget.Viewports[i];
-                    Rectangle rect = new Rectangle(vp.RealLeft, vp.RealTop, vp.RealWidth, vp.RealHeight);
-                    _spriteBatch.Draw(vp.RenderTarget, rect, Color.White);
+                    Rectangle rect = new Rectangle(vp.PixelLeft, vp.PixelTop, vp.PixelWidth, vp.PixelHeight);
+                    _spriteBatch.Draw(vp.Target, rect, Color.White);
                 }
                 _spriteBatch.End();
             }

@@ -49,7 +49,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         /// <param name="cam">Camera to use for rendering</param>
         public void Render(Viewport vp, Camera cam, RenderQueue queue)
         {
-            _renderer.SetRenderTarget(vp.RenderTarget);
+            _renderer.SetRenderTarget(vp.Target);
             if(vp.AlwaysClear) _renderer.Clear(vp.ClearColor);
 
             _shader.SetViewProj(cam.View, cam.Projection);
