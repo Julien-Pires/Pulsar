@@ -115,8 +115,7 @@ namespace Pulsar.Input
         /// Adds a button with a specified name
         /// </summary>
         /// <param name="name">Button name</param>
-        /// <param name="btn">Button instance</param>
-        public void AddButton(string name, Button btn)
+        public Button CreateButton(string name)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("name");
@@ -124,20 +123,19 @@ namespace Pulsar.Input
             if (_buttonsMap.ContainsKey(name))
                 throw new Exception(string.Format("A button named {0} already exists in this virtual input", name)); 
 
-            if (btn.Owner != null)
-                btn.Owner.RemoveButton(name);
-
+            Button btn = new Button();
             _buttons.Add(btn);
             _buttonsMap.Add(name, _buttons.Count - 1);
             btn.Owner = this;
+
+            return btn;
         }
 
         /// <summary>
         /// Adds an axis with a specified name
         /// </summary>
         /// <param name="name">Axis name</param>
-        /// <param name="axis">Axis instance</param>
-        public void AddAxis(string name, Axis axis)
+        public Axis CreateAxis(string name)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("name");
@@ -145,12 +143,12 @@ namespace Pulsar.Input
             if (_axesMap.ContainsKey(name)) 
                 throw new Exception(string.Format("An axis named {0} already exists in this virtual input", name));
 
-            if (axis.Owner != null)
-                axis.Owner.RemoveAxis(name);
-
+            Axis axis = new Axis();
             _axes.Add(axis);
             _axesMap.Add(name, _axes.Count - 1);
             axis.Owner = this;
+
+            return axis;
         }
 
         /// <summary>
@@ -158,7 +156,7 @@ namespace Pulsar.Input
         /// </summary>
         /// <param name="name">Name of the button</param>
         /// <returns>Return true if the button is removed otherwise false</returns>
-        public bool RemoveButton(string name)
+        public bool DestroyButton(string name)
         {
             int idx;
             if (!_buttonsMap.TryGetValue(name, out idx)) return false;
@@ -177,7 +175,7 @@ namespace Pulsar.Input
         /// </summary>
         /// <param name="name">Name of the axis</param>
         /// <returns>Return true if the axis is removed otherwise false</returns>
-        public bool RemoveAxis(string name)
+        public bool DestroyAxis(string name)
         {
             int idx;
             if (!_axesMap.TryGetValue(name, out idx)) return false;

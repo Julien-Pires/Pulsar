@@ -69,6 +69,14 @@ namespace Pulsar.Input
 
         #endregion
 
+        #region Constructors
+
+        internal Button()
+        {
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
