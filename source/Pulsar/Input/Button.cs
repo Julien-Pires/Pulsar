@@ -119,11 +119,6 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Gets or sets the name
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
         /// Gets the owner of the button
         /// </summary>
         public VirtualInput Owner { get; internal set; }

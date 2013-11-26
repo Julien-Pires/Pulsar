@@ -112,40 +112,44 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Adds a button
+        /// Adds a button with a specified name
         /// </summary>
+        /// <param name="name">Button name</param>
         /// <param name="btn">Button instance</param>
-        public void AddButton(Button btn)
+        public void AddButton(string name, Button btn)
         {
-            if (string.IsNullOrEmpty(btn.Name)) 
-                throw new Exception("Failed to add the button, his name is null or empty");
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name");
 
-            if (_buttonsMap.ContainsKey(btn.Name)) 
-                throw new Exception(string.Format("A button named {0} already exists in this virtual input", btn.Name)); 
+            if (_buttonsMap.ContainsKey(name))
+                throw new Exception(string.Format("A button named {0} already exists in this virtual input", name)); 
 
             if (btn.Owner != null)
-                btn.Owner.RemoveButton(btn.Name);
+                btn.Owner.RemoveButton(name);
+
             _buttons.Add(btn);
-            _buttonsMap.Add(btn.Name, _buttons.Count - 1);
+            _buttonsMap.Add(name, _buttons.Count - 1);
             btn.Owner = this;
         }
 
         /// <summary>
-        /// Adds an axis
+        /// Adds an axis with a specified name
         /// </summary>
+        /// <param name="name">Axis name</param>
         /// <param name="axis">Axis instance</param>
-        public void AddAxis(Axis axis)
+        public void AddAxis(string name, Axis axis)
         {
-            if(string.IsNullOrEmpty(axis.Name)) 
-                throw new Exception("Failed to add the axis, his name is null or empty");
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name");
 
-            if (_axesMap.ContainsKey(axis.Name)) 
-                throw new Exception(string.Format("An axis named {0} already exists in this virtual input", axis.Name));
+            if (_axesMap.ContainsKey(name)) 
+                throw new Exception(string.Format("An axis named {0} already exists in this virtual input", name));
 
             if (axis.Owner != null)
-                axis.Owner.RemoveAxis(axis.Name);
+                axis.Owner.RemoveAxis(name);
+
             _axes.Add(axis);
-            _axesMap.Add(axis.Name, _axes.Count - 1);
+            _axesMap.Add(name, _axes.Count - 1);
             axis.Owner = this;
         }
 

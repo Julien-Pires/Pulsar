@@ -179,11 +179,6 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Gets or sets the name of the axis
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
         /// Gets the owner of the axis
         /// </summary>
         public VirtualInput Owner { get; internal set; }
