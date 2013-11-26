@@ -82,6 +82,14 @@ namespace Pulsar.Input
 
         #endregion
 
+        #region Constructors
+
+        internal Axis()
+        {
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
