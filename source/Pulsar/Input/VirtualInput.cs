@@ -11,9 +11,9 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        internal readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
         internal readonly PlayerIndex PlayerIndex;
 
+        private readonly List<ButtonEvent> _internalButtonPressed = new List<ButtonEvent>();
         private readonly ReadOnlyCollection<ButtonEvent> _buttonPressed;
         private readonly Dictionary<string, int> _buttonsMap = new Dictionary<string, int>();
         private readonly Dictionary<string, int> _axesMap = new Dictionary<string, int>();
@@ -32,7 +32,7 @@ namespace Pulsar.Input
         internal VirtualInput(PlayerIndex playerIndex)
         {
             PlayerIndex = playerIndex;
-            _buttonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
+            _buttonPressed = new ReadOnlyCollection<ButtonEvent>(_internalButtonPressed);
         }
 
         #endregion
@@ -60,7 +60,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         public bool AnyKeyPressed()
         {
-            return InternalButtonPressed.Count > 0;
+            return _internalButtonPressed.Count > 0;
         }
 
         /// <summary>
@@ -213,6 +213,24 @@ namespace Pulsar.Input
                 throw new Exception(string.Format("Failed to find an axis named {0}", name));
 
             return _axes[idx];
+        }
+
+        /// <summary>
+        /// Clears the pressed buttons list
+        /// </summary>
+        internal void ClearPressedButtons()
+        {
+            _internalButtonPressed.Clear();
+        }
+
+        /// <summary>
+        /// Adds pressed buttons to this virtual input
+        /// </summary>
+        /// <param name="pressedButtons">List of pressed buttons</param>
+        internal void AddPressedButtons(List<ButtonEvent> pressedButtons)
+        {
+            for(int i = 0; i < pressedButtons.Count; i++)
+                _internalButtonPressed.Add(pressedButtons[i]);
         }
 
         /// <summary>

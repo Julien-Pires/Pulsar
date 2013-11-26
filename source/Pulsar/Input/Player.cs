@@ -47,28 +47,27 @@ namespace Pulsar.Input
         /// </summary>
         private void DispatchButtonEvent()
         {
-            _currentContext.InternalButtonPressed.Clear();
+            _currentContext.ClearPressedButtons();
 
             InputDevice device = _currentContext.AssociatedDevice;
 #if WINDOWS
             if ((device & InputDevice.Mouse) == InputDevice.Mouse)
-                _currentContext.InternalButtonPressed.AddRange(Mouse.InternalButtonPressed);
-
+                _currentContext.AddPressedButtons(Mouse.InternalButtonPressed);
 #endif
             if ((device & InputDevice.Keyboard) == InputDevice.Keyboard)
-                _currentContext.InternalButtonPressed.AddRange(Keyboard.InternalButtonPressed);
+                _currentContext.AddPressedButtons(Keyboard.InternalButtonPressed);
 
             if ((device & InputDevice.GamePad) == InputDevice.GamePad)
             {
                 GamePad pad = GamePad.GetGamePad(_playerIndex.GamePadIndex);
-                _currentContext.InternalButtonPressed.AddRange(pad.InternalButtonPressed);
+                _currentContext.AddPressedButtons(pad.InternalButtonPressed);
             }
             else if ((device & InputDevice.AllGamePad) == InputDevice.AllGamePad)
             {
                 for (short i = 0; i < GamePad.GamePadCount; i++)
                 {
                     GamePad pad = GamePad.GetGamePad(_playerIndex.GamePadIndex);
-                    _currentContext.InternalButtonPressed.AddRange(pad.InternalButtonPressed);
+                    _currentContext.AddPressedButtons(pad.InternalButtonPressed);
                 }
             }
         }
