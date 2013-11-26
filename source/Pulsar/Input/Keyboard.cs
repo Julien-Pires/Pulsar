@@ -14,7 +14,7 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        internal static readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
+        internal static readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>(8);
 
         private static readonly ReadOnlyCollection<ButtonEvent> ReadOnlyButtonPressed;
         private static readonly Keys[] AllDigital;

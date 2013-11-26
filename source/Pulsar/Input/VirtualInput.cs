@@ -13,7 +13,7 @@ namespace Pulsar.Input
 
         internal readonly PlayerIndex PlayerIndex;
 
-        private readonly List<ButtonEvent> _internalButtonPressed = new List<ButtonEvent>();
+        private readonly List<ButtonEvent> _internalButtonPressed = new List<ButtonEvent>(8);
         private readonly ReadOnlyCollection<ButtonEvent> _buttonPressed;
         private readonly Dictionary<string, int> _buttonsMap = new Dictionary<string, int>();
         private readonly Dictionary<string, int> _axesMap = new Dictionary<string, int>();
