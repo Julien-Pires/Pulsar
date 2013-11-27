@@ -95,10 +95,10 @@ namespace Pulsar.Components
 
             handler.Owner = this;
             _handlersMap.Add(handlerType, handler);
-            if(handler.ComponentTypes != null)
-                RegisterListener(handler, handler.ComponentTypes);
-            else
+            if(handler.ListenAllComponents)
                 RegisterListener(handler, typeof(Component));
+            else
+                RegisterListener(handler, handler.ComponentTypes); 
         }
 
         /// <summary>
@@ -108,6 +108,9 @@ namespace Pulsar.Components
         /// <param name="componentType">Type of component to listen for</param>
         private void RegisterListener(ComponentHandler handler, Type componentType)
         {
+            if(componentType == null)
+                throw new ArgumentNullException("componentType");
+            
             List<ComponentHandler> listeners = EnsureListeners(componentType);
             listeners.Add(handler);
         }
@@ -119,11 +122,15 @@ namespace Pulsar.Components
         /// <param name="componentTypes">Array of type of components to listen for</param>
         private void RegisterListener(ComponentHandler handler, Type[] componentTypes)
         {
-            if(componentTypes == null) return;
+            if(componentTypes == null)
+                throw new ArgumentNullException("componentTypes");
 
             for (int i = 0; i < componentTypes.Length; i++)
             {
                 Type compoType = componentTypes[i];
+                if(compoType == null)
+                    throw new ArgumentException("null is not a valid type of component", "componentTypes");
+
                 if (!compoType.IsSubclassOf(typeof(Component)))
                     throw new Exception("Provided type doesn't inherit Component class");
 
@@ -167,10 +174,12 @@ namespace Pulsar.Components
 
             ComponentHandler handler = GetComponentHandler(type);
             if (handler == null) return false;
-            if(handler.ComponentTypes != null)
-                UnregisterListener(handler, handler.ComponentTypes);
-            else
+
+            if(handler.ListenAllComponents)
                 UnregisterListener(handler, typeof(Component));
+            else
+                UnregisterListener(handler, handler.ComponentTypes);
+                
             handler.Owner = null;
 
             return true;
@@ -183,6 +192,9 @@ namespace Pulsar.Components
         /// <param name="componentType">Type of component to stop listening for</param>
         private void UnregisterListener(ComponentHandler handler, Type componentType)
         {
+            if(componentType == null)
+                throw new ArgumentNullException("componentType");
+
             List<ComponentHandler> listeners = GetListeners(componentType);
             if(listeners == null) return;
             listeners.Remove(handler);
@@ -195,11 +207,15 @@ namespace Pulsar.Components
         /// <param name="componentTypes">Array of type of components to listening for</param>
         private void UnregisterListener(ComponentHandler handler, Type[] componentTypes)
         {
-            if (componentTypes == null) return;
+            if (componentTypes == null)
+                throw new ArgumentNullException("componentTypes");
 
             for (int i = 0; i < componentTypes.Length; i++)
             {
                 Type compoType = componentTypes[i];
+                if(compoType == null)
+                    throw new ArgumentException("null is not a valid type of component", "componentTypes");
+
                 if (!compoType.IsSubclassOf(typeof(Component)))
                     throw new Exception("Provided type doesn't inherit Component class");
 
@@ -216,6 +232,9 @@ namespace Pulsar.Components
         /// <returns>Returns a ComponentHandler instance if found otherwise null</returns>
         public ComponentHandler GetComponentHandler(Type handlerType)
         {
+            if(handlerType == null)
+                throw new ArgumentNullException("handlerType");
+
             ComponentHandler handler;
             _handlersMap.TryGetValue(handlerType, out handler);
 
@@ -229,6 +248,9 @@ namespace Pulsar.Components
         /// <returns>Returns a list of component handler that listen for the specified type of component otherwise null</returns>
         private List<ComponentHandler> GetListeners(Type componentType)
         {
+            if(componentType == null)
+                throw new ArgumentNullException("componentType");
+
             List<ComponentHandler> handlersList;
             _handlersMapByComponent.TryGetValue(componentType, out handlersList);
 
