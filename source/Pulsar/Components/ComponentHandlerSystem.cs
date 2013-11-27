@@ -37,6 +37,15 @@ namespace Pulsar.Components
 
         #endregion
 
+        #region Static methods
+
+        private static bool ValidateComponentType(Type componentType)
+        {
+            return (componentType != null) && (componentType.IsSubclassOf(typeof (Component)));
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
@@ -90,15 +99,16 @@ namespace Pulsar.Components
 
             Type handlerType = handler.GetType();
             if (_handlersMap.ContainsKey(handlerType))
-                throw new Exception(string.Format("Failed to add, a {0} " +
+                throw new Exception(string.Format("Failed to add, a is {0} " +
                                                   "already attached to this ComponentHandlerSystem", handlerType));
 
-            handler.Owner = this;
-            _handlersMap.Add(handlerType, handler);
             if(handler.ListenAllComponents)
                 RegisterListener(handler, typeof(Component));
             else
-                RegisterListener(handler, handler.ComponentTypes); 
+                RegisterListener(handler, handler.ComponentTypes);
+
+            handler.Owner = this;
+            _handlersMap.Add(handlerType, handler);
         }
 
         /// <summary>
@@ -108,8 +118,8 @@ namespace Pulsar.Components
         /// <param name="componentType">Type of component to listen for</param>
         private void RegisterListener(ComponentHandler handler, Type componentType)
         {
-            if(componentType == null)
-                throw new ArgumentNullException("componentType");
+            if(!ValidateComponentType(componentType))
+                throw new ArgumentException(string.Format("{0} is not a valid component type", componentType));
             
             List<ComponentHandler> listeners = EnsureListeners(componentType);
             listeners.Add(handler);
@@ -128,11 +138,8 @@ namespace Pulsar.Components
             for (int i = 0; i < componentTypes.Length; i++)
             {
                 Type compoType = componentTypes[i];
-                if(compoType == null)
-                    throw new ArgumentException("null is not a valid type of component", "componentTypes");
-
-                if (!compoType.IsSubclassOf(typeof(Component)))
-                    throw new Exception("Provided type doesn't inherit Component class");
+                if(!ValidateComponentType(compoType))
+                    throw new ArgumentException(string.Format("{0} is not a valid component type", compoType));
 
                 List<ComponentHandler> listeners = EnsureListeners(compoType);
                 listeners.Add(handler);
@@ -192,9 +199,6 @@ namespace Pulsar.Components
         /// <param name="componentType">Type of component to stop listening for</param>
         private void UnregisterListener(ComponentHandler handler, Type componentType)
         {
-            if(componentType == null)
-                throw new ArgumentNullException("componentType");
-
             List<ComponentHandler> listeners = GetListeners(componentType);
             if(listeners == null) return;
             listeners.Remove(handler);
@@ -204,7 +208,7 @@ namespace Pulsar.Components
         /// Removes a ComponentHandler to stop listening for multiple components
         /// </summary>
         /// <param name="handler">ComponentHandler as a listener</param>
-        /// <param name="componentTypes">Array of type of components to listening for</param>
+        /// <param name="componentTypes">Array of type of components to listen for</param>
         private void UnregisterListener(ComponentHandler handler, Type[] componentTypes)
         {
             if (componentTypes == null)
@@ -212,14 +216,7 @@ namespace Pulsar.Components
 
             for (int i = 0; i < componentTypes.Length; i++)
             {
-                Type compoType = componentTypes[i];
-                if(compoType == null)
-                    throw new ArgumentException("null is not a valid type of component", "componentTypes");
-
-                if (!compoType.IsSubclassOf(typeof(Component)))
-                    throw new Exception("Provided type doesn't inherit Component class");
-
-                List<ComponentHandler> listeners = GetListeners(compoType);
+                List<ComponentHandler> listeners = GetListeners(componentTypes[i]);
                 if(listeners == null) continue;
                 listeners.Add(handler);
             }
