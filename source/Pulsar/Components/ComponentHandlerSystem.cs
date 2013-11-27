@@ -181,15 +181,21 @@ namespace Pulsar.Components
             ComponentHandler handler = GetComponentHandler(type);
             if (handler == null) return false;
 
-            if(handler.ListenAllComponents)
-                UnregisterListener(handler, typeof(Component));
-            else
-                UnregisterListener(handler, handler.ComponentTypes);
-
+            UnregisterListener(handler);
             _handlersMap.Remove(type);
             handler.Owner = null;
 
             return true;
+        }
+
+        /// <summary>
+        /// Removes a ComponentHandler to stop listening for components
+        /// </summary>
+        /// <param name="handler">ComponentHandler as a listener</param>
+        private void UnregisterListener(ComponentHandler handler)
+        {
+            foreach (List<ComponentHandler> listeners in _handlersMapByComponent.Values)
+                listeners.Remove(handler);
         }
 
         /// <summary>
