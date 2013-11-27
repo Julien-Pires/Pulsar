@@ -54,11 +54,8 @@ namespace Pulsar.Components
             {
                 for (int i = 0; i < this.pendingDeletion.Count; i++)
                 {
-                    Component compo = this.pendingDeletion[i];
-                    if (compo.Parent != null)
-                    {
-                        compo.Parent.RemoveNow(compo.GetType());
-                    }
+                    ComponentEventArgs e = new ComponentEventArgs(this.pendingDeletion[i]);
+                    this.OnComponentRemoved(this, e);
                 }
 
                 this.pendingDeletion.Clear();

@@ -90,6 +90,11 @@ namespace Pulsar.Components
         }
 
         /// <summary>
+        /// Gets or sets a value that indicates to listen for all components
+        /// </summary>
+        public bool ListenAllComponents { get; set; }
+
+        /// <summary>
         /// Get the types of component associated
         /// </summary>
         public Type[] ComponentTypes
