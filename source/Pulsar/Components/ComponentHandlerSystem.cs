@@ -69,7 +69,6 @@ namespace Pulsar.Components
 
             foreach (List<ComponentHandler> listeners in _handlersMapByComponent.Values)
                 listeners.Clear();
-            _handlersMapByComponent.Clear();
 
             foreach (ComponentHandler handler in _handlersMap.Values)
             {
@@ -107,8 +106,8 @@ namespace Pulsar.Components
             else
                 RegisterListener(handler, handler.ComponentTypes);
 
-            handler.Owner = this;
             _handlersMap.Add(handlerType, handler);
+            handler.Owner = this;
         }
 
         /// <summary>
@@ -186,7 +185,8 @@ namespace Pulsar.Components
                 UnregisterListener(handler, typeof(Component));
             else
                 UnregisterListener(handler, handler.ComponentTypes);
-                
+
+            _handlersMap.Remove(type);
             handler.Owner = null;
 
             return true;
@@ -218,7 +218,7 @@ namespace Pulsar.Components
             {
                 List<ComponentHandler> listeners = GetListeners(componentTypes[i]);
                 if(listeners == null) continue;
-                listeners.Add(handler);
+                listeners.Remove(handler);
             }
         }
 
