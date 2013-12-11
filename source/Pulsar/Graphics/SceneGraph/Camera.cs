@@ -172,11 +172,13 @@ namespace Pulsar.Graphics.SceneGraph
                     Quaternion.Inverse(ref parentInvert, out parentInvert);
                     Quaternion.Multiply(ref parentInvert, ref targetRotation, out LocalTransformRotation);
                 }
-                else LocalTransformRotation = targetRotation;
+                else 
+                    LocalTransformRotation = targetRotation;
 
                 RequireUpdate();
             }
-            else base.SetDirection(ref direction);
+            else 
+                base.SetDirection(ref direction);
         }
 
         /// <summary>
