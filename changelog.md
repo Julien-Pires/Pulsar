@@ -1,3 +1,59 @@
+## 0.3.5 (December 12, 2013)
+
+Enhancement and bug fixes
+
+- **Core:**
+  - **New:** New class IndexPool to manage a pool of index
+  - Methods in Transform class are no longer virtual
+- **Components:**
+  - Components system refactored
+  - **New:** New class World that represents a game world with all its game objects and components
+    - Add/Remove game object need to be done with this class
+	- Process method need to be called to process changes in game world, game object added and removed
+	- Update method will update the game world (system)
+  - **New:** New class ComponentManager that manages component
+  - **New:** New class ComponentGroup that manages component of a specific type
+  - ComponentHandler and ComponentHandlerSystem have been renamed System and SystemManager
+  - ComponentManager and GameObjectManager are accessible via the World class
+  - ComponentCollection class has been removed
+  - ComponentEventArgs/GameObjectEventArgs class have been removed
+  - GameObject has new methods to get component
+- **Collection:**
+  - **New:** Collection is a new namespace
+  - **New:** New class UnorderedList is a collection that works like a list but doesn't preserve order when items are removed
+- **Math:**
+  - Abs is a new method in Vector3Helpers that returns an absolute vector
+  - Sign is a new method in Vector3Helpers that returns a signed vector
+  - FlipSign is a new method in Vector3Helpers that returns a flip signed vector  
+- **Graphics:**
+  - **New:** New class AxisAlignedBox
+  - **New:** New class Frustum that represents a frustum
+  - **New:** New class Movable that implements IMovable with basic functionalities
+  - IMovable interface updated:
+    - CheckVisibilityWithCamera renamed FrustumCulling
+	- UpdateBounds is a new method
+	- WorldBoundingBox property renamed LocalAabb
+	- WorldAabb is a new property
+	- HasParentChanged property removed
+  - BatchId in Irenderable has been renamed Id
+  - BoundingVolume class removed
+  - SpeedFrustum class removed
+  - FastFrustum property removed on Camera class and replaced by Frustum property
+  - Properties on RenderingInfo class replaced by fields
+  - Name property added to the Node class
+  - Window has a default viewport
+  - Viewport have their own ClearColor
+  - AlwaysClear property of RenderTarget class is no longer assignable, RenderTargetUsage defines if a RT need to be cleared  
+  - RenderTarget class has new property Usage of type RenderTargetUsage
+  - Viewport properties renamed:
+    - RealTop/RealLeft renamed PixelTop/PixelLeft
+	- RealWidth/RealHeight renamed PixelWidth/PixelHeight
+- **Input:**
+  - Name property of Axis and Button class has been removed
+  - AddAxis/AddButton have been renamed CreateAxis/CreateButton on VirtualInput class
+  - RemoveAxis/RemoveButton have been renamed DestroyAxis/DestroyButton on VirtualInput class
+  - Constructors of Axis and Button are no longer public, you need to use CreateAxis/CreateButton
+
 ## 0.3.4 (November 8, 2013)
 
 New feature: Transform class

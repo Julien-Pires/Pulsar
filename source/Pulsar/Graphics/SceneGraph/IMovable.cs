@@ -1,33 +1,39 @@
 ﻿using Microsoft.Xna.Framework;
+using Pulsar.Core;
 
 namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
-    /// Interface defining a movable object in the scene graph
+    /// Defines a movable object in a scene graph
     /// </summary>
     public interface IMovable
     {
         #region Methods
 
         /// <summary>
-        /// Attach this object to a parent
+        /// Attaches this object to a parent
         /// </summary>
         /// <param name="parent"></param>
         void AttachParent(SceneNode parent);
 
         /// <summary>
-        /// Detach this object from his parent
+        /// Detaches this object from its parent
         /// </summary>
         void DetachParent();
 
         /// <summary>
-        /// Notify this instance of the current camera
+        /// Performs a frustum culling against a specific camera
         /// </summary>
-        /// <param name="cam">Current camera</param>
-        void CheckVisibilityWithCamera(Camera cam);
+        /// <param name="camera">Camera to test visibility with</param>
+        void FrustumCulling(Camera camera);
 
         /// <summary>
-        /// Update the render queue
+        /// Updates bounds of this object
+        /// </summary>
+        void UpdateBounds();
+
+        /// <summary>
+        /// Updates the render queue
         /// </summary>
         /// <param name="queue">Current render queue</param>
         void UpdateRenderQueue(RenderQueue queue);
@@ -37,42 +43,42 @@ namespace Pulsar.Graphics.SceneGraph
         #region Properties
 
         /// <summary>
-        /// Get the bounding box
+        /// Gets the local AABB
         /// </summary>
-        BoundingBox WorldBoundingBox { get; }
+        AxisAlignedBox LocalAabb { get; }
 
         /// <summary>
-        /// Get a boolean indicating if this object is attached to a scene node
+        /// Gets the world AABB
+        /// </summary>
+        AxisAlignedBox WorldAabb { get; }
+
+        /// <summary>
+        /// Gets a boolean indicating if this object is attached to a scene node
         /// </summary>
         bool IsAttached { get; }
 
         /// <summary>
-        /// Get the name of this object
+        /// Gets the name of this object
         /// </summary>
         string Name { get; }
 
         /// <summary>
-        /// Get a boolean indicating if this object will be draw
+        /// Gets a boolean indicating if this object will be draw
         /// </summary>
         bool IsRendered { get; }
 
         /// <summary>
-        /// Get a boolean indicating if this object is visible
+        /// Gets a boolean indicating if this object is visible
         /// </summary>
         bool Visible { get; set; }
 
         /// <summary>
-        /// Get or set a boolean indicating that the parent node has changed
-        /// </summary>
-        bool HasParentChanged { get; set; }
-
-        /// <summary>
-        /// Get the parent scene node
+        /// Gets the parent scene node
         /// </summary>
         SceneNode Parent { get; }
 
         /// <summary>
-        /// Get the transform matrix
+        /// Gets the transform matrix
         /// </summary>
         Matrix Transform { get; }
 

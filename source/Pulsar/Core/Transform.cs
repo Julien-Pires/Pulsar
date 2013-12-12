@@ -22,8 +22,9 @@ namespace Pulsar.Core
     {
         #region Fields
 
-        protected Matrix WorldTransform = Matrix.Identity;
-        protected Matrix InverseWorldTransform = Matrix.Identity;
+        internal Matrix WorldTransform = Matrix.Identity;
+        internal Matrix InverseWorldTransform = Matrix.Identity;
+
         protected Quaternion WorldTransformRotation = Quaternion.Identity;
         protected Quaternion LocalTransformRotation = Quaternion.Identity;
         protected Vector3 WorldTransformPosition;
@@ -87,7 +88,7 @@ namespace Pulsar.Core
         /// </summary>
         /// <param name="angle">Angle of rotation</param>
         /// <param name="space">Space in which the operation is performed</param>
-        public virtual void Yaw(float angle, TransformSpace space = TransformSpace.Local)
+        public void Yaw(float angle, TransformSpace space = TransformSpace.Local)
         {
             Vector3 yAxis = Vector3.UnitY;
             Rotate(ref yAxis, angle, space);
@@ -98,7 +99,7 @@ namespace Pulsar.Core
         /// </summary>
         /// <param name="angle">Angle of rotation</param>
         /// <param name="space">Space in which the operation is performed</param>
-        public virtual void Roll(float angle, TransformSpace space = TransformSpace.Local)
+        public void Roll(float angle, TransformSpace space = TransformSpace.Local)
         {
             Vector3 zAxis = Vector3.UnitZ;
             Rotate(ref zAxis, angle, space);
@@ -109,7 +110,7 @@ namespace Pulsar.Core
         /// </summary>
         /// <param name="angle">Angle of rotation</param>
         /// <param name="space">Space in which the operation is performed</param>
-        public virtual void Pitch(float angle, TransformSpace space = TransformSpace.Local)
+        public void Pitch(float angle, TransformSpace space = TransformSpace.Local)
         {
             Vector3 xAxis = Vector3.UnitX;
             Rotate(ref xAxis, angle, space);
@@ -121,7 +122,7 @@ namespace Pulsar.Core
         /// <param name="axis">Axis to rotate around</param>
         /// <param name="angle">Angle of rotation</param>
         /// <param name="space">Space in which the operation is performed</param>
-        public virtual void Rotate(Vector3 axis, float angle, TransformSpace space = TransformSpace.Local)
+        public void Rotate(Vector3 axis, float angle, TransformSpace space = TransformSpace.Local)
         {
             Rotate(ref axis, angle, space);
         }
@@ -132,7 +133,7 @@ namespace Pulsar.Core
         /// <param name="axis">Axis to rotate around</param>
         /// <param name="angle">Angle of rotation</param>
         /// <param name="space">Space in which the operation is performed</param>
-        public virtual void Rotate(ref Vector3 axis, float angle, TransformSpace space = TransformSpace.Local)
+        public void Rotate(ref Vector3 axis, float angle, TransformSpace space = TransformSpace.Local)
         {
             Quaternion rotation;
             Quaternion.CreateFromAxisAngle(ref axis, angle, out rotation);
@@ -144,7 +145,7 @@ namespace Pulsar.Core
         /// </summary>
         /// <param name="rotation">Quaternion representing the rotation</param>
         /// <param name="space">Space in which the operation is performed</param>
-        public virtual void Rotate(Quaternion rotation, TransformSpace space = TransformSpace.Local)
+        public void Rotate(Quaternion rotation, TransformSpace space = TransformSpace.Local)
         {
             Rotate(ref rotation, space);
         }
@@ -154,7 +155,7 @@ namespace Pulsar.Core
         /// </summary>
         /// <param name="rotation">Quaternion representing the rotation</param>
         /// <param name="space">Space in which the operation is performed</param>
-        public virtual void Rotate(ref Quaternion rotation, TransformSpace space = TransformSpace.Local)
+        public void Rotate(ref Quaternion rotation, TransformSpace space = TransformSpace.Local)
         {
             Quaternion normRotation;
             Quaternion.Normalize(ref rotation, out normRotation);
@@ -167,7 +168,8 @@ namespace Pulsar.Core
                     Quaternion.Multiply(ref normRotation, ref LocalTransformRotation, out LocalTransformRotation);
                     break;
                 case TransformSpace.World:
-                    if(_transformChanged) UpdateWithParent();
+                    if(_transformChanged) 
+                        UpdateWithParent();
 
                     Quaternion invertedWorld;
                     Quaternion.Inverse(ref WorldTransformRotation, out invertedWorld);
@@ -184,7 +186,7 @@ namespace Pulsar.Core
         /// Sets the transform to point toward a specific target
         /// </summary>
         /// <param name="target">Target to look at</param>
-        public virtual void LookAt(Vector3 target)
+        public void LookAt(Vector3 target)
         {
             LookAt(ref target);
         }
@@ -193,9 +195,10 @@ namespace Pulsar.Core
         /// Sets the transform to point toward a specific target
         /// </summary>
         /// <param name="target">Target to look at</param>
-        public virtual void LookAt(ref Vector3 target)
+        public void LookAt(ref Vector3 target)
         {
-            if(_transformChanged) UpdateWithParent();
+            if(_transformChanged) 
+                UpdateWithParent();
 
             Vector3 direction;
             Vector3.Subtract(ref target, ref WorldTransformPosition, out direction);
@@ -206,7 +209,7 @@ namespace Pulsar.Core
         /// Sets the direction of the transform
         /// </summary>
         /// <param name="direction">Direction to point toward</param>
-        public virtual void SetDirection(Vector3 direction)
+        public void SetDirection(Vector3 direction)
         {
             SetDirection(ref direction);
         }
@@ -221,7 +224,8 @@ namespace Pulsar.Core
             Vector3.Negate(ref direction, out adjustZ);
             adjustZ.Normalize();
 
-            if(_transformChanged) UpdateWithParent();
+            if(_transformChanged) 
+                UpdateWithParent();
             WorldTransformRotation.GetAxis(_directionAxis);
             
             Vector3 zDiff;
@@ -243,7 +247,8 @@ namespace Pulsar.Core
                 Quaternion.Inverse(ref ParentTransform.LocalTransformRotation, out parentInvert);
                 Quaternion.Multiply(ref parentInvert, ref targetRotation, out LocalTransformRotation);
             }
-            else LocalTransformRotation = targetRotation;
+            else 
+                LocalTransformRotation = targetRotation;
 
             RequireUpdate();
         }
@@ -253,7 +258,7 @@ namespace Pulsar.Core
         /// </summary>
         /// <param name="move">Vector used to translate</param>
         /// <param name="space">Space in which the operation is performed</param>
-        public virtual void Translate(Vector3 move, TransformSpace space = TransformSpace.Local)
+        public void Translate(Vector3 move, TransformSpace space = TransformSpace.Local)
         {
             Translate(ref move, space);
         }
@@ -263,7 +268,7 @@ namespace Pulsar.Core
         /// </summary>
         /// <param name="move">Vector used to translate</param>
         /// <param name="space">Space in which the operation is performed</param>
-        public virtual void Translate(ref Vector3 move, TransformSpace space = TransformSpace.Local)
+        public void Translate(ref Vector3 move, TransformSpace space = TransformSpace.Local)
         {
             switch (space)
             {
@@ -278,7 +283,8 @@ namespace Pulsar.Core
                 case TransformSpace.World:
                     if (ParentTransform != null)
                     {
-                        if (_transformChanged) UpdateWithParent();
+                        if (_transformChanged) 
+                            UpdateWithParent();
 
                         Quaternion invertedRotation;
                         Vector3 transformedMove;
@@ -287,7 +293,8 @@ namespace Pulsar.Core
                         Vector3.Divide(ref transformedMove, ref ParentTransform.WorldTransformScale, out transformedMove);
                         Vector3.Add(ref LocalTransformPosition, ref transformedMove, out LocalTransformPosition);
                     }
-                    else Vector3.Add(ref LocalTransformPosition, ref move, out LocalTransformPosition);
+                    else 
+                        Vector3.Add(ref LocalTransformPosition, ref move, out LocalTransformPosition);
                     break;
             }
 
@@ -298,7 +305,7 @@ namespace Pulsar.Core
         /// Performs an uniformed scale
         /// </summary>
         /// <param name="factor">Scaling factor</param>
-        public virtual void DoScale(float factor)
+        public void DoScale(float factor)
         {
             DoScale(factor, factor, factor);
         }
@@ -309,7 +316,7 @@ namespace Pulsar.Core
         /// <param name="x">Scaling factor on X axis</param>
         /// <param name="y">Scaling factor on Y axis</param>
         /// <param name="z">Scaling factor on Z axis</param>
-        public virtual void DoScale(float x, float y, float z)
+        public void DoScale(float x, float y, float z)
         {
             LocalTransformScale.X *= x;
             LocalTransformScale.Y *= y;
@@ -321,7 +328,7 @@ namespace Pulsar.Core
         /// Performs a scale
         /// </summary>
         /// <param name="scale">Vector representing the scale factor</param>
-        public virtual void DoScale(Vector3 scale)
+        public void DoScale(Vector3 scale)
         {
             Vector3.Multiply(ref LocalTransformScale, ref scale, out LocalTransformScale);
             RequireUpdate();
@@ -331,7 +338,7 @@ namespace Pulsar.Core
         /// Performs a scale
         /// </summary>
         /// <param name="scale">Vector representing the scale factor</param>
-        public virtual void DoScale(ref Vector3 scale)
+        public void DoScale(ref Vector3 scale)
         {
             Vector3.Multiply(ref LocalTransformScale, ref scale, out LocalTransformScale);
             RequireUpdate();
@@ -510,7 +517,8 @@ namespace Pulsar.Core
         private void RaiseTransformChanged(Transform transform)
         {
             TransformChangedEventHandler handler = TransformChanged;
-            if (handler != null) handler(transform);
+            if (handler != null) 
+                handler(transform);
         }
 
         /// <summary>
@@ -519,11 +527,13 @@ namespace Pulsar.Core
         /// <returns>Returns true if the transform has been updated otherwise false</returns>
         protected bool UpdateWithParent()
         {
-            if(!_transformChanged) return false;
+            if(!_transformChanged) 
+                return false;
 
             if (ParentTransform != null)
             {
-                if(ParentTransform._transformChanged) ParentTransform.UpdateWithParent();
+                if(ParentTransform._transformChanged) 
+                    ParentTransform.UpdateWithParent();
 
                 Vector3 transformedPosition;
                 Vector3.Multiply(ref ParentTransform.WorldTransformScale, ref LocalTransformPosition, out transformedPosition);
@@ -551,8 +561,11 @@ namespace Pulsar.Core
         /// <returns>Return true if matrices has been updated otherwise false</returns>
         protected bool UpdateTransform()
         {
-            if(!_matrixDirty) return false;
-            if (_transformChanged) UpdateWithParent();
+            if(!_matrixDirty) 
+                return false;
+
+            if (_transformChanged) 
+                UpdateWithParent();
 
             MatrixExtension.CreateWorld(ref LocalTransformPosition, ref LocalTransformRotation, ref LocalTransformScale, out WorldTransform);
             Matrix.Invert(ref WorldTransform, out InverseWorldTransform);

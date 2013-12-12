@@ -37,7 +37,7 @@ namespace Pulsar.Input
         private static readonly Buttons[] AllDigital;
         private static readonly GamePad[] GamePads = new GamePad[GamePadCount];
 
-        internal readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
+        internal readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>(8);
 
         private readonly ReadOnlyCollection<ButtonEvent> _buttonPressed;
         private readonly XnaPlayerIndex _gamePadIndex;

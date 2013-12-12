@@ -46,6 +46,9 @@ namespace Pulsar.Graphics.Rendering
         private bool _disposed;
         private bool _isDirty = true;
         private readonly FrameDetail _frameDetail = new FrameDetail();
+        private RenderTargetUsage _usage = RenderTargetUsage.DiscardContents;
+        private SurfaceFormat _pixel;
+        private DepthFormat _depth;
 
         #endregion
 
@@ -58,8 +61,11 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="renderer"></param>
         internal RenderTarget(GraphicsDeviceManager deviceManager, Renderer renderer)
         {
-            if (deviceManager == null) throw new ArgumentNullException("deviceManager");
-            if(renderer == null) throw new ArgumentNullException("renderer");
+            if (deviceManager == null) 
+                throw new ArgumentNullException("deviceManager");
+
+            if(renderer == null) 
+                throw new ArgumentNullException("renderer");
 
             DeviceManager = deviceManager;
             Renderer = renderer;
@@ -103,13 +109,20 @@ namespace Pulsar.Graphics.Rendering
         #region Methods
 
         /// <summary>
-        /// Dispose resources
+        /// Disposes resources
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Disposes resources
         /// </summary>
         /// <param name="disposing">Indicate if the method is called from dispose</param>
         protected virtual void Dispose(bool disposing)
         {
-            if(_disposed) return;
-
+            if (_disposed) return;
             if (disposing)
             {
                 for (int i = 0; i < Viewports.Count; i++)
@@ -164,12 +177,24 @@ namespace Pulsar.Graphics.Rendering
             if (Target != null) 
                 Target.Dispose();
 
-            Target = new RenderTarget2D(DeviceManager.GraphicsDevice, Width, Height, MipMap, Pixel, Depth);
+            Target = new RenderTarget2D(DeviceManager.GraphicsDevice, Width, Height, MipMap, 
+                _pixel, _depth, 0, _usage);
+            if (_usage == RenderTargetUsage.PlatformContents)
+            {
+#if XBOX || XBOX360
+                AlwaysClear = true;
+#else
+                AlwaysClear = Target.MultiSampleCount > 0;
+#endif
+            }
+            else
+                AlwaysClear = (_usage == RenderTargetUsage.DiscardContents);
+
             _isDirty = false;
         }
 
         /// <summary>
-        /// Set the resolution of the render target
+        /// Sets the resolution of the render target
         /// </summary>
         /// <param name="width">Width</param>
         /// <param name="height">Height</param>
@@ -184,28 +209,28 @@ namespace Pulsar.Graphics.Rendering
         }
 
         /// <summary>
-        /// Set the depth buffer format
+        /// Sets the depth buffer format
         /// </summary>
         /// <param name="depth">Depth buffer format</param>
-        public virtual void SetDepth(DepthFormat depth)
+        protected virtual void SetDepth(DepthFormat depth)
         {
             if (!IsValidDepth(depth)) 
                 throw new Exception(string.Format("DepthFormat {0} is not supported", depth));
 
-            Depth = depth;
+            _depth = depth;
             _isDirty = true;
         }
 
         /// <summary>
-        /// Set the pixel format of the render target
+        /// Sets the pixel format of the render target
         /// </summary>
         /// <param name="pixel">Pixel format</param>
-        public virtual void SetPixel(SurfaceFormat pixel)
+        protected virtual void SetPixel(SurfaceFormat pixel)
         {
             if (!IsValidPixel(pixel)) 
                 throw new Exception(string.Format("SurfaceFormat {0} is not supported", pixel));
 
-            Pixel = pixel;
+            _pixel = pixel;
             _isDirty = true;
         }
 
@@ -230,19 +255,6 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="pixel">Pixel format</param>
         /// <returns>Returns true if the format is valid otherwise false</returns>
         public abstract bool IsValidPixel(SurfaceFormat pixel);
-
-        /// <summary>
-        /// Disposes resources
-        /// </summary>
-        public void Dispose()
-        {
-            if (_disposed) return;
-
-            for (int i = 0; i < Viewports.Count; i++)
-                Viewports[i].Dispose();
-
-            _disposed = true;
-        }
 
         /// <summary>
         /// Creates a viewport that occupies entirely the render target
@@ -318,7 +330,8 @@ namespace Pulsar.Graphics.Rendering
 
             Viewport vp = new Viewport(this, width, height, top, left)
             {
-                ZOrder = zOrder
+                ZOrder = zOrder,
+                ClearColor = ClearColor
             };
             Viewports.Add(vp);
             Viewports.Sort(CompareByZOrder);
@@ -429,7 +442,7 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Gets or sets a value that indicates if the render target should always be cleared before rendering
         /// </summary>
-        public bool AlwaysClear { get; set; }
+        public bool AlwaysClear { get; private set; }
 
         /// <summary>
         /// Gets the height
@@ -457,12 +470,33 @@ namespace Pulsar.Graphics.Rendering
         /// <summary>
         /// Gets the pixel format
         /// </summary>
-        public SurfaceFormat Pixel { get; private set; }
+        public SurfaceFormat Pixel
+        {
+            get { return _pixel; }
+            set { SetPixel(value); }
+        }
 
         /// <summary>
         /// Gets the depth buffer format
         /// </summary>
-        public DepthFormat Depth { get; private set; }
+        public DepthFormat Depth
+        {
+            get { return _depth; }
+            set { SetDepth(value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the render target usage rule
+        /// </summary>
+        public RenderTargetUsage Usage
+        {
+            get { return _usage; }
+            set
+            {
+                _usage = value;
+                _isDirty = true;
+            }
+        }
 
         /// <summary>
         /// Gets the number of viewports

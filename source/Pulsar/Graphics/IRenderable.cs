@@ -15,7 +15,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Get the ID of this renderable
         /// </summary>
-        uint BatchId { get; }
+        uint Id { get; }
 
         /// <summary>
         /// Get the name of this instance

@@ -11,8 +11,40 @@ namespace Pulsar.Graphics.Rendering
 
         private static uint _idCounter = uint.MinValue;
 
-        internal VertexData VertexData;
-        internal IndexData IndexData;
+        /// <summary>
+        /// Id
+        /// </summary>
+        public uint Id;
+
+        /// <summary>
+        /// Vertex data
+        /// </summary>
+        public  VertexData VertexData;
+
+        /// <summary>
+        /// Index data
+        /// </summary>
+        public IndexData IndexData;
+
+        /// <summary>
+        /// Primitive type used for rendering
+        /// </summary>
+        public PrimitiveType PrimitiveType;
+
+        /// <summary>
+        /// Number of primitive
+        /// </summary>
+        public int PrimitiveCount;
+
+        /// <summary>
+        /// Number of vertex
+        /// </summary>
+        public int VertexCount;
+
+        /// <summary>
+        /// Indicates if an index buffer is used
+        /// </summary>
+        public bool UseIndexes;
 
         #endregion
 
@@ -69,36 +101,8 @@ namespace Pulsar.Graphics.Rendering
             other.PrimitiveType = PrimitiveType;
             other.PrimitiveCount = PrimitiveCount;
             other.VertexCount = VertexCount;
+            other.UseIndexes = UseIndexes;
         }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the Id
-        /// </summary>
-        public uint Id { get; internal set; }
-
-        /// <summary>
-        /// Gets the primitive type used for rendering
-        /// </summary>
-        public PrimitiveType PrimitiveType { get; set; }
-
-        /// <summary>
-        /// Gets the number of primitive
-        /// </summary>
-        public int PrimitiveCount { get; set; }
-
-        /// <summary>
-        /// Gets the number of vertex
-        /// </summary>
-        public int VertexCount { get; set; }
-
-        /// <summary>
-        /// Gets a value indicating if an index buffer is used
-        /// </summary>
-        public bool UseIndexes { get; set; }
 
         #endregion
     }

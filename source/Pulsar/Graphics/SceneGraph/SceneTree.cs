@@ -44,9 +44,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public void RenderScene(Viewport vp, Camera cam)
         {
-            UpdateGraph();
             Clean();
-            
+
+            UpdateGraph();
             FindVisibleObjects(cam);
             _renderer.Render(vp, cam, _queue);
         }
@@ -108,8 +108,10 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="node">Node to destroy</param>
         public void DestroyNode(SceneNode node)
         {
-            if(node.Scene != this) throw new ArgumentException("", "node");
-            if(node == _root) throw new ArgumentException("", "node");
+            if(node.Scene != this) 
+                throw new ArgumentException("Already attached to another tree", "node");
+            if(node == _root) 
+                throw new ArgumentException("Cannot destroy root node", "node");
 
             Node parent = node.ParentNode;
             if (parent != null) parent.RemoveChild(node);

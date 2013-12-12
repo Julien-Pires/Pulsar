@@ -82,6 +82,14 @@ namespace Pulsar.Input
 
         #endregion
 
+        #region Constructors
+
+        internal Axis()
+        {
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
@@ -177,11 +185,6 @@ namespace Pulsar.Input
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets or sets the name of the axis
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// Gets the owner of the axis

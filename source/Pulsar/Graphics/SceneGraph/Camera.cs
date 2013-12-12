@@ -40,8 +40,7 @@ namespace Pulsar.Graphics.SceneGraph
         private Matrix _projectionMatrix = Matrix.Identity;
         private Vector3 _yawFixedAxis = Vector3.UnitY;
         private Viewport _viewport;
-        private BoundingFrustum _frustum = new BoundingFrustum(Matrix.Identity);
-        private readonly SpeedFrustum _speedFrustum = new SpeedFrustum();
+        private readonly Frustum _boundingFrustum = new Frustum();
 
         #endregion
 
@@ -68,26 +67,34 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="vp">Viewport in which to render the scene</param>
         public void Render(Viewport vp)
         {
-            if (vp != _viewport) CurrentViewport = vp;
+            if (vp != _viewport) 
+                CurrentViewport = vp;
+
             _owner.RenderScene(vp, this);
         }
 
         /// <summary>
-        /// <remarks>Not implemented for the Camera class</remarks>
+        /// <remarks>Not supported for the Camera class </remarks>
         /// </summary>
-        /// <param name="cam">Current camera</param>
-        /// <exception cref="NotImplementedException">Camera doesn't need to be notified about other cameras</exception>
-        public void CheckVisibilityWithCamera(Camera cam)
+        /// <param name="camera">Camera</param>
+        void IMovable.FrustumCulling(Camera camera)
         {
             throw new NotSupportedException();
         }
 
         /// <summary>
-        /// <remarks>Not implemented for the BaseCamera class </remarks>
+        /// <remarks>Not supported for the Camera class </remarks>
         /// </summary>
         /// <param name="queue">Current render queue</param>
-        /// <exception cref="NotImplementedException">Camera doesn't neeed to be added in a queue</exception>
-        public void UpdateRenderQueue(RenderQueue queue)
+        void IMovable.UpdateRenderQueue(RenderQueue queue)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// <remarks>Not supported for the Camera class </remarks>
+        /// </summary>
+        void IMovable.UpdateBounds()
         {
             throw new NotSupportedException();
         }
@@ -165,11 +172,13 @@ namespace Pulsar.Graphics.SceneGraph
                     Quaternion.Inverse(ref parentInvert, out parentInvert);
                     Quaternion.Multiply(ref parentInvert, ref targetRotation, out LocalTransformRotation);
                 }
-                else LocalTransformRotation = targetRotation;
+                else 
+                    LocalTransformRotation = targetRotation;
 
                 RequireUpdate();
             }
-            else base.SetDirection(ref direction);
+            else 
+                base.SetDirection(ref direction);
         }
 
         /// <summary>
@@ -201,8 +210,7 @@ namespace Pulsar.Graphics.SceneGraph
 
             Matrix viewProj;
             Matrix.Multiply(ref _viewMatrix, ref _projectionMatrix, out viewProj);
-            _frustum.Matrix = viewProj;
-            _speedFrustum.Update(ref _frustum);
+            _boundingFrustum.Update(ref viewProj);
 
             _isDirtyBoundingFrustum = false;
         }
@@ -242,21 +250,24 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Attaches this object to a scene node<br />
+        /// Attaches the camera to a scene node<br />
         /// <remarks>(Used internally)</remarks>
         /// </summary>
         /// <param name="parent">Parent scene node</param>
-        public void AttachParent(SceneNode parent)
+        void IMovable.AttachParent(SceneNode parent)
         {
+            if(parent == null)
+                throw new ArgumentNullException("parent");
+
             ParentTransform = parent;
             RequireUpdate();
         }
 
         /// <summary>
-        /// Detaches this object of a scene node<br />
+        /// Detaches the camera of its parent<br />
         /// <remarks>(Used internally)</remarks>
         /// </summary>
-        public void DetachParent()
+        void IMovable.DetachParent()
         {
             ParentTransform = null;
             RequireUpdate();
@@ -275,9 +286,13 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Gets or sets a boolean indicating if the camera is visible (frustum plane)
+        /// <remarks>Not supported for the Camera class </remarks>
         /// </summary>
-        public bool Visible { get; set; }
+        bool IMovable.Visible
+        {
+            get { throw new NotSupportedException(); }
+            set { throw new NotSupportedException(); }
+        }
 
         /// <summary>
         /// Gets or sets the viewport in wich this camera will render
@@ -367,28 +382,15 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Gets the bounding frustum of the camera
+        /// Gets the bounding frustum
         /// </summary>
-        public BoundingFrustum Frustum
+        public Frustum Frustum
         {
             get
             {
                 UpdateBoundingFrustum();
 
-                return _frustum;
-            }
-        }
-
-        /// <summary>
-        /// Gets a SpeedFrustum instance to compute fast frustum interesection
-        /// </summary>
-        public SpeedFrustum FastFrustum
-        {
-            get
-            {
-                UpdateBoundingFrustum();
-
-                return _speedFrustum;
+                return _boundingFrustum;
             }
         }
 
@@ -419,9 +421,17 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Gets the AABB of the camera (Not implemented...)
+        /// <remarks>Not supported for the Camera class </remarks>
         /// </summary>
-        public BoundingBox WorldBoundingBox
+        AxisAlignedBox IMovable.WorldAabb
+        {
+            get { throw new NotSupportedException(); }
+        }
+
+        /// <summary>
+        /// <remarks>Not supported for the Camera class </remarks>
+        /// </summary>
+        AxisAlignedBox IMovable.LocalAabb
         {
             get { throw new NotSupportedException(); }
         }
@@ -443,22 +453,17 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Gets a boolean indicating if this object is visible
+        /// <remarks>Not supported for the Camera class </remarks>
         /// </summary>
-        public bool IsRendered
+        bool IMovable.IsRendered
         {
-            get { return false; }
+            get { throw new NotSupportedException(); }
         }
-
-        /// <summary>
-        /// Gets or sets a boolean indicating if the parent node has changed
-        /// </summary>
-        public bool HasParentChanged { get; set; }
 
         /// <summary>
         /// Gets the transform matrix of this object
         /// </summary>
-        public Matrix Transform
+        Matrix IMovable.Transform
         {
             get { return LocalToWorld; }
         }

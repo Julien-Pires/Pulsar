@@ -69,6 +69,14 @@ namespace Pulsar.Input
 
         #endregion
 
+        #region Constructors
+
+        internal Button()
+        {
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
@@ -117,11 +125,6 @@ namespace Pulsar.Input
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets or sets the name
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// Gets the owner of the button

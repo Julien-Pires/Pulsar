@@ -11,9 +11,9 @@ namespace Pulsar.Input
     {
         #region Fields
 
-        internal readonly List<ButtonEvent> InternalButtonPressed = new List<ButtonEvent>();
         internal readonly PlayerIndex PlayerIndex;
 
+        private readonly List<ButtonEvent> _internalButtonPressed = new List<ButtonEvent>(8);
         private readonly ReadOnlyCollection<ButtonEvent> _buttonPressed;
         private readonly Dictionary<string, int> _buttonsMap = new Dictionary<string, int>();
         private readonly Dictionary<string, int> _axesMap = new Dictionary<string, int>();
@@ -32,7 +32,7 @@ namespace Pulsar.Input
         internal VirtualInput(PlayerIndex playerIndex)
         {
             PlayerIndex = playerIndex;
-            _buttonPressed = new ReadOnlyCollection<ButtonEvent>(InternalButtonPressed);
+            _buttonPressed = new ReadOnlyCollection<ButtonEvent>(_internalButtonPressed);
         }
 
         #endregion
@@ -60,7 +60,7 @@ namespace Pulsar.Input
         /// <returns></returns>
         public bool AnyKeyPressed()
         {
-            return InternalButtonPressed.Count > 0;
+            return _internalButtonPressed.Count > 0;
         }
 
         /// <summary>
@@ -112,41 +112,43 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Adds a button
+        /// Adds a button with a specified name
         /// </summary>
-        /// <param name="btn">Button instance</param>
-        public void AddButton(Button btn)
+        /// <param name="name">Button name</param>
+        public Button CreateButton(string name)
         {
-            if (string.IsNullOrEmpty(btn.Name)) 
-                throw new Exception("Failed to add the button, his name is null or empty");
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name");
 
-            if (_buttonsMap.ContainsKey(btn.Name)) 
-                throw new Exception(string.Format("A button named {0} already exists in this virtual input", btn.Name)); 
+            if (_buttonsMap.ContainsKey(name))
+                throw new Exception(string.Format("A button named {0} already exists in this virtual input", name)); 
 
-            if (btn.Owner != null)
-                btn.Owner.RemoveButton(btn.Name);
+            Button btn = new Button();
             _buttons.Add(btn);
-            _buttonsMap.Add(btn.Name, _buttons.Count - 1);
+            _buttonsMap.Add(name, _buttons.Count - 1);
             btn.Owner = this;
+
+            return btn;
         }
 
         /// <summary>
-        /// Adds an axis
+        /// Adds an axis with a specified name
         /// </summary>
-        /// <param name="axis">Axis instance</param>
-        public void AddAxis(Axis axis)
+        /// <param name="name">Axis name</param>
+        public Axis CreateAxis(string name)
         {
-            if(string.IsNullOrEmpty(axis.Name)) 
-                throw new Exception("Failed to add the axis, his name is null or empty");
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name");
 
-            if (_axesMap.ContainsKey(axis.Name)) 
-                throw new Exception(string.Format("An axis named {0} already exists in this virtual input", axis.Name));
+            if (_axesMap.ContainsKey(name)) 
+                throw new Exception(string.Format("An axis named {0} already exists in this virtual input", name));
 
-            if (axis.Owner != null)
-                axis.Owner.RemoveAxis(axis.Name);
+            Axis axis = new Axis();
             _axes.Add(axis);
-            _axesMap.Add(axis.Name, _axes.Count - 1);
+            _axesMap.Add(name, _axes.Count - 1);
             axis.Owner = this;
+
+            return axis;
         }
 
         /// <summary>
@@ -154,7 +156,7 @@ namespace Pulsar.Input
         /// </summary>
         /// <param name="name">Name of the button</param>
         /// <returns>Return true if the button is removed otherwise false</returns>
-        public bool RemoveButton(string name)
+        public bool DestroyButton(string name)
         {
             int idx;
             if (!_buttonsMap.TryGetValue(name, out idx)) return false;
@@ -173,7 +175,7 @@ namespace Pulsar.Input
         /// </summary>
         /// <param name="name">Name of the axis</param>
         /// <returns>Return true if the axis is removed otherwise false</returns>
-        public bool RemoveAxis(string name)
+        public bool DestroyAxis(string name)
         {
             int idx;
             if (!_axesMap.TryGetValue(name, out idx)) return false;
@@ -213,6 +215,24 @@ namespace Pulsar.Input
                 throw new Exception(string.Format("Failed to find an axis named {0}", name));
 
             return _axes[idx];
+        }
+
+        /// <summary>
+        /// Clears the pressed buttons list
+        /// </summary>
+        internal void ClearPressedButtons()
+        {
+            _internalButtonPressed.Clear();
+        }
+
+        /// <summary>
+        /// Adds pressed buttons to this virtual input
+        /// </summary>
+        /// <param name="pressedButtons">List of pressed buttons</param>
+        internal void AddPressedButtons(List<ButtonEvent> pressedButtons)
+        {
+            for(int i = 0; i < pressedButtons.Count; i++)
+                _internalButtonPressed.Add(pressedButtons[i]);
         }
 
         /// <summary>
