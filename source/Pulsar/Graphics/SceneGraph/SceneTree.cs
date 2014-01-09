@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Pulsar.Assets;
 using Pulsar.Graphics.Rendering;
 
 namespace Pulsar.Graphics.SceneGraph
@@ -8,29 +9,27 @@ namespace Pulsar.Graphics.SceneGraph
     /// <summary>
     /// Represents a basic scene graph
     /// </summary>
-    public class SceneTree
+    public class SceneTree : IDisposable
     {
         #region Fields
 
+        private bool _isDisposed;
         private readonly Renderer _renderer;
         private readonly CameraManager _camManager;
         private readonly RenderQueue _queue = new RenderQueue();
         private readonly SceneNode _root;
         private readonly Dictionary<string, IMovable> _movablesMap = new Dictionary<string, IMovable>();
         private readonly List<SceneNode>  _nodes = new List<SceneNode>();
-        private readonly EntityFactory _entityFactory = new EntityFactory();
 
         #endregion
 
         #region Constructors
 
-        /// <summary>
-        /// Constructor of SceneTree class
-        /// </summary>
-        /// <param name="renderer">Renderer instance</param>
-        internal SceneTree(Renderer renderer)
+        internal SceneTree(string name, Renderer renderer, AssetEngine assetEngine)
         {
+            Name = name;
             _renderer = renderer;
+            AssetEngine = assetEngine;
             _camManager = new CameraManager(this);
             _root = CreateNode();
         }
@@ -38,6 +37,17 @@ namespace Pulsar.Graphics.SceneGraph
         #endregion
 
         #region Methods
+
+        public void Dispose()
+        {
+            if (_isDisposed) return;
+
+            foreach (IMovable movable in _movablesMap.Values)
+                movable.Dispose();
+
+            _movablesMap.Clear();
+            _isDisposed = true;
+        }
 
         /// <summary>
         /// Draws the entire scene
@@ -76,18 +86,36 @@ namespace Pulsar.Graphics.SceneGraph
             _root.FindVisibleObjects(cam, _queue, true);
         }
 
-        /// <summary>
-        /// Creates an Entity from a mesh
-        /// </summary>
-        /// <param name="modelName">Name of the model</param>
-        /// <param name="name">Name of the Entity</param>
-        /// <returns>Returns an Entity</returns>
-        public Entity CreateEntity(string modelName, string name)
+        public Entity CreateEntity(string name, string meshName, string storage)
         {
-            Entity ent = _entityFactory.Create(modelName, name);
-            _movablesMap.Add(name, ent);
+            Mesh mesh = AssetEngine[storage].Load<Mesh>(meshName);
 
-            return ent;
+            return CreateEntity(name, mesh);
+        }
+
+        public Entity CreateEntity(string name, Mesh mesh)
+        {
+            Entity entity = new Entity(name, mesh, this);
+            _movablesMap.Add(name, entity);
+
+            return entity;
+        }
+
+        public bool DestroyEntity(Entity entity)
+        {
+            return DestroyEntity(entity.Name);
+        }
+
+        public bool DestroyEntity(string name)
+        {
+            IMovable entity;
+            if (!_movablesMap.TryGetValue(name, out entity))
+                return false;
+
+            _movablesMap.Remove(name);
+            entity.Dispose();
+
+            return true;
         }
 
         /// <summary>
@@ -110,11 +138,13 @@ namespace Pulsar.Graphics.SceneGraph
         {
             if(node.Scene != this) 
                 throw new ArgumentException("Already attached to another tree", "node");
+
             if(node == _root) 
                 throw new ArgumentException("Cannot destroy root node", "node");
 
             Node parent = node.ParentNode;
-            if (parent != null) parent.RemoveChild(node);
+            if (parent != null) 
+                parent.RemoveChild(node);
 
             node.DestroyAllChild();
             _nodes.Remove(node);
@@ -123,6 +153,10 @@ namespace Pulsar.Graphics.SceneGraph
         #endregion
 
         #region Properties
+
+        public string Name { get; private set; }
+
+        internal AssetEngine AssetEngine { get; private set; }
 
         /// <summary>
         /// Gets the camera manager instance

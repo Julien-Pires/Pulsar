@@ -8,7 +8,7 @@ namespace Pulsar.Graphics.Rendering
     /// <summary>
     /// Manages multiple vertex buffer object
     /// </summary>
-    public sealed class VertexData
+    public sealed class VertexData : IDisposable
     {
         #region Nested
 
@@ -43,11 +43,29 @@ namespace Pulsar.Graphics.Rendering
 
         internal VertexBufferBinding[] VertexBindings = new VertexBufferBinding[0];
 
+        private bool _isDisposed;
         private readonly List<BindingInfo> _bindings = new List<BindingInfo>();
 
         #endregion
 
         #region Methods
+
+        public void Dispose()
+        {
+            if(_isDisposed) return;
+
+            try
+            {
+                for (int i = 0; i < _bindings.Count; i++)
+                    _bindings[i].BufferObject.Dispose();
+            }
+            finally
+            {
+                _bindings.Clear();
+                VertexBindings = null;
+                _isDisposed = true;
+            }
+        }
 
         /// <summary>
         /// Gets the VertexBufferObject at the specified index

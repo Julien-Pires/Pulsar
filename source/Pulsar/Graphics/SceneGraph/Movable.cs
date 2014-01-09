@@ -13,6 +13,7 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
+        private bool _isDisposed;
         private SceneNode _parentNode;
         private readonly AxisAlignedBox _worldAabb = new AxisAlignedBox();
         private readonly AxisAlignedBox _localAabb = new AxisAlignedBox();
@@ -23,6 +24,19 @@ namespace Pulsar.Graphics.SceneGraph
         #endregion
 
         #region Methods
+
+        public void Dispose()
+        {
+            if(_isDisposed) return;
+
+            Dispose(true);
+
+            _isDisposed = true;
+        }
+
+        protected virtual void Dispose(bool dispose)
+        {
+        }
 
         /// <summary>
         /// Attaches a parent node

@@ -1,19 +1,18 @@
 ﻿using System;
-
-using System.Collections.Generic;
-
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Pulsar.Assets.Graphics.Shaders
+namespace Pulsar.Graphics
 {
     /// <summary>
     /// Class representing a shader
     /// </summary>
-    public class Shader : Asset
+    public class Shader : IDisposable
     {
         #region Fields
 
-        protected Effect Fx = null;
+        protected Effect InternalEffect;
+
+        private bool _isDisposed;
 
         #endregion
 
@@ -22,17 +21,31 @@ namespace Pulsar.Assets.Graphics.Shaders
         /// <summary>
         /// Constructor of the Shader class
         /// </summary>
-        /// <param name="owner">Creator of this instance</param>
         /// <param name="name">Name of the shader</param>
-        protected internal Shader(ShaderManager owner, string name)
-            : base(name)
+        protected internal Shader(string name)
         {
-            this.assetManager = owner;
+            Name = name;
         }
 
         #endregion
 
         #region Methods
+
+        public void Dispose()
+        {
+            if(_isDisposed) return;
+
+            try
+            {
+                InternalEffect.Dispose();
+            }
+            finally
+            {
+                InternalEffect = null;
+            }
+
+            _isDisposed = true;
+        }
 
         /// <summary>
         /// Set the effect used by this Shader
@@ -40,8 +53,14 @@ namespace Pulsar.Assets.Graphics.Shaders
         /// <param name="fx">Effect instance</param>
         protected internal virtual void SetEffect(Effect fx)
         {
-            this.Fx = fx;
+            InternalEffect = fx;
         }
+
+        #endregion
+
+        #region Properties
+
+        public string Name { get; private set; }
 
         #endregion
     }

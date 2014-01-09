@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 
+using Pulsar.Assets;
 using Pulsar.Input;
 using Pulsar.Graphics;
 
@@ -17,6 +17,7 @@ namespace Pulsar.Game
     {
         #region Fields
 
+        private AssetEngineService _assetEngineService;
         private GraphicsEngineService _graphicsEngineService;
         private InputService _inputService;
         private GraphicsDeviceManager _deviceManager;
@@ -30,9 +31,6 @@ namespace Pulsar.Game
         /// </summary>
         public GameApplication()
         {
-            GameServices = Services;
-            Content.RootDirectory = "Content";
-            Services.AddService(typeof(ContentManager), Content);
             _deviceManager = new GraphicsDeviceManager(this);
         }
 
@@ -45,6 +43,7 @@ namespace Pulsar.Game
         /// </summary>
         protected override void Initialize()
         {
+            _assetEngineService = new AssetEngineService(this);
             _graphicsEngineService = new GraphicsEngineService(this);
             _inputService = new InputService(this);
 
@@ -54,6 +53,7 @@ namespace Pulsar.Game
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
+
             if (disposing)
             {
 #if WINDOWS
@@ -67,11 +67,15 @@ namespace Pulsar.Game
                     Monitor.Enter(this, ref locked);
 #endif
                     _graphicsEngineService.Dispose();
+                    _assetEngineService.Dispose();
                 }
                 finally
                 {
+                    _graphicsEngineService = null;
+                    _assetEngineService = null;
 #if WINDOWS
-                    if (locked) Monitor.Exit(this);
+                    if (locked) 
+                        Monitor.Exit(this);
 #elif XBOX
                     Monitor.Exit(this);
 #endif
@@ -86,6 +90,7 @@ namespace Pulsar.Game
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
             _inputService.Input.Update();
         }
 
@@ -96,12 +101,18 @@ namespace Pulsar.Game
         protected override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
+
             _graphicsEngineService.Engine.Render(gameTime);
         }
 
         #endregion
 
         #region Properties
+
+        public AssetEngine AssetEngine
+        {
+            get { return _assetEngineService.AssetEngine; }
+        }
 
         public GraphicsEngine GraphicsEngine
         {
@@ -112,11 +123,6 @@ namespace Pulsar.Game
         {
             get { return _inputService.Input; }
         }
-
-        /// <summary>
-        /// Get the service container
-        /// </summary>
-        public static GameServiceContainer GameServices { get; internal set; }
 
         #endregion
     }

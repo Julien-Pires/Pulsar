@@ -26,7 +26,9 @@ namespace Pulsar.Graphics.Rendering
         /// <param name="buffer">Vertex buffer stored in the wrapper</param>
         protected VertexBufferWrapper(TBuffer buffer)
         {
-            if (buffer == null) throw new ArgumentNullException("buffer");
+            if (buffer == null) 
+                throw new ArgumentNullException("buffer");
+
             Buffer = buffer;
         }
 

@@ -3,8 +3,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Assets.Graphics.Materials;
-
 namespace Pulsar.Graphics.Rendering
 {
     /// <summary>

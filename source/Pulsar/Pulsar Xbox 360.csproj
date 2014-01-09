@@ -50,22 +50,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Asset.cs" />
-    <Compile Include="Assets\AssetGroup.cs" />
-    <Compile Include="Assets\AssetStorageEventArgs.cs" />
-    <Compile Include="Assets\Graphics\Models\SubMesh.cs" />
-    <Compile Include="Assets\IAssetManager.cs" />
-    <Compile Include="Assets\AssetStorage.cs" />
-    <Compile Include="Assets\AssetStorageManager.cs" />
-    <Compile Include="Assets\Graphics\Materials\Material.cs" />
-    <Compile Include="Assets\Graphics\Materials\MaterialManager.cs" />
-    <Compile Include="Assets\Graphics\Materials\Texture.cs" />
-    <Compile Include="Assets\Graphics\Materials\TextureManager.cs" />
-    <Compile Include="Assets\Graphics\Models\Mesh.cs" />
-    <Compile Include="Assets\Graphics\Models\MeshManager.cs" />
-    <Compile Include="Assets\Graphics\Models\PrefabFactory.cs" />
-    <Compile Include="Assets\Graphics\Shaders\Shader.cs" />
-    <Compile Include="Assets\Graphics\Shaders\ShaderManager.cs" />
+    <Compile Include="Assets\AssetEngine.cs" />
+    <Compile Include="Assets\AssetEngineService.cs" />
+    <Compile Include="Assets\AssetFolder.cs" />
+    <Compile Include="Assets\AssetLoader.cs" />
+    <Compile Include="Assets\AssetSource.cs" />
+    <Compile Include="Assets\DefaultLoader.cs" />
+    <Compile Include="Assets\FolderManager.cs" />
+    <Compile Include="Assets\IAssetEngineService.cs" />
+    <Compile Include="Assets\IAssetLoader.cs" />
+    <Compile Include="Assets\LoadedAsset.cs" />
+    <Compile Include="Assets\LoadResult.cs" />
+    <Compile Include="Assets\PathHelpers.cs" />
+    <Compile Include="Assets\SearchResult.cs" />
+    <Compile Include="Assets\SearchState.cs" />
+    <Compile Include="Assets\Storage.cs" />
     <Compile Include="Collections\UnorderedList.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentGroup.cs" />
@@ -80,6 +79,7 @@
     <Compile Include="Components\World.cs" />
     <Compile Include="Core\AxisAlignedBox.cs" />
     <Compile Include="Core\EventType.cs" />
+    <Compile Include="Core\GlobalConstant.cs" />
     <Compile Include="Core\IndexPool.cs" />
     <Compile Include="Core\Singleton.cs" />
     <Compile Include="Core\Transform.cs" />
@@ -90,14 +90,27 @@
     <Compile Include="Core\Mediator.cs" />
     <Compile Include="Core\Message.cs" />
     <Compile Include="Core\Pool.cs" />
-    <Compile Include="Graphics\Factory.cs" />
+    <Compile Include="Graphics\Asset\Freezable.cs" />
+    <Compile Include="Graphics\Asset\MaterialLoader.cs" />
+    <Compile Include="Graphics\Asset\MaterialParameters.cs" />
+    <Compile Include="Graphics\Asset\MeshLoader.cs" />
+    <Compile Include="Graphics\Asset\MeshParameters.cs" />
+    <Compile Include="Graphics\Asset\ShaderLoader.cs" />
+    <Compile Include="Graphics\Asset\ShaderParameters.cs" />
+    <Compile Include="Graphics\Asset\TextureLoader.cs" />
+    <Compile Include="Graphics\Asset\TextureParameters.cs" />
     <Compile Include="Graphics\FrameDetail.cs" />
     <Compile Include="Graphics\FrameStatistics.cs" />
     <Compile Include="Graphics\Frustum.cs" />
+    <Compile Include="Graphics\GraphicsConstant.cs" />
     <Compile Include="Graphics\GraphicsEngine.cs" />
     <Compile Include="Graphics\GraphicsEngineService.cs" />
     <Compile Include="Graphics\IGraphicsEngineService.cs" />
+    <Compile Include="Graphics\ITextureWrapper.cs" />
+    <Compile Include="Graphics\Material.cs" />
+    <Compile Include="Graphics\Mesh.cs" />
     <Compile Include="Graphics\Node.cs" />
+    <Compile Include="Graphics\PrefabFactory.cs" />
     <Compile Include="Graphics\Rendering\BufferAllocatedEventArgs.cs" />
     <Compile Include="Graphics\Rendering\BufferManager.cs" />
     <Compile Include="Graphics\Rendering\BufferObject.cs" />
@@ -125,7 +138,6 @@
     <Compile Include="Graphics\SceneGraph\Camera.cs" />
     <Compile Include="Graphics\SceneGraph\CameraManager.cs" />
     <Compile Include="Graphics\SceneGraph\Entity.cs" />
-    <Compile Include="Graphics\SceneGraph\EntityFactory.cs" />
     <Compile Include="Graphics\SceneGraph\IMovable.cs" />
     <Compile Include="Graphics\SceneGraph\Movable.cs" />
     <Compile Include="Graphics\SceneGraph\RenderQueue.cs" />
@@ -133,6 +145,10 @@
     <Compile Include="Graphics\SceneGraph\SceneNode.cs" />
     <Compile Include="Graphics\SceneGraph\SceneTree.cs" />
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
+    <Compile Include="Graphics\Shader.cs" />
+    <Compile Include="Graphics\SubMesh.cs" />
+    <Compile Include="Graphics\Texture.cs" />
+    <Compile Include="Graphics\TextureWrapper.cs" />
     <Compile Include="Input\AbstractButton.cs" />
     <Compile Include="Input\Axis.cs" />
     <Compile Include="Input\AxisCommand.cs" />
@@ -168,6 +184,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

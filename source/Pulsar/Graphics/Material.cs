@@ -1,36 +1,50 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
 
-using Microsoft.Xna.Framework;
-
-namespace Pulsar.Assets.Graphics.Materials
+namespace Pulsar.Graphics
 {
-    /// <summary>
-    /// Class describing a material composed of many informations for rendering pass
-    /// </summary>
-    public sealed class Material : Asset
+    public sealed class Material
     {
         #region Fields
 
-        private float specularPower = 1.0f;
-        private float specularIntensity = 50.0f;
+        private float _specularPower = 1.0f;
+        private float _specularIntensity = 50.0f;
 
         #endregion
 
         #region Constructors
 
-        /// <summary>
-        /// Constructor of Material class
-        /// </summary>
-        /// <param name="owner">Creator of this instance</param>
-        /// <param name="name">Name of this instance</param>
-        internal Material(MaterialManager owner, string name) : base(name) 
+        internal Material(string name)
         {
-            this.assetManager = owner;
+            Name = name;
+        }
+
+        #endregion
+
+        #region Methods
+
+        public Material GetCopy()
+        {
+            Material material = new Material(Name)
+            {
+                TwoSide = TwoSide,
+                WireFrame = WireFrame,
+                IsTransparent = IsTransparent,
+                DiffuseMap = DiffuseMap,
+                SpecularMap = SpecularMap,
+                NormalMap = NormalMap,
+                DiffuseColor = DiffuseColor,
+                SpecularPower = SpecularPower,
+                SpecularIntensity = SpecularIntensity
+            };
+
+            return material;
         }
 
         #endregion
 
         #region Properties
+
+        public string Name { get; private set; }
 
         /// <summary>
         /// Get or set a boolean to disable backface culling
@@ -72,18 +86,8 @@ namespace Pulsar.Assets.Graphics.Materials
         /// </summary>
         public float SpecularPower
         {
-            get { return this.specularPower; }
-            set
-            {
-                if (value < 0.0f)
-                {
-                    this.specularPower = 0.0f;
-                }
-                else
-                {
-                    this.specularPower = value;
-                }
-            }
+            get { return _specularPower; }
+            set { _specularPower = (value < 0.0f) ? 0.0f : value; }
         }
 
         /// <summary>
@@ -91,18 +95,8 @@ namespace Pulsar.Assets.Graphics.Materials
         /// </summary>
         public float SpecularIntensity
         {
-            get { return this.specularIntensity; }
-            set
-            {
-                if (value < 0.0f)
-                {
-                    this.specularIntensity = 0.0f;
-                }
-                else
-                {
-                    this.specularIntensity = value;
-                }
-            }
+            get { return _specularIntensity; }
+            set { _specularIntensity = (value < 0.0f) ? 0.0f : value; }
         }
 
         #endregion

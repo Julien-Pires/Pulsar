@@ -3,9 +3,8 @@
 using Microsoft.Xna.Framework;
 
 using Pulsar.Graphics.Rendering;
-using Pulsar.Assets.Graphics.Materials;
 
-namespace Pulsar.Assets.Graphics.Models
+namespace Pulsar.Graphics
 {
     /// <summary>
     /// Represents a part of a 3D mesh
@@ -15,11 +14,10 @@ namespace Pulsar.Assets.Graphics.Models
     {
         #region Fields
 
-        private readonly Mesh _parent;
         private readonly RenderingInfo _renderData = new RenderingInfo();
-        private readonly VertexData _vertexData = new VertexData();
-        private readonly IndexData _indexData = new IndexData();
-        private bool _disposed;
+        private VertexData _vertexData = new VertexData();
+        private IndexData _indexData = new IndexData();
+        private bool _isDisposed;
 
         #endregion
 
@@ -28,10 +26,8 @@ namespace Pulsar.Assets.Graphics.Models
         /// <summary>
         /// Constructor of SubMesh class
         /// </summary>
-        /// <param name="parent">Parent of the submesh</param>
-        internal SubMesh(Mesh parent)
+        internal SubMesh()
         {
-            _parent = parent;
             _renderData.VertexData = _vertexData;
             _renderData.IndexData = _indexData;
         }
@@ -45,19 +41,21 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         public void Dispose()
         {
-            if (_disposed) return;
+            if (_isDisposed) return;
 
-            if (!ShareVertexBuffer && (_vertexData.BufferCount > 0))
+            try
             {
-                _vertexData.GetBuffer(0).Dispose();
-                _vertexData.UnsetBinding(0);
+                if (!ShareVertexBuffer && (_vertexData.BufferCount > 0))
+                    _vertexData.Dispose();
+                if (!ShareIndexBuffer && (_indexData.IndexBuffer != null))
+                    _indexData.Dispose();
             }
-            if (!ShareIndexBuffer && (_indexData.IndexBuffer != null))
+            finally
             {
-                _indexData.IndexBuffer.Dispose();
-                _indexData.IndexBuffer = null;
+                _vertexData = null;
+                _indexData = null;
+                _isDisposed = true;
             }
-            _disposed = true;
         }
 
         #endregion

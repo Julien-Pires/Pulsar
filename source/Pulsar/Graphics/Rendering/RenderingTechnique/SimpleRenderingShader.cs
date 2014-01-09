@@ -1,11 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Assets.Graphics.Materials;
-using Pulsar.Assets.Graphics.Shaders;
-
-using Texture = Pulsar.Assets.Graphics.Materials.Texture;
-
 namespace Pulsar.Graphics.Rendering.RenderingTechnique
 {
     /// <summary>
@@ -36,10 +31,8 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         /// <summary>
         /// Constructor of SimpleRenderingShader class
         /// </summary>
-        /// <param name="owner">Manager which creates this instance</param>
         /// <param name="name">Name of the shader</param>
-        internal SimpleRenderingShader(ShaderManager owner, string name)
-            : base(owner, name) 
+        internal SimpleRenderingShader(string name) : base(name) 
         {
         }
 
@@ -54,6 +47,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         protected internal override void SetEffect(Effect fx)
         {
             base.SetEffect(fx);
+
             ExtractTechnique();
             ExtractParameters();
         }
@@ -63,7 +57,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         /// </summary>
         public void Apply()
         {
-            Fx.CurrentTechnique.Passes[0].Apply();
+            InternalEffect.CurrentTechnique.Passes[0].Apply();
         }
 
         /// <summary>
@@ -98,7 +92,8 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
             _world.SetValue(world);
 
             Texture diffuse = material.DiffuseMap;
-            if (diffuse != null) _diffuse.SetValue(diffuse.Image);
+            if (diffuse != null) 
+                _diffuse.SetValue(diffuse.InternalTexture);
         }
 
         /// <summary>
@@ -106,7 +101,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         /// </summary>
         internal void UseDefaultTechnique()
         {
-            Fx.CurrentTechnique = _defaultTechnique;
+            InternalEffect.CurrentTechnique = _defaultTechnique;
         }
 
         /// <summary>
@@ -114,7 +109,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         /// </summary>
         internal void UseInstancingTechnique()
         {
-            Fx.CurrentTechnique = _instancingTechnique;
+            InternalEffect.CurrentTechnique = _instancingTechnique;
         }
 
         /// <summary>
@@ -122,8 +117,8 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         /// </summary>
         private void ExtractTechnique()
         {
-            _defaultTechnique = Fx.Techniques[DefaultTechniqueName];
-            _instancingTechnique = Fx.Techniques[InstancingTechniqueName];
+            _defaultTechnique = InternalEffect.Techniques[DefaultTechniqueName];
+            _instancingTechnique = InternalEffect.Techniques[InstancingTechniqueName];
         }
 
         /// <summary>
@@ -131,10 +126,10 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         /// </summary>
         private void ExtractParameters()
         {
-            _world = Fx.Parameters[WorldParameter];
-            _projection = Fx.Parameters[ProjectionParameter];
-            _view = Fx.Parameters[ViewParameter];
-            _diffuse = Fx.Parameters[DiffuseParameter];
+            _world = InternalEffect.Parameters[WorldParameter];
+            _projection = InternalEffect.Parameters[ProjectionParameter];
+            _view = InternalEffect.Parameters[ViewParameter];
+            _diffuse = InternalEffect.Parameters[DiffuseParameter];
         }
 
         #endregion

@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pulsar.Extension;
 using Pulsar.Graphics.Rendering;
 
-namespace Pulsar.Assets.Graphics.Models
+namespace Pulsar.Graphics
 {
     /// <summary>
     /// Represents a 3D mesh
@@ -16,7 +16,7 @@ namespace Pulsar.Assets.Graphics.Models
     ///     - With helper function (Begin/Update/End) of the mesh class (Easy - Intermediate)
     ///     - From scratch, all buffer(Vertex/Index) must be created manually (Hard)
     /// </summary>
-    public sealed class Mesh : Asset
+    public sealed class Mesh : IDisposable
     {
         #region Nested
 
@@ -91,12 +91,14 @@ namespace Pulsar.Assets.Graphics.Models
         private VertexPositionNormalTexture _currentPoint;
         private List<VertexPositionNormalTexture> _currentVertices;
         private List<int> _currentIndices;
-        private BufferType _currentBufferType = BufferType.Static;
+        private BufferType _currentIndexBufferType = BufferType.Static;
+        private BufferType _currentVertexBufferType = BufferType.Static;
         private int _estimatedVertexCount;
         private int _estimatedIndexCount;
 
-        private readonly VertexData _vertexData = new VertexData();
-        private readonly IndexData _indexData = new IndexData();
+        private bool _isDisposed;
+        private VertexData _vertexData = new VertexData();
+        private IndexData _indexData = new IndexData();
         private readonly List<SubMesh> _subMeshes = new List<SubMesh>();
         private readonly Dictionary<string, int> _subMeshNamesMap = new Dictionary<string, int>();
         private BoundingBox _aabb;
@@ -112,9 +114,10 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         /// <param name="name">Name of the mesh</param>
         /// <param name="bufferManager">Buffer manager</param>
-        internal Mesh(string name, BufferManager bufferManager) : base(name)
+        internal Mesh(string name, BufferManager bufferManager)
         {
             _bufferManager = bufferManager;
+            Name = name;
             Bones = new[] { Matrix.Identity };
         }
 
@@ -207,12 +210,32 @@ namespace Pulsar.Assets.Graphics.Models
 
         #region Methods
 
+        public void Dispose()
+        {
+            if(_isDisposed) return;
+
+            try
+            {
+                for(int i = 0; i < _subMeshes.Count; i++)
+                    _subMeshes[i].Dispose();
+
+                _vertexData.Dispose();
+                _indexData.Dispose();
+            }
+            finally
+            {
+                _vertexData = null;
+                _indexData = null;
+                _isDisposed = true;
+            }
+        }
+
         /// <summary>
         /// Begin to edit a new submesh
         /// </summary>
         public void Begin()
         {
-            Begin(string.Empty, PrimitiveType.TriangleList, false, true);
+            Begin(string.Empty, PrimitiveType.TriangleList, false, true, true);
         }
 
         /// <summary>
@@ -221,7 +244,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="type">Defines how primitives are rendered</param>
         public void Begin(PrimitiveType type)
         {
-            Begin(string.Empty, type, false, true);
+            Begin(string.Empty, type, false, true, true);
         }
 
         /// <summary>
@@ -229,10 +252,11 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         /// <param name="type">Defines how primitives are rendered</param>
         /// <param name="shareBuffer">Indicates that the submesh should use a shared buffer</param>
-        /// <param name="staticBuffer">Indicates that the submesh should use a static buffer</param>
-        public void Begin(PrimitiveType type, bool shareBuffer, bool staticBuffer)
+        /// <param name="staticVertex">Indicates that the submesh should use a static buffer</param>
+        /// /// <param name="staticIndex">Indicates that the submesh should use a static index buffer</param>
+        public void Begin(PrimitiveType type, bool shareBuffer, bool staticVertex, bool staticIndex)
         {
-            Begin(string.Empty, type, shareBuffer, staticBuffer);
+            Begin(string.Empty, type, shareBuffer, staticVertex, staticIndex);
         }
 
         /// <summary>
@@ -241,7 +265,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="name">Name of the submesh</param>
         public void Begin(string name)
         {
-            Begin(name, PrimitiveType.TriangleList, false, true);
+            Begin(name, PrimitiveType.TriangleList, false, true, true);
         }
 
         /// <summary>
@@ -251,7 +275,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="type">Defines how primitives are rendered</param>
         public void Begin(string name, PrimitiveType type)
         {
-            Begin(name, type, false, true);
+            Begin(name, type, false, true, true);
         }
 
         /// <summary>
@@ -260,8 +284,9 @@ namespace Pulsar.Assets.Graphics.Models
         /// <param name="name">Name of the submesh</param>
         /// <param name="type">Defines how primitives are rendered</param>
         /// <param name="shareBuffer">Indicates that the submesh should use a shared buffer</param>
-        /// <param name="staticBuffer">Indicates that the submesh should use a static buffer</param>
-        public void Begin(string name, PrimitiveType type, bool shareBuffer, bool staticBuffer)
+        /// <param name="staticVertex">Indicates that the submesh should use a static vertex buffer</param>
+        /// <param name="staticIndex">Indicates that the submesh should use a static index buffer</param>
+        public void Begin(string name, PrimitiveType type, bool shareBuffer, bool staticVertex, bool staticIndex)
         {
             SubMesh sub = string.IsNullOrEmpty(name) ? CreateSubMesh() : CreateSubMesh(name);
             sub.RenderInfo.PrimitiveType = type;
@@ -271,7 +296,8 @@ namespace Pulsar.Assets.Graphics.Models
             _currentVertices = new List<VertexPositionNormalTexture>();
             _currentIndices = new List<int>();
             _currentSub = _subMeshes.Count - 1;
-            _currentBufferType = staticBuffer ? BufferType.Static : BufferType.Dynamic;
+            _currentVertexBufferType = staticVertex ? BufferType.Static : BufferType.Dynamic;
+            _currentIndexBufferType = staticIndex ? BufferType.Static : BufferType.Dynamic;
         }
 
         /// <summary>
@@ -315,8 +341,11 @@ namespace Pulsar.Assets.Graphics.Models
         /// </summary>
         public void End()
         {
-            if (_currentSub == -1) throw new Exception("Begin or Update must be called first");
-            if (_pendingVertex) _currentVertices.Add(_currentPoint);
+            if (_currentSub == -1) 
+                throw new Exception("Begin or Update must be called first");
+
+            if (_pendingVertex) 
+                _currentVertices.Add(_currentPoint);
 
             if (_currentVertices.Count > 0)
             {
@@ -334,14 +363,16 @@ namespace Pulsar.Assets.Graphics.Models
                     CopyIndexToBuffer(indexSource);
                     renderingInfo.UseIndexes = true;
                 }
-                else renderingInfo.UseIndexes = false;
+                else 
+                    renderingInfo.UseIndexes = false;
                 renderingInfo.ComputePrimitiveCount();
 
                 GenerateCurrentBoundingVolume(vertexSource);
                 UpdateBounds();
                 UpdateMeshInfo();
             }
-            else RemoveSubMesh(_currentSub);
+            else 
+                RemoveSubMesh(_currentSub);
 
             ResetManualConfig();
         }
@@ -493,7 +524,8 @@ namespace Pulsar.Assets.Graphics.Models
             _currentSub = -1;
             _appendToBuffer = false;
             _isUpdating = false;
-            _currentBufferType = BufferType.Static;
+            _currentVertexBufferType = BufferType.Static;
+            _currentIndexBufferType = BufferType.Static;
         }
 
         /// <summary>
@@ -545,7 +577,7 @@ namespace Pulsar.Assets.Graphics.Models
             {
                 if (!_isUpdating)
                 {
-                    buffer = _bufferManager.CreateVertexBuffer(_currentBufferType, typeof(VertexPositionNormalTexture),
+                    buffer = _bufferManager.CreateVertexBuffer(_currentVertexBufferType, typeof(VertexPositionNormalTexture),
                         _estimatedVertexCount);
                     subBufferData.Buffer = buffer;
                 }
@@ -586,7 +618,7 @@ namespace Pulsar.Assets.Graphics.Models
             {
                 if (!_isUpdating)
                 {
-                    buffer = _bufferManager.CreateIndexBuffer(_currentBufferType, IndexElementSize.ThirtyTwoBits,
+                    buffer = _bufferManager.CreateIndexBuffer(_currentIndexBufferType, IndexElementSize.ThirtyTwoBits,
                         _estimatedIndexCount);
                     subBufferData.Buffer = buffer;
                 }
@@ -829,7 +861,7 @@ namespace Pulsar.Assets.Graphics.Models
         {
             if (_vertexData.BufferCount > 0) return _vertexData.GetBuffer(0);
 
-            VertexBufferObject vbo = _bufferManager.CreateVertexBuffer(_currentBufferType,
+            VertexBufferObject vbo = _bufferManager.CreateVertexBuffer(_currentVertexBufferType,
                 typeof (VertexPositionNormalTexture), _estimatedVertexCount);
             _vertexData.SetBinding(vbo, 0, 0, 0);
 
@@ -844,7 +876,7 @@ namespace Pulsar.Assets.Graphics.Models
         {
             if (_indexData.IndexBuffer != null) return _indexData.IndexBuffer;
 
-            IndexBufferObject ibo = _bufferManager.CreateIndexBuffer(_currentBufferType, 
+            IndexBufferObject ibo = _bufferManager.CreateIndexBuffer(_currentIndexBufferType, 
                 IndexElementSize.ThirtyTwoBits, _estimatedIndexCount);
             _indexData.IndexBuffer = ibo;
 
@@ -857,7 +889,7 @@ namespace Pulsar.Assets.Graphics.Models
         /// <returns>Returns a new submesh</returns>
         public SubMesh CreateSubMesh()
         {
-            SubMesh sub = new SubMesh(this);
+            SubMesh sub = new SubMesh();
             _subMeshes.Add(sub);
 
             return sub;
@@ -986,9 +1018,9 @@ namespace Pulsar.Assets.Graphics.Models
             PrimitiveCount = 0;
             for (int i = 0; i < _subMeshes.Count; i++)
             {
-                RenderingInfo renderData = _subMeshes[i].RenderInfo;
-                VerticesCount += renderData.VertexCount;
-                PrimitiveCount += renderData.PrimitiveCount;
+                RenderingInfo renderingInfo = _subMeshes[i].RenderInfo;
+                VerticesCount += renderingInfo.VertexCount;
+                PrimitiveCount += renderingInfo.PrimitiveCount;
             }
         }
 
@@ -1011,6 +1043,8 @@ namespace Pulsar.Assets.Graphics.Models
         #endregion
 
         #region Properties
+
+        public string Name { get; private set; }
 
         /// <summary>
         /// Gets the number of vertices

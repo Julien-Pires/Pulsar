@@ -3,9 +3,8 @@
 using Microsoft.Xna.Framework;
 
 using Pulsar.Assets;
-using Pulsar.Assets.Graphics.Shaders;
+using Pulsar.Graphics.Asset;
 using Pulsar.Graphics.SceneGraph;
-
 
 namespace Pulsar.Graphics.Rendering.RenderingTechnique
 {
@@ -26,15 +25,16 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
 
         #region Constructors
 
-        /// <summary>
-        /// Constructor of SimpleRenderingTechnique class
-        /// </summary>
-        /// <param name="renderer"></param>
-        internal SimpleRenderingTechnique(Renderer renderer)
+        internal SimpleRenderingTechnique(Renderer renderer, Storage system)
         {
             _renderer = renderer;
-            _shader = (SimpleRenderingShader)ShaderManager.Instance.LoadShader(ShaderName, 
-                AssetStorageManager.Instance.System.Name, ShaderFile, typeof(SimpleRenderingShader));
+
+            ShaderParameters shaderParameters = new ShaderParameters
+            {
+                Filename = ShaderFile,
+                ShaderType = typeof(SimpleRenderingShader)
+            };
+            _shader = system.Load<Shader>(ShaderName, shaderParameters) as SimpleRenderingShader;
         }
 
         #endregion

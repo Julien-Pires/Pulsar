@@ -1,7 +1,7 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
-using Pulsar.Assets.Graphics.Models;
-using Pulsar.Assets.Graphics.Materials;
+
 using Pulsar.Graphics.Rendering;
 
 namespace Pulsar.Graphics.SceneGraph
@@ -63,7 +63,7 @@ namespace Pulsar.Graphics.SceneGraph
         public bool UseInstancing
         {
             get { return _parent.UseInstancing; }
-            set { throw new NotImplementedException(); }
+            set { throw new NotSupportedException(); }
         }
 
         /// <summary>
