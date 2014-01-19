@@ -1,67 +1,82 @@
 ﻿using System;
+using System.IO;
+using System.Diagnostics;
 using System.Collections.Generic;
+
+using Microsoft.Xna.Framework.Content;
 
 namespace Pulsar.Assets
 {
-    internal sealed class FolderManager
+    internal sealed class FolderManager : ContentManager
     {
         #region Fields
 
-        private readonly IServiceProvider _serviceProvider;
-        private readonly Dictionary<string, AssetFolder> _folders = new Dictionary<string, AssetFolder>();
+        private const int DefaultCapacity = 4;
+
+        private int _assetOpened;
+        private readonly AssetFolder _parent;
+        private readonly Stack<LoadedAsset> _loadedStack = new Stack<LoadedAsset>(DefaultCapacity);
 
         #endregion
 
         #region Constructor
 
-        internal FolderManager(IServiceProvider serviceProvider)
+        internal FolderManager(string path, AssetFolder parent, IServiceProvider serviceProvider)
+            : base(serviceProvider, path)
         {
-            _serviceProvider = serviceProvider;
+            _parent = parent;
         }
 
         #endregion
 
         #region Methods
 
-        public void AddFolder(string folderName)
+        internal SearchResult LoadFromFile<T>(string assetName, LoadedAsset result)
         {
-            if(string.IsNullOrEmpty(folderName))
-                throw new ArgumentNullException("folderName");
-
-            if(_folders.ContainsKey(folderName))
-                throw new Exception(string.Format("Folder {0} already added", folderName));
-
-            AssetFolder folder = new AssetFolder(folderName, _serviceProvider);
-            _folders.Add(folderName, folder);
-        }
-
-        public bool RemoveFolder(string folderName)
-        {
-            return _folders.Remove(folderName);
-        }
-
-        public bool IsUsingFolder(string folderName)
-        {
-            return _folders.ContainsKey(folderName);
-        }
-
-        public void SearchAsset<T>(string assetName, LoadResult result)
-        {
-            result.Reset();
-
-            foreach (AssetFolder folder in _folders.Values)
+            SearchResult status = new SearchResult { State = SearchState.Found };
+            try
             {
-                SearchResult status = folder.Search<T>(assetName, result);
-                switch (status.State)
-                {
-                    case SearchState.Found: return;
+                _loadedStack.Push(result);
+                T asset = ReadAsset<T>(assetName, AddDisposable);
+                result.Asset = asset;
+            }
+            catch (Exception ex)
+            {
+                status.State = (_assetOpened == 0) ? SearchState.NotFound : SearchState.ErrorLoading;
+                status.Error = ex;
 
-                    case SearchState.ErrorLoading:
-                        throw status.Error;
-                }
+                result.Reset();
+            }
+            finally
+            {
+                _loadedStack.Pop();
+                _assetOpened--;
             }
 
-            throw new Exception(string.Format("Asset {0} not found", assetName));
+            return status;
+        }
+
+        public override T Load<T>(string assetName)
+        {
+            Debug.Assert(_loadedStack.Count > 0);
+
+            return _parent.Load<T>(assetName);
+        }
+
+        protected override Stream OpenStream(string assetName)
+        {
+            Stream result = base.OpenStream(assetName);
+            _assetOpened++;
+
+            return result;
+        }
+
+        private void AddDisposable(IDisposable disposable)
+        {
+            Debug.Assert(_loadedStack.Count > 0);
+
+            LoadedAsset loadedAsset = _loadedStack.Peek();
+            loadedAsset.Disposables.Add(disposable);
         }
 
         #endregion

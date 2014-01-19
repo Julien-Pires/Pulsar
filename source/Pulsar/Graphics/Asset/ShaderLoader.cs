@@ -14,9 +14,11 @@ namespace Pulsar.Graphics.Asset
     {
         #region Fields
 
+        internal const string LoaderName = "ShaderLoader";
+
         private readonly Type[] _supportedTypes = { typeof(Shader) };
         private readonly ShaderParameters _defaultParameters = new ShaderParameters();
-        private readonly LoadResult _result = new LoadResult();
+        private readonly LoadedAsset _result = new LoadedAsset();
 
         #endregion
 
@@ -33,9 +35,10 @@ namespace Pulsar.Graphics.Asset
 
         #region Methods
 
-        public override LoadResult Load<T>(string assetName, object parameters, Storage storage)
+        public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
             _result.Reset();
+            _result.Name = assetName;
 
             ShaderParameters shaderParameters;
             if (parameters != null)
@@ -47,7 +50,7 @@ namespace Pulsar.Graphics.Asset
             else
             {
                 shaderParameters = _defaultParameters;
-                shaderParameters.Filename = assetName;
+                shaderParameters.Filename = path;
             }
 
             Shader shader;
@@ -55,10 +58,9 @@ namespace Pulsar.Graphics.Asset
             {
                 case AssetSource.FromFile:
                     shader = CreateInstance(assetName, shaderParameters.ShaderType);
-                    LoadFromFile<Effect>(shaderParameters.Filename, storage, _result);
+                    LoadFromFile<Effect>(shaderParameters.Filename, assetFolder, _result);
 
-                    LoadedAsset loadedEffect = _result.Get(shaderParameters.Filename);
-                    shader.SetEffect(loadedEffect.Asset as Effect);
+                    shader.SetEffect(_result.Asset as Effect);
                     break;
 
                 case AssetSource.NewInstance:
@@ -68,9 +70,8 @@ namespace Pulsar.Graphics.Asset
             }
             _result.Reset();
 
-            LoadedAsset loadedShader = _result.AddAsset(assetName);
-            loadedShader.Asset = shader;
-            loadedShader.Disposables.Add(shader);
+            _result.Asset = shader;
+            _result.Disposables.Add(shader);
 
             return _result;
         }
@@ -94,6 +95,11 @@ namespace Pulsar.Graphics.Asset
         #endregion
 
         #region Properties
+
+        public override string Name
+        {
+            get { return LoaderName; }
+        }
 
         public override Type[] SupportedTypes
         {

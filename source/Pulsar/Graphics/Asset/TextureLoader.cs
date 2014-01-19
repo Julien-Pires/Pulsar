@@ -14,26 +14,29 @@ namespace Pulsar.Graphics.Asset
     {
         #region Fields
 
+        internal const string LoaderName = "TextureLoader";
+
         private const string MissingTexture2DName = "Missing_Texture_2D";
         private const int MissingTexture2DSize = 256;
 
-        private readonly Type[] _supportedTypes = { typeof(Texture) };
+        private readonly Type[] _supportedTypes = { typeof(Texture), typeof(XnaTexture), typeof(Texture2D) };
         private readonly TextureParameters _defaultParameters;
-        private readonly LoadResult _result = new LoadResult();
+        private readonly LoadedAsset _result = new LoadedAsset();
+        private readonly LoadedAsset _fromFileResult = new LoadedAsset();
         private readonly GraphicsDeviceManager _deviceManager;
-        private readonly Storage _system;
+        private readonly AssetFolder _textureFolder;
 
         #endregion
 
         #region Constructor
 
-        internal TextureLoader(GraphicsDeviceManager deviceManager, Storage system)
+        internal TextureLoader(GraphicsDeviceManager deviceManager, Storage graphicsStorage)
         {
             Debug.Assert(deviceManager != null);
-            Debug.Assert(system != null);
+            Debug.Assert(graphicsStorage != null);
 
             _deviceManager = deviceManager;
-            _system = system;
+            _textureFolder = graphicsStorage[GraphicsConstant.TextureFolderName];
             _defaultParameters = new TextureParameters { Level = TextureLevel.Texture2D };
             UseMissingTexture = true;
         }
@@ -49,7 +52,7 @@ namespace Pulsar.Graphics.Asset
                 Height = size,
                 Width = size
             };
-            Texture texture = _system.Load<Texture>(MissingTexture2DName, texParams);
+            Texture texture = _textureFolder.Load<Texture>(MissingTexture2DName, texParams);
 
             Color[] textureData = new Color[size * size];
             for (int x = 0; x < size; x++)
@@ -68,10 +71,8 @@ namespace Pulsar.Graphics.Asset
             texture.SetData(textureData);
         }
 
-        public override LoadResult Load<T>(string assetName, object parameters, Storage storage)
+        public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
-            _result.Reset();
-
             TextureParameters textureParams;
             if (parameters != null)
             {
@@ -82,7 +83,16 @@ namespace Pulsar.Graphics.Asset
             else
             {
                 textureParams = _defaultParameters;
-                textureParams.Filename = assetName;
+                textureParams.Level = TextureLevel.Texture2D;
+                textureParams.Filename = path;
+
+                Type textureType = typeof(T);
+                if (textureType == typeof (Texture2D))
+                    textureParams.Level = TextureLevel.Texture2D;
+                else if (textureType == typeof (XnaTexture))
+                    textureParams.Level = TextureLevel.Texture;
+                else if (textureType == typeof (Texture3D))
+                    textureParams.Level = TextureLevel.Texture3D;
             }
 
             Texture texture;
@@ -94,28 +104,27 @@ namespace Pulsar.Graphics.Asset
                         switch (textureParams.Level)
                         {
                             case TextureLevel.Texture2D:
-                                LoadFromFile<Texture2D>(textureParams.Filename, storage, _result);
+                                LoadFromFile<Texture2D>(textureParams.Filename, assetFolder, _fromFileResult);
                                 break;
                             case TextureLevel.Texture3D:
-                                LoadFromFile<Texture3D>(textureParams.Filename, storage, _result);
+                                LoadFromFile<Texture3D>(textureParams.Filename, assetFolder, _fromFileResult);
+                                break;
+                            case TextureLevel.Texture:
+                                LoadFromFile<XnaTexture>(textureParams.Filename, assetFolder, _fromFileResult);
                                 break;
                         }
 
-                        LoadedAsset textureResult = _result[assetName];
-                        if (textureResult == null)
-                            throw new Exception("");
-
-                        texture = new Texture(_deviceManager, assetName, textureResult.Asset as XnaTexture);
+                        texture = new Texture(_deviceManager, assetName, _fromFileResult.Asset as XnaTexture);
                     }
                     catch (Exception)
                     {
                         if(!UseMissingTexture)
                             throw;
 
-                        if(!_system.IsLoaded(MissingTexture2DName))
+                        if(!_textureFolder.IsLoaded(MissingTexture2DName))
                             CreateMissingTexture2D(MissingTexture2DSize, 2, Color.White, Color.Blue);
 
-                        texture = _system.Load<Texture>(MissingTexture2DName);
+                        texture = _textureFolder.Load<Texture>(MissingTexture2DName);
                     }
                     break;
                 
@@ -127,11 +136,12 @@ namespace Pulsar.Graphics.Asset
                 default:
                     throw new Exception("");
             }
+            _fromFileResult.Reset();
+            
             _result.Reset();
-
-            LoadedAsset finalTexture = _result.AddAsset(assetName);
-            finalTexture.Asset = texture;
-            finalTexture.Disposables.Add(texture);
+            _result.Name = assetName;
+            _result.Asset = texture;
+            _result.Disposables.Add(texture);
 
             return _result;
         }
@@ -139,6 +149,11 @@ namespace Pulsar.Graphics.Asset
         #endregion
 
         #region Properties
+
+        public override string Name
+        {
+            get { return LoaderName; }
+        }
 
         public override Type[] SupportedTypes
         {

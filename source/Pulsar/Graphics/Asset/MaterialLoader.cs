@@ -8,8 +8,10 @@ namespace Pulsar.Graphics.Asset
     {
         #region Fields
 
+        internal const string LoaderName = "MaterialLoader";
+
         private readonly Type[] _supportedTypes = { typeof(Material) };
-        private readonly LoadResult _result = new LoadResult();
+        private readonly LoadedAsset _result = new LoadedAsset();
         private readonly MaterialParameters _defaultParameter = new MaterialParameters();
 
         #endregion
@@ -24,10 +26,8 @@ namespace Pulsar.Graphics.Asset
 
         #region Methods
 
-        public override LoadResult Load<T>(string assetName, object parameters, Storage storage)
+        public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
-            _result.Reset();
-
             MaterialParameters matParameters;
             if (parameters != null)
             {
@@ -43,15 +43,17 @@ namespace Pulsar.Graphics.Asset
             {
                 case AssetSource.FromFile:
                     throw new NotSupportedException("");
+
                 case AssetSource.NewInstance:
                     material = new Material(assetName);
                     break;
+
                 default:
                     throw new Exception("");
             }
-
-            LoadedAsset loadedMaterial = _result.AddAsset(assetName);
-            loadedMaterial.Asset = material;
+            _result.Reset();
+            _result.Name = assetName;
+            _result.Asset = material;
 
             return _result;
         }
@@ -59,6 +61,11 @@ namespace Pulsar.Graphics.Asset
         #endregion
 
         #region Properties
+
+        public override string Name
+        {
+            get { return LoaderName; }
+        }
 
         public override Type[] SupportedTypes
         {

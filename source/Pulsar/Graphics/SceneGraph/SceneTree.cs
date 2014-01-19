@@ -86,9 +86,16 @@ namespace Pulsar.Graphics.SceneGraph
             _root.FindVisibleObjects(cam, _queue, true);
         }
 
-        public Entity CreateEntity(string name, string meshName, string storage)
+        public Entity CreateEntity(string name, string meshName, string storage, string folder)
         {
-            Mesh mesh = AssetEngine[storage].Load<Mesh>(meshName);
+            AssetFolder assetFolder = AssetEngine[storage][folder];
+
+            return CreateEntity(name, meshName, assetFolder);
+        }
+
+        public Entity CreateEntity(string name, string meshName, AssetFolder assetFolder)
+        {
+            Mesh mesh = assetFolder.Load<Mesh>(meshName);
 
             return CreateEntity(name, mesh);
         }

@@ -43,7 +43,7 @@ namespace Pulsar.Graphics.Rendering
 
             _spriteBatch = new SpriteBatch(_graphicDevice);
             _instancingManager = new InstanceBatchManager(this);
-            _renderingTechnique = new SimpleRenderingTechnique(this, _assetEngine.SystemStorage);
+            _renderingTechnique = new SimpleRenderingTechnique(this, _assetEngine[GraphicsConstant.Storage]);
         }
 
         #endregion

@@ -3,13 +3,14 @@ using System.Diagnostics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using Pulsar.Core;
 using XnaTexture = Microsoft.Xna.Framework.Graphics.Texture;
 
 namespace Pulsar.Graphics
 {
     public enum TextureLevel
     {
+        Texture,
         Texture2D,
         Texture3D
     }
@@ -17,7 +18,8 @@ namespace Pulsar.Graphics
     /// <summary>
     /// Class containing informations about a 2D texture
     /// </summary>
-    public class Texture : IDisposable
+    public class Texture : ICastable<XnaTexture>, ICastable<Texture2D>, ICastable<Texture3D>,
+        IDisposable
     {
         #region Fields
 
@@ -61,6 +63,25 @@ namespace Pulsar.Graphics
             MipMap = mipMap;
             SetSize(width, height, depth);
             CreateTexture();
+        }
+
+        #endregion
+
+        #region Operators
+
+        public static explicit operator XnaTexture(Texture texture)
+        {
+            return texture.GetBaseTexture();
+        }
+
+        public static explicit operator Texture2D(Texture texture)
+        {
+            return texture.GetTexture2D();
+        }
+
+        public static explicit operator Texture3D(Texture texture)
+        {
+            return texture.GetTexture3D();
         }
 
         #endregion
@@ -174,6 +195,36 @@ namespace Pulsar.Graphics
             int top, int bottom, int front, int back) where T : struct
         {
             _textureWrapper.SetData(data, startIndex, elementCount, left, right, top, bottom, front, back, mipmapLevel);   
+        }
+
+        XnaTexture ICastable<XnaTexture>.Cast()
+        {
+            return (XnaTexture)this;
+        }
+
+        Texture2D ICastable<Texture2D>.Cast()
+        {
+            return (Texture2D)this;
+        }
+
+        Texture3D ICastable<Texture3D>.Cast()
+        {
+            return (Texture3D)this;
+        }
+
+        public XnaTexture GetBaseTexture()
+        {
+            return _textureWrapper.Texture;
+        }
+
+        public Texture2D GetTexture2D()
+        {
+            return (Texture2D)_textureWrapper.Texture;
+        }
+
+        public Texture3D GetTexture3D()
+        {
+            return (Texture3D)_textureWrapper.Texture;
         }
 
         #endregion

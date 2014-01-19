@@ -6,17 +6,20 @@ namespace Pulsar.Assets
     {
         #region Fields
 
+        private const string LoaderName = "DefaultLoader";
+
         private readonly Type[] _supportedTypes = {};
-        private readonly LoadResult _result = new LoadResult();
+        private readonly LoadedAsset _result = new LoadedAsset();
 
         #endregion
 
         #region Methods
 
-        public override LoadResult Load<T>(string assetName, object parameters, Storage storage)
+        public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
             _result.Reset();
-            LoadFromFile<T>(assetName, storage, _result);
+            _result.Name = assetName;
+            LoadFromFile<T>(path, assetFolder, _result);
 
             return _result;
         }
@@ -24,6 +27,11 @@ namespace Pulsar.Assets
         #endregion
 
         #region Properties
+
+        public override string Name
+        {
+            get { return LoaderName; }
+        }
 
         public override Type[] SupportedTypes
         {

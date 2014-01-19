@@ -14,8 +14,8 @@ namespace Pulsar.Assets
         private readonly Storage _systemStorage;
         private readonly Storage _globalStorage;
         private Dictionary<string, Storage> _storages = new Dictionary<string, Storage>();
-        private readonly Dictionary<Type, AssetLoader> _loaders = new Dictionary<Type, AssetLoader>();
-        private readonly List<Type> _assetUsingLoaders = new List<Type>();
+        private readonly Dictionary<Type, IAssetLoader> _loaders = new Dictionary<Type, IAssetLoader>();
+        private readonly Dictionary<string, IAssetLoader> _loadersByName = new Dictionary<string, IAssetLoader>();
 
         #endregion
 
@@ -59,23 +59,28 @@ namespace Pulsar.Assets
             _isDisposed = true;
         }
 
-        public AssetLoader GetLoader<T>() 
+        public IAssetLoader GetLoader<T>() 
         {
             return GetLoader(typeof (T));
         }
 
-        public AssetLoader GetLoader(Type assetType)
+        public IAssetLoader GetLoader(string name)
+        {
+            return _loadersByName[name];
+        }
+
+        public IAssetLoader GetLoader(Type assetType)
         {
             if(assetType == null)
                 throw new ArgumentNullException("assetType");
 
-            AssetLoader loader;
+            IAssetLoader loader;
             _loaders.TryGetValue(assetType, out loader);
 
             return loader;
         }
 
-        public void AddLoader(AssetLoader loader)
+        public void AddLoader(IAssetLoader loader)
         {
             if(loader == null)
                 throw new ArgumentNullException("loader");
@@ -89,7 +94,6 @@ namespace Pulsar.Assets
                     throw new Exception(string.Format("{0} already managed by another loader", supportedTypes[i]));
 
                 _loaders.Add(supportedTypes[i], loader);
-                _assetUsingLoaders.Add(supportedTypes[i]);
             }
         }
 
@@ -106,20 +110,34 @@ namespace Pulsar.Assets
             _loaders[assetType] = null;
         }
 
-        public void RemoveLoader(AssetLoader loader)
+        public bool RemoveLoader(IAssetLoader loader)
         {
             if(loader == null)
                 throw new ArgumentNullException("loader");
 
-            for (int i = _assetUsingLoaders.Count; i --> 0; )
+            Type[] assetType = loader.SupportedTypes;
+            for (int i = 0; i < assetType.Length; i++)
             {
-                Type assetType = _assetUsingLoaders[i];
-                if (_loaders[assetType] == loader)
-                {
-                    _loaders[assetType] = null;
-                    _assetUsingLoaders.RemoveAt(i);
-                }
+                IAssetLoader currentLoader;
+                if (!_loaders.TryGetValue(assetType[i], out currentLoader))
+                    continue;
+
+                if (currentLoader == loader)
+                    _loaders.Remove(assetType[i]);
             }
+
+            _loadersByName.Remove(loader.Name);
+
+            return true;
+        }
+
+        public bool RemoveLoader(string name)
+        {
+            IAssetLoader loader;
+            if (!_loadersByName.TryGetValue(name, out loader))
+                return false;
+
+            return RemoveLoader(loader);
         }
 
         public Storage CreateStorage(string name)

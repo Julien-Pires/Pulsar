@@ -31,6 +31,14 @@ namespace Pulsar.Graphics
 
         #region Methods
 
+        public Mesh CreateBox(string name, float width, float height, float depth, string storage,
+            string folder)
+        {
+            AssetFolder assetFolder = _assetEngine[storage][folder];
+
+            return CreateBox(name, width, height, depth, assetFolder);
+        }
+
         /// <summary>
         /// Creates a mesh that represents a box
         /// </summary>
@@ -40,7 +48,7 @@ namespace Pulsar.Graphics
         /// <param name="depth">Depth of the box</param>
         /// <param name="storage">Storage used to store the mesh</param>
         /// <returns>Returns a mesh</returns>
-        public Mesh CreateBox(string name, float width, float height, float depth, string storage)
+        public Mesh CreateBox(string name, float width, float height, float depth, AssetFolder assetFolder)
         {
             float halfWidth = width/2.0f;
             float halfHeight = height/2.0f;
@@ -66,7 +74,7 @@ namespace Pulsar.Graphics
             Vector2 texBottomLeft = new Vector2(0.0f, 1.0f);
             Vector2 texBottomRight = new Vector2(1.0f, 1.0f);
 
-            Mesh meshBox = _assetEngine[storage].Load<Mesh>(name, MeshParameters.NewInstance);
+            Mesh meshBox = assetFolder.Load<Mesh>(name, MeshParameters.NewInstance);
             meshBox.Bones = new Matrix[1];
             meshBox.Bones[0] = Matrix.Identity;
 
@@ -123,7 +131,7 @@ namespace Pulsar.Graphics
             meshBox.End();
 
             string materialName = string.Format("{0}_material", name);
-            meshBox.GetSubMesh(0).Material = _assetEngine[storage].Load<Material>(materialName,
+            meshBox.GetSubMesh(0).Material = assetFolder.Load<Material>(materialName,
                 MaterialParameters.NewInstance);
 
             return meshBox;

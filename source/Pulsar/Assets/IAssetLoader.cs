@@ -6,11 +6,13 @@ namespace Pulsar.Assets
     {
         #region Methods
 
-        LoadResult Load<T>(string assetName, object parameters, Storage storage);
+        LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder);
 
         #endregion
 
         #region Properties
+
+        string Name { get; }
 
         Type[] SupportedTypes { get; }
 

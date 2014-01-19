@@ -56,15 +56,16 @@
   <ItemGroup>
     <Compile Include="Assets\AssetEngineService.cs" />
     <Compile Include="Assets\AssetFolder.cs" />
+    <Compile Include="Assets\FolderManager.cs" />
     <Compile Include="Assets\AssetLoader.cs" />
     <Compile Include="Assets\DefaultLoader.cs" />
-    <Compile Include="Assets\FolderManager.cs" />
     <Compile Include="Assets\AssetSource.cs" />
     <Compile Include="Assets\IAssetEngineService.cs" />
     <Compile Include="Assets\IAssetLoader.cs" />
     <Compile Include="Assets\PathHelpers.cs" />
     <Compile Include="Assets\SearchResult.cs" />
     <Compile Include="Core\GlobalConstant.cs" />
+    <Compile Include="Core\ICastable.cs" />
     <Compile Include="Graphics\Asset\Freezable.cs" />
     <Compile Include="Graphics\Asset\MaterialParameters.cs" />
     <Compile Include="Graphics\Asset\MeshParameters.cs" />

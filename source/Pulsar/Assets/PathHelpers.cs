@@ -6,7 +6,34 @@ namespace Pulsar.Assets
     {
         #region Methods
 
-        public static string GetPath(string path)
+        public static string RemoveRoot(string path, string root)
+        {
+            path = path.Replace(root, string.Empty);
+            while (path.StartsWith("\\"))
+                path = path.Substring("\\".Length);
+
+            return path;
+        }
+
+        public static string GetDirectoryPath(string path)
+        {
+            path = CleanPath(path);
+
+            while (path.StartsWith("\\"))
+                path = path.Substring("\\".Length);
+
+            int index = path.IndexOf("\\", StringComparison.Ordinal);
+            if (index < 1)
+                return string.Empty;
+
+            path = path.Substring(index);
+            while (path.StartsWith("\\"))
+                path = path.Substring("\\".Length);
+
+            return path;
+        }
+
+        public static string CleanPath(string path)
         {
             path = path.Replace('/', '\\');
             path = path.Replace("\\.\\", "\\");

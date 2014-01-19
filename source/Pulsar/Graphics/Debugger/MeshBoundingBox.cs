@@ -34,7 +34,7 @@ namespace Pulsar.Graphics.Debugger
         private const int BackBottomRight = 7;
 
         private bool _isDisposed;
-        private readonly AssetEngine _assetEngine;
+        private readonly Storage _storage;
         private Mesh _internalMesh;
         private VertexBufferObject _vbo;
         private readonly VertexPositionNormalTexture[] _vertices = new VertexPositionNormalTexture[VertexCount];
@@ -51,7 +51,8 @@ namespace Pulsar.Graphics.Debugger
             Debug.Assert(assetEngine != null);
 
             Name = name;
-            _assetEngine = assetEngine;
+            _storage = assetEngine[GraphicsConstant.Storage];
+
             LoadAsset();
             InitializeMesh();
         }
@@ -105,7 +106,7 @@ namespace Pulsar.Graphics.Debugger
         {
             if(_isDisposed) return;
 
-            _assetEngine[GraphicsConstant.Storage].Unload(Name);
+            _storage[GraphicsConstant.MeshFolderName].Unload(Name);
             _vbo = null;
             _internalMesh = null;
 
@@ -114,22 +115,22 @@ namespace Pulsar.Graphics.Debugger
 
         private void LoadAsset()
         {
-            _internalMesh = _assetEngine[GraphicsConstant.Storage].Load<Mesh>(Name, MeshParameters.NewInstance);
-            if (!_assetEngine[GraphicsConstant.Storage].IsLoaded(AabbMaterial))
+            _internalMesh = _storage[GraphicsConstant.MeshFolderName].Load<Mesh>(Name, MeshParameters.NewInstance);
+            if (!_storage[GraphicsConstant.MaterialFolderName].IsLoaded(AabbMaterial))
             {
                 TextureParameters textureParameters = new TextureParameters
                 {
                     Height = 1,
                     Width = 1
                 };
-                Texture texture = _assetEngine[GraphicsConstant.Storage].Load<Texture>(AabbTexture, textureParameters);
+                Texture texture = _storage[GraphicsConstant.TextureFolderName].Load<Texture>(AabbTexture, textureParameters);
                 texture.SetData(new[]{ new Color(255, 255, 255, 255) });
-                Material = _assetEngine[GraphicsConstant.Storage].Load<Material>(AabbMaterial,
+                Material = _storage[GraphicsConstant.MaterialFolderName].Load<Material>(AabbMaterial,
                     MaterialParameters.NewInstance);
                 Material.DiffuseMap = texture;
             }
             else
-                Material = _assetEngine[GraphicsConstant.Storage].Load<Material>(AabbMaterial);
+                Material = _storage[GraphicsConstant.MaterialFolderName].Load<Material>(AabbMaterial);
         }
 
         private void InitializeMesh()

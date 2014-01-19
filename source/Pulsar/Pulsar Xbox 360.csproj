@@ -80,6 +80,7 @@
     <Compile Include="Core\AxisAlignedBox.cs" />
     <Compile Include="Core\EventType.cs" />
     <Compile Include="Core\GlobalConstant.cs" />
+    <Compile Include="Core\ICastable.cs" />
     <Compile Include="Core\IndexPool.cs" />
     <Compile Include="Core\Singleton.cs" />
     <Compile Include="Core\Transform.cs" />

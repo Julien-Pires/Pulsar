@@ -17,16 +17,17 @@ namespace Pulsar.Graphics.Asset
     {
         #region Fields
 
+        internal const string LoaderName = "MeshLoader";
+
         private const string DiffuseMapKey = "Texture";
         private const string NormalMapKey = "NormalMap";
         private const string SpecularMapKey = "SpecularMap";
 
         private readonly Type[] _supportedTypes = { typeof(Mesh) };
-        private readonly GraphicsDeviceManager _deviceManager;
         private readonly BufferManager _bufferManager;
         private readonly MeshParameters _defaultParameters = new MeshParameters();
-        private readonly LoadResult _result = new LoadResult();
-        private readonly LoadResult _fromFileResult = new LoadResult();
+        private readonly LoadedAsset _result = new LoadedAsset();
+        private readonly LoadedAsset _fromFileResult = new LoadedAsset();
 
         #endregion
 
@@ -37,7 +38,6 @@ namespace Pulsar.Graphics.Asset
             Debug.Assert(deviceManager != null);
             Debug.Assert(bufferManager != null);
 
-            _deviceManager = deviceManager;
             _bufferManager = bufferManager;
         }
 
@@ -45,16 +45,15 @@ namespace Pulsar.Graphics.Asset
 
         #region Static methods
 
-        private static void ProcessModel(string meshName, Model model, GraphicsDeviceManager deviceManager, 
-            BufferManager bufferManager, LoadResult result)
+        private static void ProcessModel(string meshName, Model model, BufferManager bufferManager, 
+            AssetFolder assetFolder, LoadedAsset result)
         {
             MeshData data = model.Tag as MeshData;
             if(data == null)
                 throw new Exception("Mesh data incomplete");
 
-            LoadedAsset loadedMesh = result.AddAsset(meshName);
             Mesh mesh = new Mesh(meshName, bufferManager);
-            loadedMesh.Asset = mesh;
+            result.Asset = mesh;
 
             Matrix[] bones = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(bones);
@@ -102,8 +101,7 @@ namespace Pulsar.Graphics.Asset
                     subMesh.IndexData.IndexCount = part.IndexBuffer.IndexCount;
 
                     string materialName = string.Format("{0}/{1}_material", mesh.Name, currentMesh.Name);
-                    subMesh.Material = CreateMaterial(materialName, part.Effect, subData.TexturesName, deviceManager,
-                        result);
+                    subMesh.Material = CreateMaterial(materialName, part.Effect, subData.TexturesName, assetFolder);
                 }
             }
 
@@ -111,58 +109,41 @@ namespace Pulsar.Graphics.Asset
             mesh.UpdateMeshInfo();
         }
 
-        private static Material CreateMaterial(string materialName, Effect effect, Dictionary<string, string> texturesName, 
-            GraphicsDeviceManager deviceManager, LoadResult result)
+        private static Material CreateMaterial(string materialName, Effect effect, Dictionary<string, string> texturesName,
+             AssetFolder assetFolder)
         {
-            Material material = new Material(materialName);
-            LoadedAsset materialAsset = result.AddAsset(materialName);
-            materialAsset.Asset = material;
-
+            Material material = assetFolder.Load<Material>(materialName, MaterialParameters.NewInstance);
             EffectParameter fxParameter = effect.Parameters[DiffuseMapKey];
             if (fxParameter != null)
-                material.DiffuseMap = CreateTexture(texturesName[DiffuseMapKey], fxParameter.GetValueTexture2D(),
-                    deviceManager, result);
+                material.DiffuseMap = GetTextureFromFullPath(texturesName[DiffuseMapKey], assetFolder);
 
             fxParameter = effect.Parameters[NormalMapKey];
             if (fxParameter != null)
-                material.NormalMap = CreateTexture(texturesName[NormalMapKey], fxParameter.GetValueTexture2D(),
-                    deviceManager, result);
+                material.NormalMap = GetTextureFromFullPath(texturesName[NormalMapKey], assetFolder);
 
             fxParameter = effect.Parameters[SpecularMapKey];
             if (fxParameter != null)
-                material.SpecularMap = CreateTexture(texturesName[SpecularMapKey], fxParameter.GetValueTexture2D(),
-                    deviceManager, result);
+                material.SpecularMap = GetTextureFromFullPath(texturesName[SpecularMapKey], assetFolder);
 
             return material;
         }
 
-        private static Texture CreateTexture(string textureName, XnaTexture rawTexture, GraphicsDeviceManager deviceManager,
-            LoadResult result)
+        private static Texture GetTextureFromFullPath(string path, AssetFolder folder)
         {
-            LoadedAsset loadedTexture = result.Get(textureName);
-            if (loadedTexture != null)
-                return (Texture)loadedTexture.Asset;
+            string assetName = folder.GetNameFromFullPath(path);
 
-            Texture texture = new Texture(deviceManager, textureName, rawTexture);
-            LoadedAsset textureAsset = result.AddAsset(textureName);
-            textureAsset.Asset = texture;
-            textureAsset.Disposables.Add(texture);
-
-            return texture;
+            return folder.Load<Texture>(assetName);
         }
 
-        private static void TransferDisposable(string filename, string meshName, LoadResult fileResult, 
-            LoadResult finalResult)
+        private static void TransferDisposable(LoadedAsset fileResult, LoadedAsset finalResult)
         {
-            LoadedAsset loadedModel = fileResult.Get(filename);
-            LoadedAsset loadedMesh = finalResult.Get(meshName);
-            List<IDisposable> modelDisposables = loadedModel.Disposables;
+            List<IDisposable> modelDisposables = fileResult.Disposables;
             for (int i = 0; i < modelDisposables.Count; i++)
             {
                 Type iDisposableType = modelDisposables[i].GetType();
                 if (iDisposableType == typeof (VertexDeclaration))
                 {
-                    loadedMesh.Disposables.Add(modelDisposables[i]);
+                    finalResult.Disposables.Add(modelDisposables[i]);
                     continue;
                 }
 
@@ -175,9 +156,10 @@ namespace Pulsar.Graphics.Asset
 
         #region Methods
 
-        public override LoadResult Load<T>(string assetName, object parameters, Storage storage)
+        public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
             _result.Reset();
+            _result.Name = assetName;
 
             MeshParameters meshParameters;
             if (parameters != null)
@@ -189,24 +171,23 @@ namespace Pulsar.Graphics.Asset
             else
             {
                 meshParameters = _defaultParameters;
-                meshParameters.Filename = assetName;
+                meshParameters.Filename = path;
             }
 
             switch (meshParameters.Source)
             {
                 case AssetSource.FromFile:
-                    LoadFromFile<Model>(meshParameters.Filename, storage, _fromFileResult);
-                    LoadedAsset modelAsset = _fromFileResult.Get(meshParameters.Filename);
-                    Model model = modelAsset.Asset as Model;
-                    ProcessModel(assetName, model, _deviceManager, _bufferManager, _result);
-                    TransferDisposable(meshParameters.Filename, assetName, _fromFileResult, _result);
+                    LoadFromFile<Model>(meshParameters.Filename, assetFolder, _fromFileResult);
+
+                    Model model = _fromFileResult.Asset as Model;
+                    ProcessModel(assetName, model, _bufferManager, assetFolder, _result);
+                    TransferDisposable(_fromFileResult, _result);
                     break;
 
                 case AssetSource.NewInstance:
                     Mesh mesh = new Mesh(assetName, _bufferManager);
-                    LoadedAsset loadedMesh = _result.AddAsset(assetName);
-                    loadedMesh.Asset = mesh;
-                    loadedMesh.Disposables.Add(mesh);
+                    _result.Asset = mesh;
+                    _result.Disposables.Add(mesh);
                     break;
             }
 
@@ -218,6 +199,11 @@ namespace Pulsar.Graphics.Asset
         #endregion
 
         #region Properties
+
+        public override string Name
+        {
+            get { return LoaderName; }
+        }
 
         public override Type[] SupportedTypes
         {

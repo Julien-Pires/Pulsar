@@ -15,7 +15,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
     {
         #region Fields
 
-        private const string ShaderFile = "Shaders/SimpleShader";
+        private const string ShaderFile = "SimpleShader";
         private const string ShaderName = "SimpleRenderingShader";
 
         private readonly SimpleRenderingShader _shader;
@@ -25,7 +25,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
 
         #region Constructors
 
-        internal SimpleRenderingTechnique(Renderer renderer, Storage system)
+        internal SimpleRenderingTechnique(Renderer renderer, Storage graphicsStorage)
         {
             _renderer = renderer;
 
@@ -34,7 +34,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
                 Filename = ShaderFile,
                 ShaderType = typeof(SimpleRenderingShader)
             };
-            _shader = system.Load<Shader>(ShaderName, shaderParameters) as SimpleRenderingShader;
+            _shader = graphicsStorage[GraphicsConstant.ShaderFolderName].Load<Shader>(ShaderName, shaderParameters) as SimpleRenderingShader;
         }
 
         #endregion
