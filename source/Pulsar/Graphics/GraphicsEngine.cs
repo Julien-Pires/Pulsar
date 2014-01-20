@@ -79,10 +79,10 @@ namespace Pulsar.Graphics
             storage.AddFolder(GraphicsConstant.ShaderFolder, GraphicsConstant.ShaderFolderName);
             storage.AddFolder(GraphicsConstant.MeshFolder, GraphicsConstant.MeshFolderName);
 
-            _assetEngine.AddLoader(new TextureLoader(_deviceManager, storage));
+            _assetEngine.AddLoader(new TextureLoader(_deviceManager));
+            _assetEngine.AddLoader(new ShaderLoader());
             _assetEngine.AddLoader(new MaterialLoader());
             _assetEngine.AddLoader(new MeshLoader(_deviceManager, _bufferManager));
-            _assetEngine.AddLoader(new ShaderLoader());
         }
 
         private void ReleaseStorage()

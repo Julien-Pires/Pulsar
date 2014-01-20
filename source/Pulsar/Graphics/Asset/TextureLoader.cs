@@ -24,19 +24,17 @@ namespace Pulsar.Graphics.Asset
         private readonly LoadedAsset _result = new LoadedAsset();
         private readonly LoadedAsset _fromFileResult = new LoadedAsset();
         private readonly GraphicsDeviceManager _deviceManager;
-        private readonly AssetFolder _textureFolder;
+        private AssetFolder _textureFolder;
 
         #endregion
 
         #region Constructor
 
-        internal TextureLoader(GraphicsDeviceManager deviceManager, Storage graphicsStorage)
+        internal TextureLoader(GraphicsDeviceManager deviceManager)
         {
             Debug.Assert(deviceManager != null);
-            Debug.Assert(graphicsStorage != null);
 
             _deviceManager = deviceManager;
-            _textureFolder = graphicsStorage[GraphicsConstant.TextureFolderName];
             _defaultParameters = new TextureParameters { Level = TextureLevel.Texture2D };
             UseMissingTexture = true;
         }
@@ -44,6 +42,15 @@ namespace Pulsar.Graphics.Asset
         #endregion
 
         #region Methods
+
+        public override void Initialize(AssetEngine engine)
+        {
+            base.Initialize(engine);
+
+            _textureFolder = engine[GraphicsConstant.Storage][GraphicsConstant.TextureFolderName];
+            if (!_textureFolder.IsLoaded(MissingTexture2DName))
+                CreateMissingTexture2D(MissingTexture2DSize, 2, Color.White, Color.Blue);
+        }
 
         private void CreateMissingTexture2D(int size, int stripSize, Color odd, Color even)
         {
@@ -120,9 +127,6 @@ namespace Pulsar.Graphics.Asset
                     {
                         if(!UseMissingTexture)
                             throw;
-
-                        if(!_textureFolder.IsLoaded(MissingTexture2DName))
-                            CreateMissingTexture2D(MissingTexture2DSize, 2, Color.White, Color.Blue);
 
                         texture = _textureFolder.Load<Texture>(MissingTexture2DName);
                     }

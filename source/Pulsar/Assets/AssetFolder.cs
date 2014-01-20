@@ -112,6 +112,9 @@ namespace Pulsar.Assets
 
         public T LoadWithFullPath<T>(string assetName, string path, object parameters = null)
         {
+            if(path == null)
+                throw new ArgumentNullException("path");
+
             path = PathHelpers.RemoveRoot(path, _directoryPath);
 
             return InternalLoad<T>(assetName, path, parameters);

@@ -6,6 +6,10 @@ namespace Pulsar.Assets
     {
         #region Methods
 
+        public virtual void Initialize(AssetEngine engine)
+        {
+        }
+
         public abstract LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder);
 
         protected void LoadFromFile<T>(string path, AssetFolder assetFolder, LoadedAsset result)

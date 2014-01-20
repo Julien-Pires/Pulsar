@@ -95,6 +95,8 @@ namespace Pulsar.Assets
 
                 _loaders.Add(supportedTypes[i], loader);
             }
+
+            loader.Initialize(this);
         }
 
         public void RemoveLoader<T>()
