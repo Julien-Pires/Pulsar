@@ -44,12 +44,6 @@
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PulsarRuntime\PulsarRuntime Xbox 360.csproj">
-      <Project>{7E857BC8-D357-43E1-91C3-863EB2D19B49}</Project>
-      <Name>PulsarRuntime Xbox 360</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Assets\AssetEngine.cs" />
     <Compile Include="Assets\AssetEngineService.cs" />
     <Compile Include="Assets\AssetFolder.cs" />
@@ -110,6 +104,7 @@
     <Compile Include="Graphics\ITextureWrapper.cs" />
     <Compile Include="Graphics\Material.cs" />
     <Compile Include="Graphics\Mesh.cs" />
+    <Compile Include="Graphics\MeshData.cs" />
     <Compile Include="Graphics\Node.cs" />
     <Compile Include="Graphics\PrefabFactory.cs" />
     <Compile Include="Graphics\Rendering\BufferAllocatedEventArgs.cs" />
@@ -148,6 +143,7 @@
     <Compile Include="Graphics\SceneGraph\SubEntity.cs" />
     <Compile Include="Graphics\Shader.cs" />
     <Compile Include="Graphics\SubMesh.cs" />
+    <Compile Include="Graphics\SubMeshData.cs" />
     <Compile Include="Graphics\Texture.cs" />
     <Compile Include="Graphics\TextureWrapper.cs" />
     <Compile Include="Input\AbstractButton.cs" />

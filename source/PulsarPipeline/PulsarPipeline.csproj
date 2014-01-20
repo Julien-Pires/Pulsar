@@ -53,13 +53,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PulsarModelProcessor.cs" />
+    <Compile Include="Graphics\PulsarModelProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PulsarRuntime\PulsarRuntime.csproj">
-      <Project>{266852a9-b8d8-48d3-8533-0a6e981894a1}</Project>
-      <Name>PulsarRuntime</Name>
+    <ProjectReference Include="..\Pulsar\Pulsar.csproj">
+      <Project>{2323eeaf-3931-4685-b3ab-91fd67bad3f0}</Project>
+      <Name>Pulsar</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

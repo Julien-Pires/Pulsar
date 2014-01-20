@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets;
 using Pulsar.Graphics.Rendering;
-using PulsarRuntime.Graphics;
 
 using XnaTexture = Microsoft.Xna.Framework.Graphics.Texture;
 
@@ -81,10 +80,10 @@ namespace Pulsar.Graphics.Asset
                 ModelMesh currentMesh = model.Meshes[i];
                 for (int j = 0; j < currentMesh.MeshParts.Count; j++)
                 {
-                    SubMeshData subData = data.SubMeshData[i];
+                    SubMeshData subData = data.SubMeshDatas[i];
                     SubMesh subMesh = mesh.CreateSubMesh(currentMesh.Name);
-                    subMesh.AxisAlignedBoundingBox = subData.BoundingVolume.BoundingBox;
-                    subMesh.BoundingSphere = subData.BoundingVolume.BoundingSphere;
+                    subMesh.AxisAlignedBoundingBox = subData.Aabb;
+                    subMesh.BoundingSphere = subData.BoundingSphere;
                     subMesh.BoneIndex = currentMesh.ParentBone.Index;
 
                     ModelMeshPart part = currentMesh.MeshParts[j];

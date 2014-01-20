@@ -73,9 +73,11 @@
     <Compile Include="Graphics\Asset\TextureParameters.cs" />
     <Compile Include="Graphics\GraphicsConstant.cs" />
     <Compile Include="Graphics\ITextureWrapper.cs" />
+    <Compile Include="Graphics\MeshData.cs" />
     <Compile Include="Graphics\SubMesh.cs" />
     <Compile Include="Graphics\Material.cs" />
     <Compile Include="Graphics\Asset\MaterialLoader.cs" />
+    <Compile Include="Graphics\SubMeshData.cs" />
     <Compile Include="Graphics\Texture.cs" />
     <Compile Include="Graphics\Asset\TextureLoader.cs" />
     <Compile Include="Graphics\Mesh.cs" />
@@ -176,12 +178,6 @@
     <Compile Include="Mathematic\Vector3Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Singleton.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PulsarRuntime\PulsarRuntime.csproj">
-      <Project>{266852a9-b8d8-48d3-8533-0a6e981894a1}</Project>
-      <Name>PulsarRuntime</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
