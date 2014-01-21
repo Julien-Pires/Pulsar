@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 namespace Pulsar.Graphics
 {
     [ContentProcessor(DisplayName = "Mesh - Pulsar")]
-    public class PulsarModelProcessor : ModelProcessor
+    public class MeshProcessor : ModelProcessor
     {
         #region Fields
 
