@@ -54,7 +54,6 @@
     <Compile Include="Assets\IAssetEngineService.cs" />
     <Compile Include="Assets\IAssetLoader.cs" />
     <Compile Include="Assets\LoadedAsset.cs" />
-    <Compile Include="Assets\LoadResult.cs" />
     <Compile Include="Assets\PathHelpers.cs" />
     <Compile Include="Assets\SearchResult.cs" />
     <Compile Include="Assets\SearchState.cs" />
