@@ -2,10 +2,19 @@
 
 namespace Pulsar.Assets
 {
+    /// <summary>
+    /// Provides methods to manipulate path
+    /// </summary>
     internal static class PathHelpers
     {
         #region Methods
 
+        /// <summary>
+        /// Removes a directory root from the beginning of a path
+        /// </summary>
+        /// <param name="path">Path to clean</param>
+        /// <param name="root">Directory to remove from the path</param>
+        /// <returns>Returns a cleaned path</returns>
         public static string RemoveRoot(string path, string root)
         {
             path = path.Replace(root, string.Empty);
@@ -15,6 +24,11 @@ namespace Pulsar.Assets
             return path;
         }
 
+        /// <summary>
+        /// Cleans a path to remove the first directory
+        /// </summary>
+        /// <param name="path">Path to clean</param>
+        /// <returns>Returns a cleaned path</returns>
         public static string GetDirectoryPath(string path)
         {
             path = CleanPath(path);
@@ -33,6 +47,11 @@ namespace Pulsar.Assets
             return path;
         }
 
+        /// <summary>
+        /// Cleans a path
+        /// </summary>
+        /// <param name="path">Path to clean</param>
+        /// <returns>Returns a cleaned path</returns>
         public static string CleanPath(string path)
         {
             path = path.Replace('/', '\\');
@@ -65,6 +84,13 @@ namespace Pulsar.Assets
             return path;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="position"></param>
+        /// <param name="removeLength"></param>
+        /// <returns></returns>
         public static int CollapseParentDirectory(ref string path, int position, int removeLength)
         {
             int num = path.LastIndexOf('\\', position - 1) + 1;

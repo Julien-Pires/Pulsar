@@ -2,7 +2,10 @@
 
 namespace Pulsar.Assets
 {
-    public sealed class DefaultLoader : AssetLoader
+    /// <summary>
+    /// Implements default loader behaviour
+    /// </summary>
+    internal sealed class DefaultLoader : AssetLoader
     {
         #region Fields
 
@@ -15,6 +18,15 @@ namespace Pulsar.Assets
 
         #region Methods
 
+        /// <summary>
+        /// Loads an asset
+        /// </summary>
+        /// <typeparam name="T">Type of asset</typeparam>
+        /// <param name="assetName">Name of the asset</param>
+        /// <param name="path">Path of the asset</param>
+        /// <param name="parameters">Optional parameters</param>
+        /// <param name="assetFolder">Folder where the asset will be stored</param>
+        /// <returns>Returns a loaded asset</returns>
         public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
             _result.Reset();
@@ -28,11 +40,17 @@ namespace Pulsar.Assets
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name of the loader
+        /// </summary>
         public override string Name
         {
             get { return LoaderName; }
         }
 
+        /// <summary>
+        /// Gets the list of assets supported by this loader
+        /// </summary>
         public override Type[] SupportedTypes
         {
             get { return _supportedTypes; }

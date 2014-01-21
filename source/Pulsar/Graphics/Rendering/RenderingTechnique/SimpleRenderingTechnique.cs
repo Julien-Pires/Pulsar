@@ -25,6 +25,11 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of SimpleRenderingTechnique class
+        /// </summary>
+        /// <param name="renderer">Renderer</param>
+        /// <param name="graphicsStorage">Storage</param>
         internal SimpleRenderingTechnique(Renderer renderer, Storage graphicsStorage)
         {
             _renderer = renderer;
@@ -42,7 +47,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         #region Methods
 
         /// <summary>
-        /// Render the GBuffer pass
+        /// Renders the GBuffer pass
         /// </summary>
         /// <param name="vp">Target viewport for the rendering</param>
         /// <param name="queue">Render queue containing objects to draw</param>
@@ -65,7 +70,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         }
 
         /// <summary>
-        /// Render a group of objects
+        /// Renders a group of objects
         /// </summary>
         /// <param name="group">Group of objects to render</param>
         private void RenderGroup(RenderQueueGroup group)
@@ -83,7 +88,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         }
 
         /// <summary>
-        /// Render a list of objects
+        /// Renders a list of objects
         /// </summary>
         /// <param name="geometries">List of renderable objects</param>
         private void RenderObjects(List<IRenderable> geometries)

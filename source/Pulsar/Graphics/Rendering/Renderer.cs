@@ -20,7 +20,6 @@ namespace Pulsar.Graphics.Rendering
 
         private bool _disposed;
         private readonly GraphicsDeviceManager _graphicsDeviceManager;
-        private readonly AssetEngine _assetEngine;
         private GraphicsDevice _graphicDevice;
         private SpriteBatch _spriteBatch;
         private readonly InstanceBatchManager _instancingManager;
@@ -31,19 +30,19 @@ namespace Pulsar.Graphics.Rendering
         #region Constructors
 
         /// <summary>
-        /// Constructor of the GraphicsRenderer class
+        /// Constructor of Renderer class
         /// </summary>
-        /// <param name="deviceManager">Graphics device manager</param>
+        /// <param name="deviceManager">GraphicsDeviceManager</param>
+        /// <param name="assetEngine">AssetEngine</param>
         internal Renderer(GraphicsDeviceManager deviceManager, AssetEngine assetEngine)
         {
             _graphicsDeviceManager = deviceManager;
-            _assetEngine = assetEngine;
             _graphicDevice = deviceManager.GraphicsDevice;
             deviceManager.DeviceCreated += GraphicsDeviceCreated;
 
             _spriteBatch = new SpriteBatch(_graphicDevice);
             _instancingManager = new InstanceBatchManager(this);
-            _renderingTechnique = new SimpleRenderingTechnique(this, _assetEngine[GraphicsConstant.Storage]);
+            _renderingTechnique = new SimpleRenderingTechnique(this, assetEngine[GraphicsConstant.Storage]);
         }
 
         #endregion
@@ -51,7 +50,7 @@ namespace Pulsar.Graphics.Rendering
         #region Methods
 
         /// <summary>
-        /// Disposes ressources
+        /// Disposes all ressources
         /// </summary>
         public void Dispose()
         {

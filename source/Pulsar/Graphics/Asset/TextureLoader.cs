@@ -10,6 +10,9 @@ using XnaTexture = Microsoft.Xna.Framework.Graphics.Texture;
 
 namespace Pulsar.Graphics.Asset
 {
+    /// <summary>
+    /// Represents a loader for Texture asset
+    /// </summary>
     public sealed class TextureLoader : AssetLoader
     {
         #region Fields
@@ -30,6 +33,10 @@ namespace Pulsar.Graphics.Asset
 
         #region Constructor
 
+        /// <summary>
+        /// Constructor of TextureLoader class
+        /// </summary>
+        /// <param name="deviceManager">GraphicsDeviceManager</param>
         internal TextureLoader(GraphicsDeviceManager deviceManager)
         {
             Debug.Assert(deviceManager != null);
@@ -43,16 +50,27 @@ namespace Pulsar.Graphics.Asset
 
         #region Methods
 
+        /// <summary>
+        /// Initializes the loader
+        /// </summary>
+        /// <param name="engine">Asset engine that use this loader</param>
         public override void Initialize(AssetEngine engine)
         {
             base.Initialize(engine);
 
             _textureFolder = engine[GraphicsConstant.Storage][GraphicsConstant.TextureFolderName];
             if (!_textureFolder.IsLoaded(MissingTexture2DName))
-                CreateMissingTexture2D(MissingTexture2DSize, 2, Color.White, Color.Blue);
+                CreateCheckerTexture2D(MissingTexture2DSize, 2, Color.White, Color.Blue);
         }
 
-        private void CreateMissingTexture2D(int size, int stripSize, Color odd, Color even)
+        /// <summary>
+        /// Create a 2D checker texture
+        /// </summary>
+        /// <param name="size">Size of the texture</param>
+        /// <param name="stripSize">Size of the stripe</param>
+        /// <param name="odd">Odd color</param>
+        /// <param name="even">Even color</param>
+        private void CreateCheckerTexture2D(int size, int stripSize, Color odd, Color even)
         {
             TextureParameters texParams = new TextureParameters
             {
@@ -78,6 +96,15 @@ namespace Pulsar.Graphics.Asset
             texture.SetData(textureData);
         }
 
+        /// <summary>
+        /// Loads an asset
+        /// </summary>
+        /// <typeparam name="T">Type of asset</typeparam>
+        /// <param name="assetName">Name of the asset</param>
+        /// <param name="path">Path of the asset</param>
+        /// <param name="parameters">Optional parameters</param>
+        /// <param name="assetFolder">Folder where the asset will be stored</param>
+        /// <returns>Returns a loaded asset</returns>
         public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
             TextureParameters textureParams;
@@ -85,7 +112,7 @@ namespace Pulsar.Graphics.Asset
             {
                 textureParams = parameters as TextureParameters;
                 if (textureParams == null)
-                    throw new ArgumentException("");
+                    throw new ArgumentException("Invalid parameters for this loader");
             }
             else
             {
@@ -138,7 +165,7 @@ namespace Pulsar.Graphics.Asset
                     break;
 
                 default:
-                    throw new Exception("");
+                    throw new Exception("Invalid asset source provided");
             }
             _fromFileResult.Reset();
             
@@ -154,16 +181,25 @@ namespace Pulsar.Graphics.Asset
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name of the loader
+        /// </summary>
         public override string Name
         {
             get { return LoaderName; }
         }
 
+        /// <summary>
+        /// Gets the list of assets supported by this loader
+        /// </summary>
         public override Type[] SupportedTypes
         {
             get { return _supportedTypes; }
         }
 
+        /// <summary>
+        /// Gets or sets a value that indicate if a missing texture is used when a load failed
+        /// </summary>
         public bool UseMissingTexture { get; set; }
 
         #endregion

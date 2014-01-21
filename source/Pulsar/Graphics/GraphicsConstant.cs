@@ -1,5 +1,8 @@
 ﻿namespace Pulsar.Graphics
 {
+    /// <summary>
+    /// Contains constant values for the graphics engine
+    /// </summary>
     internal static class GraphicsConstant
     {
         #region Fields

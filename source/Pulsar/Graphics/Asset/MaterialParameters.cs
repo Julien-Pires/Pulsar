@@ -4,10 +4,16 @@ using Pulsar.Assets;
 
 namespace Pulsar.Graphics.Asset
 {
+    /// <summary>
+    /// Defines parameters to load a Material instance
+    /// </summary>
     public sealed class MaterialParameters : Freezable
     {
         #region Fields
 
+        /// <summary>
+        /// Default parameters to create a new instance
+        /// </summary>
         public static readonly MaterialParameters NewInstance;
 
         private string _filename;
@@ -16,6 +22,9 @@ namespace Pulsar.Graphics.Asset
 
         #region Static constructor
 
+        /// <summary>
+        /// Static constructor of MaterialParameters class
+        /// </summary>
         static MaterialParameters()
         {
             NewInstance = new MaterialParameters
@@ -29,8 +38,14 @@ namespace Pulsar.Graphics.Asset
 
         #region Properties
 
+        /// <summary>
+        /// Gets the source of the material
+        /// </summary>
         public AssetSource Source { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the name of the file
+        /// </summary>
         public string Filename
         {
             get { return _filename; }

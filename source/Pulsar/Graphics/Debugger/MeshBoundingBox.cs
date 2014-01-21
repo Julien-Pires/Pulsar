@@ -46,6 +46,8 @@ namespace Pulsar.Graphics.Debugger
         /// <summary>
         /// Constructor of MeshBoundingBox class
         /// </summary>
+        /// <param name="name">Name of the mesh</param>
+        /// <param name="assetEngine">AssetEngine</param>
         internal MeshBoundingBox(string name, AssetEngine assetEngine)
         {
             Debug.Assert(assetEngine != null);
@@ -61,6 +63,10 @@ namespace Pulsar.Graphics.Debugger
 
         #region Static methods
 
+        /// <summary>
+        /// Generates indices for an index buffer
+        /// </summary>
+        /// <param name="ibo">Index buffer instance</param>
         private static void GenerateIndices(IndexBufferObject ibo)
         {
             int[] indices = new int[IndexCount];
@@ -102,6 +108,9 @@ namespace Pulsar.Graphics.Debugger
 
         #region Methods
 
+        /// <summary>
+        /// Disposes all resources
+        /// </summary>
         public void Dispose()
         {
             if(_isDisposed) return;
@@ -113,6 +122,9 @@ namespace Pulsar.Graphics.Debugger
             _isDisposed = true;
         }
 
+        /// <summary>
+        /// Loads asset
+        /// </summary>
         private void LoadAsset()
         {
             _internalMesh = _storage[GraphicsConstant.MeshFolderName].Load<Mesh>(Name, MeshParameters.NewInstance);
@@ -133,6 +145,9 @@ namespace Pulsar.Graphics.Debugger
                 Material = _storage[GraphicsConstant.MaterialFolderName].Load<Material>(AabbMaterial);
         }
 
+        /// <summary>
+        /// Initializes mesh
+        /// </summary>
         private void InitializeMesh()
         {
             _internalMesh.Begin(PrimitiveType.LineList, true, false, true);

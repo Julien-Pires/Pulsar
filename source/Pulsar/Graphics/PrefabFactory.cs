@@ -7,7 +7,7 @@ using Pulsar.Graphics.Asset;
 namespace Pulsar.Graphics
 {
     /// <summary>
-    /// Used to create various type of primitive mesh(box, sphere, ...)
+    /// Used to create various type of primitive mesh
     /// </summary>
     public sealed class PrefabFactory
     {
@@ -20,8 +20,9 @@ namespace Pulsar.Graphics
         #region Constructors
 
         /// <summary>
-        /// Constructor of the PrefabFactory class
+        /// Constructor of PrefabFactory class
         /// </summary>
+        /// <param name="assetEngine">AssetEngine</param>
         internal PrefabFactory(AssetEngine assetEngine)
         {
             _assetEngine = assetEngine;
@@ -31,6 +32,16 @@ namespace Pulsar.Graphics
 
         #region Methods
 
+        /// <summary>
+        /// Creates a box
+        /// </summary>
+        /// <param name="name">Name of the mesh</param>
+        /// <param name="width">Width of the box</param>
+        /// <param name="height">Height of the box</param>
+        /// <param name="depth">Depth of the box</param>
+        /// <param name="storage">Name of the storage</param>
+        /// <param name="folder">Name of the folder</param>
+        /// <returns>Returns a mesh instance</returns>
         public Mesh CreateBox(string name, float width, float height, float depth, string storage,
             string folder)
         {
@@ -40,14 +51,14 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Creates a mesh that represents a box
+        /// Creates a box
         /// </summary>
         /// <param name="name">Name of the mesh</param>
         /// <param name="width">Width of the box</param>
         /// <param name="height">Height of the box</param>
         /// <param name="depth">Depth of the box</param>
-        /// <param name="storage">Storage used to store the mesh</param>
-        /// <returns>Returns a mesh</returns>
+        /// <param name="assetFolder">Asset folder</param>
+        /// <returns>Returns a mesh instance</returns>
         public Mesh CreateBox(string name, float width, float height, float depth, AssetFolder assetFolder)
         {
             float halfWidth = width/2.0f;

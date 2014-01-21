@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Pulsar.Assets
 {
+    /// <summary>
+    /// Contains datas about a loaded asset
+    /// </summary>
     public sealed class LoadedAsset
     {
         #region Fields
@@ -13,6 +16,9 @@ namespace Pulsar.Assets
 
         #region Constructor
 
+        /// <summary>
+        /// Constructor of LoadedAsset class
+        /// </summary>
         internal LoadedAsset()
         {
             Disposables = new List<IDisposable>(DefaultCapacity);
@@ -22,6 +28,9 @@ namespace Pulsar.Assets
 
         #region Methods
 
+        /// <summary>
+        /// Resets the instance
+        /// </summary>
         internal void Reset()
         {
             Name = string.Empty;
@@ -33,10 +42,19 @@ namespace Pulsar.Assets
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets the name of the asset
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Gets or sets the asset
+        /// </summary>
         public object Asset { get; set; }
 
+        /// <summary>
+        /// Gets a list of disposable resources used by the asset
+        /// </summary>
         public List<IDisposable> Disposables { get; private set; }
 
         #endregion

@@ -12,6 +12,9 @@ using XnaTexture = Microsoft.Xna.Framework.Graphics.Texture;
 
 namespace Pulsar.Graphics.Asset
 {
+    /// <summary>
+    /// Represents a loader for Mesh asset
+    /// </summary>
     public sealed class MeshLoader : AssetLoader
     {
         #region Fields
@@ -32,6 +35,11 @@ namespace Pulsar.Graphics.Asset
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of MeshLoader class
+        /// </summary>
+        /// <param name="deviceManager">GraphicsDeviceManager</param>
+        /// <param name="bufferManager">Buffer manager</param>
         internal MeshLoader(GraphicsDeviceManager deviceManager, BufferManager bufferManager)
         {
             Debug.Assert(deviceManager != null);
@@ -44,6 +52,14 @@ namespace Pulsar.Graphics.Asset
 
         #region Static methods
 
+        /// <summary>
+        /// Converts an XNA model to a mesh
+        /// </summary>
+        /// <param name="meshName">Name of the mesh</param>
+        /// <param name="model">XNA model</param>
+        /// <param name="bufferManager">Buffer manager</param>
+        /// <param name="assetFolder">Asset folder</param>
+        /// <param name="result">Result that contains the mesh and his resources</param>
         private static void ProcessModel(string meshName, Model model, BufferManager bufferManager, 
             AssetFolder assetFolder, LoadedAsset result)
         {
@@ -99,7 +115,7 @@ namespace Pulsar.Graphics.Asset
                     subMesh.IndexData.StartIndex = part.StartIndex;
                     subMesh.IndexData.IndexCount = part.IndexBuffer.IndexCount;
 
-                    string materialName = string.Format("{0}/{1}_material", mesh.Name, currentMesh.Name);
+                    string materialName = string.Format("{0}\\{1}_material", mesh.Name, currentMesh.Name);
                     subMesh.Material = CreateMaterial(materialName, part.Effect, subData.TexturesName, assetFolder);
                 }
             }
@@ -108,6 +124,14 @@ namespace Pulsar.Graphics.Asset
             mesh.UpdateMeshInfo();
         }
 
+        /// <summary>
+        /// Creates a material from an effect
+        /// </summary>
+        /// <param name="materialName">Name of the material</param>
+        /// <param name="effect">Effect</param>
+        /// <param name="texturesName">Map with the name of texture to extract</param>
+        /// <param name="assetFolder">Asset folder</param>
+        /// <returns>Returns a material instance</returns>
         private static Material CreateMaterial(string materialName, Effect effect, Dictionary<string, string> texturesName,
              AssetFolder assetFolder)
         {
@@ -127,6 +151,12 @@ namespace Pulsar.Graphics.Asset
             return material;
         }
 
+        /// <summary>
+        /// Gets a texture from a folder with a specified path
+        /// </summary>
+        /// <param name="path">Full path of the texture</param>
+        /// <param name="folder">Asset folder</param>
+        /// <returns>Returns a texture instance</returns>
         private static Texture GetTextureFromFullPath(string path, AssetFolder folder)
         {
             string assetName = folder.GetNameFromFullPath(path);
@@ -134,6 +164,11 @@ namespace Pulsar.Graphics.Asset
             return folder.Load<Texture>(assetName);
         }
 
+        /// <summary>
+        /// Transfers disposable from XNA model result to mesh result
+        /// </summary>
+        /// <param name="fileResult">XNA model result</param>
+        /// <param name="finalResult">Mesh result</param>
         private static void TransferDisposable(LoadedAsset fileResult, LoadedAsset finalResult)
         {
             List<IDisposable> modelDisposables = fileResult.Disposables;
@@ -155,6 +190,15 @@ namespace Pulsar.Graphics.Asset
 
         #region Methods
 
+        /// <summary>
+        /// Loads an asset
+        /// </summary>
+        /// <typeparam name="T">Type of asset</typeparam>
+        /// <param name="assetName">Name of the asset</param>
+        /// <param name="path">Path of the asset</param>
+        /// <param name="parameters">Optional parameters</param>
+        /// <param name="assetFolder">Folder where the asset will be stored</param>
+        /// <returns>Returns a loaded asset</returns>
         public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
             _result.Reset();
@@ -165,7 +209,7 @@ namespace Pulsar.Graphics.Asset
             {
                 meshParameters = parameters as MeshParameters;
                 if (meshParameters == null)
-                    throw new Exception("");
+                    throw new Exception("Invalid parameters for this loader");
             }
             else
             {
@@ -188,6 +232,9 @@ namespace Pulsar.Graphics.Asset
                     _result.Asset = mesh;
                     _result.Disposables.Add(mesh);
                     break;
+
+                default:
+                    throw new Exception("Invalid asset source provided");
             }
 
             _fromFileResult.Reset();
@@ -199,11 +246,17 @@ namespace Pulsar.Graphics.Asset
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name of the loader
+        /// </summary>
         public override string Name
         {
             get { return LoaderName; }
         }
 
+        /// <summary>
+        /// Gets the list of assets supported by this loader
+        /// </summary>
         public override Type[] SupportedTypes
         {
             get { return _supportedTypes; }

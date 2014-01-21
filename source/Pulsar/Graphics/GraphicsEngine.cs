@@ -12,7 +12,7 @@ using Pulsar.Graphics.Rendering;
 namespace Pulsar.Graphics
 {
     /// <summary>
-    /// Class used as an entry point for the Graphics system
+    /// Represents an entry point for the Graphics system
     /// </summary>
     public sealed class GraphicsEngine : IDisposable
     {
@@ -34,9 +34,9 @@ namespace Pulsar.Graphics
         #region Constructors
 
         /// <summary>
-        /// Constructor of the GraphicsEngine class
+        /// Constructor of GraphicsEngine class
         /// </summary>
-        /// <param name="services">GameServiceContainer used by the engine</param>
+        /// <param name="services">Services provider</param>
         public GraphicsEngine(IServiceProvider services)
         {
             if (services == null) 
@@ -45,12 +45,12 @@ namespace Pulsar.Graphics
             GraphicsDeviceManager deviceManager = services.GetService(typeof(IGraphicsDeviceManager)) 
                 as GraphicsDeviceManager;
             if (deviceManager == null) 
-                throw new NullReferenceException("No Graphics device service found");
+                throw new NullReferenceException("Failed to find GraphicsDeviceManager");
 
             IAssetEngineService assetService = services.GetService(typeof(IAssetEngineService))
                 as IAssetEngineService;
             if (assetService == null)
-                throw new NullReferenceException("");
+                throw new NullReferenceException("Failed to find AssetEngine service");
 
             _deviceManager = deviceManager;
             _bufferManager = new BufferManager(_deviceManager);
@@ -64,6 +64,9 @@ namespace Pulsar.Graphics
 
         #region Methods
 
+        /// <summary>
+        /// Initializes resources
+        /// </summary>
         private void InitializeResources()
         {
             _renderer = new Renderer(_deviceManager, _assetEngine);
@@ -71,6 +74,9 @@ namespace Pulsar.Graphics
             _prefabFactory = new PrefabFactory(_assetEngine);
         }
 
+        /// <summary>
+        /// Initializes storage and loaders
+        /// </summary>
         private void InitializeStorage()
         {
             Storage storage = _assetEngine.CreateStorage(GraphicsConstant.Storage);
@@ -85,6 +91,9 @@ namespace Pulsar.Graphics
             _assetEngine.AddLoader(new MeshLoader(_deviceManager, _bufferManager));
         }
 
+        /// <summary>
+        /// Releases storage and loaders
+        /// </summary>
         private void ReleaseStorage()
         {
             _assetEngine.RemoveLoader(ShaderLoader.LoaderName);
@@ -194,6 +203,9 @@ namespace Pulsar.Graphics
             get { return _frameStats; }
         }
 
+        /// <summary>
+        /// Gets a prefab factory
+        /// </summary>
         public PrefabFactory PrefabFactory
         {
             get { return _prefabFactory; }

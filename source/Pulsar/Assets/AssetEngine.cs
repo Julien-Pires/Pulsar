@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Pulsar.Assets
 {
+    /// <summary>
+    /// Represents the entry point of the asset engine
+    /// </summary>
     public sealed class AssetEngine : IDisposable
     {
         #region Fields
@@ -11,8 +14,8 @@ namespace Pulsar.Assets
         internal readonly IServiceProvider ServiceProvider;
 
         private bool _isDisposed;
-        private readonly Storage _systemStorage;
-        private readonly Storage _globalStorage;
+        private Storage _systemStorage;
+        private Storage _globalStorage;
         private Dictionary<string, Storage> _storages = new Dictionary<string, Storage>();
         private readonly Dictionary<Type, IAssetLoader> _loaders = new Dictionary<Type, IAssetLoader>();
         private readonly Dictionary<string, IAssetLoader> _loadersByName = new Dictionary<string, IAssetLoader>();
@@ -21,6 +24,10 @@ namespace Pulsar.Assets
 
         #region Constructors
 
+        /// <summary>
+        /// Constructors of AssetEngine class
+        /// </summary>
+        /// <param name="serviceProvider">Services provider</param>
         public AssetEngine(IServiceProvider serviceProvider)
         {
             ServiceProvider = serviceProvider;
@@ -32,6 +39,11 @@ namespace Pulsar.Assets
 
         #region Operators
 
+        /// <summary>
+        /// Gets the storage with a specified name
+        /// </summary>
+        /// <param name="name">Name of the storage</param>
+        /// <returns>Returns the storage with the specified name</returns>
         public Storage this[string name]
         {
             get { return GetStorage(name); }
@@ -41,6 +53,9 @@ namespace Pulsar.Assets
 
         #region Methods
 
+        /// <summary>
+        /// Disposes all resources
+        /// </summary>
         public void Dispose()
         {
             if(_isDisposed) return;
@@ -49,26 +64,46 @@ namespace Pulsar.Assets
             {
                 foreach (Storage storage in _storages.Values)
                     storage.Dispose();
+
+                _globalStorage.Dispose();
+                _systemStorage.Dispose();
             }
             finally
             {
                 _storages.Clear();
                 _storages = null;
+                _globalStorage = null;
+                _systemStorage = null;
             }
 
             _isDisposed = true;
         }
 
+        /// <summary>
+        /// Gets the loader for a specified type of asset
+        /// </summary>
+        /// <typeparam name="T">Type of asset</typeparam>
+        /// <returns>Returns a loader</returns>
         public IAssetLoader GetLoader<T>() 
         {
             return GetLoader(typeof (T));
         }
 
+        /// <summary>
+        /// Gets the loader with a specified name
+        /// </summary>
+        /// <param name="name">Name of the loader</param>
+        /// <returns>Returns a loader</returns>
         public IAssetLoader GetLoader(string name)
         {
             return _loadersByName[name];
         }
 
+        /// <summary>
+        /// Gets the loader for a specified type of asset
+        /// </summary>
+        /// <param name="assetType">Type of asset</param>
+        /// <returns>Returns a loader</returns>
         public IAssetLoader GetLoader(Type assetType)
         {
             if(assetType == null)
@@ -80,6 +115,10 @@ namespace Pulsar.Assets
             return loader;
         }
 
+        /// <summary>
+        /// Adds an asset loader
+        /// </summary>
+        /// <param name="loader">Loader to add</param>
         public void AddLoader(IAssetLoader loader)
         {
             if(loader == null)
@@ -99,11 +138,19 @@ namespace Pulsar.Assets
             loader.Initialize(this);
         }
 
+        /// <summary>
+        /// Removes a loader for a specified type of asset
+        /// </summary>
+        /// <typeparam name="T">Type of asset</typeparam>
         public void RemoveLoader<T>()
         {
             RemoveLoader(typeof(T));
         }
 
+        /// <summary>
+        /// Removes a loader for a specified type of asset
+        /// </summary>
+        /// <param name="assetType">Type of asset</param>
         public void RemoveLoader(Type assetType)
         {
             if(assetType == null)
@@ -112,6 +159,11 @@ namespace Pulsar.Assets
             _loaders[assetType] = null;
         }
 
+        /// <summary>
+        /// Removes a loader
+        /// </summary>
+        /// <param name="loader">Loader to remove</param>
+        /// <returns>Returns true if the loader is removed successfully otherwise false</returns>
         public bool RemoveLoader(IAssetLoader loader)
         {
             if(loader == null)
@@ -133,6 +185,11 @@ namespace Pulsar.Assets
             return true;
         }
 
+        /// <summary>
+        /// Removes a loader with a specified name
+        /// </summary>
+        /// <param name="name">Name of the loader</param>
+        /// <returns>Returns true if the loader is removed successfully otherwise false</returns>
         public bool RemoveLoader(string name)
         {
             IAssetLoader loader;
@@ -142,6 +199,11 @@ namespace Pulsar.Assets
             return RemoveLoader(loader);
         }
 
+        /// <summary>
+        /// Creates a storage
+        /// </summary>
+        /// <param name="name">Name of the storage</param>
+        /// <returns>Returns a new storage</returns>
         public Storage CreateStorage(string name)
         {
             if(string.IsNullOrEmpty(name))
@@ -156,6 +218,11 @@ namespace Pulsar.Assets
             return storage;
         }
 
+        /// <summary>
+        /// Destroys a storage
+        /// </summary>
+        /// <param name="name">Name of the storage</param>
+        /// <returns>Returns true if the storage is destroyed otherwise false</returns>
         public bool DestroyStorage(string name)
         {
             Storage storage;
@@ -170,6 +237,11 @@ namespace Pulsar.Assets
             return true;
         }
 
+        /// <summary>
+        /// Gets a storage with a specified name
+        /// </summary>
+        /// <param name="name">Name of the storage</param>
+        /// <returns>Returns a storage instance if found otherwise null</returns>
         public Storage GetStorage(string name)
         {
             Storage storage;
@@ -182,11 +254,17 @@ namespace Pulsar.Assets
 
         #region Properties
 
+        /// <summary>
+        /// Gets the system storage
+        /// </summary>
         internal Storage SystemStorage
         {
             get { return _systemStorage; }
         }
 
+        /// <summary>
+        /// Gets the global storage
+        /// </summary>
         public Storage GlobalStorage
         {
             get { return _globalStorage; }

@@ -25,6 +25,12 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of SceneTree class
+        /// </summary>
+        /// <param name="name">Name of the scene tree</param>
+        /// <param name="renderer">Renderer</param>
+        /// <param name="assetEngine">AssetEngine</param>
         internal SceneTree(string name, Renderer renderer, AssetEngine assetEngine)
         {
             Name = name;
@@ -38,6 +44,9 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Methods
 
+        /// <summary>
+        /// Disposes all resources
+        /// </summary>
         public void Dispose()
         {
             if (_isDisposed) return;
@@ -86,6 +95,14 @@ namespace Pulsar.Graphics.SceneGraph
             _root.FindVisibleObjects(cam, _queue, true);
         }
 
+        /// <summary>
+        /// Creates an entity
+        /// </summary>
+        /// <param name="name">Name of the entity</param>
+        /// <param name="meshName">Name of the mesh</param>
+        /// <param name="storage">Storage to load the mesh from</param>
+        /// <param name="folder">Asset folder</param>
+        /// <returns>Returns an entity instance</returns>
         public Entity CreateEntity(string name, string meshName, string storage, string folder)
         {
             AssetFolder assetFolder = AssetEngine[storage][folder];
@@ -93,6 +110,13 @@ namespace Pulsar.Graphics.SceneGraph
             return CreateEntity(name, meshName, assetFolder);
         }
 
+        /// <summary>
+        /// Creates an entity
+        /// </summary>
+        /// <param name="name">Name of the entity</param>
+        /// <param name="meshName">Name of the mesh</param>
+        /// <param name="assetFolder">Asset folder</param>
+        /// <returns>Returns an entity instance</returns>
         public Entity CreateEntity(string name, string meshName, AssetFolder assetFolder)
         {
             Mesh mesh = assetFolder.Load<Mesh>(meshName);
@@ -100,6 +124,12 @@ namespace Pulsar.Graphics.SceneGraph
             return CreateEntity(name, mesh);
         }
 
+        /// <summary>
+        /// Creates an entity from specified mesh
+        /// </summary>
+        /// <param name="name">Name of the entity</param>
+        /// <param name="mesh">Mesh</param>
+        /// <returns>Returns an entity instance</returns>
         public Entity CreateEntity(string name, Mesh mesh)
         {
             Entity entity = new Entity(name, mesh, this);
@@ -108,11 +138,21 @@ namespace Pulsar.Graphics.SceneGraph
             return entity;
         }
 
+        /// <summary>
+        /// Destroys an entity
+        /// </summary>
+        /// <param name="entity">Entity</param>
+        /// <returns>Returns true if the entity is destroyed otherwise false</returns>
         public bool DestroyEntity(Entity entity)
         {
             return DestroyEntity(entity.Name);
         }
 
+        /// <summary>
+        /// Destroys an entity with a specified name
+        /// </summary>
+        /// <param name="name">Name of the entity</param>
+        /// <returns>Returns true if the entity is destroyed otherwise false</returns>
         public bool DestroyEntity(string name)
         {
             IMovable entity;
@@ -161,8 +201,14 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name of the scene tree
+        /// </summary>
         public string Name { get; private set; }
 
+        /// <summary>
+        /// Gets an AssetEngine instance
+        /// </summary>
         internal AssetEngine AssetEngine { get; private set; }
 
         /// <summary>
