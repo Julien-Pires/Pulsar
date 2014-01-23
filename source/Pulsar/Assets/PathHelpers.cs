@@ -25,11 +25,12 @@ namespace Pulsar.Assets
         }
 
         /// <summary>
-        /// Cleans a path to remove the first directory
+        /// Cleans a path to remove the first folder
         /// </summary>
         /// <param name="path">Path to clean</param>
+        /// <param name="deep">Number of folder to remove</param>
         /// <returns>Returns a cleaned path</returns>
-        public static string GetDirectoryPath(string path)
+        public static string RemovesFirstFolder(string path, int deep)
         {
             path = CleanPath(path);
 
@@ -43,6 +44,9 @@ namespace Pulsar.Assets
             path = path.Substring(index);
             while (path.StartsWith("\\"))
                 path = path.Substring("\\".Length);
+
+            if (deep > 0)
+                path = RemovesFirstFolder(path, deep - 1);
 
             return path;
         }

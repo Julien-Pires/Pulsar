@@ -34,7 +34,7 @@ namespace Pulsar.Assets
             Debug.Assert(engine != null);
 
             _engine = engine;
-            _directoryPath = PathHelpers.GetDirectoryPath(path);
+            _directoryPath = PathHelpers.RemovesFirstFolder(path, 0);
             _folderManager = new FolderManager(path, this, _engine.ServiceProvider);
         }
 
