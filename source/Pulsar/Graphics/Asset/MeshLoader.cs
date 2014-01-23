@@ -202,7 +202,6 @@ namespace Pulsar.Graphics.Asset
         public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
             _result.Reset();
-            _result.Name = assetName;
 
             MeshParameters meshParameters;
             if (parameters != null)

@@ -170,7 +170,6 @@ namespace Pulsar.Graphics.Asset
             _fromFileResult.Reset();
             
             _result.Reset();
-            _result.Name = assetName;
             _result.Asset = texture;
             _result.Disposables.Add(texture);
 

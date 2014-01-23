@@ -33,7 +33,6 @@ namespace Pulsar.Assets
         /// </summary>
         internal void Reset()
         {
-            Name = string.Empty;
             Asset = null;
             Disposables.Clear();
         }
@@ -41,11 +40,6 @@ namespace Pulsar.Assets
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets or sets the name of the asset
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the asset

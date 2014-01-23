@@ -67,7 +67,6 @@ namespace Pulsar.Graphics.Asset
                     throw new Exception("Invalid asset source provided");
             }
             _result.Reset();
-            _result.Name = assetName;
             _result.Asset = material;
 
             return _result;

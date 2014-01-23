@@ -30,7 +30,6 @@ namespace Pulsar.Assets
         public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
             _result.Reset();
-            _result.Name = assetName;
             LoadFromFile<T>(path, assetFolder, _result);
 
             return _result;
