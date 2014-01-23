@@ -60,40 +60,15 @@ namespace Pulsar.Graphics.Asset
 
             _textureFolder = engine[GraphicsConstant.Storage][GraphicsConstant.TextureFolderName];
             if (!_textureFolder.IsLoaded(MissingTexture2DName))
-                CreateCheckerTexture2D(MissingTexture2DSize, 2, Color.White, Color.Blue);
-        }
-
-        /// <summary>
-        /// Create a 2D checker texture
-        /// </summary>
-        /// <param name="size">Size of the texture</param>
-        /// <param name="stripSize">Size of the stripe</param>
-        /// <param name="odd">Odd color</param>
-        /// <param name="even">Even color</param>
-        private void CreateCheckerTexture2D(int size, int stripSize, Color odd, Color even)
-        {
-            TextureParameters texParams = new TextureParameters
             {
-                Height = size,
-                Width = size
-            };
-            Texture texture = _textureFolder.Load<Texture>(MissingTexture2DName, texParams);
-
-            Color[] textureData = new Color[size * size];
-            for (int x = 0; x < size; x++)
-            {
-                for (int y = 0; y < size; y++)
+                TextureParameters texParams = new TextureParameters
                 {
-                    bool hasColor = (((x & stripSize) == 0) ^ ((y & stripSize) == 0));
-                    int idx = (x * size) + y;
-
-                    if (hasColor)
-                        textureData[idx] = odd;
-                    else
-                        textureData[idx] = even;
-                }
+                    Height = MissingTexture2DSize,
+                    Width = MissingTexture2DSize
+                };
+                Texture missingTexture2D = _textureFolder.Load<Texture>(MissingTexture2DName, texParams);
+                Texture.CreateCheckerTexture(missingTexture2D, 4, Color.White, Color.Blue);
             }
-            texture.SetData(textureData);
         }
 
         /// <summary>

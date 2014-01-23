@@ -121,6 +121,36 @@ namespace Pulsar.Graphics
 
         #endregion
 
+        #region Static methods
+
+        /// <summary>
+        /// Creates a checker texture
+        /// </summary>
+        /// <typeparam name="T">Pixel format</typeparam>
+        /// <param name="texture">Texture to fill</param>
+        /// <param name="stripSize">Size of the stripe</param>
+        /// <param name="odd">Odd color</param>
+        /// <param name="even">Even color</param>
+        public static void CreateCheckerTexture<T>(Texture texture, int stripSize, T odd, T even) where T : struct
+        {
+            T[] data = new T[texture.Width * texture.Height];
+            for (int x = 0; x < texture.Width; x++)
+            {
+                for (int y = 0; y < texture.Height; y++)
+                {
+                    bool hasColor = (((x & stripSize) == 0) ^ ((y & stripSize) == 0));
+                    int idx = (x * texture.Width) + y;
+                    if (hasColor)
+                        data[idx] = odd;
+                    else
+                        data[idx] = even;
+                }
+            }
+            texture.SetData(data);
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
