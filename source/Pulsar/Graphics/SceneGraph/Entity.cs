@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-using Pulsar.Assets.Graphics.Models;
 using Pulsar.Graphics.Debugger;
 
 namespace Pulsar.Graphics.SceneGraph
@@ -15,14 +14,11 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
-        /// <summary>
-        /// Indicates if the AABB of this entity must be rendered
-        /// </summary>
-        public bool RenderAabb;
-
         internal Matrix[] BonesTransform;
         internal int BonesCount;
 
+        private bool _renderAabb;
+        private readonly SceneTree _sceneTree;
         private MeshBoundingBox _meshAabb;
         private Mesh _mesh;
         private readonly List<SubEntity> _subEntities = new List<SubEntity>();
@@ -31,27 +27,26 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Constructors
 
-        /// <summary>
-        /// Constructor of Entity class
-        /// </summary>
-        internal Entity()
+        internal Entity(string name, Mesh m, SceneTree sceneTree)
         {
-            Visible = true;
-        }
-
-        /// <summary>
-        /// Constructor of Entity class
-        /// </summary>
-        /// <param name="m">Mesh associated to this entity</param>
-        internal Entity(Mesh m) : this()
-        {
+            _sceneTree = sceneTree;
             _mesh = m;
+            Name = name;
+            Visible = true;
             ProcessMesh();
         }
 
         #endregion
 
         #region Methods
+
+        protected override void Dispose(bool dispose)
+        {
+            if (!dispose) return;
+
+            if(_meshAabb != null)
+                _meshAabb.Dispose();
+        }
 
         /// <summary>
         /// Extracts data from the associated mesh
@@ -93,9 +88,6 @@ namespace Pulsar.Graphics.SceneGraph
                 queue.AddRenderable(_subEntities[i]);
 
             if (!RenderAabb) return;
-
-            if (_meshAabb == null) 
-                _meshAabb = new MeshBoundingBox();
 
             _meshAabb.UpdateBox(WorldAabb);
             queue.AddRenderable(_meshAabb);
@@ -142,6 +134,21 @@ namespace Pulsar.Graphics.SceneGraph
         #endregion
 
         #region Properties
+
+        public bool RenderAabb
+        {
+            get { return _renderAabb; }
+            set
+            {
+                if (value && (_meshAabb == null))
+                {
+                    string name = string.Format("{0}_{1}_Aabb", _sceneTree.Name, Name);
+                    _meshAabb = new MeshBoundingBox(name, _sceneTree.AssetEngine);
+                }
+
+                _renderAabb = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating if this entity use instancing for draw calls

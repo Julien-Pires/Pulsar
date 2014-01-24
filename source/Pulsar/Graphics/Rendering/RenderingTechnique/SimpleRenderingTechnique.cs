@@ -3,9 +3,8 @@
 using Microsoft.Xna.Framework;
 
 using Pulsar.Assets;
-using Pulsar.Assets.Graphics.Shaders;
+using Pulsar.Graphics.Asset;
 using Pulsar.Graphics.SceneGraph;
-
 
 namespace Pulsar.Graphics.Rendering.RenderingTechnique
 {
@@ -16,7 +15,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
     {
         #region Fields
 
-        private const string ShaderFile = "Shaders/SimpleShader";
+        private const string ShaderFile = "SimpleShader";
         private const string ShaderName = "SimpleRenderingShader";
 
         private readonly SimpleRenderingShader _shader;
@@ -29,12 +28,18 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         /// <summary>
         /// Constructor of SimpleRenderingTechnique class
         /// </summary>
-        /// <param name="renderer"></param>
-        internal SimpleRenderingTechnique(Renderer renderer)
+        /// <param name="renderer">Renderer</param>
+        /// <param name="graphicsStorage">Storage</param>
+        internal SimpleRenderingTechnique(Renderer renderer, Storage graphicsStorage)
         {
             _renderer = renderer;
-            _shader = (SimpleRenderingShader)ShaderManager.Instance.LoadShader(ShaderName, 
-                AssetStorageManager.Instance.System.Name, ShaderFile, typeof(SimpleRenderingShader));
+
+            ShaderParameters shaderParameters = new ShaderParameters
+            {
+                Filename = ShaderFile,
+                ShaderType = typeof(SimpleRenderingShader)
+            };
+            _shader = graphicsStorage[GraphicsConstant.ShaderFolderName].Load<Shader>(ShaderName, shaderParameters) as SimpleRenderingShader;
         }
 
         #endregion
@@ -42,7 +47,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         #region Methods
 
         /// <summary>
-        /// Render the GBuffer pass
+        /// Renders the GBuffer pass
         /// </summary>
         /// <param name="vp">Target viewport for the rendering</param>
         /// <param name="queue">Render queue containing objects to draw</param>
@@ -65,7 +70,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         }
 
         /// <summary>
-        /// Render a group of objects
+        /// Renders a group of objects
         /// </summary>
         /// <param name="group">Group of objects to render</param>
         private void RenderGroup(RenderQueueGroup group)
@@ -83,7 +88,7 @@ namespace Pulsar.Graphics.Rendering.RenderingTechnique
         }
 
         /// <summary>
-        /// Render a list of objects
+        /// Renders a list of objects
         /// </summary>
         /// <param name="geometries">List of renderable objects</param>
         private void RenderObjects(List<IRenderable> geometries)

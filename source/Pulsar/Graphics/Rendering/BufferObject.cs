@@ -123,7 +123,7 @@ namespace Pulsar.Graphics.Rendering
         /// Sets the data stored in the buffer
         /// </summary>
         /// <typeparam name="T">Type of element stored in the buffer</typeparam>
-        /// <param name="data">Array in which to store data</param>
+        /// <param name="data">Elements to add</param>
         public void SetData<T>(T[] data) where T : struct
         {
             SetData(data, 0, data.Length, SetDataOptions.None);
@@ -133,7 +133,7 @@ namespace Pulsar.Graphics.Rendering
         /// Sets the data stored in the buffer
         /// </summary>
         /// <typeparam name="T">Type of element stored in the buffer</typeparam>
-        /// <param name="data">Array in which to store data</param>
+        /// <param name="data">Elements to add</param>
         /// <param name="startIndex">Index of the first element</param>
         /// <param name="elementCount">Number of element to set</param>
         public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
@@ -145,7 +145,7 @@ namespace Pulsar.Graphics.Rendering
         /// Sets the data stored in the buffer
         /// </summary>
         /// <typeparam name="T">Type of element stored in the buffer</typeparam>
-        /// <param name="data">Array in which to store data</param>
+        /// <param name="data">Elements to add</param>
         /// <param name="startIndex">Index of the first element</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>
@@ -159,7 +159,7 @@ namespace Pulsar.Graphics.Rendering
         /// </summary>
         /// <typeparam name="T">Type of element stored in the buffer</typeparam>
         /// <param name="bufferOffset">Offset in the buffer to the data</param>
-        /// <param name="data">Array in which to store data</param>
+        /// <param name="data">Elements to add</param>
         /// <param name="startIndex">Index of the first element</param>
         /// <param name="elementCount">Number of element to set</param>
         /// <param name="option">Settings option</param>

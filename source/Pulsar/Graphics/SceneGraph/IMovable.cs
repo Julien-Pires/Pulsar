@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Pulsar.Core;
 
 namespace Pulsar.Graphics.SceneGraph
@@ -6,7 +7,7 @@ namespace Pulsar.Graphics.SceneGraph
     /// <summary>
     /// Defines a movable object in a scene graph
     /// </summary>
-    public interface IMovable
+    public interface IMovable : IDisposable
     {
         #region Methods
 

@@ -28,7 +28,7 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Shaders\SimpleShader.fx">
+    <Compile Include="Graphics\Shaders\SimpleShader.fx">
       <Name>SimpleShader</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>

@@ -61,6 +61,10 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Methods
 
+        public void Dispose()
+        {
+        }
+
         /// <summary>
         /// Renders the scene in a specific viewport
         /// </summary>

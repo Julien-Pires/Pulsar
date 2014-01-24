@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-
-using Pulsar.Assets.Graphics.Materials;
 using Pulsar.Graphics.Rendering;
 
 namespace Pulsar.Graphics

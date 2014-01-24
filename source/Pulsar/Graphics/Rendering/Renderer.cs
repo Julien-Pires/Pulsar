@@ -3,6 +3,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Pulsar.Assets;
 using Pulsar.Graphics.Rendering.RenderingTechnique;
 using Pulsar.Graphics.SceneGraph;
 
@@ -29,10 +30,11 @@ namespace Pulsar.Graphics.Rendering
         #region Constructors
 
         /// <summary>
-        /// Constructor of the GraphicsRenderer class
+        /// Constructor of Renderer class
         /// </summary>
-        /// <param name="deviceManager">Graphics device manager</param>
-        internal Renderer(GraphicsDeviceManager deviceManager)
+        /// <param name="deviceManager">GraphicsDeviceManager</param>
+        /// <param name="assetEngine">AssetEngine</param>
+        internal Renderer(GraphicsDeviceManager deviceManager, AssetEngine assetEngine)
         {
             _graphicsDeviceManager = deviceManager;
             _graphicDevice = deviceManager.GraphicsDevice;
@@ -40,7 +42,7 @@ namespace Pulsar.Graphics.Rendering
 
             _spriteBatch = new SpriteBatch(_graphicDevice);
             _instancingManager = new InstanceBatchManager(this);
-            _renderingTechnique = new SimpleRenderingTechnique(this);
+            _renderingTechnique = new SimpleRenderingTechnique(this, assetEngine[GraphicsConstant.Storage]);
         }
 
         #endregion
@@ -48,7 +50,7 @@ namespace Pulsar.Graphics.Rendering
         #region Methods
 
         /// <summary>
-        /// Disposes ressources
+        /// Disposes all ressources
         /// </summary>
         public void Dispose()
         {

@@ -5,7 +5,7 @@
     /// </summary>
     public interface IGraphicsEngineService
     {
-        #region Fields
+        #region Properties
 
         /// <summary>
         /// Get the graphic engine

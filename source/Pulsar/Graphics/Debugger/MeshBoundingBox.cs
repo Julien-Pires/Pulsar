@@ -1,36 +1,42 @@
 ﻿using System;
+using System.Diagnostics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+using Pulsar.Assets;
 using Pulsar.Core;
-using Pulsar.Game;
-using Pulsar.Assets.Graphics.Materials;
-using Pulsar.Graphics.SceneGraph;
+using Pulsar.Graphics.Asset;
 using Pulsar.Graphics.Rendering;
+using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics.Debugger
 {
     /// <summary>
     /// Creates a wireframe bounding box used for debugging
     /// </summary>
-    internal sealed class MeshBoundingBox : IRenderable
+    internal sealed class MeshBoundingBox : IRenderable, IDisposable
     {
         #region Fields
 
-        private const int IndexCount = 24;
-        private const int PrimitiveCount = 12;
-        private const int VertexCount = 8;
-        private const short FrontTopLeft = 0;
-        private const short FrontTopRight = 1;
-        private const short FrontBottomLeft = 2;
-        private const short FrontBottomRight = 3;
-        private const short BackTopLeft = 4;
-        private const short BackTopRight = 5;
-        private const short BackBottomLeft = 6;
-        private const short BackBottomRight = 7;
+        private const string AabbMaterial = "MeshBoundingBox_Material";
+        private const string AabbTexture = "MeshBoundingBox_Texture";
 
+        private const int IndexCount = 24;
+        private const int VertexCount = 8;
+        private const int FrontTopLeft = 0;
+        private const int FrontTopRight = 1;
+        private const int FrontBottomLeft = 2;
+        private const int FrontBottomRight = 3;
+        private const int BackTopLeft = 4;
+        private const int BackTopRight = 5;
+        private const int BackBottomLeft = 6;
+        private const int BackBottomRight = 7;
+
+        private bool _isDisposed;
+        private readonly Storage _storage;
+        private Mesh _internalMesh;
         private VertexBufferObject _vbo;
-        private IndexBufferObject _ibo;
         private readonly VertexPositionNormalTexture[] _vertices = new VertexPositionNormalTexture[VertexCount];
 
         #endregion
@@ -40,18 +46,30 @@ namespace Pulsar.Graphics.Debugger
         /// <summary>
         /// Constructor of MeshBoundingBox class
         /// </summary>
-        internal MeshBoundingBox()
+        /// <param name="name">Name of the mesh</param>
+        /// <param name="assetEngine">AssetEngine</param>
+        internal MeshBoundingBox(string name, AssetEngine assetEngine)
         {
-            InitBuffers();
+            Debug.Assert(assetEngine != null);
+
+            Name = name;
+            _storage = assetEngine[GraphicsConstant.Storage];
+
+            LoadAsset();
+            InitializeMesh();
         }
 
         #endregion
 
         #region Static methods
 
+        /// <summary>
+        /// Generates indices for an index buffer
+        /// </summary>
+        /// <param name="ibo">Index buffer instance</param>
         private static void GenerateIndices(IndexBufferObject ibo)
         {
-            short[] indices = new short[IndexCount];
+            int[] indices = new int[IndexCount];
 
             // Top
             indices[0] = FrontTopLeft;
@@ -91,38 +109,62 @@ namespace Pulsar.Graphics.Debugger
         #region Methods
 
         /// <summary>
-        /// Initializes all the buffers
+        /// Disposes all resources
         /// </summary>
-        private void InitBuffers()
+        public void Dispose()
         {
-            GraphicsEngineService engineService = GameApplication.GameServices.GetService(typeof(IGraphicsEngineService)) 
-                as GraphicsEngineService;
-            if (engineService == null) 
-                throw new NullReferenceException("GraphicsEngineService cannot be found");
+            if(_isDisposed) return;
 
-            BufferManager bufferMngr = engineService.Engine.BufferManager;
-            VertexData vData = new VertexData();
-            _vbo = bufferMngr.CreateVertexBuffer(BufferType.DynamicWriteOnly, typeof(VertexPositionNormalTexture),
-                VertexCount);
-            vData.SetBinding(_vbo);
+            _storage[GraphicsConstant.MeshFolderName].Unload(Name);
+            _vbo = null;
+            _internalMesh = null;
 
-            IndexData iData = new IndexData();
-            _ibo = bufferMngr.CreateIndexBuffer(BufferType.DynamicWriteOnly, IndexElementSize.SixteenBits,
-                IndexCount);
-            GenerateIndices(_ibo);
-            iData.IndexBuffer = _ibo;
-            
-            RenderInfo = new RenderingInfo
+            _isDisposed = true;
+        }
+
+        /// <summary>
+        /// Loads asset
+        /// </summary>
+        private void LoadAsset()
+        {
+            _internalMesh = _storage[GraphicsConstant.MeshFolderName].Load<Mesh>(Name, MeshParameters.NewInstance);
+            if (!_storage[GraphicsConstant.MaterialFolderName].IsLoaded(AabbMaterial))
             {
-                PrimitiveType = PrimitiveType.LineList,
-                VertexData = vData,
-                IndexData = iData,
-                UseIndexes = true,
-                VertexCount = VertexCount,
-                PrimitiveCount = PrimitiveCount
-            };
-            Material = MaterialManager.Instance.LoadDefault();
-            Material.DiffuseColor = Color.White;
+                TextureParameters textureParameters = new TextureParameters
+                {
+                    Height = 1,
+                    Width = 1
+                };
+                Texture texture = _storage[GraphicsConstant.TextureFolderName].Load<Texture>(AabbTexture, textureParameters);
+                texture.SetData(new[]{ new Color(255, 255, 255, 255) });
+                Material = _storage[GraphicsConstant.MaterialFolderName].Load<Material>(AabbMaterial,
+                    MaterialParameters.NewInstance);
+                Material.DiffuseMap = texture;
+            }
+            else
+                Material = _storage[GraphicsConstant.MaterialFolderName].Load<Material>(AabbMaterial);
+        }
+
+        /// <summary>
+        /// Initializes mesh
+        /// </summary>
+        private void InitializeMesh()
+        {
+            _internalMesh.Begin(PrimitiveType.LineList, true, false, true);
+            _internalMesh.EstimateBufferSize(VertexCount, IndexCount);
+            _internalMesh.Position(0.0f, 0.0f, 0.0f);
+            _internalMesh.Index(0);
+            _internalMesh.End();
+
+            _vbo = _internalMesh.VertexData.GetBuffer(0);
+            GenerateIndices(_internalMesh.IndexData.IndexBuffer);
+
+            SubMesh sub = _internalMesh.GetSubMesh(0);
+            sub.RenderInfo.VertexCount = VertexCount;
+            sub.IndexData.IndexCount = IndexCount;
+            sub.RenderInfo.ComputePrimitiveCount();
+
+            _internalMesh.UpdateMeshInfo();
         }
 
         /// <summary>
@@ -164,10 +206,7 @@ namespace Pulsar.Graphics.Debugger
         /// <summary>
         /// Gets the name of this instace
         /// </summary>
-        public string Name 
-        {
-            get { return "Debug AABB"; } 
-        }
+        public string Name { get; private set; }
 
         /// <summary>
         /// Gets or set a boolean to enable instancing
@@ -205,7 +244,10 @@ namespace Pulsar.Graphics.Debugger
         /// <summary>
         /// Gets the rendering info of this instance
         /// </summary>
-        public RenderingInfo RenderInfo { get; private set; }
+        public RenderingInfo RenderInfo
+        {
+            get { return _internalMesh.GetSubMesh(0).RenderInfo; }
+        }
 
         /// <summary>
         /// Gets the material associated to this instance
