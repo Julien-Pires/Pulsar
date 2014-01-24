@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 
-using Pulsar.Core;
+using Pulsar;
 
 namespace Pulsar.Assets
 {

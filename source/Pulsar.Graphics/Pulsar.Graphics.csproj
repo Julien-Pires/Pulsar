@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{DA4A1233-A1E5-4985-B326-3CA9737FD7A9}</ProjectGuid>
+    <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Pulsar.Graphics</RootNamespace>
+    <AssemblyName>Pulsar.Graphics</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
+    <XnaPlatform>Windows</XnaPlatform>
+    <XnaProfile>HiDef</XnaProfile>
+    <XnaCrossPlatformGroupID>e9ae1ca8-8074-4949-b641-4d404289791c</XnaCrossPlatformGroupID>
+    <XnaOutputType>Library</XnaOutputType>
+    <BaseIntermediateOutputPath>..\..\temp\obj</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)\$(AssemblyName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
+    <XnaCompressContent>false</XnaCompressContent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
+    <XnaCompressContent>true</XnaCompressContent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="mscorlib">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Net">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Asset\Freezable.cs" />
+    <Compile Include="Asset\MaterialLoader.cs" />
+    <Compile Include="Asset\MaterialParameters.cs" />
+    <Compile Include="Asset\MeshLoader.cs" />
+    <Compile Include="Asset\MeshParameters.cs" />
+    <Compile Include="Asset\ShaderLoader.cs" />
+    <Compile Include="Asset\ShaderParameters.cs" />
+    <Compile Include="Asset\TextureLoader.cs" />
+    <Compile Include="Asset\TextureParameters.cs" />
+    <Compile Include="Debugger\MeshBoundingBox.cs" />
+    <Compile Include="FrameDetail.cs" />
+    <Compile Include="FrameStatistics.cs" />
+    <Compile Include="Frustum.cs" />
+    <Compile Include="GraphicsConstant.cs" />
+    <Compile Include="GraphicsEngine.cs" />
+    <Compile Include="GraphicsEngineService.cs" />
+    <Compile Include="IGraphicsEngineService.cs" />
+    <Compile Include="IRenderable.cs" />
+    <Compile Include="ITextureWrapper.cs" />
+    <Compile Include="Material.cs" />
+    <Compile Include="Mesh.cs" />
+    <Compile Include="MeshData.cs" />
+    <Compile Include="Node.cs" />
+    <Compile Include="PrefabFactory.cs" />
+    <Compile Include="BufferAllocatedEventArgs.cs" />
+    <Compile Include="BufferManager.cs" />
+    <Compile Include="BufferObject.cs" />
+    <Compile Include="IBufferWrapper.cs" />
+    <Compile Include="IndexBufferObject.cs" />
+    <Compile Include="IndexBufferWrapper.cs" />
+    <Compile Include="IndexData.cs" />
+    <Compile Include="InstanceBatch.cs" />
+    <Compile Include="InstanceBatchManager.cs" />
+    <Compile Include="IRenderingTechnique.cs" />
+    <Compile Include="ProjectionType.cs" />
+    <Compile Include="Renderer.cs" />
+    <Compile Include="RenderingInfo.cs" />
+    <Compile Include="RenderingTechnique\SimpleRenderingShader.cs" />
+    <Compile Include="RenderingTechnique\SimpleRenderingTechnique.cs" />
+    <Compile Include="RenderTarget.cs" />
+    <Compile Include="VertexBufferObject.cs" />
+    <Compile Include="VertexBufferWrapper.cs" />
+    <Compile Include="VertexData.cs" />
+    <Compile Include="Viewport.cs" />
+    <Compile Include="Window.cs" />
+    <Compile Include="WindowDisplayModeChangedEventArgs.cs" />
+    <Compile Include="WindowFullScreenSwitchedEventArgs.cs" />
+    <Compile Include="Camera.cs" />
+    <Compile Include="CameraManager.cs" />
+    <Compile Include="Entity.cs" />
+    <Compile Include="IMovable.cs" />
+    <Compile Include="Movable.cs" />
+    <Compile Include="RenderQueue.cs" />
+    <Compile Include="RenderQueueGroup.cs" />
+    <Compile Include="SceneNode.cs" />
+    <Compile Include="SceneTree.cs" />
+    <Compile Include="SubEntity.cs" />
+    <Compile Include="Shader.cs" />
+    <Compile Include="SubMesh.cs" />
+    <Compile Include="SubMeshData.cs" />
+    <Compile Include="Texture.cs" />
+    <Compile Include="TextureWrapper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Pulsar\Pulsar.csproj">
+      <Project>{2323eeaf-3931-4685-b3ab-91fd67bad3f0}</Project>
+      <Name>Pulsar</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
+  <!--
+      To modify your build process, add your task inside one of the targets below and uncomment it. 
+      Other similar extension points exist, see Microsoft.Common.targets.
+      <Target Name="BeforeBuild">
+      </Target>
+      <Target Name="AfterBuild">
+      </Target>
+    -->
+</Project>
