@@ -19,7 +19,7 @@ namespace Pulsar.Assets
         /// <summary>
         /// Constructor of LoadedAsset class
         /// </summary>
-        internal LoadedAsset()
+        public LoadedAsset()
         {
             Disposables = new List<IDisposable>(DefaultCapacity);
         }
@@ -31,7 +31,7 @@ namespace Pulsar.Assets
         /// <summary>
         /// Resets the instance
         /// </summary>
-        internal void Reset()
+        public void Reset()
         {
             Asset = null;
             Disposables.Clear();

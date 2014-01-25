@@ -75,7 +75,7 @@ namespace Pulsar.Input
         /// <summary>
         /// Update the states of devices and players
         /// </summary>
-        internal void Update()
+        public void Update()
         {
 #if WINDOWS
             Mouse.Update();
