@@ -148,7 +148,7 @@ namespace Pulsar
         /// Adds a message to the queue
         /// </summary>
         /// <param name="msg">Message to add in the queue</param>
-        public void QueueEvent(Message msg)
+        public void Queue(Message msg)
         {
             List<IEventHandler> listeners;
             _eventListenersMap.TryGetValue(msg.Event.EventHash, out listeners);
