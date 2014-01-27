@@ -99,6 +99,7 @@
     <Compile Include="RenderQueue.cs" />
     <Compile Include="RenderQueueGroup.cs" />
     <Compile Include="RenderTarget.cs" />
+    <Compile Include="ResizeRule.cs" />
     <Compile Include="SceneNode.cs" />
     <Compile Include="SceneTree.cs" />
     <Compile Include="Shader.cs" />

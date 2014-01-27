@@ -109,6 +109,7 @@
     <Compile Include="RenderingTechnique\SimpleRenderingShader.cs" />
     <Compile Include="RenderingTechnique\SimpleRenderingTechnique.cs" />
     <Compile Include="RenderTarget.cs" />
+    <Compile Include="ResizeRule.cs" />
     <Compile Include="VertexBufferObject.cs" />
     <Compile Include="VertexBufferWrapper.cs" />
     <Compile Include="VertexData.cs" />
