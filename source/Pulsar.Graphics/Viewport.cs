@@ -18,7 +18,7 @@ namespace Pulsar.Graphics
         private float _height;
         private float _topPosition;
         private float _leftPosition;
-        private bool _disposed;
+        private bool _isDisposed;
         private bool _isDirty = true;
         private readonly RenderTarget _parent;
         private readonly FrameDetail _frameDetail = new FrameDetail();
@@ -53,21 +53,17 @@ namespace Pulsar.Graphics
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-        }
+            if (_isDisposed) return;
 
-        /// <summary>
-        /// Disposes resources
-        /// </summary>
-        /// <param name="disposing">Indicates wether the method is called from IDisposable.Dispose</param>
-        private void Dispose(bool disposing)
-        {
-            if (_disposed) return;
-
-            if (disposing) 
+            try
+            {
                 Target.Dispose();
-
-            _disposed = true;
+            }
+            finally
+            {
+                Target = null;
+                _isDisposed = true;
+            }
         }
 
         /// <summary>
@@ -113,6 +109,9 @@ namespace Pulsar.Graphics
         /// </summary>
         private void CreateRenderTarget()
         {
+            if(_isDisposed)
+                throw new Exception("Cannot use a disposed viewport");
+
             if (Target != null) 
                 Target.Dispose();
 
