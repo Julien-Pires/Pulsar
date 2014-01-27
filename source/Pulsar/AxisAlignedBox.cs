@@ -13,8 +13,15 @@ namespace Pulsar
     {
         #region Fields
 
-        internal Vector3 InternCenter;
-        internal Vector3 InternHalfSize;
+        /// <summary>
+        /// Center of the AABB
+        /// </summary>
+        public Vector3 Center;
+
+        /// <summary>
+        /// Extend of the AABB
+        /// </summary>
+        public Vector3 HalfSize;
 
         #endregion
 
@@ -54,8 +61,8 @@ namespace Pulsar
         /// </summary>
         public void Reset()
         {
-            InternCenter = Vector3.Zero;
-            InternHalfSize = Vector3.Zero;
+            Center = Vector3.Zero;
+            HalfSize = Vector3.Zero;
         }
 
         /// <summary>
@@ -76,8 +83,8 @@ namespace Pulsar
             Vector3 halfSize;
             Vector3.Subtract(ref aabb.Max, ref aabb.Min, out halfSize);
             Vector3Extension.Abs(ref halfSize, out halfSize);
-            Vector3.Multiply(ref halfSize, 0.5f, out InternHalfSize);
-            Vector3.Add(ref aabb.Min, ref InternHalfSize, out InternCenter);
+            Vector3.Multiply(ref halfSize, 0.5f, out HalfSize);
+            Vector3.Add(ref aabb.Min, ref HalfSize, out Center);
         }
 
         /// <summary>
@@ -86,8 +93,57 @@ namespace Pulsar
         /// <param name="aabb">Source aabb</param>
         public void SetFromAabb(AxisAlignedBox aabb)
         {
-            InternCenter = aabb.InternCenter;
-            InternHalfSize = aabb.InternHalfSize;
+            Center = aabb.Center;
+            HalfSize = aabb.HalfSize;
+        }
+
+        /// <summary>
+        /// Checks intersection with a plane
+        /// </summary>
+        /// <param name="plane">Plane to test against</param>
+        /// <returns>Return the relationship between the aabb and the plane</returns>
+        public PlaneIntersectionType Intersects(Plane plane)
+        {
+            Vector3 absPlane;
+            Vector3Extension.Abs(ref plane.Normal, out absPlane);
+
+            float e, s;
+            Vector3.Dot(ref HalfSize, ref absPlane, out e);
+            Vector3.Dot(ref Center, ref plane.Normal, out s);
+            s += plane.D;
+
+            if (s - e > 0) return PlaneIntersectionType.Back;
+
+            return (s + e < 0) ? PlaneIntersectionType.Front : PlaneIntersectionType.Intersecting;
+        }
+
+        /// <summary>
+        /// Checks intersection with a plane
+        /// </summary>
+        /// <param name="plane">Plane to test against</param>
+        /// <param name="result">Result relationship between the aabb and the plane</param>
+        public void Intersects(ref Plane plane, out PlaneIntersectionType result)
+        {
+            Vector3 absPlane;
+            Vector3Extension.Abs(ref plane.Normal, out absPlane);
+
+            float e, s;
+            Vector3.Dot(ref HalfSize, ref absPlane, out e);
+            Vector3.Dot(ref Center, ref plane.Normal, out s);
+            s += plane.D;
+
+            if (s - e > 0)
+            {
+                result = PlaneIntersectionType.Back;
+                return;
+            }
+            if (s + e < 0)
+            {
+                result = PlaneIntersectionType.Front;
+                return;
+            }
+
+            result = PlaneIntersectionType.Intersecting;
         }
 
         /// <summary>
@@ -98,8 +154,8 @@ namespace Pulsar
         public bool Intersects(AxisAlignedBox aabb)
         {
             Vector3 distance, sumHalfSize;
-            Vector3.Subtract(ref InternCenter, ref aabb.InternCenter, out distance);
-            Vector3.Add(ref InternHalfSize, ref aabb.InternHalfSize, out sumHalfSize);
+            Vector3.Subtract(ref Center, ref aabb.Center, out distance);
+            Vector3.Add(ref HalfSize, ref aabb.HalfSize, out sumHalfSize);
 
             return (Math.Abs(distance.X) <= sumHalfSize.X) & (Math.Abs(distance.Y) <= sumHalfSize.Y)
                    & (Math.Abs(distance.Z) <= sumHalfSize.Z);
@@ -113,11 +169,11 @@ namespace Pulsar
         public bool Contains(AxisAlignedBox aabb)
         {
             Vector3 distance;
-            Vector3.Subtract(ref InternCenter, ref aabb.InternCenter, out distance);
+            Vector3.Subtract(ref Center, ref aabb.Center, out distance);
 
-            return (Math.Abs(distance.X) + aabb.InternHalfSize.X <= InternHalfSize.X)
-                & (Math.Abs(distance.Y) + aabb.InternHalfSize.Y <= InternHalfSize.Y)
-                & (Math.Abs(distance.Z) + aabb.InternHalfSize.Z <= InternHalfSize.Z);
+            return (Math.Abs(distance.X) + aabb.HalfSize.X <= HalfSize.X)
+                & (Math.Abs(distance.Y) + aabb.HalfSize.Y <= HalfSize.Y)
+                & (Math.Abs(distance.Z) + aabb.HalfSize.Z <= HalfSize.Z);
         }
 
         /// <summary>
@@ -138,10 +194,10 @@ namespace Pulsar
         public bool Contains(ref Vector3 point)
         {
             Vector3 distance;
-            Vector3.Subtract(ref InternCenter, ref point, out distance);
+            Vector3.Subtract(ref Center, ref point, out distance);
 
-            return (Math.Abs(distance.X) <= InternHalfSize.X) & (Math.Abs(distance.Y) <= InternHalfSize.Y)
-                   & (Math.Abs(distance.Z) <= InternHalfSize.Z);
+            return (Math.Abs(distance.X) <= HalfSize.X) & (Math.Abs(distance.Y) <= HalfSize.Y)
+                   & (Math.Abs(distance.Z) <= HalfSize.Z);
         }
 
         /// <summary>
@@ -151,10 +207,10 @@ namespace Pulsar
         public void Merge(AxisAlignedBox aabb)
         {
             Vector3 max, min, otherMax, otherMin;
-            Vector3.Add(ref InternCenter, ref InternHalfSize, out max);
-            Vector3.Add(ref aabb.InternCenter, ref aabb.InternHalfSize, out otherMax);
-            Vector3.Subtract(ref InternCenter, ref InternHalfSize, out min);
-            Vector3.Subtract(ref aabb.InternCenter, ref aabb.InternHalfSize, out otherMin);
+            Vector3.Add(ref Center, ref HalfSize, out max);
+            Vector3.Add(ref aabb.Center, ref aabb.HalfSize, out otherMax);
+            Vector3.Subtract(ref Center, ref HalfSize, out min);
+            Vector3.Subtract(ref aabb.Center, ref aabb.HalfSize, out otherMin);
 
             Vector3.Max(ref max, ref otherMax, out max);
             Vector3.Min(ref min, ref otherMin, out min);
@@ -163,12 +219,12 @@ namespace Pulsar
             {
                 Vector3 maxPlusMin;
                 Vector3.Add(ref max, ref min, out maxPlusMin);
-                Vector3.Multiply(ref maxPlusMin, 0.5f, out InternCenter);
+                Vector3.Multiply(ref maxPlusMin, 0.5f, out Center);
             }
 
             Vector3 maxMinusMin;
             Vector3.Subtract(ref max, ref min, out maxMinusMin);
-            Vector3.Multiply(ref maxMinusMin, 0.5f, out InternCenter);
+            Vector3.Multiply(ref maxMinusMin, 0.5f, out Center);
         }
 
         /// <summary>
@@ -187,8 +243,8 @@ namespace Pulsar
         public void Merge(ref Vector3 point)
         {
             Vector3 max, min;
-            Vector3.Add(ref InternCenter, ref InternHalfSize, out max);
-            Vector3.Subtract(ref InternCenter, ref InternHalfSize, out min);
+            Vector3.Add(ref Center, ref HalfSize, out max);
+            Vector3.Subtract(ref Center, ref HalfSize, out min);
 
             Vector3.Max(ref max, ref point, out max);
             Vector3.Min(ref min, ref point, out min);
@@ -197,12 +253,12 @@ namespace Pulsar
             {
                 Vector3 maxPlusMin;
                 Vector3.Add(ref max, ref min, out maxPlusMin);
-                Vector3.Multiply(ref maxPlusMin, 0.5f, out InternCenter);
+                Vector3.Multiply(ref maxPlusMin, 0.5f, out Center);
             }
 
             Vector3 maxMinusMin;
             Vector3.Subtract(ref max, ref min, out maxMinusMin);
-            Vector3.Multiply(ref maxMinusMin, 0.5f, out InternCenter);
+            Vector3.Multiply(ref maxMinusMin, 0.5f, out Center);
         }
 
         /// <summary>
@@ -220,36 +276,20 @@ namespace Pulsar
         /// <param name="matrix">Matrix</param>
         public void Transform(ref Matrix matrix)
         {
-            Vector3.Transform(ref InternCenter, ref matrix, out InternCenter);
+            Vector3.Transform(ref Center, ref matrix, out Center);
 
-            float xHalfSize = (Math.Abs(matrix.M11)*InternHalfSize.X) + (Math.Abs(matrix.M21)*InternHalfSize.Y) 
-                + (Math.Abs(matrix.M31)*InternHalfSize.Z);
-            float yHalfSize = (Math.Abs(matrix.M12) * InternHalfSize.X) + (Math.Abs(matrix.M22) * InternHalfSize.Y) 
-                + (Math.Abs(matrix.M32) * InternHalfSize.Z);
-            float zHalfSize = (Math.Abs(matrix.M13)*InternHalfSize.X) + (Math.Abs(matrix.M23)*InternHalfSize.Y) 
-                + (Math.Abs(matrix.M33)*InternHalfSize.Z);
-            InternHalfSize = new Vector3(xHalfSize, yHalfSize, zHalfSize);
+            float xHalfSize = (Math.Abs(matrix.M11)*HalfSize.X) + (Math.Abs(matrix.M21)*HalfSize.Y) 
+                + (Math.Abs(matrix.M31)*HalfSize.Z);
+            float yHalfSize = (Math.Abs(matrix.M12) * HalfSize.X) + (Math.Abs(matrix.M22) * HalfSize.Y) 
+                + (Math.Abs(matrix.M32) * HalfSize.Z);
+            float zHalfSize = (Math.Abs(matrix.M13)*HalfSize.X) + (Math.Abs(matrix.M23)*HalfSize.Y) 
+                + (Math.Abs(matrix.M33)*HalfSize.Z);
+            HalfSize = new Vector3(xHalfSize, yHalfSize, zHalfSize);
         }
 
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets the center
-        /// </summary>
-        public Vector3 Center
-        {
-            get { return InternCenter; }
-        }
-
-        /// <summary>
-        /// Gets the half-size
-        /// </summary>
-        public Vector3 HalfSize
-        {
-            get { return InternHalfSize; }
-        }
 
         /// <summary>
         /// Gets the minimum point
@@ -259,7 +299,7 @@ namespace Pulsar
             get
             {
                 Vector3 min;
-                Vector3.Subtract(ref InternCenter, ref InternHalfSize, out min);
+                Vector3.Subtract(ref Center, ref HalfSize, out min);
 
                 return min;
             }
@@ -273,7 +313,7 @@ namespace Pulsar
             get
             {
                 Vector3 max;
-                Vector3.Add(ref InternCenter, ref InternHalfSize, out max);
+                Vector3.Add(ref Center, ref HalfSize, out max);
 
                 return max;
             }
