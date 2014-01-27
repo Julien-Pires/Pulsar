@@ -109,10 +109,12 @@
     <Compile Include="RenderingTechnique\SimpleRenderingShader.cs" />
     <Compile Include="RenderingTechnique\SimpleRenderingTechnique.cs" />
     <Compile Include="RenderTarget.cs" />
+    <Compile Include="ResizeRule.cs" />
     <Compile Include="VertexBufferObject.cs" />
     <Compile Include="VertexBufferWrapper.cs" />
     <Compile Include="VertexData.cs" />
     <Compile Include="Viewport.cs" />
+    <Compile Include="ViewportPosition.cs" />
     <Compile Include="Window.cs" />
     <Compile Include="WindowDisplayModeChangedEventArgs.cs" />
     <Compile Include="WindowFullScreenSwitchedEventArgs.cs" />

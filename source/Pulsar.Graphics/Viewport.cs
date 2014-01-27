@@ -18,7 +18,7 @@ namespace Pulsar.Graphics
         private float _height;
         private float _topPosition;
         private float _leftPosition;
-        private bool _disposed;
+        private bool _isDisposed;
         private bool _isDirty = true;
         private readonly RenderTarget _parent;
         private readonly FrameDetail _frameDetail = new FrameDetail();
@@ -53,21 +53,17 @@ namespace Pulsar.Graphics
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-        }
+            if (_isDisposed) return;
 
-        /// <summary>
-        /// Disposes resources
-        /// </summary>
-        /// <param name="disposing">Indicates wether the method is called from IDisposable.Dispose</param>
-        private void Dispose(bool disposing)
-        {
-            if (_disposed) return;
-
-            if (disposing) 
+            try
+            {
                 Target.Dispose();
-
-            _disposed = true;
+            }
+            finally
+            {
+                Target = null;
+                _isDisposed = true;
+            }
         }
 
         /// <summary>
@@ -88,21 +84,24 @@ namespace Pulsar.Graphics
         /// </summary>
         private void UpdateDimension()
         {
-            int parentWidth = _parent.Width;
-            int parentHeight = _parent.Height;
-            int newWidth = (int)(parentWidth * _width);
-            int newHeight = (int)(parentHeight * _height);
-            if ((newWidth != PixelWidth) || (newHeight != PixelHeight))
-            {
-                PixelWidth = newWidth;
-                PixelHeight = newHeight;
-                AspectRatio = (float)newWidth/newHeight;
-                CreateRenderTarget();
-            }
-            PixelTop = (int)(_topPosition * parentHeight);
-            PixelLeft = (int) (_leftPosition * parentWidth);
+            int newWidth = (int)(_parent.Width * _width);
+            int newHeight = (int)(_parent.Height * _height);
+            if ((newWidth == PixelWidth) && (newHeight == PixelHeight)) return;
 
+            PixelWidth = newWidth;
+            PixelHeight = newHeight;
+            AspectRatio = (float)newWidth/newHeight;
+            CreateRenderTarget();
             _isDirty = false;
+        }
+
+        /// <summary>
+        /// Updates the position of the viewport
+        /// </summary>
+        private void UpdatePosition()
+        {
+            PixelTop = (int)(_topPosition * _parent.Height);
+            PixelLeft = (int)(_leftPosition * _parent.Width);
         }
 
         /// <summary>
@@ -110,6 +109,9 @@ namespace Pulsar.Graphics
         /// </summary>
         private void CreateRenderTarget()
         {
+            if(_isDisposed)
+                throw new Exception("Cannot use a disposed viewport");
+
             if (Target != null) 
                 Target.Dispose();
 
@@ -181,7 +183,7 @@ namespace Pulsar.Graphics
                     value = 1.0f;
 
                 _topPosition = value;
-                _isDirty = true;
+                UpdatePosition();
             }
         }
 
@@ -199,7 +201,7 @@ namespace Pulsar.Graphics
                     value = 1.0f;
 
                 _leftPosition = value;
-                _isDirty = true;
+                UpdatePosition();
             }
         }
 

@@ -7,43 +7,19 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Pulsar.Graphics
 {
     /// <summary>
-    /// Specifies the position of a viewport, can be combined
-    /// </summary>
-    [Flags]
-    public enum ViewportPosition
-    {
-        /// <summary>
-        /// Occupies the half top
-        /// </summary>
-        Top = 0,
-        /// <summary>
-        /// Occupies the half bottom
-        /// </summary>
-        Bottom = 1,
-        /// <summary>
-        /// Occupies the half left
-        /// </summary>
-        Left = 2,
-        /// <summary>
-        /// Occupies the half right
-        /// </summary>
-        Right = 4
-    }
-
-    /// <summary>
     /// Used as a render target for multiple rendering
     /// </summary>
     public abstract class RenderTarget : IDisposable
     {
         #region Fields
 
-        internal readonly List<Viewport> Viewports = new List<Viewport>();
+        internal List<Viewport> Viewports = new List<Viewport>();
 
-        protected readonly Renderer Renderer;
-        protected readonly GraphicsDeviceManager DeviceManager;
+        protected Renderer Renderer;
+        protected GraphicsDeviceManager DeviceManager;
         
         private bool _mipmap;
-        private bool _disposed;
+        private bool _isDisposed;
         private bool _isDirty = true;
         private readonly FrameDetail _frameDetail = new FrameDetail();
         private RenderTargetUsage _usage = RenderTargetUsage.DiscardContents;
@@ -122,15 +98,25 @@ namespace Pulsar.Graphics
         /// <param name="disposing">Indicate if the method is called from dispose</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
-            if (disposing)
+            if (_isDisposed) return;
+
+            try
             {
                 for (int i = 0; i < Viewports.Count; i++)
                     Viewports[i].Dispose();
 
                 Target.Dispose();
             }
-            _disposed = true;
+            finally
+            {
+                Viewports.Clear();
+                Viewports = null;
+                Target = null;
+                Renderer = null;
+                DeviceManager = null;
+
+                _isDisposed = true;
+            }
         }
 
         /// <summary>
