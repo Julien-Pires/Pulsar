@@ -86,7 +86,6 @@
     <Compile Include="AxisAlignedBox.cs" />
     <Compile Include="EventType.cs" />
     <Compile Include="IndexPool.cs" />
-    <Compile Include="IntersectionResult.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="TransformSpace.cs" />
     <Compile Include="Extension\ArrayExtension.cs" />

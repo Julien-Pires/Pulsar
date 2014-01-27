@@ -98,6 +98,55 @@ namespace Pulsar
         }
 
         /// <summary>
+        /// Checks intersection with a plane
+        /// </summary>
+        /// <param name="plane">Plane to test against</param>
+        /// <returns>Return the relationship between the aabb and the plane</returns>
+        public PlaneIntersectionType Intersects(Plane plane)
+        {
+            Vector3 absPlane;
+            Vector3Extension.Abs(ref plane.Normal, out absPlane);
+
+            float e, s;
+            Vector3.Dot(ref HalfSize, ref absPlane, out e);
+            Vector3.Dot(ref Center, ref plane.Normal, out s);
+            s += plane.D;
+
+            if (s - e > 0) return PlaneIntersectionType.Back;
+
+            return (s + e < 0) ? PlaneIntersectionType.Front : PlaneIntersectionType.Intersecting;
+        }
+
+        /// <summary>
+        /// Checks intersection with a plane
+        /// </summary>
+        /// <param name="plane">Plane to test against</param>
+        /// <param name="result">Result relationship between the aabb and the plane</param>
+        public void Intersects(ref Plane plane, out PlaneIntersectionType result)
+        {
+            Vector3 absPlane;
+            Vector3Extension.Abs(ref plane.Normal, out absPlane);
+
+            float e, s;
+            Vector3.Dot(ref HalfSize, ref absPlane, out e);
+            Vector3.Dot(ref Center, ref plane.Normal, out s);
+            s += plane.D;
+
+            if (s - e > 0)
+            {
+                result = PlaneIntersectionType.Back;
+                return;
+            }
+            if (s + e < 0)
+            {
+                result = PlaneIntersectionType.Front;
+                return;
+            }
+
+            result = PlaneIntersectionType.Intersecting;
+        }
+
+        /// <summary>
         /// Detects if this AABB intersects with another one
         /// </summary>
         /// <param name="aabb">AABB</param>
