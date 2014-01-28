@@ -15,8 +15,6 @@
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
     <ContentRootDirectory>Content</ContentRootDirectory>
-	<BaseIntermediateOutputPath>..\..\temp\obj</BaseIntermediateOutputPath>
-    <IntermediateOutputPath>$(BaseIntermediateOutputPath)\$(ContentRootDirectory)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>PulsarContent</RootNamespace>
