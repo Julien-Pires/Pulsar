@@ -69,7 +69,7 @@
     <Compile Include="Components\GameObject.cs" />
     <Compile Include="Components\GameObjectHandler.cs" />
     <Compile Include="Components\GameObjectManager.cs" />
-    <Compile Include="Components\IManager.cs" />
+    <Compile Include="Components\IGameObjectManager.cs" />
     <Compile Include="Components\System.cs" />
     <Compile Include="Components\SystemManager.cs" />
     <Compile Include="Components\World.cs" />

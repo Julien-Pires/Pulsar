@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-using Pulsar;
-
 namespace Pulsar.Components
 {
     /// <summary>
@@ -18,12 +16,14 @@ namespace Pulsar.Components
         private readonly GameObjectManager _gameObjectManager = new GameObjectManager();
         private readonly ComponentManager _componentManager = new ComponentManager();
         private readonly SystemManager _systemManager = new SystemManager();
+        private readonly List<IGameObjectManager> _customsGoManagers = new List<IGameObjectManager>();
         private readonly List<GameObject> _addedGameObjects = new List<GameObject>();
         private readonly List<GameObject> _removedGameObjects = new List<GameObject>();
 
         #endregion
 
         #region Methods
+
         /// <summary>
         /// Updates the world
         /// </summary>
@@ -64,6 +64,9 @@ namespace Pulsar.Components
                     _componentManager.Add(component);
                     _systemManager.ComponentAdded(component);
                 }
+
+                for (int j = 0; j < _customsGoManagers.Count; j++)
+                    _customsGoManagers[i].Added(gameObject);
             }
 
             _addedGameObjects.Clear();
@@ -77,8 +80,10 @@ namespace Pulsar.Components
             for (int i = 0; i < _removedGameObjects.Count; i++)
             {
                 GameObject gameObject = _removedGameObjects[i];
-                gameObject.Owner = null;
+                for (int j = 0; j < _customsGoManagers.Count; j++)
+                    _customsGoManagers[i].Removed(gameObject);
 
+                gameObject.Owner = null;
                 _gameObjectManager.Remove(gameObject.Id);
                 for (int j = 0; j < gameObject.Count; j++)
                 {
@@ -142,6 +147,93 @@ namespace Pulsar.Components
         {
             _systemManager.ComponentRemoved(component);
             _componentManager.Remove(component);
+        }
+
+        /// <summary>
+        /// Adds a custom game object manager
+        /// </summary>
+        /// <param name="gameObjectManager">Game object manager</param>
+        public void AddManager(IGameObjectManager gameObjectManager)
+        {
+            if(gameObjectManager == null)
+                throw new ArgumentNullException("gameObjectManager");
+
+            if(IndexOfManager(gameObjectManager.GetType()) > -1)
+                throw new Exception(string.Format("Failed to add, a GameObject Manager with type {0} already exists", gameObjectManager.GetType()));
+
+            _customsGoManagers.Add(gameObjectManager);
+        }
+
+        /// <summary>
+        /// Removes a custom game object manager
+        /// </summary>
+        /// <param name="gameObjectManager">Game object manager</param>
+        /// <returns>Return true if the game object manager is removed successfully otherwise false</returns>
+        public bool RemoveManager(IGameObjectManager gameObjectManager)
+        {
+            if(gameObjectManager == null)
+                throw new ArgumentNullException("gameObjectManager");
+
+            return RemoveManager(gameObjectManager.GetType());
+        }
+
+        /// <summary>
+        /// Removes a custom game object manager with a specified type
+        /// </summary>
+        /// <typeparam name="T">Type of the game object manager</typeparam>
+        /// <returns>Return true if the game object manager is removed successfully otherwise false</returns>
+        public bool RemoveManager<T>() where T : IGameObjectManager
+        {
+            return RemoveManager(typeof (T));
+        }
+
+        /// <summary>
+        /// Removes a custom game object manager with a specified type
+        /// </summary>
+        /// <param name="type">Type of the game object manager</param>
+        /// <returns>Return true if the game object manager is removed successfully otherwise false</returns>
+        public bool RemoveManager(Type type)
+        {
+            if(type == null)
+                throw new ArgumentNullException("type");
+
+            int index = IndexOfManager(type);
+            if (index == -1)
+                return false;
+
+            _customsGoManagers.RemoveAt(index);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Gets a custom game object manager with a specified type
+        /// </summary>
+        /// <typeparam name="T">Type of the game object manager</typeparam>
+        /// <returns>Returns a game object manager instance if found otherwise default T value</returns>
+        public T GetManager<T>() where T : IGameObjectManager
+        {
+            int index = IndexOfManager(typeof (T));
+            if (index == -1)
+                return default(T);
+
+            return (T)_customsGoManagers[index];
+        }
+
+        /// <summary>
+        /// Gets the index of a specific game object manager
+        /// </summary>
+        /// <param name="type">Type of the game object manager</param>
+        /// <returns>Returns the zero-based index of the game object manager if found, otherwise -1</returns>
+        private int IndexOfManager(Type type)
+        {
+            for (int i = 0; i < _customsGoManagers.Count; i++)
+            {
+                if (_customsGoManagers[i].GetType() == type)
+                    return i;
+            }
+
+            return -1;
         }
 
         #endregion
