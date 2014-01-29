@@ -153,7 +153,12 @@ namespace Pulsar.Assets
         /// <returns>Returns the loaded asset</returns>
         public T LoadWithFullPath<T>(string assetName, object parameters = null)
         {
-            return LoadWithFullPath<T>(assetName, assetName, parameters);
+            if (assetName == null)
+                throw new ArgumentNullException("assetName");
+
+            assetName = PathHelpers.CleanPath(assetName);
+
+            return InternalLoad<T>(assetName, assetName, parameters);
         }
 
         /// <summary>
@@ -166,9 +171,13 @@ namespace Pulsar.Assets
         /// <returns>Returns the loaded asset</returns>
         public T LoadWithFullPath<T>(string assetName, string path, object parameters = null)
         {
-            if(path == null)
+            if (assetName == null)
+                throw new ArgumentNullException("assetName");
+
+            if (path == null)
                 throw new ArgumentNullException("path");
 
+            assetName = PathHelpers.CleanPath(assetName);
             path = PathHelpers.RemoveRoot(path, _directoryPath);
 
             return InternalLoad<T>(assetName, path, parameters);
@@ -183,7 +192,12 @@ namespace Pulsar.Assets
         /// <returns>Returns the loaded asset</returns>
         public T Load<T>(string assetName, object parameters = null)
         {
-            return Load<T>(assetName, assetName, parameters);
+            if (assetName == null)
+                throw new ArgumentNullException("assetName");
+
+            assetName = PathHelpers.CleanPath(assetName);
+
+            return InternalLoad<T>(assetName, assetName, parameters);
         }
 
         /// <summary>
@@ -196,8 +210,14 @@ namespace Pulsar.Assets
         /// <returns>Returns the loaded asset</returns>
         public T Load<T>(string assetName, string path, object parameters = null)
         {
-            if(path != null)
-                path = PathHelpers.CleanPath(path);
+            if(assetName == null)
+                throw new ArgumentNullException("assetName");
+
+            if (path == null)
+                throw new ArgumentNullException("path");
+
+            assetName = PathHelpers.CleanPath(assetName);
+            path = PathHelpers.CleanPath(path);
 
             return InternalLoad<T>(assetName, path, parameters);
         }
