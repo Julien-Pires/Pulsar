@@ -2,8 +2,6 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 
-using Pulsar;
-
 namespace Pulsar.Assets
 {
     /// <summary>
@@ -282,6 +280,18 @@ namespace Pulsar.Assets
             _disposablesMap.Add(assetName, disposables);
 
             return disposables;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the number of loaded asset
+        /// </summary>
+        public int Count
+        {
+            get { return _assetsMap.Count; }
         }
 
         #endregion
