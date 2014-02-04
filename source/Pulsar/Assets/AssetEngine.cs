@@ -14,7 +14,6 @@ namespace Pulsar.Assets
         internal readonly IServiceProvider ServiceProvider;
 
         private bool _isDisposed;
-        private Storage _systemStorage;
         private Storage _globalStorage;
         private Dictionary<string, Storage> _storages = new Dictionary<string, Storage>();
         private readonly Dictionary<Type, IAssetLoader> _loaders = new Dictionary<Type, IAssetLoader>();
@@ -31,7 +30,6 @@ namespace Pulsar.Assets
         public AssetEngine(IServiceProvider serviceProvider)
         {
             ServiceProvider = serviceProvider;
-            _systemStorage = new Storage("SystemStorage", this);
             _globalStorage = new Storage("GlobalStorage", this);
         }
 
@@ -66,14 +64,12 @@ namespace Pulsar.Assets
                     storage.Dispose();
 
                 _globalStorage.Dispose();
-                _systemStorage.Dispose();
             }
             finally
             {
                 _storages.Clear();
                 _storages = null;
                 _globalStorage = null;
-                _systemStorage = null;
             }
 
             _isDisposed = true;
@@ -253,14 +249,6 @@ namespace Pulsar.Assets
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets the system storage
-        /// </summary>
-        internal Storage SystemStorage
-        {
-            get { return _systemStorage; }
-        }
 
         /// <summary>
         /// Gets the global storage
