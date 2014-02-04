@@ -24,6 +24,12 @@ I would like to thanks following people and communities. Their works is a great 
 - Ogre3D and Ogre community: Their engine is great and contains all functionalities we can seek in 3D engine.
 There is a number of similarities between Ogre3D engine and the graphics module of Pulsar.
 
+- Mike McShaffry and David "Rez" Graham for the book "Game Coding Complete".
+
+- Tomas Akenine-Möller, Eric Haines and Naty Hoffman for the book "Real-Time Rendering".
+
+- Christer Ericson for the book "Real-Time Collision Detection".
+
 Authors
 --------
 
