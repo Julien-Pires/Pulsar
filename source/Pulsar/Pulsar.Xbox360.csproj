@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{2323EEAF-3931-4685-B3AB-91FD67BAD3F0}</ProjectGuid>
+    <ProjectGuid>{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">Xbox 360</Platform>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Pulsar</RootNamespace>
@@ -12,88 +12,74 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
-    <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>Reach</XnaProfile>
+    <XnaPlatform>Xbox 360</XnaPlatform>
+    <XnaProfile>HiDef</XnaProfile>
     <XnaCrossPlatformGroupID>5eac7359-3e66-4f87-a637-7e81f0da22a5</XnaCrossPlatformGroupID>
     <XnaOutputType>Library</XnaOutputType>
+    <Thumbnail Condition="$(XnaOutputType)=='Game'">GameThumbnail.png</Thumbnail>
     <BaseIntermediateOutputPath>..\..\temp\obj</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)\$(AssemblyName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Xbox 360' ">
+    <OutputPath>..\..\bin\Xbox 360\Release\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;XBOX;XBOX360</DefineConstants>
+    <XnaCompressContent>true</XnaCompressContent>
+    <LangVersion>4</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Xbox 360' ">
+    <OutputPath>..\..\bin\Xbox 360\Debug\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoStdLib>true</NoStdLib>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>false</XnaCompressContent>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoStdLib>true</NoStdLib>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PlatformTarget>x86</PlatformTarget>
+    <DefineConstants>DEBUG;TRACE;XBOX;XBOX360</DefineConstants>
     <XnaCompressContent>true</XnaCompressContent>
+    <LangVersion>4</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Net" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Assets\AssetEngine.cs" />
     <Compile Include="Assets\AssetEngineService.cs" />
     <Compile Include="Assets\AssetFolder.cs" />
-    <Compile Include="Assets\FolderManager.cs" />
     <Compile Include="Assets\AssetLoader.cs" />
-    <Compile Include="Assets\DefaultLoader.cs" />
     <Compile Include="Assets\AssetSource.cs" />
+    <Compile Include="Assets\DefaultLoader.cs" />
+    <Compile Include="Assets\FolderManager.cs" />
     <Compile Include="Assets\IAssetEngineService.cs" />
     <Compile Include="Assets\IAssetLoader.cs" />
+    <Compile Include="Assets\LoadedAsset.cs" />
     <Compile Include="Assets\PathHelpers.cs" />
     <Compile Include="Assets\SearchResult.cs" />
-    <Compile Include="GlobalConstant.cs" />
-    <Compile Include="ICastable.cs" />
-    <Compile Include="Assets\LoadedAsset.cs" />
     <Compile Include="Assets\SearchState.cs" />
     <Compile Include="Assets\Storage.cs" />
-    <Compile Include="Assets\AssetEngine.cs" />
+    <Compile Include="AxisAlignedBox.cs" />
     <Compile Include="Collections\UnorderedList.cs" />
-    <Compile Include="Components\ComponentHandler.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentGroup.cs" />
-    <Compile Include="Components\System.cs" />
-    <Compile Include="Components\SystemManager.cs" />
+    <Compile Include="Components\ComponentHandler.cs" />
     <Compile Include="Components\ComponentManager.cs" />
     <Compile Include="Components\GameObject.cs" />
     <Compile Include="Components\GameObjectHandler.cs" />
     <Compile Include="Components\GameObjectManager.cs" />
     <Compile Include="Components\IGameObjectManager.cs" />
+    <Compile Include="Components\System.cs" />
+    <Compile Include="Components\SystemManager.cs" />
     <Compile Include="Components\World.cs" />
-    <Compile Include="AxisAlignedBox.cs" />
     <Compile Include="EventType.cs" />
-    <Compile Include="IndexPool.cs" />
-    <Compile Include="Transform.cs" />
-    <Compile Include="TransformSpace.cs" />
     <Compile Include="Extension\ArrayExtension.cs" />
     <Compile Include="Extension\EnumExtension.cs" />
+    <Compile Include="GlobalConstant.cs" />
+    <Compile Include="ICastable.cs" />
     <Compile Include="IEventHandler.cs" />
-    <Compile Include="Mediator.cs" />
-    <Compile Include="Message.cs" />
-    <Compile Include="Pool.cs" />
+    <Compile Include="IndexPool.cs" />
     <Compile Include="Input\AbstractButton.cs" />
     <Compile Include="Input\Axis.cs" />
     <Compile Include="Input\AxisCommand.cs" />
@@ -104,19 +90,36 @@
     <Compile Include="Input\GamePadEventArgs.cs" />
     <Compile Include="Input\IInputCommand.cs" />
     <Compile Include="Input\IInputService.cs" />
-    <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\InputEvent.cs" />
+    <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\InputService.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\Mouse.cs" />
-    <Compile Include="Input\PlayerIndex.cs" />
     <Compile Include="Input\Player.cs" />
+    <Compile Include="Input\PlayerIndex.cs" />
     <Compile Include="Input\VirtualInput.cs" />
     <Compile Include="Mathematic\MatrixHelpers.cs" />
     <Compile Include="Mathematic\QuaternionHelpers.cs" />
     <Compile Include="Mathematic\Vector3Helpers.cs" />
+    <Compile Include="Mediator.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="Pool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Singleton.cs" />
+    <Compile Include="Transform.cs" />
+    <Compile Include="TransformSpace.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework" />
+    <Reference Include="Microsoft.Xna.Framework.Game" />
+    <Reference Include="Microsoft.Xna.Framework.GamerServices" />
+    <Reference Include="Microsoft.Xna.Framework.Graphics" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
