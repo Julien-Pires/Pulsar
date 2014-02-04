@@ -1,3 +1,48 @@
+## 0.4 (February 4, 2014)
+
+New feature : New version of Asset management
+
+- **Asset:**
+  - **New:** Asset engine have been completely changed
+  - **New:** New class AssetEngine available to manages storages, storages is organized by folders
+    - Create/Destroy storage
+    - Add/Remove asset loader
+  - **New:** New class AssetEngineService, it contains an instance of AssetEngine and can be used with a service providers
+  - IAssetEngineService interface allows to implement custom asset engine service
+  - New class Storage allows you to manage multiple asset folders, like a big box that contains another small boxes
+  - New class AssetFolder allows you to load asset from a specific folder
+  - AssetEngine provides a GlobalStorage property to get a shared storage that will be destroyed only when the Dispose method is called on the engine or the application is closed
+  - Loading asset works like Load method of ContentManager class, but has additional signatures that allow to add extra parameters
+  - AssetFolder supports unloading one asset or all assets
+  - IAssetLoader interface and AssetLoader class are part of the asset loader system that allows to personalize how asset are loaded
+  - New class LoadedAsset used to return the result of load from an asset loader
+  - Asset doesn't need to implement an interface or inherit a class
+  - All singleton managers have been removed (MeshManager, TextureManager, ...) and replaced by specific asset loader
+  - Graphics namespace and all classes/structs inside have been moved to Pulsar.Graphics
+- **Components:**
+  - **New:** World class can accept custom game object manager
+  - IGameObjectManager is a common interface to implement custom game object manager
+- **Core:**
+  - AxisAlignedBox has a new method Intersects to detect the type of intersection between an AABB and a plane
+  - QueueEvent method in Mediator class has been renamed Queue
+- **Graphics:**
+  - Asset classes (Mesh, Texture, ...) have been moved from Pulsar.Asset to Pulsar.Graphics
+  - Frustum intersection algorithm has been slightly improved
+  - Updating Viewport position doesn't re-create the render target
+  - Texture class has a static method to fill a texture with a checker pattern
+  - MeshData class has been moved from PulsarRuntime to Pulsar.Graphics
+  - Rendering and SceneGraph have been removed and all files moved to the root of Pulsar.Graphics project
+- **Pipeline:**
+  - PulsarModelProcessor class renamed to MeshProcessor
+- **Projects:**
+  - Graphics namespace has been moved to its own project Pulsar.Graphics and require a reference to Pulsar.dll
+  - Game namespace has been moved to its own project Pulsar.Game and require a reference to Pulsar.dll and Pulsar.Graphics.dll
+  - Core namespace has been removed and all files have been moved to the root of Pulsar project
+  - PulsarPipeline has been renamed Pulsar.Pipeline
+  - Pulsar.Pipeline require Pulsar.dll and Pulsar.Graphics.dll to work
+  - PulsarContent content project has been renamed Pulsar.Content
+  - PulsarRuntime project has been removed
+
 ## 0.3.5 (December 12, 2013)
 
 Enhancement and bug fixes
