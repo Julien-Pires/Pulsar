@@ -1,3 +1,10 @@
+## 0.4.1 (February 23, 2014)
+
+Hotfix
+
+- **Components:**
+  - Bug fixed when trying to add/remove a game object in a world that has at least one custom game object manager
+
 ## 0.4 (February 4, 2014)
 
 New feature : New version of Asset management
