@@ -66,7 +66,7 @@ namespace Pulsar.Components
                 }
 
                 for (int j = 0; j < _customsGoManagers.Count; j++)
-                    _customsGoManagers[i].Added(gameObject);
+                    _customsGoManagers[j].Added(gameObject);
             }
 
             _addedGameObjects.Clear();
@@ -81,7 +81,7 @@ namespace Pulsar.Components
             {
                 GameObject gameObject = _removedGameObjects[i];
                 for (int j = 0; j < _customsGoManagers.Count; j++)
-                    _customsGoManagers[i].Removed(gameObject);
+                    _customsGoManagers[j].Removed(gameObject);
 
                 gameObject.Owner = null;
                 _gameObjectManager.Remove(gameObject.Id);
