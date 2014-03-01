@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using Pulsar.Assets;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Represents a basic scene graph
     /// </summary>
-    public class SceneTree : IDisposable
+    public class BaseScene : IDisposable
     {
         #region Fields
 
@@ -25,12 +24,12 @@ namespace Pulsar.Graphics
         #region Constructors
 
         /// <summary>
-        /// Constructor of SceneTree class
+        /// Constructor of BaseScene class
         /// </summary>
         /// <param name="name">Name of the scene tree</param>
         /// <param name="renderer">Renderer</param>
         /// <param name="assetEngine">AssetEngine</param>
-        internal SceneTree(string name, Renderer renderer, AssetEngine assetEngine)
+        internal BaseScene(string name, Renderer renderer, AssetEngine assetEngine)
         {
             Name = name;
             _renderer = renderer;

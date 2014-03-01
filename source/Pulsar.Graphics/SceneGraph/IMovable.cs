@@ -1,8 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Pulsar;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Defines a movable object in a scene graph

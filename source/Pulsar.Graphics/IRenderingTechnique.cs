@@ -1,4 +1,6 @@
-﻿namespace Pulsar.Graphics
+﻿using Pulsar.Graphics.SceneGraph;
+
+namespace Pulsar.Graphics
 {
     /// <summary>
     /// Interfaces for rendering technique used by Renderer class to render a scene graph

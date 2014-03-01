@@ -91,7 +91,7 @@
     <Compile Include="Material.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="MeshData.cs" />
-    <Compile Include="Node.cs" />
+    <Compile Include="SceneGraph\Node.cs" />
     <Compile Include="PrefabFactory.cs" />
     <Compile Include="BufferAllocatedEventArgs.cs" />
     <Compile Include="BufferManager.cs" />
@@ -118,16 +118,16 @@
     <Compile Include="Window.cs" />
     <Compile Include="WindowDisplayModeChangedEventArgs.cs" />
     <Compile Include="WindowFullScreenSwitchedEventArgs.cs" />
-    <Compile Include="Camera.cs" />
-    <Compile Include="CameraManager.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="IMovable.cs" />
-    <Compile Include="Movable.cs" />
+    <Compile Include="SceneGraph\Camera.cs" />
+    <Compile Include="SceneGraph\CameraManager.cs" />
+    <Compile Include="SceneGraph\Entity.cs" />
+    <Compile Include="SceneGraph\IMovable.cs" />
+    <Compile Include="SceneGraph\Movable.cs" />
     <Compile Include="RenderQueue.cs" />
     <Compile Include="RenderQueueGroup.cs" />
-    <Compile Include="SceneNode.cs" />
-    <Compile Include="SceneTree.cs" />
-    <Compile Include="SubEntity.cs" />
+    <Compile Include="SceneGraph\SceneNode.cs" />
+    <Compile Include="SceneGraph\BaseScene.cs" />
+    <Compile Include="SceneGraph\SubEntity.cs" />
     <Compile Include="Shader.cs" />
     <Compile Include="SubMesh.cs" />
     <Compile Include="SubMeshData.cs" />
@@ -141,6 +141,7 @@
       <Name>Pulsar</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

@@ -1,8 +1,7 @@
 ﻿using System;
-
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Class representing a part of an Entity

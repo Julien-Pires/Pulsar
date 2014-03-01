@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Camera manager used to keep track of all the cameras
@@ -10,7 +10,7 @@ namespace Pulsar.Graphics
         #region Fields
 
         private readonly Dictionary<string, Camera> _cameras = new Dictionary<string, Camera>();
-        private readonly SceneTree _owner;
+        private readonly BaseScene _owner;
 
         #endregion
 
@@ -19,7 +19,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Constructor of CameraManager class
         /// </summary>
-        internal CameraManager(SceneTree owner)
+        internal CameraManager(BaseScene owner)
         {
             _owner = owner;
         }

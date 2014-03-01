@@ -1,11 +1,9 @@
-﻿using System.Globalization;
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Xna.Framework;
-
 using Pulsar.Graphics.Debugger;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Represents and manipulates a mesh in a 3D scene graph
@@ -18,7 +16,7 @@ namespace Pulsar.Graphics
         internal int BonesCount;
 
         private bool _renderAabb;
-        private readonly SceneTree _sceneTree;
+        private readonly BaseScene _sceneTree;
         private MeshBoundingBox _meshAabb;
         private Mesh _mesh;
         private readonly List<SubEntity> _subEntities = new List<SubEntity>();
@@ -27,7 +25,7 @@ namespace Pulsar.Graphics
 
         #region Constructors
 
-        internal Entity(string name, Mesh m, SceneTree sceneTree)
+        internal Entity(string name, Mesh m, BaseScene sceneTree)
         {
             _sceneTree = sceneTree;
             _mesh = m;
