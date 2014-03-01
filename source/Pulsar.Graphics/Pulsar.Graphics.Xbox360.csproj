@@ -63,10 +63,7 @@
     <Compile Include="BufferAllocatedEventArgs.cs" />
     <Compile Include="BufferManager.cs" />
     <Compile Include="BufferObject.cs" />
-    <Compile Include="Camera.cs" />
-    <Compile Include="CameraManager.cs" />
     <Compile Include="Debugger\MeshBoundingBox.cs" />
-    <Compile Include="Entity.cs" />
     <Compile Include="FrameDetail.cs" />
     <Compile Include="FrameStatistics.cs" />
     <Compile Include="Frustum.cs" />
@@ -75,7 +72,6 @@
     <Compile Include="GraphicsEngineService.cs" />
     <Compile Include="IBufferWrapper.cs" />
     <Compile Include="IGraphicsEngineService.cs" />
-    <Compile Include="IMovable.cs" />
     <Compile Include="IndexBufferObject.cs" />
     <Compile Include="IndexBufferWrapper.cs" />
     <Compile Include="IndexData.cs" />
@@ -87,8 +83,6 @@
     <Compile Include="Material.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="MeshData.cs" />
-    <Compile Include="Movable.cs" />
-    <Compile Include="Node.cs" />
     <Compile Include="PrefabFactory.cs" />
     <Compile Include="ProjectionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -100,10 +94,16 @@
     <Compile Include="RenderQueueGroup.cs" />
     <Compile Include="RenderTarget.cs" />
     <Compile Include="ResizeRule.cs" />
-    <Compile Include="SceneNode.cs" />
-    <Compile Include="SceneTree.cs" />
+    <Compile Include="SceneGraph\BaseScene.cs" />
+    <Compile Include="SceneGraph\Camera.cs" />
+    <Compile Include="SceneGraph\CameraManager.cs" />
+    <Compile Include="SceneGraph\Entity.cs" />
+    <Compile Include="SceneGraph\IMovable.cs" />
+    <Compile Include="SceneGraph\Movable.cs" />
+    <Compile Include="SceneGraph\Node.cs" />
+    <Compile Include="SceneGraph\SceneNode.cs" />
+    <Compile Include="SceneGraph\SubEntity.cs" />
     <Compile Include="Shader.cs" />
-    <Compile Include="SubEntity.cs" />
     <Compile Include="SubMesh.cs" />
     <Compile Include="SubMeshData.cs" />
     <Compile Include="Texture.cs" />

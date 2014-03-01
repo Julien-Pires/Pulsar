@@ -1,11 +1,8 @@
 ﻿using System;
-
 using Microsoft.Xna.Framework;
-
-using Pulsar;
 using Pulsar.Mathematic;
 
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Represents a camera
@@ -15,7 +12,7 @@ namespace Pulsar.Graphics
         #region Fields
 
         private readonly string _name = string.Empty;
-        private readonly SceneTree _owner;
+        private readonly BaseScene _owner;
         private bool _isDirtyView = true;
         private bool _isDirtyFrustum = true;
         private bool _isDirtyBoundingFrustum = true;
@@ -40,8 +37,8 @@ namespace Pulsar.Graphics
         /// Constructor of the Camera class
         /// </summary>
         /// <param name="name">Name of the camera</param>
-        /// <param name="owner">SceneTree in which the camera was created</param>
-        internal Camera(string name, SceneTree owner)
+        /// <param name="owner">Scene in which the camera was created</param>
+        internal Camera(string name, BaseScene owner)
         {
             _name = name;
             _owner = owner;

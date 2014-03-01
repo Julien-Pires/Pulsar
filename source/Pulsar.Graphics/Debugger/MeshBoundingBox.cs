@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets;
-using Pulsar;
+
 using Pulsar.Graphics.Asset;
 
 namespace Pulsar.Graphics.Debugger

@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Pulsar;
+
 using XnaTexture = Microsoft.Xna.Framework.Graphics.Texture;
 
 namespace Pulsar.Graphics

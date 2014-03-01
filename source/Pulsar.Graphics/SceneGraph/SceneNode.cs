@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Pulsar;
-
-namespace Pulsar.Graphics
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Represents a node in a scene graph
@@ -12,7 +10,7 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        protected readonly SceneTree Owner;
+        protected readonly BaseScene Owner;
 
         private readonly AxisAlignedBox _aabb = new AxisAlignedBox();
         private readonly Dictionary<string, IMovable> _movablesByName = new Dictionary<string, IMovable>();
@@ -25,8 +23,8 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Constructor of SceneNode class
         /// </summary>
-        /// <param name="owner">SceneTree instance wich create this node</param>
-        internal SceneNode(SceneTree owner)
+        /// <param name="owner">Scene instance wich create this node</param>
+        internal SceneNode(BaseScene owner)
         {
             Owner = owner;
         }
@@ -150,7 +148,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Gets the scene tree which created this node
         /// </summary>
-        public SceneTree Scene
+        public BaseScene Scene
         {
             get { return Owner; }
         }

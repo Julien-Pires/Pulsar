@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 
 using Pulsar.Assets;
 using Pulsar.Graphics.Asset;
+using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics
 {
@@ -23,7 +24,7 @@ namespace Pulsar.Graphics
         private Renderer _renderer;
         private readonly BufferManager _bufferManager;
         private PrefabFactory _prefabFactory;
-        private Dictionary<string, SceneTree> _scenes = new Dictionary<string, SceneTree>();
+        private Dictionary<string, BaseScene> _scenes = new Dictionary<string, BaseScene>();
         private readonly FrameStatistics _frameStats = new FrameStatistics();
         private readonly Stopwatch _watch = new Stopwatch();
 
@@ -111,7 +112,7 @@ namespace Pulsar.Graphics
 
             try
             {
-                foreach (SceneTree graph in _scenes.Values)
+                foreach (BaseScene graph in _scenes.Values)
                     graph.Dispose();
 
                 _window.Dispose();
@@ -155,9 +156,9 @@ namespace Pulsar.Graphics
         /// </summary>
         /// <param name="name">Name of the scene graph</param>
         /// <returns>Returns an instance of SceneGraph class</returns>
-        public SceneTree CreateSceneGraph(string name)
+        public BaseScene CreateSceneGraph(string name)
         {
-            SceneTree graph = new SceneTree(name, _renderer, _assetEngine);
+            BaseScene graph = new BaseScene(name, _renderer, _assetEngine);
             _scenes.Add(name, graph);
 
             return graph;
@@ -170,7 +171,7 @@ namespace Pulsar.Graphics
         /// <returns>Returns true if the scene graph is removed otherwise false</returns>
         public bool RemoveSceneGraph(string name)
         {
-            SceneTree graph;
+            BaseScene graph;
             if (!_scenes.TryGetValue(name, out graph))
                 return false;
 
@@ -184,7 +185,7 @@ namespace Pulsar.Graphics
         /// </summary>
         /// <param name="name">Name of the scene graph</param>
         /// <returns>Returns an instance of SceneGraph</returns>
-        public SceneTree GetScene(string name)
+        public BaseScene GetScene(string name)
         {
             return !_scenes.ContainsKey(name) ? null : _scenes[name];
         }

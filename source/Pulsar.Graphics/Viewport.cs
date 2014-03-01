@@ -2,6 +2,7 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics
 {
