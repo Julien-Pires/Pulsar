@@ -39,7 +39,7 @@ namespace Pulsar.Graphics.RenderingTechnique
                 Filename = ShaderFile,
                 ShaderType = typeof(SimpleRenderingShader)
             };
-            _shader = graphicsStorage[GraphicsConstant.ShaderFolderName].Load<Shader>(ShaderName, shaderParameters) as SimpleRenderingShader;
+            _shader = graphicsStorage[GraphicsConstant.ShaderFolderName].Load<ShaderOld>(ShaderName, shaderParameters) as SimpleRenderingShader;
         }
 
         #endregion

@@ -6,7 +6,7 @@ namespace Pulsar.Graphics.RenderingTechnique
     /// <summary>
     /// Shader class for simple rendering with no lights nor shadows
     /// </summary>
-    internal sealed class SimpleRenderingShader : Shader
+    internal sealed class SimpleRenderingShader : ShaderOld
     {
         #region Fields
 

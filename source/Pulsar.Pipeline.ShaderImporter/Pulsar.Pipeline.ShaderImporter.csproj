@@ -1,19 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <ProjectGuid>{601008E0-0394-4AAC-914A-E714A7D127BF}</ProjectGuid>
+    <ProjectGuid>{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pulsar.Pipeline</RootNamespace>
-    <AssemblyName>Pulsar.Pipeline</AssemblyName>
+    <RootNamespace>Pulsar.Pipeline.ShaderImporter</RootNamespace>
+    <AssemblyName>Pulsar.Pipeline.ShaderImporter</AssemblyName>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <BaseIntermediateOutputPath>..\..\temp\obj</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)\$(AssemblyName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
@@ -33,33 +29,46 @@
       <Private>False</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
       <SpecificVersion>true</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\lib\Json.Net\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Graphics\ShaderContent.cs" />
-    <Compile Include="Graphics\ShaderTechniqueCollection.cs" />
-    <Compile Include="Graphics\ShaderTechniqueContent.cs" />
-    <Compile Include="Graphics\ShaderVariableCollection.cs" />
-    <Compile Include="Graphics\ShaderVariableContent.cs" />
-    <Compile Include="Processors\MeshProcessor.cs" />
-    <Compile Include="Processors\ShaderProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShaderImporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pulsar.Graphics\Pulsar.Graphics.csproj">
       <Project>{da4a1233-a1e5-4985-b326-3ca9737fd7a9}</Project>
       <Name>Pulsar.Graphics</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Pulsar.Pipeline\Pulsar.Pipeline.csproj">
+      <Project>{601008e0-0394-4aac-914a-e714a7d127bf}</Project>
+      <Name>Pulsar.Pipeline</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Schema\ShaderDefinition.schema.json" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.ContentPipelineExtensions.targets" />

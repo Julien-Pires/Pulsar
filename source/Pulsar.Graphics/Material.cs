@@ -1,4 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Diagnostics;
+using System.Collections.Generic;
+
+using Microsoft.Xna.Framework;
+
+using Pulsar.Graphics.Fx;
 
 namespace Pulsar.Graphics
 {
@@ -6,38 +12,94 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        private float _specularPower = 1.0f;
-        private float _specularIntensity = 50.0f;
+        private const string DiffuseKey = "Diffuse";
+        private const string DiffuseMapKey = "DiffuseMap";
+        private const string SpecularKey = "Specular";
+        private const string SpecularMapKey = "SpecularMap";
+        private const string SpecularPowerKey = "SpecularPower";
+        private const string NormalMapKey = "NormalMap";
+        private const string OpacityKey = "Opacity";
+
+        private float _opacity;
+        private Color _diffuse;
+        private Texture _diffuseMap;
+        private Color _specular;
+        private Texture _specularMap;
+        private float _specularPower;
+        private Texture _normalMap;
+        private readonly Dictionary<Type, object> _dataMap = new Dictionary<Type, object>();
+        private ShaderBinding _currentTechnique;
 
         #endregion
 
         #region Constructors
 
-        internal Material(string name)
+        public Material(string name)
         {
             Name = name;
+
+            InitializeDataMap();
+
+            Opacity = 1.0f;
+            Diffuse = Color.White;
+            DiffuseMap = null;
+            Specular = Color.White;
+            SpecularMap = null;
+            SpecularPower = 50.0f;
         }
 
         #endregion
 
         #region Methods
 
-        public Material GetCopy()
+        private void InitializeDataMap()
         {
-            Material material = new Material(Name)
-            {
-                TwoSide = TwoSide,
-                WireFrame = WireFrame,
-                IsTransparent = IsTransparent,
-                DiffuseMap = DiffuseMap,
-                SpecularMap = SpecularMap,
-                NormalMap = NormalMap,
-                DiffuseColor = DiffuseColor,
-                SpecularPower = SpecularPower,
-                SpecularIntensity = SpecularIntensity
-            };
+            _dataMap.Add(typeof(float), new Dictionary<string, float>());
+            _dataMap.Add(typeof(Texture), new Dictionary<string, Texture>());
+            _dataMap.Add(typeof(Color), new Dictionary<string, Color>());
+        }
 
-            return material;
+        public void UnsafeSetValue<T>(string key, T value)
+        {
+            Dictionary<string, T> map = (Dictionary<string, T>)_dataMap[typeof(T)];
+            map[key] = value;
+        }
+
+        public void SetValue<T>(string key, T value)
+        {
+            Dictionary<string, T> map = EnsureDictionary<T>();
+            map[key] = value;
+        }
+
+        public T UnsafeGetValue<T>(string key)
+        {
+            Dictionary<string, T> map = (Dictionary<string, T>)_dataMap[typeof(T)];
+
+            return map[key];
+        }
+
+        public T GetValue<T>(string key)
+        {
+            Dictionary<string, T> map = EnsureDictionary<T>();
+            T result;
+
+            return !map.TryGetValue(key, out result) ? default(T) : result;
+        }
+
+        private Dictionary<string, T> EnsureDictionary<T>()
+        {
+            Type type = typeof (T);
+            object value;
+            if (!_dataMap.TryGetValue(type, out value))
+            {
+                value = new Dictionary<string, T>();
+                _dataMap.Add(type, value);
+            }
+
+            Dictionary<string, T> typedDictionary = value as Dictionary<string, T>;
+            Debug.Assert(typedDictionary != null);
+
+            return typedDictionary;
         }
 
         #endregion
@@ -46,57 +108,79 @@ namespace Pulsar.Graphics
 
         public string Name { get; private set; }
 
-        /// <summary>
-        /// Get or set a boolean to disable backface culling
-        /// </summary>
-        public bool TwoSide { get; set; }
+        public bool IsTransparent
+        {
+            get { return _currentTechnique.IsTransparent; }
+        }
 
-        /// <summary>
-        /// Get or set a boolean to draw in wireframe mode
-        /// </summary>
-        public bool WireFrame { get; set; }
+        public float Opacity
+        {
+            get { return _opacity; }
+            set
+            {
+                _opacity = value;
+                UnsafeSetValue(OpacityKey, value);
+            }
+        }
 
-        /// <summary>
-        /// Get or set a boolean indicating this material is transparent
-        /// </summary>
-        public bool IsTransparent { get; set; }
+        public Color Diffuse
+        {
+            get { return _diffuse; }
+            set
+            {
+                _diffuse = value;
+                UnsafeSetValue(DiffuseKey, value);
+            }
+        }
 
-        /// <summary>
-        /// Get or set the diffuse map
-        /// </summary>
-        public Texture DiffuseMap { get; set; }
+        public Texture DiffuseMap
+        {
+            get { return _diffuseMap; }
+            set
+            {
+                _diffuseMap = value;
+                UnsafeSetValue(DiffuseMapKey, value);
+            }
+        }
 
-        /// <summary>
-        /// Get or set the specular map
-        /// </summary>
-        public Texture SpecularMap { get; set; }
+        public Color Specular
+        {
+            get { return _specular; }
+            set
+            {
+                _specular = value;
+                UnsafeSetValue(SpecularKey, value);
+            }
+        }
 
-        /// <summary>
-        /// Get or set the normal map
-        /// </summary>
-        public Texture NormalMap { get; set; }
+        public Texture SpecularMap
+        {
+            get { return _specularMap; }
+            set
+            {
+                _specularMap = value;
+                UnsafeSetValue(SpecularMapKey, value);
+            }
+        }
 
-        /// <summary>
-        /// Get or set the diffuse color
-        /// </summary>
-        public Color DiffuseColor { get; set; }
-
-        /// <summary>
-        /// Get or set the specular power
-        /// </summary>
         public float SpecularPower
         {
             get { return _specularPower; }
-            set { _specularPower = (value < 0.0f) ? 0.0f : value; }
+            set
+            {
+                _specularPower = value;
+                UnsafeSetValue(SpecularPowerKey, value);
+            }
         }
 
-        /// <summary>
-        /// Get or set the specular intensity
-        /// </summary>
-        public float SpecularIntensity
+        public Texture NormalMap
         {
-            get { return _specularIntensity; }
-            set { _specularIntensity = (value < 0.0f) ? 0.0f : value; }
+            get { return _normalMap; }
+            set
+            {
+                _normalMap = value;
+                UnsafeSetValue(NormalMapKey, value);
+            }
         }
 
         #endregion

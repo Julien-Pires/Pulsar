@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21126.0
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pulsar", "Pulsar\Pulsar.csproj", "{2323EEAF-3931-4685-B3AB-91FD67BAD3F0}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pulsar.Game", "Pulsar.Game\Pulsar.Game.csproj", "{5B8CF9AB-0C86-4BB3-BAF4-B052CF812C32}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pulsar.Game.Xbox360", "Pulsar.Game\Pulsar.Game.Xbox360.csproj", "{C40449DF-A51B-4C6A-A8F0-A56AEC166BEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pulsar.Pipeline.ShaderImporter", "Pulsar.Pipeline.ShaderImporter\Pulsar.Pipeline.ShaderImporter.csproj", "{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -135,6 +137,22 @@ Global
 		{C40449DF-A51B-4C6A-A8F0-A56AEC166BEB}.Release|x86.ActiveCfg = Release|Xbox 360
 		{C40449DF-A51B-4C6A-A8F0-A56AEC166BEB}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{C40449DF-A51B-4C6A-A8F0-A56AEC166BEB}.Release|Xbox 360.Build.0 = Release|Xbox 360
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Debug|Any CPU.Build.0 = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Debug|x86.ActiveCfg = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Debug|x86.Build.0 = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Debug|Xbox 360.Build.0 = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Release|Any CPU.ActiveCfg = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Release|Any CPU.Build.0 = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Release|Mixed Platforms.ActiveCfg = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Release|Mixed Platforms.Build.0 = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Release|x86.ActiveCfg = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Release|x86.Build.0 = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Release|Xbox 360.ActiveCfg = Debug|x86
+		{E4420BB2-18AC-48E6-8BEA-0A33FDB37B6A}.Release|Xbox 360.Build.0 = Debug|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,7 +6,7 @@ namespace Pulsar.Graphics
     /// <summary>
     /// Class representing a shader
     /// </summary>
-    public class Shader : IDisposable
+    public class ShaderOld : IDisposable
     {
         #region Fields
 
@@ -22,7 +22,7 @@ namespace Pulsar.Graphics
         /// Constructor of the Shader class
         /// </summary>
         /// <param name="name">Name of the shader</param>
-        protected internal Shader(string name)
+        protected internal ShaderOld(string name)
         {
             Name = name;
         }

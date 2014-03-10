@@ -1,0 +1,53 @@
+﻿{
+	"type" : "object",
+	"properties" : {
+		"File" : {
+			"type" : "string",
+			"title" : "Path to effect file"
+		},
+		"InstancingTechnique" : {
+			"type" : "string",
+			"title" : "Technique used for instancing"
+		},
+		"Fallback" : {
+			"type" : "string",
+			"title" : "Technique used as fallback"
+		},
+		"Techniques" : {
+			"type" : "object",
+			"title" : "List of techniques",
+			"additionalProperties" : {
+				"type" : "object",
+				"properties" : {
+					"Transparent" : {
+						"type" : "boolean",
+						"title" : "Indicate that the technique use transparency"
+					}
+				}
+			}
+		},
+		"Variables" : {
+			"type" : "object",
+			"title" : "List of shader variables",
+			"additionalProperties" : {
+				"type" : "object",
+				"properties" : {
+					"Source" : {
+						"type" : "string",
+						"title" : "Source of the value used by the variable"
+					},
+					"Semantic" : {
+						"type" : "string",
+						"title" : "Semantic used to find the value"
+					},
+					"Usage" : {
+						"type" : "string",
+						"title" : "Update frequency of the variable"
+					}
+				},
+				"required" : ["Source"]
+			}
+		}
+	},
+	"required" : ["File"]
+}

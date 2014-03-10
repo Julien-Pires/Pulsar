@@ -11,7 +11,29 @@ namespace Pulsar.Extension
     /// </summary>
     public static class EnumExtension
     {
-        #region Methods
+        #region Static methods
+
+        public static bool TryParse<T>(string value, bool ignoreCase, out T result) where T : struct
+        {
+#if WINDOWS
+            return Enum.TryParse(value, ignoreCase, out result);
+#elif XBOX || XBOX360
+            result = default(T);
+            bool success;
+            try
+            {
+                result = (T)Enum.Parse(typeof (T), value, ignoreCase);
+
+                success = true;
+            }
+            catch (Exception)
+            {
+                success = false;
+            }
+
+            return success;
+#endif
+        }
 
         /// <summary>
         /// Get an array containing all values for a specific enum
@@ -39,6 +61,7 @@ namespace Pulsar.Extension
             return new T[0];
 #endif
         }
+
         #endregion
     }
 }

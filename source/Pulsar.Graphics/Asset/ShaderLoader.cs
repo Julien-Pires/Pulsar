@@ -16,7 +16,7 @@ namespace Pulsar.Graphics.Asset
 
         internal const string LoaderName = "ShaderLoader";
 
-        private readonly Type[] _supportedTypes = { typeof(Shader) };
+        private readonly Type[] _supportedTypes = { typeof(ShaderOld) };
         private readonly ShaderParameters _defaultParameters = new ShaderParameters();
         private readonly LoadedAsset _result = new LoadedAsset();
 
@@ -61,7 +61,7 @@ namespace Pulsar.Graphics.Asset
                 shaderParameters.Filename = path;
             }
 
-            Shader shader;
+            ShaderOld shader;
             switch (shaderParameters.Source)
             {
                 case AssetSource.FromFile:
@@ -91,19 +91,19 @@ namespace Pulsar.Graphics.Asset
         /// <param name="name">Name of the shader</param>
         /// <param name="shaderType">Type of shader</param>
         /// <returns>Returns a shader instance</returns>
-        public Shader CreateInstance(string name, Type shaderType)
+        public ShaderOld CreateInstance(string name, Type shaderType)
         {
             if (shaderType == null) 
-                return new Shader(name);
+                return new ShaderOld(name);
 
-            if (!shaderType.IsSubclassOf(typeof(Shader)))
+            if (!shaderType.IsSubclassOf(typeof(ShaderOld)))
                 throw new Exception(string.Format("Failed to create instance of {0}, this class doesn't inherit from Shader class", shaderType));
 
             ConstructorInfo[] constructInfo = shaderType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (constructInfo.Length == 0)
                 throw new Exception(string.Format("Failed to create instance of {0}, no constructor available", shaderType));
 
-            Shader fx = (Shader)constructInfo[0].Invoke(new object[] { name });
+            ShaderOld fx = (ShaderOld)constructInfo[0].Invoke(new object[] { name });
 
             return fx;
         }
