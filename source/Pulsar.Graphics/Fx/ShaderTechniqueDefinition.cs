@@ -24,6 +24,8 @@ namespace Pulsar.Graphics.Fx
 
         public bool IsTransparent { get; internal set; }
 
+        public bool IsInstancing { get; internal set; }
+
         #endregion
     }
 }

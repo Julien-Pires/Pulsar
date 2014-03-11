@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-
-namespace Pulsar.Graphics.Fx
+﻿namespace Pulsar.Graphics.Fx
 {
     public sealed class ConstantBinding<T> : ShaderVariableBinding<T>
     {

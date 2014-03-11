@@ -58,6 +58,7 @@
     <Compile Include="Asset\MeshParameters.cs" />
     <Compile Include="Asset\ShaderLoader.cs" />
     <Compile Include="Asset\ShaderParameters.cs" />
+    <Compile Include="Asset\ShaderReader.cs" />
     <Compile Include="Asset\TextureLoader.cs" />
     <Compile Include="Asset\TextureParameters.cs" />
     <Compile Include="BufferAllocatedEventArgs.cs" />
@@ -77,11 +78,9 @@
     <Compile Include="Fx\EffectParameterWriter.cs" />
     <Compile Include="Fx\KeyedBinding.cs" />
     <Compile Include="Fx\Shader.cs" />
-    <Compile Include="Fx\ShaderBinding.cs" />
     <Compile Include="Fx\ShaderPassEnumerator.cs" />
-    <Compile Include="Fx\ShaderTechniqueAssociation.cs" />
+    <Compile Include="Fx\ShaderTechniqueBinding.cs" />
     <Compile Include="Fx\ShaderTechniqueDefinition.cs" />
-    <Compile Include="Fx\ShaderVariableAssociation.cs" />
     <Compile Include="Fx\ShaderVariableBinding.cs" />
     <Compile Include="Fx\ShaderVariableBindingCollection.cs" />
     <Compile Include="Fx\ShaderVariableBindingFactory.cs" />

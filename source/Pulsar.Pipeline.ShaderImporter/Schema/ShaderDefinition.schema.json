@@ -3,9 +3,10 @@
 	"properties" : {
 		"File" : {
 			"type" : "string",
-			"title" : "Path to effect file"
+			"title" : "Path to effect file",
+			"required" : true
 		},
-		"InstancingTechnique" : {
+		"Instancing" : {
 			"type" : "string",
 			"title" : "Technique used for instancing"
 		},
@@ -34,7 +35,8 @@
 				"properties" : {
 					"Source" : {
 						"type" : "string",
-						"title" : "Source of the value used by the variable"
+						"title" : "Source of the value used by the variable",
+						"required" : true
 					},
 					"Semantic" : {
 						"type" : "string",
@@ -44,10 +46,8 @@
 						"type" : "string",
 						"title" : "Update frequency of the variable"
 					}
-				},
-				"required" : ["Source"]
+				}
 			}
 		}
-	},
-	"required" : ["File"]
+	}
 }

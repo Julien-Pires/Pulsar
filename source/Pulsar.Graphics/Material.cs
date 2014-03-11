@@ -28,7 +28,7 @@ namespace Pulsar.Graphics
         private float _specularPower;
         private Texture _normalMap;
         private readonly Dictionary<Type, object> _dataMap = new Dictionary<Type, object>();
-        private ShaderBinding _currentTechnique;
+        private ShaderTechniqueBinding _currentTechnique;
 
         #endregion
 

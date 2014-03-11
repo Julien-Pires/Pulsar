@@ -14,8 +14,11 @@ using Pulsar.Pipeline.Graphics;
 
 namespace Pulsar.Pipeline.ShaderImporter
 {
-    [ContentImporterAttribute(".shd", DefaultProcessor = "", DisplayName = "Shader Definition Importer")]
-    public class ShaderImporter : ContentImporter<ShaderContent>
+    /// <summary>
+    /// Importer for shader definition file
+    /// </summary>
+    [ContentImporterAttribute(".shd", DefaultProcessor = "ShaderProcessor", DisplayName = "Shader Importer - Pulsar")]
+    public class ShaderImporter : ContentImporter<ShaderDefinitionContent>
     {
         #region Fields
 
@@ -23,13 +26,13 @@ namespace Pulsar.Pipeline.ShaderImporter
         private const string EffectExtension = ".fx";
 
         private const string FileProperty = "File";
-        private const string InstancingTechniqueProperty = "InstancingTechnique";
+        private const string InstancingProperty = "Instancing";
         private const string FallbackProperty = "Fallback";
 
         private const string VariablesProperty = "Variables";
         private const string VariableSourceProperty = "Source";
         private const string VariableUsageProperty = "Usage";
-        private const string VariableKeyProperty = "Semantic";
+        private const string VariableSemanticProperty = "Semantic";
 
         private const string TechniquesProperty = "Techniques";
         private const string TechniqueTransparentProperty = "Transparent";
@@ -38,9 +41,15 @@ namespace Pulsar.Pipeline.ShaderImporter
 
         #region Static methods
 
+        /// <summary>
+        /// Gets the path to the effect file
+        /// </summary>
+        /// <param name="definition">Imported data</param>
+        /// <param name="definitionPath">Path of the shader definition file</param>
+        /// <returns>Returns the path to the associated effect file</returns>
         private static string GetEffectFilePath(JObject definition, string definitionPath)
         {
-            JProperty fileToken = definition[FileProperty] as JProperty;
+            JToken fileToken = definition[FileProperty];
             string filePath;
             if (fileToken == null)
             {
@@ -53,28 +62,38 @@ namespace Pulsar.Pipeline.ShaderImporter
             return filePath;
         }
 
-        private static void ImportShaderInfo(JObject shaderBlock, ShaderContent content)
+        /// <summary>
+        /// Extracts shader data
+        /// </summary>
+        /// <param name="shaderBlock">Imported data</param>
+        /// <param name="content">Content object that received imported data</param>
+        private static void ImportShaderInfo(JObject shaderBlock, ShaderDefinitionContent content)
         {
-            JProperty prop = shaderBlock[InstancingTechniqueProperty] as JProperty;
-            if (prop != null)
-                content.InstancingTechnique = (string) prop;
+            JToken token = shaderBlock[InstancingProperty];
+            if (token != null)
+                content.InstancingTechnique = (string) token;
 
-            prop = shaderBlock[FallbackProperty] as JProperty;
-            if (prop != null)
-                content.Fallback = (string) prop;
+            token = shaderBlock[FallbackProperty];
+            if (token != null)
+                content.Fallback = (string) token;
         }
 
-        private static void ImportTechniques(JObject techniquesBlock, ShaderContent content)
+        /// <summary>
+        /// Extracts shader technique data
+        /// </summary>
+        /// <param name="techniquesBlock">Imported data</param>
+        /// <param name="content">Content object that received imported data</param>
+        private static void ImportTechniques(JObject techniquesBlock, ShaderDefinitionContent content)
         {
             if(techniquesBlock == null)
                 return;
 
             foreach (JProperty technique in techniquesBlock.Values<JProperty>())
             {
-                ShaderTechniqueContent techniqueContent = new ShaderTechniqueContent {Name = technique.Name};
+                ShaderTechniqueContent techniqueContent = new ShaderTechniqueContent(technique.Name);
                 JObject techniqueInfo = (JObject)technique.Value;
 
-                JProperty prop = techniqueInfo[TechniqueTransparentProperty] as JProperty;
+                JToken prop = techniqueInfo[TechniqueTransparentProperty];
                 if (prop != null)
                     techniqueContent.IsTransparent = (bool)prop;
 
@@ -82,14 +101,19 @@ namespace Pulsar.Pipeline.ShaderImporter
             }
         }
 
-        private static void ImportVariables(JObject variablesBlock, ShaderContent content)
+        /// <summary>
+        /// Extracts shader variable data
+        /// </summary>
+        /// <param name="variablesBlock">Imported data</param>
+        /// <param name="content">Content object that received imported data</param>
+        private static void ImportVariables(JObject variablesBlock, ShaderDefinitionContent content)
         {
             if(variablesBlock == null)
                 return;
 
             foreach (JProperty shaderVar in variablesBlock.Values<JProperty>())
             {
-                ShaderVariableContent variableContent = new ShaderVariableContent {Name = shaderVar.Name};
+                ShaderVariableContent variableContent = new ShaderVariableContent(shaderVar.Name);
                 JObject shaderVarInfo = (JObject)shaderVar.Value;
 
                 string value = (string)shaderVarInfo[VariableSourceProperty];
@@ -101,10 +125,10 @@ namespace Pulsar.Pipeline.ShaderImporter
                     throw new Exception("Invalid shader variable source value provided");
                 variableContent.Source = source;
 
-                JProperty prop = shaderVarInfo[VariableUsageProperty] as JProperty;
-                if (prop != null)
+                JToken token = shaderVarInfo[VariableUsageProperty];
+                if (token != null)
                 {
-                    value = (string) prop;
+                    value = (string) token;
                     if (!string.IsNullOrWhiteSpace(value))
                     {
                         ShaderVariableUsage usage;
@@ -114,14 +138,20 @@ namespace Pulsar.Pipeline.ShaderImporter
                     }
                 }
 
-                prop = shaderVarInfo[VariableKeyProperty] as JProperty;
-                if (prop != null)
-                    variableContent.Semantic = (string) prop;
+                token = shaderVarInfo[VariableSemanticProperty];
+                if (token != null)
+                    variableContent.Semantic = (string) token;
 
                 content.Variables.Add(variableContent.Name, variableContent);
             }
         }
 
+        /// <summary>
+        /// Checks if the definition file match the definition schema
+        /// </summary>
+        /// <param name="definition">Imported data</param>
+        /// <param name="error">Error message</param>
+        /// <returns>Returns true if the definition is valid otherwise false</returns>
         private static bool IsValidDefinitionFormat(JObject definition, out string error)
         {
             string schema = File.ReadAllText(Schemas);
@@ -150,13 +180,19 @@ namespace Pulsar.Pipeline.ShaderImporter
 
         #region Methods
 
-        public override ShaderContent Import(string filename, ContentImporterContext context)
+        /// <summary>
+        /// Imports a shader definition file
+        /// </summary>
+        /// <param name="filename">Path of the definition file</param>
+        /// <param name="context">Context</param>
+        /// <returns>Returns an object that contains imported data from the file</returns>
+        public override ShaderDefinitionContent Import(string filename, ContentImporterContext context)
         {
             string text = File.ReadAllText(filename);
             if(string.IsNullOrWhiteSpace(text))
                 throw new Exception(string.Format("Failed to load shader definition, {0} is empty", filename));
 
-            JObject definition = new JObject(text);
+            JObject definition = JObject.Parse(text);
             string error;
             if(!IsValidDefinitionFormat(definition, out error))
                 throw new Exception(string.Format("Invalid definition format : {0}", error));
@@ -165,7 +201,7 @@ namespace Pulsar.Pipeline.ShaderImporter
             if(!File.Exists(filePath))
                 throw new Exception("Failed to load shader definition, effect file missing");
 
-            ShaderContent content = new ShaderContent {Effect = new ExternalReference<EffectContent>(filePath)};
+            ShaderDefinitionContent content = new ShaderDefinitionContent {EffectFile = new ExternalReference<EffectContent>(filePath)};
             ImportShaderInfo(definition, content);
 
             JObject jsonObject = definition[VariablesProperty] as JObject;

@@ -8,13 +8,11 @@ namespace Pulsar.Graphics.Fx
     {
         #region Constructor
 
-        internal ShaderVariableDefinition(string name, EffectParameter parameter, Type type, 
-            ShaderVariableSource source)
+        internal ShaderVariableDefinition(string name, EffectParameter parameter, Type type)
         {
             Name = name;
             Parameter = parameter;
             Type = type;
-            Source = source;
         }
 
         #endregion
@@ -31,7 +29,7 @@ namespace Pulsar.Graphics.Fx
 
         public ShaderVariableUsage Usage { get; internal set; }
 
-        public ShaderVariableSource Source { get; private set; }
+        public ShaderVariableSource Source { get; internal set; }
 
         #endregion
     }

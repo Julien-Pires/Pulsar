@@ -27,6 +27,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <XnaPlatform>Windows</XnaPlatform>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
@@ -47,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graphics\ShaderContent.cs" />
+    <Compile Include="Graphics\ShaderDefinitionContent.cs" />
     <Compile Include="Graphics\ShaderTechniqueCollection.cs" />
     <Compile Include="Graphics\ShaderTechniqueContent.cs" />
     <Compile Include="Graphics\ShaderVariableCollection.cs" />
@@ -54,6 +56,7 @@
     <Compile Include="Processors\MeshProcessor.cs" />
     <Compile Include="Processors\ShaderProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\Compiler\ShaderWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pulsar.Graphics\Pulsar.Graphics.csproj">

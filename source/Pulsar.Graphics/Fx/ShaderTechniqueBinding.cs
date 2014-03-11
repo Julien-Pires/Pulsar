@@ -2,7 +2,7 @@
 
 namespace Pulsar.Graphics.Fx
 {
-    internal sealed class ShaderBinding : IDisposable
+    internal sealed class ShaderTechniqueBinding : IDisposable
     {
         #region Fields
 
@@ -13,7 +13,7 @@ namespace Pulsar.Graphics.Fx
 
         #region Constructors
 
-        internal ShaderBinding(Shader shader, ShaderTechniqueDefinition technique)
+        internal ShaderTechniqueBinding(Shader shader, ShaderTechniqueDefinition technique)
         {
             _shader = shader;
             _technique = technique;
