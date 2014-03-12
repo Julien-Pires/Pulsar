@@ -88,7 +88,6 @@
     <Compile Include="Fx\ShaderVariableDefinition.cs" />
     <Compile Include="Fx\ShaderVariableSemantic.cs" />
     <Compile Include="Fx\ShaderVariableSource.cs" />
-    <Compile Include="Fx\ShaderVariableType.cs" />
     <Compile Include="Fx\ShaderVariableUsage.cs" />
     <Compile Include="GraphicsConstant.cs" />
     <Compile Include="GraphicsEngine.cs" />

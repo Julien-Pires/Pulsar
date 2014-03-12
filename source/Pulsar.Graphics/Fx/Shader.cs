@@ -10,6 +10,9 @@ using Pulsar.Extension;
 
 namespace Pulsar.Graphics.Fx
 {
+    /// <summary>
+    /// Represents an effect composed of techniques to render an object
+    /// </summary>
     public sealed class Shader
     {
         #region Fields
@@ -29,6 +32,10 @@ namespace Pulsar.Graphics.Fx
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of Shader class
+        /// </summary>
+        /// <param name="fx">Effect</param>
         internal Shader(Effect fx)
         {
             Debug.Assert(fx != null);
@@ -40,6 +47,11 @@ namespace Pulsar.Graphics.Fx
 
         #region Static methods
 
+        /// <summary>
+        /// Converts a binary input to a shader instance
+        /// </summary>
+        /// <param name="input">Input</param>
+        /// <returns>Returns a shader instance</returns>
         internal static Shader Read(ContentReader input)
         {
             IGraphicsDeviceService graphicsDeviceService = input.ContentManager.ServiceProvider.GetService(typeof(IGraphicsDeviceService))
@@ -63,6 +75,11 @@ namespace Pulsar.Graphics.Fx
             return shader;
         }
 
+        /// <summary>
+        /// Gets the managed type from an effect parameter
+        /// </summary>
+        /// <param name="parameter">Effect parameter</param>
+        /// <returns>Returns an instance of Type class that corresponds to the parameter</returns>
         private static Type ExtractVariableType(EffectParameter parameter)
         {
             Type result = null;
@@ -91,6 +108,11 @@ namespace Pulsar.Graphics.Fx
             return result;
         }
 
+        /// <summary>
+        /// Gets the vector type from an effect parameter
+        /// </summary>
+        /// <param name="parameter">Effect parameter</param>
+        /// <returns>Returns an instance of Type class that corresponds to the parameter</returns>
         private static Type GetVectorType(EffectParameter parameter)
         {
             Type result = null;
@@ -112,6 +134,11 @@ namespace Pulsar.Graphics.Fx
             return result;
         }
 
+        /// <summary>
+        /// Gets the object type from an effect parameter
+        /// </summary>
+        /// <param name="parameter">Effect parameter</param>
+        /// <returns>Returns an instance of Type class that corresponds to the parameter</returns>
         private static Type GetObjectType(EffectParameter parameter)
         {
             Type result = null;
@@ -161,6 +188,11 @@ namespace Pulsar.Graphics.Fx
             return result;
         }
 
+        /// <summary>
+        /// Gets the scalar type from an effect parameter
+        /// </summary>
+        /// <param name="parameter">Effect parameter</param>
+        /// <returns>Returns an instance of Type class that corresponds to the parameter</returns>
         private static Type GetScalarType(EffectParameter parameter)
         {
             Type result = null;
@@ -206,6 +238,9 @@ namespace Pulsar.Graphics.Fx
 
         #region Methods
 
+        /// <summary>
+        /// Creates missing defintion for techniques
+        /// </summary>
         private void CreateMissingTechniqueDefinition()
         {
             for (int i = 0; i < _underlyingFx.Techniques.Count; i++)
@@ -218,6 +253,9 @@ namespace Pulsar.Graphics.Fx
             }
         }
 
+        /// <summary>
+        /// Creates missing definition for variables
+        /// </summary>
         private void CreateMissingVariableDefinition()
         {
             for (int i = 0; i < _underlyingFx.Parameters.Count; i++)
@@ -241,11 +279,15 @@ namespace Pulsar.Graphics.Fx
                 else
                     definition.Source = ShaderVariableSource.Custom;
 
-                List<ShaderVariableDefinition> list = EnsureVariableList((int) definition.Usage);
+                List<ShaderVariableDefinition> list = EnsureVariableList( definition.Usage);
                 list.Add(definition);
             }
         }
 
+        /// <summary>
+        /// Reads techniques definition from a binary input
+        /// </summary>
+        /// <param name="input">Input</param>
         internal void ReadTechniques(ContentReader input)
         {
             int count = input.ReadInt32();
@@ -261,6 +303,10 @@ namespace Pulsar.Graphics.Fx
             }
         }
 
+        /// <summary>
+        /// Reads variables definition from a binary input
+        /// </summary>
+        /// <param name="input">Input</param>
         internal void ReadVariables(ContentReader input)
         {
             int count = input.ReadInt32();
@@ -277,22 +323,30 @@ namespace Pulsar.Graphics.Fx
                 };
                 _variablesMap.Add(name, definition);
 
-                List<ShaderVariableDefinition> list = EnsureVariableList((int)definition.Usage);
+                List<ShaderVariableDefinition> list = EnsureVariableList(definition.Usage);
                 list.Add(definition);
             }
 
             _globalVariables = CreateVariableBinding(ShaderVariableUsage.Global);
         }
 
+        /// <summary>
+        /// Sets the current technique
+        /// </summary>
+        /// <param name="definition">Technique</param>
         internal void SetCurrentTechnique(ShaderTechniqueDefinition definition)
         {
             _underlyingFx.CurrentTechnique = definition.Technique;
         }
 
+        /// <summary>
+        /// Creates a collection of variables binding for a specified update frequency
+        /// </summary>
+        /// <param name="usage">Update frequency</param>
+        /// <returns>Returns a collection of variables binding</returns>
         internal ShaderVariableBindingCollection CreateVariableBinding(ShaderVariableUsage usage)
         {
-            int key = (int) usage;
-            List<ShaderVariableDefinition> variableList = EnsureVariableList(key);
+            List<ShaderVariableDefinition> variableList = EnsureVariableList(usage);
             ShaderVariableBindingCollection bindingCollection = new ShaderVariableBindingCollection(variableList.Count);
             for (int i = 0; i < variableList.Count; i++)
             {
@@ -303,17 +357,28 @@ namespace Pulsar.Graphics.Fx
             return bindingCollection;
         }
 
-        private List<ShaderVariableDefinition> EnsureVariableList(int key)
+        /// <summary>
+        /// Gets a collection of variable definition for a specific update frequency
+        /// </summary>
+        /// <param name="key">Update frequency</param>
+        /// <returns>Returns a collection of variables definition</returns>
+        private List<ShaderVariableDefinition> EnsureVariableList(ShaderVariableUsage key)
         {
             List<ShaderVariableDefinition> list;
-            if (_variablesPerUpdate.TryGetValue(key, out list)) return list;
+            if (_variablesPerUpdate.TryGetValue((int)key, out list)) 
+                return list;
 
             list = new List<ShaderVariableDefinition>();
-            _variablesPerUpdate.Add(key, list);
+            _variablesPerUpdate.Add((int)key, list);
 
             return list;
         }
 
+        /// <summary>
+        /// Gets a shader variable definition
+        /// </summary>
+        /// <param name="name">Name of the variable</param>
+        /// <returns>Returns a variable definition if found otherwise null</returns>
         public ShaderVariableDefinition GetVariableDefinition(string name)
         {
             ShaderVariableDefinition definition;
@@ -321,6 +386,11 @@ namespace Pulsar.Graphics.Fx
             return !_variablesMap.TryGetValue(name, out definition) ? null : definition;
         }
 
+        /// <summary>
+        /// Gets a shader technique definition
+        /// </summary>
+        /// <param name="name">Name of the technique</param>
+        /// <returns>Returns a technique definition if found otherwise null</returns>
         public ShaderTechniqueDefinition GetTechniqueDefinition(string name)
         {
             ShaderTechniqueDefinition technique;
@@ -332,11 +402,17 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
+        /// <summary>
+        /// Gets the collection of variable binding used for global update
+        /// </summary>
         internal ShaderVariableBindingCollection GlobalVariablesBinding
         {
             get { return _globalVariables; }
         }
 
+        /// <summary>
+        /// Gets the name of the technique used as fallback
+        /// </summary>
         public string Fallback
         {
             get { return _fallback; }
@@ -364,6 +440,9 @@ namespace Pulsar.Graphics.Fx
             }
         }
 
+        /// <summary>
+        /// Gets the name of the technique used for instancing
+        /// </summary>
         public string Instancing
         {
             get { return _instancing; }

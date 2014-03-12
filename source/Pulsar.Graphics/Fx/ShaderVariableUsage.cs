@@ -1,5 +1,8 @@
 ﻿namespace Pulsar.Graphics.Fx
 {
+    /// <summary>
+    /// Enumerates update frequency for a variable
+    /// </summary>
     public enum ShaderVariableUsage
     {
         Instance = 0,

@@ -2,7 +2,20 @@
 
 namespace Pulsar.Pipeline.Graphics
 {
-    public class ShaderTechniqueCollection : NamedValueDictionary<ShaderTechniqueContent>
+    /// <summary>
+    /// Represents a collection of named shader technique
+    /// </summary>
+    public sealed class ShaderTechniqueCollection : NamedValueDictionary<ShaderTechniqueContent>
     {
+        #region Constructors
+
+        /// <summary>
+        /// Constructor of ShaderTechniqueCollection class
+        /// </summary>
+        internal ShaderTechniqueCollection()
+        {
+        }
+
+        #endregion
     }
 }

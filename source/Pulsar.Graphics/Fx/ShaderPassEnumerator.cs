@@ -5,6 +5,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsar.Graphics.Fx
 {
+    /// <summary>
+    /// Enumerates a collection of pass
+    /// </summary>
     internal struct ShaderPassEnumerator : IEnumerator<EffectPass>
     {
         #region Fields
@@ -17,6 +20,10 @@ namespace Pulsar.Graphics.Fx
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of ShaderPassEnumerator struct
+        /// </summary>
+        /// <param name="definition">Technique that contains pass to enumerate</param>
         internal ShaderPassEnumerator(ShaderTechniqueDefinition definition)
         {
             _passCollection = definition.Technique.Passes;
@@ -28,12 +35,19 @@ namespace Pulsar.Graphics.Fx
 
         #region Methods
 
+        /// <summary>
+        /// Releases resources
+        /// </summary>
         public void Dispose()
         {
             _passCollection = null;
             _current = null;
         }
 
+        /// <summary>
+        /// Moves to the next pass
+        /// </summary>
+        /// <returns>Returns true if there is a next pass otherwise false</returns>
         public bool MoveNext()
         {
             if (_index < _passCollection.Count)
@@ -50,6 +64,9 @@ namespace Pulsar.Graphics.Fx
             return false;
         }
 
+        /// <summary>
+        /// Resets the enumerator
+        /// </summary>
         public void Reset()
         {
             _current = null;
@@ -60,11 +77,17 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
+        /// <summary>
+        /// Gets the current pass
+        /// </summary>
         public EffectPass Current
         {
             get { return _current; }
         }
 
+        /// <summary>
+        /// Gets the current pass
+        /// </summary>
         object IEnumerator.Current
         {
             get { return Current; }

@@ -13,6 +13,14 @@ namespace Pulsar.Extension
     {
         #region Static methods
 
+        /// <summary>
+        /// Converts the string to an enum value
+        /// </summary>
+        /// <typeparam name="T">Type of the enum</typeparam>
+        /// <param name="value">String value</param>
+        /// <param name="ignoreCase">Use case insensitive when comparing</param>
+        /// <param name="result">Result</param>
+        /// <returns>Returns true if the value is converted successfully otherwise false</returns>
         public static bool TryParse<T>(string value, bool ignoreCase, out T result) where T : struct
         {
 #if WINDOWS

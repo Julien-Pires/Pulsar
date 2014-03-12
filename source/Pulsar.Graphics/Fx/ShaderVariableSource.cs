@@ -1,5 +1,8 @@
 ﻿namespace Pulsar.Graphics.Fx
 {
+    /// <summary>
+    /// Enumerates sources that can be used to update a variable
+    /// </summary>
     public enum ShaderVariableSource
     {
         Custom = 0,

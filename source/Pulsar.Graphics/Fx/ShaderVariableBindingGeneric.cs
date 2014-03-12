@@ -1,9 +1,11 @@
 ﻿using System;
 
-using Microsoft.Xna.Framework.Graphics;
-
 namespace Pulsar.Graphics.Fx
 {
+    /// <summary>
+    /// Represents a strongly-typed shader variable binding
+    /// </summary>
+    /// <typeparam name="T">Variable type</typeparam>
     public abstract class ShaderVariableBinding<T> : ShaderVariableBinding
     {
         #region Fields
@@ -16,13 +18,20 @@ namespace Pulsar.Graphics.Fx
 
         #region Constructors
 
+        /// <summary>
+        /// Static constructor of ShaderVariableBinding class
+        /// </summary>
         static ShaderVariableBinding()
         {
             WriteToParameter = EffectParameterWriter.GetWriteMethod<T>();
         }
 
-        protected ShaderVariableBinding(EffectParameter fxParameter) 
-            : base(fxParameter)
+        /// <summary>
+        /// Constructor of ShaderVariableBinding class
+        /// </summary>
+        /// <param name="definition">Variable definition</param>
+        protected ShaderVariableBinding(ShaderVariableDefinition definition)
+            : base(definition)
         {
         }
 
@@ -30,11 +39,18 @@ namespace Pulsar.Graphics.Fx
 
         #region Methods
 
+        /// <summary>
+        /// Writes the value to the effect parameter
+        /// </summary>
         public override void Write()
         {
             WriteToParameter(this);
         }
 
+        /// <summary>
+        /// Updates the variable value
+        /// </summary>
+        /// <param name="context">Frame context</param>
         public override void Update(FrameContext context)
         {
         }
@@ -43,6 +59,9 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
+        /// <summary>
+        /// Gets the current value of the variable
+        /// </summary>
         public T Value
         {
             get { return InternalValue; }

@@ -3,7 +3,10 @@ using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 
 namespace Pulsar.Pipeline.Graphics
 {
-    public class ShaderDefinitionContent
+    /// <summary>
+    /// Stores design-time data for a shader definition
+    /// </summary>
+    public sealed class ShaderDefinitionContent
     {
         #region Fields
 
@@ -14,9 +17,12 @@ namespace Pulsar.Pipeline.Graphics
 
         #region Constructors
 
-        public ShaderDefinitionContent()
+        /// <summary>
+        /// Constructor of ShaderDefinitionContent class
+        /// </summary>
+        internal ShaderDefinitionContent()
         {
-            InstancingTechnique = string.Empty;
+            Instancing = string.Empty;
             Fallback = string.Empty;
         }
 
@@ -24,21 +30,36 @@ namespace Pulsar.Pipeline.Graphics
 
         #region Properties
 
-        public ExternalReference<EffectContent> EffectFile { get; set; }
+        /// <summary>
+        /// Gets an external reference to the associated effect file
+        /// </summary>
+        public ExternalReference<EffectContent> EffectFile { get; internal set; }
 
+        /// <summary>
+        /// Gets a list of variable definition
+        /// </summary>
         public ShaderVariableCollection Variables
         {
             get { return _variables; }
         }
 
+        /// <summary>
+        /// Gets a list of technique definition
+        /// </summary>
         public ShaderTechniqueCollection Techniques
         {
             get { return _techniques; }
         }
 
-        public string InstancingTechnique { get; set; }
+        /// <summary>
+        /// Gets the name of the instancing technique
+        /// </summary>
+        public string Instancing { get; internal set; }
 
-        public string Fallback { get; set; }
+        /// <summary>
+        /// Gets the name of the fallback technique
+        /// </summary>
+        public string Fallback { get; internal set; }
 
         #endregion
     }

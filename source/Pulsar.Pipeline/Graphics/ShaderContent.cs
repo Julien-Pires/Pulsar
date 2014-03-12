@@ -21,8 +21,9 @@ namespace Pulsar.Pipeline.Graphics
         /// <summary>
         /// Constructor of ShaderContent class
         /// </summary>
-        internal ShaderContent()
+        internal ShaderContent(byte[] compiledEffect)
         {
+            CompiledEffect = compiledEffect;
         }
 
         #endregion
@@ -80,7 +81,7 @@ namespace Pulsar.Pipeline.Graphics
         /// <summary>
         /// Gets the compiled effect
         /// </summary>
-        public byte[] CompiledEffect { get; internal set; }
+        public byte[] CompiledEffect { get; private set; }
 
         /// <summary>
         /// Gets a list of variable definition

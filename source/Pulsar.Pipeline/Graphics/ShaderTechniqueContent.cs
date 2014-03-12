@@ -1,10 +1,17 @@
 ﻿namespace Pulsar.Pipeline.Graphics
 {
-    public class ShaderTechniqueContent
+    /// <summary>
+    /// Stores design-time data for a shader technique
+    /// </summary>
+    public sealed class ShaderTechniqueContent
     {
         #region Constructors
 
-        public ShaderTechniqueContent(string name)
+        /// <summary>
+        /// Constructor of ShaderTechniqueContent class
+        /// </summary>
+        /// <param name="name">Name of the technique</param>
+        internal ShaderTechniqueContent(string name)
         {
             Name = name;
         }
@@ -13,9 +20,15 @@
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name of the technique
+        /// </summary>
         public string Name { get; private set; }
 
-        public bool IsTransparent { get; set; }
+        /// <summary>
+        /// Gets a value that indicate if the technique use transparency
+        /// </summary>
+        public bool IsTransparent { get; internal set; }
 
         #endregion
     }

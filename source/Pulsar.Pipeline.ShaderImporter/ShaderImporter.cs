@@ -71,7 +71,7 @@ namespace Pulsar.Pipeline.ShaderImporter
         {
             JToken token = shaderBlock[InstancingProperty];
             if (token != null)
-                content.InstancingTechnique = (string) token;
+                content.Instancing = (string) token;
 
             token = shaderBlock[FallbackProperty];
             if (token != null)
