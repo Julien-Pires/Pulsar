@@ -13,18 +13,19 @@ namespace Pulsar.Graphics.Fx
     /// <summary>
     /// Represents an effect composed of techniques to render an object
     /// </summary>
-    public sealed class Shader
+    public sealed class Shader : IDisposable
     {
         #region Fields
 
-        private readonly Effect _underlyingFx;
+        private bool _isDisposed;
+        private Effect _underlyingFx;
         private string _fallback = string.Empty;
         private string _instancing = string.Empty;
-        private readonly Dictionary<string, ShaderTechniqueDefinition> _techniquesMap
+        private Dictionary<string, ShaderTechniqueDefinition> _techniquesMap
             = new Dictionary<string, ShaderTechniqueDefinition>();
-        private readonly Dictionary<string, ShaderVariableDefinition> _variablesMap
+        private Dictionary<string, ShaderVariableDefinition> _variablesMap
             = new Dictionary<string, ShaderVariableDefinition>();
-        private readonly Dictionary<int, List<ShaderVariableDefinition>> _variablesPerUpdate
+        private Dictionary<int, List<ShaderVariableDefinition>> _variablesPerUpdate
             = new Dictionary<int, List<ShaderVariableDefinition>>();
         private ShaderVariableBindingCollection _globalVariables;
 
@@ -57,9 +58,9 @@ namespace Pulsar.Graphics.Fx
             IGraphicsDeviceService graphicsDeviceService = input.ContentManager.ServiceProvider.GetService(typeof(IGraphicsDeviceService))
                 as IGraphicsDeviceService;
             if (graphicsDeviceService == null)
-                throw new Exception("");
+                throw new Exception("Failed to find a graphics device service");
             if (graphicsDeviceService.GraphicsDevice == null)
-                throw new Exception("");
+                throw new Exception("Failed to find a graphics device");
 
             int length = input.ReadInt32();
             byte[] compiledEffect = input.ReadBytes(length);
@@ -237,6 +238,33 @@ namespace Pulsar.Graphics.Fx
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
+        public void Dispose()
+        {
+            if(_isDisposed) return;
+
+            try
+            {
+                _techniquesMap.Clear();
+                _variablesMap.Clear();
+                _variablesPerUpdate.Clear();
+                _globalVariables.Clear();
+                _underlyingFx.Dispose();
+            }
+            finally
+            {
+                _techniquesMap = null;
+                _variablesMap = null;
+                _variablesPerUpdate = null;
+                _globalVariables = null;
+                _underlyingFx = null;
+
+                _isDisposed = true;
+            }
+        }
 
         /// <summary>
         /// Creates missing defintion for techniques
