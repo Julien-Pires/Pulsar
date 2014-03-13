@@ -6,7 +6,7 @@ namespace Pulsar.Graphics.Fx
     /// <summary>
     /// Represents a collection of delegate associated to a key
     /// </summary>
-    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TKey">Key</typeparam>
     internal class DelegateMapper<TKey> : Dictionary<TKey, Delegate>
     {
         #region Methods

@@ -3,10 +3,10 @@
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents a shader variable binding that use a key to retrieve its value on a material instance
+    /// Represents a shader constant binding that use a key to retrieve its value on a material instance
     /// </summary>
-    /// <typeparam name="T">Variable type</typeparam>
-    public sealed class KeyedBinding<T> : ShaderVariableBinding<T>
+    /// <typeparam name="T">Constant type</typeparam>
+    public sealed class KeyedBinding<T> : ShaderConstantBinding<T>
     {
         #region Fields
 
@@ -19,8 +19,8 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Constructor of KeyedBinding class
         /// </summary>
-        /// <param name="definition">Variable definition</param>
-        internal KeyedBinding(ShaderVariableDefinition definition)
+        /// <param name="definition">Constant definition</param>
+        internal KeyedBinding(ShaderConstantDefinition definition)
             : base(definition)
         {
             if(string.IsNullOrEmpty(definition.Semantic))
@@ -34,7 +34,7 @@ namespace Pulsar.Graphics.Fx
         #region Methods
 
         /// <summary>
-        /// Updates the variable value
+        /// Updates the value
         /// </summary>
         /// <param name="context">Frame context</param>
         internal override void Update(FrameContext context)

@@ -29,11 +29,11 @@ namespace Pulsar.Pipeline.ShaderImporter
         private const string InstancingProperty = "Instancing";
         private const string FallbackProperty = "Fallback";
 
-        private const string VariablesProperty = "Variables";
-        private const string VariableSourceProperty = "Source";
-        private const string VariableUsageProperty = "Usage";
-        private const string VariableSemanticProperty = "Semantic";
-        private const string VariableEquivalentTypeProperty = "EquivalentType";
+        private const string ConstantProperty = "Constants";
+        private const string ConstantSourceProperty = "Source";
+        private const string ConstantUpdateFrequencyProperty = "UpdateFrequency";
+        private const string ConstantSemanticProperty = "Semantic";
+        private const string ConstantEquivalentTypeProperty = "EquivalentType";
 
         private const string TechniquesProperty = "Techniques";
         private const string TechniqueTransparentProperty = "Transparent";
@@ -103,51 +103,56 @@ namespace Pulsar.Pipeline.ShaderImporter
         }
 
         /// <summary>
-        /// Extracts shader variable data
+        /// Extracts shader constants data
         /// </summary>
-        /// <param name="variablesBlock">Imported data</param>
+        /// <param name="constantsBlock">Imported data</param>
         /// <param name="content">Content object that received imported data</param>
-        private static void ImportVariables(JObject variablesBlock, ShaderDefinitionContent content)
+        private static void ImportConstants(JObject constantsBlock, ShaderDefinitionContent content)
         {
-            if(variablesBlock == null)
+            if(constantsBlock == null)
                 return;
 
-            foreach (JProperty shaderVar in variablesBlock.Values<JProperty>())
+            foreach (JProperty shaderConstant in constantsBlock.Values<JProperty>())
             {
-                ShaderVariableContent variableContent = new ShaderVariableContent(shaderVar.Name);
-                JObject shaderVarInfo = (JObject)shaderVar.Value;
+                ShaderConstantContent constantContent = new ShaderConstantContent(shaderConstant.Name);
+                JObject shaderConstantInfo = (JObject)shaderConstant.Value;
 
-                string value = (string)shaderVarInfo[VariableSourceProperty];
-                if(string.IsNullOrWhiteSpace(value))
-                    throw new Exception("Shader variable source cannot be null or empty");
+                JToken token = shaderConstantInfo[ConstantSourceProperty];
+                string value;
+                if (token != null)
+                {
+                    value = (string) token;
+                    if (string.IsNullOrWhiteSpace(value))
+                        throw new Exception("Shader constant source cannot be null or empty");
 
-                ShaderVariableSource source;
-                if(!Enum.TryParse(value, out source))
-                    throw new Exception("Invalid shader variable source value provided");
-                variableContent.Source = source;
+                    ShaderConstantSource source;
+                    if (!Enum.TryParse(value, out source))
+                        throw new Exception("Invalid shader constant source value provided");
+                    constantContent.Source = source;
+                }
 
-                JToken token = shaderVarInfo[VariableUsageProperty];
+                token = shaderConstantInfo[ConstantUpdateFrequencyProperty];
                 if (token != null)
                 {
                     value = (string) token;
                     if (!string.IsNullOrWhiteSpace(value))
                     {
-                        ShaderVariableUsage usage;
-                        if(!Enum.TryParse(value, out usage))
-                            throw new Exception("Invalid shader variable usage value provided");
-                        variableContent.Usage = usage;
+                        UpdateFrequency update;
+                        if(!Enum.TryParse(value, out update))
+                            throw new Exception("Invalid shader constant usage value provided");
+                        constantContent.UpdateFrequency = update;
                     }
                 }
 
-                token = shaderVarInfo[VariableSemanticProperty];
+                token = shaderConstantInfo[ConstantSemanticProperty];
                 if (token != null)
-                    variableContent.Semantic = (string) token;
+                    constantContent.Semantic = (string) token;
 
-                token = shaderVarInfo[VariableEquivalentTypeProperty];
+                token = shaderConstantInfo[ConstantEquivalentTypeProperty];
                 if (token != null)
-                    variableContent.EquivalentType = ((string)token).ToLower();
+                    constantContent.EquivalentType = ((string)token).ToLower();
 
-                content.Variables.Add(variableContent.Name, variableContent);
+                content.Constants.Add(constantContent.Name, constantContent);
             }
         }
 
@@ -209,8 +214,8 @@ namespace Pulsar.Pipeline.ShaderImporter
             ShaderDefinitionContent content = new ShaderDefinitionContent {EffectFile = new ExternalReference<EffectContent>(filePath)};
             ImportShaderInfo(definition, content);
 
-            JObject jsonObject = definition[VariablesProperty] as JObject;
-            ImportVariables(jsonObject, content);
+            JObject jsonObject = definition[ConstantProperty] as JObject;
+            ImportConstants(jsonObject, content);
 
             jsonObject = definition[TechniquesProperty] as JObject;
             ImportTechniques(jsonObject, content);

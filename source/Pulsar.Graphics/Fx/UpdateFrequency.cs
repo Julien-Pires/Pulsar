@@ -3,7 +3,7 @@
     /// <summary>
     /// Enumerates update frequency for a variable
     /// </summary>
-    public enum ShaderVariableUsage
+    public enum UpdateFrequency
     {
         Instance = 0,
         Material = 1,

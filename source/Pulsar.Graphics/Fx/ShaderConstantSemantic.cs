@@ -3,7 +3,7 @@
     /// <summary>
     /// Enumerates semantics that can be used to automatically update a variable
     /// </summary>
-    public enum ShaderVariableSemantic
+    public enum ShaderConstantSemantic
     {
         Position,
         CameraPosition,

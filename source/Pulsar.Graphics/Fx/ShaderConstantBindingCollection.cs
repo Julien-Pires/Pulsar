@@ -5,34 +5,34 @@ using System.Collections.Generic;
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents a collection of variable binding
+    /// Represents a collection of constants binding
     /// </summary>
-    public sealed class ShaderVariableBindingCollection
+    public sealed class ShaderConstantBindingCollection
     {
         #region Fields
 
         private const int DefaultCapacity = 4;
 
-        private readonly List<ShaderVariableBinding> _bindings;
+        private readonly List<ShaderConstantBinding> _bindings;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Constructor of ShaderVariableBindingCollection class
+        /// Constructor of ShaderConstantBindingCollection class
         /// </summary>
-        internal ShaderVariableBindingCollection() : this(DefaultCapacity)
+        internal ShaderConstantBindingCollection() : this(DefaultCapacity)
         {
         }
 
         /// <summary>
-        /// Constructor of ShaderVariableBindingCollection class
+        /// Constructor of ShaderConstantBindingCollection class
         /// </summary>
         /// <param name="capacity">Initial capacity</param>
-        internal ShaderVariableBindingCollection(int capacity)
+        internal ShaderConstantBindingCollection(int capacity)
         {
-            _bindings = new List<ShaderVariableBinding>(capacity);
+            _bindings = new List<ShaderConstantBinding>(capacity);
         }
 
         #endregion
@@ -42,9 +42,9 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Gets a binding with a specified name
         /// </summary>
-        /// <param name="name">Name of the variable</param>
-        /// <returns>Returns a variable binding if found otherwise null</returns>
-        public ShaderVariableBinding this[string name]
+        /// <param name="name">Name of the constant</param>
+        /// <returns>Returns a constant binding if found otherwise null</returns>
+        public ShaderConstantBinding this[string name]
         {
             get
             {
@@ -61,9 +61,9 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Gets a binding with a specified name
         /// </summary>
-        /// <param name="name">Name of the variable</param>
-        /// <returns>Returns a variable binding if found otherwise null</returns>
-        public ShaderVariableBinding GetBinding(string name)
+        /// <param name="name">Name of the constant</param>
+        /// <returns>Returns a constant binding if found otherwise null</returns>
+        public ShaderConstantBinding GetBinding(string name)
         {
             int idx = IndexOf(name);
 
@@ -74,9 +74,9 @@ namespace Pulsar.Graphics.Fx
         /// Gets a binding with a specified name
         /// </summary>
         /// <typeparam name="T">Binding type</typeparam>
-        /// <param name="name">Name of the variable</param>
-        /// <returns>Returns a variable binding if found otherwise null</returns>
-        public T GetBinding<T>(string name) where T : ShaderVariableBinding
+        /// <param name="name">Name of the constant</param>
+        /// <returns>Returns a constant binding if found otherwise null</returns>
+        public T GetBinding<T>(string name) where T : ShaderConstantBinding
         {
             int idx = IndexOf(name);
 
@@ -84,9 +84,9 @@ namespace Pulsar.Graphics.Fx
         }
 
         /// <summary>
-        /// Gets the index of binding with a specified name
+        /// Gets the index of a binding with a specified name
         /// </summary>
-        /// <param name="name">Name of the variable</param>
+        /// <param name="name">Name of the constant</param>
         /// <returns>Returns a based zero index if found otherwise -1</returns>
         private int IndexOf(string name)
         {
@@ -102,8 +102,8 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Adds a binding to the collection
         /// </summary>
-        /// <param name="binding">Variable binding</param>
-        internal void Add(ShaderVariableBinding binding)
+        /// <param name="binding">Constant binding</param>
+        internal void Add(ShaderConstantBinding binding)
         {
             Debug.Assert(binding != null);
 

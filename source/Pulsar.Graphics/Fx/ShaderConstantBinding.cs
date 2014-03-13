@@ -5,17 +5,17 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents the base class for a shader variable binding
+    /// Represents the base class for a shader constant binding
     /// </summary>
-    public abstract class ShaderVariableBinding
+    public abstract class ShaderConstantBinding
     {
         #region Constructors
 
         /// <summary>
-        /// Constructor of ShaderVariableBinding class
+        /// Constructor of ShaderConstantBinding class
         /// </summary>
-        /// <param name="definition">Variable definition</param>
-        internal ShaderVariableBinding(ShaderVariableDefinition definition)
+        /// <param name="definition">Constant definition</param>
+        internal ShaderConstantBinding(ShaderConstantDefinition definition)
         {
             Debug.Assert(definition.Parameter != null, "Effect parameter cannot be null");
 
@@ -27,7 +27,7 @@ namespace Pulsar.Graphics.Fx
         #region Methods
 
         /// <summary>
-        /// Updates the variable value
+        /// Updates the value
         /// </summary>
         /// <param name="context">Frame context</param>
         internal abstract void Update(FrameContext context);
@@ -47,7 +47,7 @@ namespace Pulsar.Graphics.Fx
         internal EffectParameter FxParameter { get; private set; }
 
         /// <summary>
-        /// Gets the name of the variable
+        /// Gets the name of the constant
         /// </summary>
         public string Name
         {

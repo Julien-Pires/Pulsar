@@ -15,38 +15,38 @@ namespace Pulsar.Graphics.Fx
 
         private static readonly DelegateMapper<int> DelegatesMap = new DelegateMapper<int>
         {
-            {(int)ShaderVariableSemantic.Position, (Func<FrameContext, Vector3>)GetPosition},
-            {(int)ShaderVariableSemantic.CameraPosition, (Func<FrameContext, Vector3>)GetCameraPosition},
-            {(int)ShaderVariableSemantic.Diffuse, (Func<FrameContext, Color>)GetDiffuse},
-            {(int)ShaderVariableSemantic.DiffuseMap, (Func<FrameContext, XnaTexture>)GetDiffuseMap},
-            {(int)ShaderVariableSemantic.Opacity, (Func<FrameContext, float>)GetOpacity},
-            {(int)ShaderVariableSemantic.Projection, (Func<FrameContext, Matrix>)GetProjection},
-            {(int)ShaderVariableSemantic.ProjectionInverse, (Func<FrameContext, Matrix>)GetProjectionInverse},
-            {(int)ShaderVariableSemantic.ProjectionInverseTranspose, (Func<FrameContext, Matrix>)GetProjectionInverseTranspose},
-            {(int)ShaderVariableSemantic.ProjectionTranspose, (Func<FrameContext, Matrix>)GetProjectionTranspose},
-            {(int)ShaderVariableSemantic.Specular, (Func<FrameContext, Color>)GetSpecular},
-            {(int)ShaderVariableSemantic.SpecularMap, (Func<FrameContext, XnaTexture>)GetSpecularMap},
-            {(int)ShaderVariableSemantic.SpecularPower, (Func<FrameContext, float>)GetSpecularPower},
-            {(int)ShaderVariableSemantic.View, (Func<FrameContext, Matrix>)GetView},
-            {(int)ShaderVariableSemantic.ViewInverse, (Func<FrameContext, Matrix>)GetViewInverse},
-            {(int)ShaderVariableSemantic.ViewInverseTranspose, (Func<FrameContext, Matrix>)GetViewInverseTranspose},
-            {(int)ShaderVariableSemantic.ViewProjection, (Func<FrameContext, Matrix>)GetViewProjection},
-            {(int)ShaderVariableSemantic.ViewProjectionInverse, (Func<FrameContext, Matrix>)GetViewProjectionInverse},
-            {(int)ShaderVariableSemantic.ViewProjectionInverseTranspose, (Func<FrameContext, Matrix>)GetViewProjectionInverseTranspose},
-            {(int)ShaderVariableSemantic.ViewProjectionTranspose, (Func<FrameContext, Matrix>)GetViewProjectionTranspose},
-            {(int)ShaderVariableSemantic.ViewTranspose, (Func<FrameContext, Matrix>)GetViewTranspose},
-            {(int)ShaderVariableSemantic.World, (Func<FrameContext, Matrix>)GetWorld},
-            {(int)ShaderVariableSemantic.WorldInverse, (Func<FrameContext, Matrix>)GetWorldInverse},
-            {(int)ShaderVariableSemantic.WorldInverseTranspose, (Func<FrameContext, Matrix>)GetWorldInverseTranspose},
-            {(int)ShaderVariableSemantic.WorldTranspose, (Func<FrameContext, Matrix>)GetWorldTranspose},
-            {(int)ShaderVariableSemantic.WorldView, (Func<FrameContext, Matrix>)GetWorldView},
-            {(int)ShaderVariableSemantic.WorldViewInverse, (Func<FrameContext, Matrix>)GetWorldViewInverse},
-            {(int)ShaderVariableSemantic.WorldViewInverseTranspose, (Func<FrameContext, Matrix>)GetWorldViewInverseTranspose},
-            {(int)ShaderVariableSemantic.WorldViewTranspose, (Func<FrameContext, Matrix>)GetWorldViewTranspose},
-            {(int)ShaderVariableSemantic.WorldViewProjection, (Func<FrameContext, Matrix>)GetWorldViewProjection},
-            {(int)ShaderVariableSemantic.WorldViewProjectionInverse, (Func<FrameContext, Matrix>)GetWorldViewProjectionInverse},
-            {(int)ShaderVariableSemantic.WorldViewProjectionInverseTranspose, (Func<FrameContext, Matrix>)GetWorldViewProjectionInverseTranspose},
-            {(int)ShaderVariableSemantic.WorldViewProjectionTranspose, (Func<FrameContext, Matrix>)GetWorldViewProjectionTranspose}
+            {(int)ShaderConstantSemantic.Position, (Func<FrameContext, Vector3>)GetPosition},
+            {(int)ShaderConstantSemantic.CameraPosition, (Func<FrameContext, Vector3>)GetCameraPosition},
+            {(int)ShaderConstantSemantic.Diffuse, (Func<FrameContext, Color>)GetDiffuse},
+            {(int)ShaderConstantSemantic.DiffuseMap, (Func<FrameContext, XnaTexture>)GetDiffuseMap},
+            {(int)ShaderConstantSemantic.Opacity, (Func<FrameContext, float>)GetOpacity},
+            {(int)ShaderConstantSemantic.Projection, (Func<FrameContext, Matrix>)GetProjection},
+            {(int)ShaderConstantSemantic.ProjectionInverse, (Func<FrameContext, Matrix>)GetProjectionInverse},
+            {(int)ShaderConstantSemantic.ProjectionInverseTranspose, (Func<FrameContext, Matrix>)GetProjectionInverseTranspose},
+            {(int)ShaderConstantSemantic.ProjectionTranspose, (Func<FrameContext, Matrix>)GetProjectionTranspose},
+            {(int)ShaderConstantSemantic.Specular, (Func<FrameContext, Color>)GetSpecular},
+            {(int)ShaderConstantSemantic.SpecularMap, (Func<FrameContext, XnaTexture>)GetSpecularMap},
+            {(int)ShaderConstantSemantic.SpecularPower, (Func<FrameContext, float>)GetSpecularPower},
+            {(int)ShaderConstantSemantic.View, (Func<FrameContext, Matrix>)GetView},
+            {(int)ShaderConstantSemantic.ViewInverse, (Func<FrameContext, Matrix>)GetViewInverse},
+            {(int)ShaderConstantSemantic.ViewInverseTranspose, (Func<FrameContext, Matrix>)GetViewInverseTranspose},
+            {(int)ShaderConstantSemantic.ViewProjection, (Func<FrameContext, Matrix>)GetViewProjection},
+            {(int)ShaderConstantSemantic.ViewProjectionInverse, (Func<FrameContext, Matrix>)GetViewProjectionInverse},
+            {(int)ShaderConstantSemantic.ViewProjectionInverseTranspose, (Func<FrameContext, Matrix>)GetViewProjectionInverseTranspose},
+            {(int)ShaderConstantSemantic.ViewProjectionTranspose, (Func<FrameContext, Matrix>)GetViewProjectionTranspose},
+            {(int)ShaderConstantSemantic.ViewTranspose, (Func<FrameContext, Matrix>)GetViewTranspose},
+            {(int)ShaderConstantSemantic.World, (Func<FrameContext, Matrix>)GetWorld},
+            {(int)ShaderConstantSemantic.WorldInverse, (Func<FrameContext, Matrix>)GetWorldInverse},
+            {(int)ShaderConstantSemantic.WorldInverseTranspose, (Func<FrameContext, Matrix>)GetWorldInverseTranspose},
+            {(int)ShaderConstantSemantic.WorldTranspose, (Func<FrameContext, Matrix>)GetWorldTranspose},
+            {(int)ShaderConstantSemantic.WorldView, (Func<FrameContext, Matrix>)GetWorldView},
+            {(int)ShaderConstantSemantic.WorldViewInverse, (Func<FrameContext, Matrix>)GetWorldViewInverse},
+            {(int)ShaderConstantSemantic.WorldViewInverseTranspose, (Func<FrameContext, Matrix>)GetWorldViewInverseTranspose},
+            {(int)ShaderConstantSemantic.WorldViewTranspose, (Func<FrameContext, Matrix>)GetWorldViewTranspose},
+            {(int)ShaderConstantSemantic.WorldViewProjection, (Func<FrameContext, Matrix>)GetWorldViewProjection},
+            {(int)ShaderConstantSemantic.WorldViewProjectionInverse, (Func<FrameContext, Matrix>)GetWorldViewProjectionInverse},
+            {(int)ShaderConstantSemantic.WorldViewProjectionInverseTranspose, (Func<FrameContext, Matrix>)GetWorldViewProjectionInverseTranspose},
+            {(int)ShaderConstantSemantic.WorldViewProjectionTranspose, (Func<FrameContext, Matrix>)GetWorldViewProjectionTranspose}
         };
 
         #endregion
@@ -57,9 +57,9 @@ namespace Pulsar.Graphics.Fx
         /// Gets the delegate for a specified key
         /// </summary>
         /// <typeparam name="T">Type of the return parameter</typeparam>
-        /// <param name="key">Shader variable semantic</param>
+        /// <param name="key">Shader constant semantic</param>
         /// <returns>Returns a strongly typed function</returns>
-        public static Func<FrameContext, T> GetMethod<T>(ShaderVariableSemantic key)
+        public static Func<FrameContext, T> GetMethod<T>(ShaderConstantSemantic key)
         {
             return DelegatesMap.GetTypedDelegate<Func<FrameContext, T>>((int)key);
         }

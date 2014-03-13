@@ -17,15 +17,15 @@ namespace Pulsar.Graphics.Fx
         #region Fields
 
         private bool _isDisposed;
-        private Effect _underlyingFx;
+        private Effect _underlyingEffect;
         private string _fallback = string.Empty;
         private string _instancing = string.Empty;
         private Dictionary<string, ShaderTechniqueDefinition> _techniquesMap
             = new Dictionary<string, ShaderTechniqueDefinition>();
-        private Dictionary<string, ShaderVariableDefinition> _variablesMap
-            = new Dictionary<string, ShaderVariableDefinition>();
-        private Dictionary<int, List<ShaderVariableDefinition>> _variablesPerUpdate
-            = new Dictionary<int, List<ShaderVariableDefinition>>();
+        private Dictionary<string, ShaderConstantDefinition> _constantsMap
+            = new Dictionary<string, ShaderConstantDefinition>();
+        private Dictionary<int, List<ShaderConstantDefinition>> _constantsPerUpdate
+            = new Dictionary<int, List<ShaderConstantDefinition>>();
 
         #endregion
 
@@ -34,12 +34,12 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Constructor of Shader class
         /// </summary>
-        /// <param name="fx">Effect</param>
-        internal Shader(Effect fx)
+        /// <param name="effect">Effect</param>
+        internal Shader(Effect effect)
         {
-            Debug.Assert(fx != null);
+            Debug.Assert(effect != null);
 
-            _underlyingFx = fx;
+            _underlyingEffect = effect;
         }
 
         #endregion
@@ -65,9 +65,9 @@ namespace Pulsar.Graphics.Fx
             Effect fx = new Effect(graphicsDeviceService.GraphicsDevice, compiledEffect);
             Shader shader = new Shader(fx);
             shader.ReadTechniques(input);
-            shader.ReadVariables(input);
+            shader.ReadConstants(input);
             shader.CreateMissingTechniqueDefinition();
-            shader.CreateMissingVariableDefinition();
+            shader.CreateMissingConstantDefinition();
             shader.Fallback = input.ReadString();
             shader.Instancing = input.ReadString();
 
@@ -87,19 +87,21 @@ namespace Pulsar.Graphics.Fx
 
             try
             {
+                GlobalConstantsBinding.Clear();
+                _constantsMap.Clear();
+                _constantsPerUpdate.Clear();
                 _techniquesMap.Clear();
-                _variablesMap.Clear();
-                _variablesPerUpdate.Clear();
-                GlobalVariablesBinding.Clear();
-                _underlyingFx.Dispose();
+
+                _underlyingEffect.Dispose();
             }
             finally
             {
+                GlobalConstantsBinding = null;
+                _constantsMap = null;
+                _constantsPerUpdate = null;
                 _techniquesMap = null;
-                _variablesMap = null;
-                _variablesPerUpdate = null;
-                GlobalVariablesBinding = null;
-                _underlyingFx = null;
+
+                _underlyingEffect = null;
 
                 _isDisposed = true;
             }
@@ -110,9 +112,9 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         private void CreateMissingTechniqueDefinition()
         {
-            for (int i = 0; i < _underlyingFx.Techniques.Count; i++)
+            for (int i = 0; i < _underlyingEffect.Techniques.Count; i++)
             {
-                EffectTechnique technique = _underlyingFx.Techniques[i];
+                EffectTechnique technique = _underlyingEffect.Techniques[i];
                 if (_techniquesMap.ContainsKey(technique.Name)) continue;
 
                 ShaderTechniqueDefinition definition = new ShaderTechniqueDefinition(technique.Name, technique);
@@ -121,34 +123,34 @@ namespace Pulsar.Graphics.Fx
         }
 
         /// <summary>
-        /// Creates missing definition for variables
+        /// Creates missing definition for constants
         /// </summary>
-        private void CreateMissingVariableDefinition()
+        private void CreateMissingConstantDefinition()
         {
-            for (int i = 0; i < _underlyingFx.Parameters.Count; i++)
+            for (int i = 0; i < _underlyingEffect.Parameters.Count; i++)
             {
-                EffectParameter parameter = _underlyingFx.Parameters[i];
-                if (_variablesMap.ContainsKey(parameter.Name)) continue;
+                EffectParameter parameter = _underlyingEffect.Parameters[i];
+                if (_constantsMap.ContainsKey(parameter.Name)) continue;
 
                 Type type = EffectParameterHelper.GetManagedType(parameter, string.Empty);
-                ShaderVariableDefinition definition = new ShaderVariableDefinition(parameter.Name, parameter, type)
+                ShaderConstantDefinition definition = new ShaderConstantDefinition(parameter.Name, parameter, type)
                 {
-                    Usage = ShaderVariableUsage.Instance
+                    UpdateFrequency = UpdateFrequency.Instance
                 };
 
                 if (!string.IsNullOrEmpty(parameter.Semantic))
                 {
-                    ShaderVariableSemantic semantic;
+                    ShaderConstantSemantic semantic;
                     definition.Source = EnumExtension.TryParse(parameter.Semantic, true, out semantic) ?
-                        ShaderVariableSource.Auto : ShaderVariableSource.Keyed;
+                        ShaderConstantSource.Auto : ShaderConstantSource.Keyed;
                     definition.Semantic = parameter.Semantic;
                 }
                 else
-                    definition.Source = ShaderVariableSource.Custom;
+                    definition.Source = ShaderConstantSource.Custom;
 
-                _variablesMap.Add(parameter.Name, definition);
+                _constantsMap.Add(parameter.Name, definition);
 
-                List<ShaderVariableDefinition> list = EnsureVariableList( definition.Usage);
+                List<ShaderConstantDefinition> list = EnsureConstantsList( definition.UpdateFrequency);
                 list.Add(definition);
             }
         }
@@ -163,7 +165,7 @@ namespace Pulsar.Graphics.Fx
             for (int i = 0; i < count; i++)
             {
                 string name = input.ReadString();
-                EffectTechnique technique = _underlyingFx.Techniques[name];
+                EffectTechnique technique = _underlyingEffect.Techniques[name];
                 if (technique == null)
                     throw new Exception(
                         string.Format("Shader definition contains a technique {0} but doesn't exist in effect", name));
@@ -177,38 +179,38 @@ namespace Pulsar.Graphics.Fx
         }
 
         /// <summary>
-        /// Reads variables definition from a binary input
+        /// Reads constants definition from a binary input
         /// </summary>
         /// <param name="input">Input</param>
-        internal void ReadVariables(ContentReader input)
+        internal void ReadConstants(ContentReader input)
         {
             int count = input.ReadInt32();
             for (int i = 0; i < count; i++)
             {
                 string name = input.ReadString();
-                EffectParameter parameter = _underlyingFx.Parameters[name];
+                EffectParameter parameter = _underlyingEffect.Parameters[name];
                 if (parameter == null)
                     throw new Exception(
                         string.Format("Shader definition contains a constant {0} but doesn't exist in effect", name));
 
-                ShaderVariableSource source = (ShaderVariableSource) input.ReadInt32();
-                ShaderVariableUsage usage = (ShaderVariableUsage) input.ReadInt32();
+                ShaderConstantSource source = (ShaderConstantSource) input.ReadInt32();
+                UpdateFrequency update = (UpdateFrequency) input.ReadInt32();
                 string semantic = input.ReadString();
                 string equivalentType = input.ReadString();
                 Type type = EffectParameterHelper.GetManagedType(parameter, equivalentType);
-                ShaderVariableDefinition definition = new ShaderVariableDefinition(name, parameter, type)
+                ShaderConstantDefinition definition = new ShaderConstantDefinition(name, parameter, type)
                 {
                     Source = source,
-                    Usage = usage,
+                    UpdateFrequency = update,
                     Semantic = semantic
                 };
-                _variablesMap.Add(name, definition);
+                _constantsMap.Add(name, definition);
 
-                List<ShaderVariableDefinition> list = EnsureVariableList(definition.Usage);
+                List<ShaderConstantDefinition> list = EnsureConstantsList(definition.UpdateFrequency);
                 list.Add(definition);
             }
 
-            GlobalVariablesBinding = CreateVariableBinding(ShaderVariableUsage.Global);
+            GlobalConstantsBinding = CreateConstantsBinding(UpdateFrequency.Global);
         }
 
         /// <summary>
@@ -217,21 +219,21 @@ namespace Pulsar.Graphics.Fx
         /// <param name="definition">Technique</param>
         internal void SetCurrentTechnique(ShaderTechniqueDefinition definition)
         {
-            _underlyingFx.CurrentTechnique = definition.Technique;
+            _underlyingEffect.CurrentTechnique = definition.Technique;
         }
 
         /// <summary>
-        /// Creates a collection of variables binding for a specified update frequency
+        /// Creates a collection of constants binding for a specified update frequency
         /// </summary>
         /// <param name="usage">Update frequency</param>
-        /// <returns>Returns a collection of variables binding</returns>
-        internal ShaderVariableBindingCollection CreateVariableBinding(ShaderVariableUsage usage)
+        /// <returns>Returns a collection of constants binding</returns>
+        internal ShaderConstantBindingCollection CreateConstantsBinding(UpdateFrequency usage)
         {
-            List<ShaderVariableDefinition> variableList = EnsureVariableList(usage);
-            ShaderVariableBindingCollection bindingCollection = new ShaderVariableBindingCollection(variableList.Count);
-            for (int i = 0; i < variableList.Count; i++)
+            List<ShaderConstantDefinition> constantList = EnsureConstantsList(usage);
+            ShaderConstantBindingCollection bindingCollection = new ShaderConstantBindingCollection(constantList.Count);
+            for (int i = 0; i < constantList.Count; i++)
             {
-                ShaderVariableBinding binding = ShaderVariableBindingFactory.CreateBinding(variableList[i]);
+                ShaderConstantBinding binding = ShaderConstantBindingFactory.CreateBinding(constantList[i]);
                 bindingCollection.Add(binding);
             }
 
@@ -239,32 +241,32 @@ namespace Pulsar.Graphics.Fx
         }
 
         /// <summary>
-        /// Gets a collection of variable definition for a specific update frequency
+        /// Gets a collection of constant definition for a specific update frequency
         /// </summary>
         /// <param name="key">Update frequency</param>
-        /// <returns>Returns a collection of variables definition</returns>
-        private List<ShaderVariableDefinition> EnsureVariableList(ShaderVariableUsage key)
+        /// <returns>Returns a collection of constants definition</returns>
+        private List<ShaderConstantDefinition> EnsureConstantsList(UpdateFrequency key)
         {
-            List<ShaderVariableDefinition> list;
-            if (_variablesPerUpdate.TryGetValue((int)key, out list)) 
+            List<ShaderConstantDefinition> list;
+            if (_constantsPerUpdate.TryGetValue((int)key, out list)) 
                 return list;
 
-            list = new List<ShaderVariableDefinition>();
-            _variablesPerUpdate.Add((int)key, list);
+            list = new List<ShaderConstantDefinition>();
+            _constantsPerUpdate.Add((int)key, list);
 
             return list;
         }
 
         /// <summary>
-        /// Gets a shader variable definition
+        /// Gets a shader constant definition
         /// </summary>
-        /// <param name="name">Name of the variable</param>
-        /// <returns>Returns a variable definition if found otherwise null</returns>
-        public ShaderVariableDefinition GetVariableDefinition(string name)
+        /// <param name="name">Name of the constant</param>
+        /// <returns>Returns a constant definition if found otherwise null</returns>
+        public ShaderConstantDefinition GetConstantDefinition(string name)
         {
-            ShaderVariableDefinition definition;
+            ShaderConstantDefinition definition;
 
-            return !_variablesMap.TryGetValue(name, out definition) ? null : definition;
+            return !_constantsMap.TryGetValue(name, out definition) ? null : definition;
         }
 
         /// <summary>
@@ -284,9 +286,9 @@ namespace Pulsar.Graphics.Fx
         #region Properties
 
         /// <summary>
-        /// Gets the collection of variable binding used for global update
+        /// Gets the collection of constants binding used for global update
         /// </summary>
-        public ShaderVariableBindingCollection GlobalVariablesBinding { get; private set; }
+        public ShaderConstantBindingCollection GlobalConstantsBinding { get; private set; }
 
         /// <summary>
         /// Gets the name of the technique used as fallback
@@ -306,7 +308,7 @@ namespace Pulsar.Graphics.Fx
                 if (!string.IsNullOrEmpty(value))
                 {
                     if (!_techniquesMap.TryGetValue(value, out definition))
-                        throw new Exception(string.Format("Shader {0} does not have a technique {1}", _underlyingFx.Name,
+                        throw new Exception(string.Format("Shader {0} does not have a technique {1}", _underlyingEffect.Name,
                             value));
 
                     definition.IsFallback = true;
@@ -336,7 +338,7 @@ namespace Pulsar.Graphics.Fx
                 if (!string.IsNullOrEmpty(value))
                 {
                     if (!_techniquesMap.TryGetValue(value, out definition))
-                        throw new Exception(string.Format("Shader {0} does not have a technique {1}", _underlyingFx.Name,
+                        throw new Exception(string.Format("Shader {0} does not have a technique {1}", _underlyingEffect.Name,
                             value));
 
                     definition.IsInstancing = true;

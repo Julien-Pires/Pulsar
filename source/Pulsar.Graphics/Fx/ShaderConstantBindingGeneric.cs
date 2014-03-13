@@ -3,14 +3,14 @@
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents a strongly-typed shader variable binding
+    /// Represents a strongly-typed shader constant binding
     /// </summary>
-    /// <typeparam name="T">Variable type</typeparam>
-    public abstract class ShaderVariableBinding<T> : ShaderVariableBinding
+    /// <typeparam name="T">Constant type</typeparam>
+    public abstract class ShaderConstantBinding<T> : ShaderConstantBinding
     {
         #region Fields
 
-        private static readonly Action<ShaderVariableBinding<T>> WriteToParameter;
+        private static readonly Action<ShaderConstantBinding<T>> WriteToParameter;
 
         internal T InternalValue;
 
@@ -19,18 +19,18 @@ namespace Pulsar.Graphics.Fx
         #region Constructors
 
         /// <summary>
-        /// Static constructor of ShaderVariableBinding class
+        /// Static constructor of ShaderConstantBinding class
         /// </summary>
-        static ShaderVariableBinding()
+        static ShaderConstantBinding()
         {
             WriteToParameter = EffectParameterWriter.GetWriteMethod<T>();
         }
 
         /// <summary>
-        /// Constructor of ShaderVariableBinding class
+        /// Constructor of ShaderConstantBinding class
         /// </summary>
-        /// <param name="definition">Variable definition</param>
-        internal ShaderVariableBinding(ShaderVariableDefinition definition)
+        /// <param name="definition">Constant definition</param>
+        internal ShaderConstantBinding(ShaderConstantDefinition definition)
             : base(definition)
         {
         }
@@ -48,7 +48,7 @@ namespace Pulsar.Graphics.Fx
         }
 
         /// <summary>
-        /// Updates the variable value
+        /// Updates the value
         /// </summary>
         /// <param name="context">Frame context</param>
         internal override void Update(FrameContext context)
@@ -60,7 +60,7 @@ namespace Pulsar.Graphics.Fx
         #region Properties
 
         /// <summary>
-        /// Gets the current value of the variable
+        /// Gets the current value
         /// </summary>
         public T Value
         {

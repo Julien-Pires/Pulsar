@@ -25,8 +25,8 @@ namespace Pulsar.Graphics.Fx
         {
             _shader = shader;
             _technique = technique;
-            MaterialBinding = shader.CreateVariableBinding(ShaderVariableUsage.Material);
-            InstanceBinding = shader.CreateVariableBinding(ShaderVariableUsage.Instance);
+            MaterialConstantsBinding = shader.CreateConstantsBinding(UpdateFrequency.Material);
+            InstanceConstantsBinding = shader.CreateConstantsBinding(UpdateFrequency.Instance);
         }
 
         #endregion
@@ -40,13 +40,13 @@ namespace Pulsar.Graphics.Fx
         {
             try
             {
-                MaterialBinding.Clear();
-                InstanceBinding.Clear();
+                MaterialConstantsBinding.Clear();
+                InstanceConstantsBinding.Clear();
             }
             finally
             {
-                MaterialBinding = null;
-                InstanceBinding = null;
+                MaterialConstantsBinding = null;
+                InstanceConstantsBinding = null;
                 _shader = null;
                 _technique = null;
             }
@@ -74,22 +74,22 @@ namespace Pulsar.Graphics.Fx
         #region Properties
 
         /// <summary>
-        /// Gets the collection of variable binding used for a global update
+        /// Gets the collection of constants binding used for a global update
         /// </summary>
-        public ShaderVariableBindingCollection GlobalBinding
+        public ShaderConstantBindingCollection GlobalConstantsBinding
         {
-            get { return _shader.GlobalVariablesBinding; }
+            get { return _shader.GlobalConstantsBinding; }
         }
 
         /// <summary>
-        /// Gets the collection of variable binding used for material update
+        /// Gets the collection of constants binding used for material update
         /// </summary>
-        public ShaderVariableBindingCollection MaterialBinding { get; private set; }
+        public ShaderConstantBindingCollection MaterialConstantsBinding { get; private set; }
 
         /// <summary>
-        /// Gets the collection of variable binding used for instance update
+        /// Gets the collection of constants binding used for instance update
         /// </summary>
-        public ShaderVariableBindingCollection InstanceBinding { get; private set; }
+        public ShaderConstantBindingCollection InstanceConstantsBinding { get; private set; }
 
         /// <summary>
         /// Gets the name of the technique

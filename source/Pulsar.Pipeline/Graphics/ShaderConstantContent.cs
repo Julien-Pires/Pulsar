@@ -3,17 +3,17 @@
 namespace Pulsar.Pipeline.Graphics
 {
     /// <summary>
-    /// Stores design-time data for a shader variable
+    /// Stores design-time data for a shader constant
     /// </summary>
-    public sealed class ShaderVariableContent
+    public sealed class ShaderConstantContent
     {
         #region Constructors
 
         /// <summary>
-        /// Constructor of ShaderVariableContent class
+        /// Constructor of ShaderConstantContent class
         /// </summary>
-        /// <param name="name">Name of the variable</param>
-        internal ShaderVariableContent(string name)
+        /// <param name="name">Name of the constant</param>
+        internal ShaderConstantContent(string name)
         {
             Name = name;
             Semantic = string.Empty;
@@ -25,19 +25,19 @@ namespace Pulsar.Pipeline.Graphics
         #region Properties
 
         /// <summary>
-        /// Gets the name of the variable
+        /// Gets the name of the constant
         /// </summary>
         public string Name { get; private set; }
 
         /// <summary>
         /// Gets the update source
         /// </summary>
-        public ShaderVariableSource Source { get; internal set; }
+        public ShaderConstantSource Source { get; internal set; }
 
         /// <summary>
         /// Gets the update frequency
         /// </summary>
-        public ShaderVariableUsage Usage { get; internal set; }
+        public UpdateFrequency UpdateFrequency { get; internal set; }
         
         /// <summary>
         /// Gets the semantic

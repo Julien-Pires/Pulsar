@@ -3,9 +3,9 @@
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents a shader variable binding that use a delegate to update its value
+    /// Represents a shader constant binding that use a delegate to update its value
     /// </summary>
-    /// <typeparam name="T">Variable type</typeparam>
+    /// <typeparam name="T">Constant type</typeparam>
     public sealed class DelegateBinding<T> : BaseDelegateBinding<T>
     {
         #region Constructors
@@ -13,8 +13,8 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Constructor of DelegateBinding class
         /// </summary>
-        /// <param name="definition">Variable definition</param>
-        internal DelegateBinding(ShaderVariableDefinition definition)
+        /// <param name="definition">Constant definition</param>
+        internal DelegateBinding(ShaderConstantDefinition definition)
             : base(definition)
         {
             InternalUpdateFunction = DefaultUpdate;
@@ -25,7 +25,7 @@ namespace Pulsar.Graphics.Fx
         #region Static methods
 
         /// <summary>
-        /// Default method to update the variable
+        /// Default method to update the value
         /// </summary>
         /// <param name="context">Frame context</param>
         /// <returns>Returns the default value for the current type</returns>
@@ -39,7 +39,7 @@ namespace Pulsar.Graphics.Fx
         #region Methods
 
         /// <summary>
-        /// Sets the delegate used to update the variable
+        /// Sets the delegate used to update the value
         /// </summary>
         /// <param name="context">Frame context</param>
         public void SetUpdateFunction(Func<FrameContext, T> context)

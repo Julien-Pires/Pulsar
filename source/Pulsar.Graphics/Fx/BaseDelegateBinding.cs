@@ -3,10 +3,10 @@
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents a shader variable binding that use a delegate to update its value
+    /// Represents a shader constant binding that use a delegate to update its value
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class BaseDelegateBinding<T> : ShaderVariableBinding<T>
+    public abstract class BaseDelegateBinding<T> : ShaderConstantBinding<T>
     {
         #region Fields
 
@@ -22,8 +22,8 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Constructor of BaseDelegateBinding class
         /// </summary>
-        /// <param name="definition">Variable definition</param>
-        internal BaseDelegateBinding(ShaderVariableDefinition definition)
+        /// <param name="definition">Constant definition</param>
+        internal BaseDelegateBinding(ShaderConstantDefinition definition)
             : base(definition)
         {
         }
@@ -33,7 +33,7 @@ namespace Pulsar.Graphics.Fx
         #region Methods
 
         /// <summary>
-        /// Updates the value of the variable
+        /// Updates the value
         /// </summary>
         /// <param name="context">Frame context</param>
         internal override void Update(FrameContext context)

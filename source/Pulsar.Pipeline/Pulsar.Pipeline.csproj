@@ -51,8 +51,8 @@
     <Compile Include="Graphics\ShaderDefinitionContent.cs" />
     <Compile Include="Graphics\ShaderTechniqueCollection.cs" />
     <Compile Include="Graphics\ShaderTechniqueContent.cs" />
-    <Compile Include="Graphics\ShaderVariableCollection.cs" />
-    <Compile Include="Graphics\ShaderVariableContent.cs" />
+    <Compile Include="Graphics\ShaderConstantCollection.cs" />
+    <Compile Include="Graphics\ShaderConstantContent.cs" />
     <Compile Include="Processors\MeshProcessor.cs" />
     <Compile Include="Processors\ShaderProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

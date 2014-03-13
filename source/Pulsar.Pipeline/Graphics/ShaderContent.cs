@@ -12,7 +12,7 @@ namespace Pulsar.Pipeline.Graphics
         #region Fields
 
         private readonly List<ShaderTechniqueContent> _techniques = new List<ShaderTechniqueContent>();
-        private readonly List<ShaderVariableContent> _variables = new List<ShaderVariableContent>();
+        private readonly List<ShaderConstantContent> _constants = new List<ShaderConstantContent>();
 
         #endregion
 
@@ -39,25 +39,25 @@ namespace Pulsar.Pipeline.Graphics
             output.Write(CompiledEffect.Length);
             output.Write(CompiledEffect);
             WriteTechniques(output);
-            WriteVariables(output);
+            WriteConstants(output);
             output.Write(Fallback);
             output.Write(Instancing);
         }
 
         /// <summary>
-        /// Writes a list of shader variables definition to a content writer
+        /// Writes a list of shader constants definition to a content writer
         /// </summary>
         /// <param name="output">Output</param>
-        private void WriteVariables(ContentWriter output)
+        private void WriteConstants(ContentWriter output)
         {
-            output.Write(_variables.Count);
-            for(int i = 0; i < _variables.Count; i++)
+            output.Write(_constants.Count);
+            for(int i = 0; i < _constants.Count; i++)
             {
-                output.Write(_variables[i].Name);
-                output.Write((int)_variables[i].Source);
-                output.Write((int)_variables[i].Usage);
-                output.Write(_variables[i].Semantic);
-                output.Write(_variables[i].EquivalentType);
+                output.Write(_constants[i].Name);
+                output.Write((int)_constants[i].Source);
+                output.Write((int)_constants[i].UpdateFrequency);
+                output.Write(_constants[i].Semantic);
+                output.Write(_constants[i].EquivalentType);
             }
         }
 
@@ -85,11 +85,11 @@ namespace Pulsar.Pipeline.Graphics
         public byte[] CompiledEffect { get; private set; }
 
         /// <summary>
-        /// Gets a list of variable definition
+        /// Gets a list of constant definition
         /// </summary>
-        public List<ShaderVariableContent> Variables
+        public List<ShaderConstantContent> Constants
         {
-            get { return _variables; }
+            get { return _constants; }
         }
 
         /// <summary>

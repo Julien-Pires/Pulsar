@@ -1,19 +1,19 @@
 ﻿namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents a shader variable binding to a constant value
+    /// Represents a shader constant binding to a constant value
     /// </summary>
-    /// <typeparam name="T">Variable type</typeparam>
-    public sealed class ConstantBinding<T> : ShaderVariableBinding<T>
+    /// <typeparam name="T">Constant type</typeparam>
+    public sealed class ConstantBinding<T> : ShaderConstantBinding<T>
     {
         #region Constructors
 
         /// <summary>
         /// Constructor of ConstantBinding class
         /// </summary>
-        /// <param name="definition">Variable definition</param>
-        /// <param name="value">Constant</param>
-        internal ConstantBinding(ShaderVariableDefinition definition, T value)
+        /// <param name="definition">Constant definition</param>
+        /// <param name="value">Value</param>
+        internal ConstantBinding(ShaderConstantDefinition definition, T value)
             : base(definition)
         {
             InternalValue = value;

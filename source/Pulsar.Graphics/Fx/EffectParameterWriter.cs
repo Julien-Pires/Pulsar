@@ -15,24 +15,24 @@ namespace Pulsar.Graphics.Fx
 
         private static readonly DelegateMapper<Type> DelegatesMap = new DelegateMapper<Type>
         {
-            {typeof(Vector2), (Action<ShaderVariableBinding<Vector2>>)Write},
-            {typeof(Vector2[]), (Action<ShaderVariableBinding<Vector2[]>>)Write},
-            {typeof(Vector3), (Action<ShaderVariableBinding<Vector3>>)Write},
-            {typeof(Vector3[]), (Action<ShaderVariableBinding<Vector3[]>>)Write},
-            {typeof(Vector4), (Action<ShaderVariableBinding<Vector4>>)Write},
-            {typeof(Vector4[]), (Action<ShaderVariableBinding<Vector4[]>>)Write},
-            {typeof(Quaternion), (Action<ShaderVariableBinding<Quaternion>>)Write},
-            {typeof(Quaternion[]), (Action<ShaderVariableBinding<Quaternion[]>>)Write},
-            {typeof(Matrix), (Action<ShaderVariableBinding<Matrix>>)Write},
-            {typeof(Matrix[]), (Action<ShaderVariableBinding<Matrix[]>>)Write},
-            {typeof(int), (Action<ShaderVariableBinding<int>>)Write},
-            {typeof(int[]), (Action<ShaderVariableBinding<int[]>>)Write},
-            {typeof(float), (Action<ShaderVariableBinding<float>>)Write},
-            {typeof(float[]), (Action<ShaderVariableBinding<float[]>>)Write},
-            {typeof(bool), (Action<ShaderVariableBinding<bool>>)Write},
-            {typeof(bool[]), (Action<ShaderVariableBinding<bool[]>>)Write},
-            {typeof(XnaTexture), (Action<ShaderVariableBinding<XnaTexture>>)Write},
-            {typeof(string), (Action<ShaderVariableBinding<string>>)Write}
+            {typeof(Vector2), (Action<ShaderConstantBinding<Vector2>>)Write},
+            {typeof(Vector2[]), (Action<ShaderConstantBinding<Vector2[]>>)Write},
+            {typeof(Vector3), (Action<ShaderConstantBinding<Vector3>>)Write},
+            {typeof(Vector3[]), (Action<ShaderConstantBinding<Vector3[]>>)Write},
+            {typeof(Vector4), (Action<ShaderConstantBinding<Vector4>>)Write},
+            {typeof(Vector4[]), (Action<ShaderConstantBinding<Vector4[]>>)Write},
+            {typeof(Quaternion), (Action<ShaderConstantBinding<Quaternion>>)Write},
+            {typeof(Quaternion[]), (Action<ShaderConstantBinding<Quaternion[]>>)Write},
+            {typeof(Matrix), (Action<ShaderConstantBinding<Matrix>>)Write},
+            {typeof(Matrix[]), (Action<ShaderConstantBinding<Matrix[]>>)Write},
+            {typeof(int), (Action<ShaderConstantBinding<int>>)Write},
+            {typeof(int[]), (Action<ShaderConstantBinding<int[]>>)Write},
+            {typeof(float), (Action<ShaderConstantBinding<float>>)Write},
+            {typeof(float[]), (Action<ShaderConstantBinding<float[]>>)Write},
+            {typeof(bool), (Action<ShaderConstantBinding<bool>>)Write},
+            {typeof(bool[]), (Action<ShaderConstantBinding<bool[]>>)Write},
+            {typeof(XnaTexture), (Action<ShaderConstantBinding<XnaTexture>>)Write},
+            {typeof(string), (Action<ShaderConstantBinding<string>>)Write}
         };
 
         #endregion
@@ -44,16 +44,16 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         /// <typeparam name="T">Type of the value to write</typeparam>
         /// <returns>Returns a delegate</returns>
-        public static Action<ShaderVariableBinding<T>> GetWriteMethod<T>()
+        public static Action<ShaderConstantBinding<T>> GetWriteMethod<T>()
         {
-            return DelegatesMap.GetTypedDelegate<Action<ShaderVariableBinding<T>>>(typeof(T));
+            return DelegatesMap.GetTypedDelegate<Action<ShaderConstantBinding<T>>>(typeof(T));
         }
 
         /// <summary>
         /// Writes a vector2 to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<Vector2> binding)
+        private static void Write(ShaderConstantBinding<Vector2> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -62,7 +62,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes an array of vector2 to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<Vector2[]> binding)
+        private static void Write(ShaderConstantBinding<Vector2[]> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -71,7 +71,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes a vector3 to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<Vector3> binding)
+        private static void Write(ShaderConstantBinding<Vector3> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -80,7 +80,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes an array of vector3 to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<Vector3[]> binding)
+        private static void Write(ShaderConstantBinding<Vector3[]> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -89,7 +89,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes a vector4 to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<Vector4> binding)
+        private static void Write(ShaderConstantBinding<Vector4> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -98,7 +98,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes an array of vector4 to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<Vector4[]> binding)
+        private static void Write(ShaderConstantBinding<Vector4[]> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -107,7 +107,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes a quaternion to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<Quaternion> binding)
+        private static void Write(ShaderConstantBinding<Quaternion> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -116,7 +116,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes an array of quaternion to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<Quaternion[]> binding)
+        private static void Write(ShaderConstantBinding<Quaternion[]> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -125,7 +125,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes a matrix to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<Matrix> binding)
+        private static void Write(ShaderConstantBinding<Matrix> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -134,7 +134,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes an array of matrix to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<Matrix[]> binding)
+        private static void Write(ShaderConstantBinding<Matrix[]> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -143,7 +143,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes an int to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<int> binding)
+        private static void Write(ShaderConstantBinding<int> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -152,7 +152,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes an array of int to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<int[]> binding)
+        private static void Write(ShaderConstantBinding<int[]> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -161,7 +161,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes a float to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<float> binding)
+        private static void Write(ShaderConstantBinding<float> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -170,7 +170,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes an array of float to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<float[]> binding)
+        private static void Write(ShaderConstantBinding<float[]> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -179,7 +179,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes a bool to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<bool> binding)
+        private static void Write(ShaderConstantBinding<bool> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -188,7 +188,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes an array of bool to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<bool[]> binding)
+        private static void Write(ShaderConstantBinding<bool[]> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -197,7 +197,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes a texture to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<XnaTexture> binding)
+        private static void Write(ShaderConstantBinding<XnaTexture> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }
@@ -206,7 +206,7 @@ namespace Pulsar.Graphics.Fx
         /// Writes a string to the effect parameter
         /// </summary>
         /// <param name="binding">Binding that contains the data to write</param>
-        private static void Write(ShaderVariableBinding<string> binding)
+        private static void Write(ShaderConstantBinding<string> binding)
         {
             binding.FxParameter.SetValue(binding.InternalValue);
         }

@@ -5,19 +5,19 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Describes a shader variable
+    /// Describes a shader constant
     /// </summary>
-    public sealed class ShaderVariableDefinition
+    public sealed class ShaderConstantDefinition
     {
         #region Constructor
 
         /// <summary>
-        /// Constructor of ShaderVariableDefinition class
+        /// Constructor of ShaderConstantDefinition class
         /// </summary>
-        /// <param name="name">Name of the variable</param>
+        /// <param name="name">Name of the constant</param>
         /// <param name="parameter">Effect parameter</param>
-        /// <param name="type">Variable type</param>
-        internal ShaderVariableDefinition(string name, EffectParameter parameter, Type type)
+        /// <param name="type">Constant type</param>
+        internal ShaderConstantDefinition(string name, EffectParameter parameter, Type type)
         {
             Name = name;
             Parameter = parameter;
@@ -34,29 +34,29 @@ namespace Pulsar.Graphics.Fx
         internal EffectParameter Parameter { get; private set; }
 
         /// <summary>
-        /// Gets the name of the variable
+        /// Gets the name of the constant
         /// </summary>
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets the type of the variable
+        /// Gets the type
         /// </summary>
         public Type Type { get; private set; }
 
         /// <summary>
-        /// Gets the semantic of the variable
+        /// Gets the semantic
         /// </summary>
         public string Semantic { get; internal set; }
 
         /// <summary>
-        /// Gets the update frequency of the variable
+        /// Gets the update frequency
         /// </summary>
-        public ShaderVariableUsage Usage { get; internal set; }
+        public UpdateFrequency UpdateFrequency { get; internal set; }
 
         /// <summary>
-        /// Gets the source used to update the variable value
+        /// Gets the source used to update the constant value
         /// </summary>
-        public ShaderVariableSource Source { get; internal set; }
+        public ShaderConstantSource Source { get; internal set; }
 
         #endregion
     }

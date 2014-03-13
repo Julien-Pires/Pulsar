@@ -27,24 +27,23 @@
 				}
 			}
 		},
-		"Variables" : {
+		"Constants" : {
 			"type" : "object",
-			"title" : "List of shader variables",
+			"title" : "List of shader constants",
 			"additionalProperties" : {
 				"type" : "object",
 				"properties" : {
 					"Source" : {
 						"type" : "string",
-						"title" : "Source of the value used by the variable",
-						"required" : true
+						"title" : "Source of the value used by the constant"
 					},
 					"Semantic" : {
 						"type" : "string",
 						"title" : "Semantic used to find the value"
 					},
-					"Usage" : {
+					"UpdateFrequency" : {
 						"type" : "string",
-						"title" : "Update frequency of the variable"
+						"title" : "Update frequency of the constant"
 					},
 					"EquivalentType" : {
 						"type" : "string",

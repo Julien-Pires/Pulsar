@@ -10,7 +10,7 @@ namespace Pulsar.Pipeline.Graphics
     {
         #region Fields
 
-        private readonly ShaderVariableCollection _variables = new ShaderVariableCollection();
+        private readonly ShaderConstantCollection _constants = new ShaderConstantCollection();
         private readonly ShaderTechniqueCollection _techniques = new ShaderTechniqueCollection();
 
         #endregion
@@ -36,11 +36,11 @@ namespace Pulsar.Pipeline.Graphics
         public ExternalReference<EffectContent> EffectFile { get; internal set; }
 
         /// <summary>
-        /// Gets a list of variable definition
+        /// Gets a list of constant definition
         /// </summary>
-        public ShaderVariableCollection Variables
+        public ShaderConstantCollection Constants
         {
-            get { return _variables; }
+            get { return _constants; }
         }
 
         /// <summary>

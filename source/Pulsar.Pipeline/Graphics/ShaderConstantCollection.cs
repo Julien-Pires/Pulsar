@@ -3,16 +3,16 @@
 namespace Pulsar.Pipeline.Graphics
 {
     /// <summary>
-    /// Represents a collection of named shader variable
+    /// Represents a collection of named shader constant
     /// </summary>
-    public class ShaderVariableCollection : NamedValueDictionary<ShaderVariableContent>
+    public class ShaderConstantCollection : NamedValueDictionary<ShaderConstantContent>
     {
         #region Constructors
 
         /// <summary>
-        /// Constructor of ShaderVariableCollection class
+        /// Constructor of ShaderConstantCollection class
         /// </summary>
-        internal ShaderVariableCollection()
+        internal ShaderConstantCollection()
         {
         }
 

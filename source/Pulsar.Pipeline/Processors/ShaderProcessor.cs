@@ -18,23 +18,23 @@ namespace Pulsar.Pipeline.Processors
         #region Static methods
 
         /// <summary>
-        /// Validates shader variable definition
+        /// Validates shader constants definition
         /// </summary>
         /// <param name="input">Input</param>
-        private static void ValidateVariablesDefinition(ShaderDefinitionContent input)
+        private static void ValidateConstantsDefinition(ShaderDefinitionContent input)
         {
-            foreach (ShaderVariableContent shaderVar in input.Variables.Values)
+            foreach (ShaderConstantContent shaderConstant in input.Constants.Values)
             {
-                switch (shaderVar.Source)
+                switch (shaderConstant.Source)
                 {
-                    case ShaderVariableSource.Auto:
-                        ShaderVariableSemantic semantic;
-                        if (!Enum.TryParse(shaderVar.Semantic, out semantic))
-                            throw new Exception(string.Format("{0} is an invalid semantic when source is set to Auto", shaderVar.Semantic));
+                    case ShaderConstantSource.Auto:
+                        ShaderConstantSemantic semantic;
+                        if (!Enum.TryParse(shaderConstant.Semantic, out semantic))
+                            throw new Exception(string.Format("{0} is an invalid semantic when source is set to Auto", shaderConstant.Semantic));
                         break;
 
-                    case ShaderVariableSource.Keyed:
-                        if (string.IsNullOrWhiteSpace(shaderVar.Semantic))
+                    case ShaderConstantSource.Keyed:
+                        if (string.IsNullOrWhiteSpace(shaderConstant.Semantic))
                             throw new Exception("Semantic cannot be null or empty when source is set to Keyed");
                         break;
                 }
@@ -59,7 +59,7 @@ namespace Pulsar.Pipeline.Processors
             if(context == null)
                 throw new ArgumentNullException("context");
 
-            ValidateVariablesDefinition(input);
+            ValidateConstantsDefinition(input);
 
             CompiledEffectContent compiledFx = context.BuildAndLoadAsset<EffectContent, CompiledEffectContent>(input.EffectFile, "EffectProcessor");
             ShaderContent shader = new ShaderContent(compiledFx.GetEffectCode())
@@ -67,10 +67,11 @@ namespace Pulsar.Pipeline.Processors
                 Fallback = input.Fallback,
                 Instancing = input.Instancing
             };
-            foreach (ShaderVariableContent shaderVar in input.Variables.Values)
-                shader.Variables.Add(shaderVar);
+            
             foreach (ShaderTechniqueContent shaderTech in input.Techniques.Values)
                 shader.Techniques.Add(shaderTech);
+            foreach (ShaderConstantContent shaderConstant in input.Constants.Values)
+                shader.Constants.Add(shaderConstant);
 
             return shader;
         }
