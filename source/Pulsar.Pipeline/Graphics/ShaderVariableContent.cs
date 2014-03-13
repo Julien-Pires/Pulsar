@@ -17,6 +17,7 @@ namespace Pulsar.Pipeline.Graphics
         {
             Name = name;
             Semantic = string.Empty;
+            EquivalentType = string.Empty;
         }
 
         #endregion
@@ -42,6 +43,11 @@ namespace Pulsar.Pipeline.Graphics
         /// Gets the semantic
         /// </summary>
         public string Semantic { get; internal set; }
+
+        /// <summary>
+        /// Gets the managed type used instead of the native type
+        /// </summary>
+        public string EquivalentType { get; internal set; }
 
         #endregion
     }

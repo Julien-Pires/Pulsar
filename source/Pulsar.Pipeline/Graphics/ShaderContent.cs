@@ -57,6 +57,7 @@ namespace Pulsar.Pipeline.Graphics
                 output.Write((int)_variables[i].Source);
                 output.Write((int)_variables[i].Usage);
                 output.Write(_variables[i].Semantic);
+                output.Write(_variables[i].EquivalentType);
             }
         }
 

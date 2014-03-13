@@ -75,6 +75,7 @@
     <Compile Include="Fx\ConstantBinding.cs" />
     <Compile Include="Fx\DelegateBinding.cs" />
     <Compile Include="Fx\DelegateMapper.cs" />
+    <Compile Include="Fx\EffectParameterHelper.cs" />
     <Compile Include="Fx\EffectParameterWriter.cs" />
     <Compile Include="Fx\KeyedBinding.cs" />
     <Compile Include="Fx\Shader.cs" />

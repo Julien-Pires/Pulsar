@@ -33,6 +33,7 @@ namespace Pulsar.Pipeline.ShaderImporter
         private const string VariableSourceProperty = "Source";
         private const string VariableUsageProperty = "Usage";
         private const string VariableSemanticProperty = "Semantic";
+        private const string VariableEquivalentTypeProperty = "EquivalentType";
 
         private const string TechniquesProperty = "Techniques";
         private const string TechniqueTransparentProperty = "Transparent";
@@ -141,6 +142,10 @@ namespace Pulsar.Pipeline.ShaderImporter
                 token = shaderVarInfo[VariableSemanticProperty];
                 if (token != null)
                     variableContent.Semantic = (string) token;
+
+                token = shaderVarInfo[VariableEquivalentTypeProperty];
+                if (token != null)
+                    variableContent.EquivalentType = ((string)token).ToLower();
 
                 content.Variables.Add(variableContent.Name, variableContent);
             }

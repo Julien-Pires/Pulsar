@@ -90,6 +90,7 @@
     <Compile Include="Fx\DelegateBinding.cs" />
     <Compile Include="Fx\BaseDelegateBinding.cs" />
     <Compile Include="Fx\DelegateMapper.cs" />
+    <Compile Include="Fx\EffectParameterHelper.cs" />
     <Compile Include="Fx\KeyedBinding.cs" />
     <Compile Include="Fx\ShaderTechniqueBinding.cs" />
     <Compile Include="Fx\ShaderPassEnumerator.cs" />

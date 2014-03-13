@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -60,7 +59,7 @@ namespace Pulsar.Graphics.Fx
                 throw new Exception("Failed to find a graphics device service");
             if (graphicsDeviceService.GraphicsDevice == null)
                 throw new Exception("Failed to find a graphics device");
-
+            
             int length = input.ReadInt32();
             byte[] compiledEffect = input.ReadBytes(length);
             Effect fx = new Effect(graphicsDeviceService.GraphicsDevice, compiledEffect);
@@ -73,165 +72,6 @@ namespace Pulsar.Graphics.Fx
             shader.Instancing = input.ReadString();
 
             return shader;
-        }
-
-        /// <summary>
-        /// Gets the managed type from an effect parameter
-        /// </summary>
-        /// <param name="parameter">Effect parameter</param>
-        /// <returns>Returns an instance of Type class that corresponds to the parameter</returns>
-        private static Type ExtractVariableType(EffectParameter parameter)
-        {
-            Type result = null;
-            switch (parameter.ParameterClass)
-            {
-                case EffectParameterClass.Matrix:
-                    result = typeof(Matrix);
-                    break;
-
-                case EffectParameterClass.Object:
-                    result = GetObjectType(parameter);
-                    break;
-
-                case EffectParameterClass.Scalar:
-                    result = GetScalarType(parameter);
-                    break;
-
-                case EffectParameterClass.Vector:
-                    result = GetVectorType(parameter);
-                    break;
-            }
-
-            if (result == null)
-                throw new Exception("Failed to load shader, unsupported parameter type detected");
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets the vector type from an effect parameter
-        /// </summary>
-        /// <param name="parameter">Effect parameter</param>
-        /// <returns>Returns an instance of Type class that corresponds to the parameter</returns>
-        private static Type GetVectorType(EffectParameter parameter)
-        {
-            Type result = null;
-            switch (parameter.ColumnCount)
-            {
-                case 2:
-                    result = typeof(Vector2);
-                    break;
-
-                case 3:
-                    result = typeof(Vector3);
-                    break;
-
-                case 4:
-                    result = typeof(Vector4);
-                    break;
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets the object type from an effect parameter
-        /// </summary>
-        /// <param name="parameter">Effect parameter</param>
-        /// <returns>Returns an instance of Type class that corresponds to the parameter</returns>
-        private static Type GetObjectType(EffectParameter parameter)
-        {
-            Type result = null;
-            if (parameter.Elements.Count == 0)
-            {
-                switch (parameter.ParameterType)
-                {
-                    case EffectParameterType.Texture:
-                        result = typeof(Texture);
-                        break;
-
-                    case EffectParameterType.Texture2D:
-                        result = typeof(Texture2D);
-                        break;
-
-                    case EffectParameterType.Texture3D:
-                        result = typeof(Texture3D);
-                        break;
-
-                    case EffectParameterType.String:
-                        result = typeof(string);
-                        break;
-                }
-            }
-            else
-            {
-                switch (parameter.ParameterType)
-                {
-                    case EffectParameterType.Texture:
-                        result = typeof(Texture[]);
-                        break;
-
-                    case EffectParameterType.Texture2D:
-                        result = typeof(Texture2D[]);
-                        break;
-
-                    case EffectParameterType.Texture3D:
-                        result = typeof(Texture3D[]);
-                        break;
-
-                    case EffectParameterType.String:
-                        result = typeof(string[]);
-                        break;
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets the scalar type from an effect parameter
-        /// </summary>
-        /// <param name="parameter">Effect parameter</param>
-        /// <returns>Returns an instance of Type class that corresponds to the parameter</returns>
-        private static Type GetScalarType(EffectParameter parameter)
-        {
-            Type result = null;
-            if (parameter.Elements.Count == 0)
-            {
-                switch (parameter.ParameterType)
-                {
-                    case EffectParameterType.Bool:
-                        result = typeof(bool);
-                        break;
-
-                    case EffectParameterType.Int32:
-                        result = typeof(int);
-                        break;
-
-                    case EffectParameterType.Single:
-                        result = typeof(float);
-                        break;
-                }
-            }
-            else
-            {
-                switch (parameter.ParameterType)
-                {
-                    case EffectParameterType.Bool:
-                        result = typeof(bool[]);
-                        break;
-
-                    case EffectParameterType.Int32:
-                        result = typeof(int[]);
-                        break;
-
-                    case EffectParameterType.Single:
-                        result = typeof(float[]);
-                        break;
-                }
-            }
-
-            return result;
         }
 
         #endregion
@@ -290,7 +130,7 @@ namespace Pulsar.Graphics.Fx
                 EffectParameter parameter = _underlyingFx.Parameters[i];
                 if (_variablesMap.ContainsKey(parameter.Name)) continue;
 
-                Type type = ExtractVariableType(parameter);
+                Type type = EffectParameterHelper.GetManagedType(parameter, string.Empty);
                 ShaderVariableDefinition definition = new ShaderVariableDefinition(parameter.Name, parameter, type)
                 {
                     Usage = ShaderVariableUsage.Instance
@@ -305,6 +145,8 @@ namespace Pulsar.Graphics.Fx
                 }
                 else
                     definition.Source = ShaderVariableSource.Custom;
+
+                _variablesMap.Add(parameter.Name, definition);
 
                 List<ShaderVariableDefinition> list = EnsureVariableList( definition.Usage);
                 list.Add(definition);
@@ -322,6 +164,10 @@ namespace Pulsar.Graphics.Fx
             {
                 string name = input.ReadString();
                 EffectTechnique technique = _underlyingFx.Techniques[name];
+                if (technique == null)
+                    throw new Exception(
+                        string.Format("Shader definition contains a technique {0} but doesn't exist in effect", name));
+
                 ShaderTechniqueDefinition definition = new ShaderTechniqueDefinition(name, technique)
                 {
                     IsTransparent = input.ReadBoolean()
@@ -341,12 +187,20 @@ namespace Pulsar.Graphics.Fx
             {
                 string name = input.ReadString();
                 EffectParameter parameter = _underlyingFx.Parameters[name];
-                Type type = ExtractVariableType(parameter);
+                if (parameter == null)
+                    throw new Exception(
+                        string.Format("Shader definition contains a constant {0} but doesn't exist in effect", name));
+
+                ShaderVariableSource source = (ShaderVariableSource) input.ReadInt32();
+                ShaderVariableUsage usage = (ShaderVariableUsage) input.ReadInt32();
+                string semantic = input.ReadString();
+                string equivalentType = input.ReadString();
+                Type type = EffectParameterHelper.GetManagedType(parameter, equivalentType);
                 ShaderVariableDefinition definition = new ShaderVariableDefinition(name, parameter, type)
                 {
-                    Source = (ShaderVariableSource)input.ReadInt32(),
-                    Usage = (ShaderVariableUsage)input.ReadInt32(),
-                    Semantic = input.ReadString()
+                    Source = source,
+                    Usage = usage,
+                    Semantic = semantic
                 };
                 _variablesMap.Add(name, definition);
 

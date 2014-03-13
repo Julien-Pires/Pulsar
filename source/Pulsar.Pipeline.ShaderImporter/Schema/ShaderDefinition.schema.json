@@ -45,6 +45,10 @@
 					"Usage" : {
 						"type" : "string",
 						"title" : "Update frequency of the variable"
+					},
+					"EquivalentType" : {
+						"type" : "string",
+						"title" : "Managed type to use instead of the native type"
 					}
 				}
 			}
