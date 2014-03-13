@@ -15,7 +15,7 @@ namespace Pulsar.Graphics.Fx
         /// Constructor of ShaderVariableBinding class
         /// </summary>
         /// <param name="definition">Variable definition</param>
-        protected ShaderVariableBinding(ShaderVariableDefinition definition)
+        internal ShaderVariableBinding(ShaderVariableDefinition definition)
         {
             Debug.Assert(definition.Parameter != null, "Effect parameter cannot be null");
 
@@ -30,12 +30,12 @@ namespace Pulsar.Graphics.Fx
         /// Updates the variable value
         /// </summary>
         /// <param name="context">Frame context</param>
-        public abstract void Update(FrameContext context);
+        internal abstract void Update(FrameContext context);
 
         /// <summary>
         /// Writes the value to the effect parameter
         /// </summary>
-        public abstract void Write();
+        internal abstract void Write();
 
         #endregion
 

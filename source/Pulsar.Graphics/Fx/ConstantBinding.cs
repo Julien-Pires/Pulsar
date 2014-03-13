@@ -13,7 +13,7 @@
         /// </summary>
         /// <param name="definition">Variable definition</param>
         /// <param name="value">Constant</param>
-        public ConstantBinding(ShaderVariableDefinition definition, T value)
+        internal ConstantBinding(ShaderVariableDefinition definition, T value)
             : base(definition)
         {
             InternalValue = value;

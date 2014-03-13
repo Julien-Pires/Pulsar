@@ -20,7 +20,7 @@ namespace Pulsar.Graphics.Fx
         /// Constructor of KeyedBinding class
         /// </summary>
         /// <param name="definition">Variable definition</param>
-        public KeyedBinding(ShaderVariableDefinition definition)
+        internal KeyedBinding(ShaderVariableDefinition definition)
             : base(definition)
         {
             if(string.IsNullOrEmpty(definition.Semantic))
@@ -37,7 +37,7 @@ namespace Pulsar.Graphics.Fx
         /// Updates the variable value
         /// </summary>
         /// <param name="context">Frame context</param>
-        public override void Update(FrameContext context)
+        internal override void Update(FrameContext context)
         {
             InternalValue = context.Renderable.Material.UnsafeGetValue<T>(_key);
         }

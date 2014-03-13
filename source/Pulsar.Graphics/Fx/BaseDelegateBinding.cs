@@ -36,7 +36,7 @@ namespace Pulsar.Graphics.Fx
         /// Updates the value of the variable
         /// </summary>
         /// <param name="context">Frame context</param>
-        public override void Update(FrameContext context)
+        internal override void Update(FrameContext context)
         {
             InternalValue = InternalUpdateFunction(context);
         }

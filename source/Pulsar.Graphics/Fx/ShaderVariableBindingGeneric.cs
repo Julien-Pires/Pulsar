@@ -30,7 +30,7 @@ namespace Pulsar.Graphics.Fx
         /// Constructor of ShaderVariableBinding class
         /// </summary>
         /// <param name="definition">Variable definition</param>
-        protected ShaderVariableBinding(ShaderVariableDefinition definition)
+        internal ShaderVariableBinding(ShaderVariableDefinition definition)
             : base(definition)
         {
         }
@@ -42,7 +42,7 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Writes the value to the effect parameter
         /// </summary>
-        public override void Write()
+        internal override void Write()
         {
             WriteToParameter(this);
         }
@@ -51,7 +51,7 @@ namespace Pulsar.Graphics.Fx
         /// Updates the variable value
         /// </summary>
         /// <param name="context">Frame context</param>
-        public override void Update(FrameContext context)
+        internal override void Update(FrameContext context)
         {
         }
 

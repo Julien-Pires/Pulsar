@@ -27,7 +27,6 @@ namespace Pulsar.Graphics.Fx
             = new Dictionary<string, ShaderVariableDefinition>();
         private Dictionary<int, List<ShaderVariableDefinition>> _variablesPerUpdate
             = new Dictionary<int, List<ShaderVariableDefinition>>();
-        private ShaderVariableBindingCollection _globalVariables;
 
         #endregion
 
@@ -251,7 +250,7 @@ namespace Pulsar.Graphics.Fx
                 _techniquesMap.Clear();
                 _variablesMap.Clear();
                 _variablesPerUpdate.Clear();
-                _globalVariables.Clear();
+                GlobalVariablesBinding.Clear();
                 _underlyingFx.Dispose();
             }
             finally
@@ -259,7 +258,7 @@ namespace Pulsar.Graphics.Fx
                 _techniquesMap = null;
                 _variablesMap = null;
                 _variablesPerUpdate = null;
-                _globalVariables = null;
+                GlobalVariablesBinding = null;
                 _underlyingFx = null;
 
                 _isDisposed = true;
@@ -355,7 +354,7 @@ namespace Pulsar.Graphics.Fx
                 list.Add(definition);
             }
 
-            _globalVariables = CreateVariableBinding(ShaderVariableUsage.Global);
+            GlobalVariablesBinding = CreateVariableBinding(ShaderVariableUsage.Global);
         }
 
         /// <summary>
@@ -433,10 +432,7 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Gets the collection of variable binding used for global update
         /// </summary>
-        internal ShaderVariableBindingCollection GlobalVariablesBinding
-        {
-            get { return _globalVariables; }
-        }
+        public ShaderVariableBindingCollection GlobalVariablesBinding { get; private set; }
 
         /// <summary>
         /// Gets the name of the technique used as fallback

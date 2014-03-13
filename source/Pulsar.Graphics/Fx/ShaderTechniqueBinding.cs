@@ -5,7 +5,7 @@ namespace Pulsar.Graphics.Fx
     /// <summary>
     /// Represents a binding to a specific technique used by a material
     /// </summary>
-    internal sealed class ShaderTechniqueBinding : IDisposable
+    public sealed class ShaderTechniqueBinding : IDisposable
     {
         #region Fields
 
@@ -45,10 +45,10 @@ namespace Pulsar.Graphics.Fx
             }
             finally
             {
-                _shader = null;
-                _technique = null;
                 MaterialBinding = null;
                 InstanceBinding = null;
+                _shader = null;
+                _technique = null;
             }
         }
 
@@ -76,7 +76,7 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Gets the collection of variable binding used for a global update
         /// </summary>
-        internal ShaderVariableBindingCollection GlobalBinding
+        public ShaderVariableBindingCollection GlobalBinding
         {
             get { return _shader.GlobalVariablesBinding; }
         }
@@ -84,17 +84,17 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Gets the collection of variable binding used for material update
         /// </summary>
-        internal ShaderVariableBindingCollection MaterialBinding { get; private set; }
+        public ShaderVariableBindingCollection MaterialBinding { get; private set; }
 
         /// <summary>
         /// Gets the collection of variable binding used for instance update
         /// </summary>
-        internal ShaderVariableBindingCollection InstanceBinding { get; private set; }
+        public ShaderVariableBindingCollection InstanceBinding { get; private set; }
 
         /// <summary>
         /// Gets the name of the technique
         /// </summary>
-        public string Technique
+        public string Name
         {
             get { return _technique.Name; }
         }
