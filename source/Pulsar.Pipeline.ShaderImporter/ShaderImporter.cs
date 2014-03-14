@@ -70,13 +70,8 @@ namespace Pulsar.Pipeline.ShaderImporter
         /// <param name="content">Content object that received imported data</param>
         private static void ImportShaderInfo(JObject shaderBlock, ShaderDefinitionContent content)
         {
-            JToken token = shaderBlock[InstancingProperty];
-            if (token != null)
-                content.Instancing = (string) token;
-
-            token = shaderBlock[FallbackProperty];
-            if (token != null)
-                content.Fallback = (string) token;
+            content.Instancing = GetStringValue(shaderBlock, InstancingProperty);
+            content.Fallback = GetStringValue(shaderBlock, FallbackProperty);
         }
 
         /// <summary>
@@ -117,43 +112,60 @@ namespace Pulsar.Pipeline.ShaderImporter
                 ShaderConstantContent constantContent = new ShaderConstantContent(shaderConstant.Name);
                 JObject shaderConstantInfo = (JObject)shaderConstant.Value;
 
-                JToken token = shaderConstantInfo[ConstantSourceProperty];
-                string value;
-                if (token != null)
-                {
-                    value = (string) token;
-                    if (string.IsNullOrWhiteSpace(value))
-                        throw new Exception("Shader constant source cannot be null or empty");
-
-                    ShaderConstantSource source;
-                    if (!Enum.TryParse(value, out source))
-                        throw new Exception("Invalid shader constant source value provided");
+                ShaderConstantSource source;
+                if (GetEnumValue(shaderConstantInfo, ConstantSourceProperty, out source))
                     constantContent.Source = source;
-                }
 
-                token = shaderConstantInfo[ConstantUpdateFrequencyProperty];
-                if (token != null)
-                {
-                    value = (string) token;
-                    if (!string.IsNullOrWhiteSpace(value))
-                    {
-                        UpdateFrequency update;
-                        if(!Enum.TryParse(value, out update))
-                            throw new Exception("Invalid shader constant usage value provided");
-                        constantContent.UpdateFrequency = update;
-                    }
-                }
+                UpdateFrequency update;
+                if (GetEnumValue(shaderConstantInfo, ConstantUpdateFrequencyProperty, out update))
+                    constantContent.UpdateFrequency = update;
 
-                token = shaderConstantInfo[ConstantSemanticProperty];
-                if (token != null)
-                    constantContent.Semantic = (string) token;
-
-                token = shaderConstantInfo[ConstantEquivalentTypeProperty];
-                if (token != null)
-                    constantContent.EquivalentType = ((string)token).ToLower();
+                constantContent.Semantic = GetStringValue(shaderConstantInfo, ConstantSemanticProperty);
+                constantContent.EquivalentType =
+                    GetStringValue(shaderConstantInfo, ConstantEquivalentTypeProperty).ToLower();
 
                 content.Constants.Add(constantContent.Name, constantContent);
             }
+        }
+
+        /// <summary>
+        /// Parses a json string property to an enum
+        /// </summary>
+        /// <typeparam name="T">Enum type</typeparam>
+        /// <param name="jObject">Json object</param>
+        /// <param name="key">Name of the property</param>
+        /// <param name="result">Result value</param>
+        /// <returns>Returns true if the property is parsed successfully otherwise false</returns>
+        private static bool GetEnumValue<T>(JObject jObject, string key, out T result) where T : struct
+        {
+            result = default(T);
+            JToken token = jObject[key];
+            if (token == null)
+                return false;
+
+            string value = (string)token;
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            if (!Enum.TryParse(value, out result))
+                throw new Exception(string.Format("Failed to cast {0} to enum {1}", value, typeof(T)));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the string value of a json property
+        /// </summary>
+        /// <param name="jObject">Json object</param>
+        /// <param name="key">Name of the property</param>
+        /// <returns>Returns the value of the property if found otherwise an empty string</returns>
+        private static string GetStringValue(JObject jObject, string key)
+        {
+            JToken token = jObject[key];
+            if (token == null)
+                return string.Empty;
+
+            return (string) token;
         }
 
         /// <summary>
@@ -214,11 +226,11 @@ namespace Pulsar.Pipeline.ShaderImporter
             ShaderDefinitionContent content = new ShaderDefinitionContent {EffectFile = new ExternalReference<EffectContent>(filePath)};
             ImportShaderInfo(definition, content);
 
-            JObject jsonObject = definition[ConstantProperty] as JObject;
-            ImportConstants(jsonObject, content);
-
-            jsonObject = definition[TechniquesProperty] as JObject;
+            JObject jsonObject = definition[TechniquesProperty] as JObject;
             ImportTechniques(jsonObject, content);
+
+            jsonObject = definition[ConstantProperty] as JObject;
+            ImportConstants(jsonObject, content);
 
             return content;
         }
