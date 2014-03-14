@@ -11,6 +11,7 @@ using Newtonsoft.Json.Schema;
 
 using Pulsar.Graphics.Fx;
 using Pulsar.Pipeline.Graphics;
+using Pulsar.Pipeline.ShaderImporter.Properties;
 
 namespace Pulsar.Pipeline.ShaderImporter
 {
@@ -22,7 +23,6 @@ namespace Pulsar.Pipeline.ShaderImporter
     {
         #region Fields
 
-        private const string Schemas = "Schema/ShaderDefinition.schema.json";
         private const string EffectExtension = ".fx";
 
         private const string FileProperty = "File";
@@ -164,7 +164,7 @@ namespace Pulsar.Pipeline.ShaderImporter
         /// <returns>Returns true if the definition is valid otherwise false</returns>
         private static bool IsValidDefinitionFormat(JObject definition, out string error)
         {
-            string schema = File.ReadAllText(Schemas);
+            string schema = Encoding.UTF8.GetString(Resources.ShaderDefinitionSchema);
             JsonSchema jSchema = JsonSchema.Parse(schema);
             IList<string> validationMsg;
             bool result = definition.IsValid(jSchema, out validationMsg);
