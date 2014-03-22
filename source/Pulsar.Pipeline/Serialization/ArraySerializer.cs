@@ -2,7 +2,7 @@
 
 namespace Pulsar.Pipeline.Serialization
 {
-    public sealed class ArrayReader<T> : ContentReader<T[]>
+    public sealed class ArraySerializer<T> : ContentSerializer<T[]>
     {
         #region Fields
 
@@ -11,7 +11,7 @@ namespace Pulsar.Pipeline.Serialization
         private const string LastBracket = "]";
 
         private ReaderManager _manager;
-        private IContentReader _reader;
+        private IContentSerializer _serializer;
 
         #endregion
 
@@ -21,10 +21,10 @@ namespace Pulsar.Pipeline.Serialization
                 throw new ArgumentNullException("manager");
 
             _manager = manager;
-            _reader = _manager.GetReader(typeof (T));
+            _serializer = _manager.GetReader(typeof (T));
         }
 
-        public override T[] Read(string value, ReaderContext context)
+        public override T[] Read(string value, SerializerContext context)
         {
             if (value.StartsWith(FirstBracket))
                 value = value.Substring(1);
@@ -34,7 +34,7 @@ namespace Pulsar.Pipeline.Serialization
             string[] splitValue = value.Split(ValueSeparator);
             T[] result = new T[splitValue.Length];
             for (int i = 0; i < splitValue.Length; i++)
-                result[i] = (T)_reader.Read(splitValue[i], context);
+                result[i] = (T)_serializer.Read(splitValue[i], context);
 
             return result;
         }

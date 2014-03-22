@@ -1,11 +1,11 @@
 ﻿namespace Pulsar.Pipeline.Serialization
 {
     [ContentReader]
-    public sealed class BoolReader : ContentReader<bool>
+    public sealed class BoolSerializer : ContentSerializer<bool>
     {
         #region Constructors
 
-        internal BoolReader()
+        internal BoolSerializer()
         {
         }
 
@@ -13,7 +13,7 @@
 
         #region Methods
 
-        public override bool Read(string value, ReaderContext context)
+        public override bool Read(string value, SerializerContext context)
         {
             string cleanValue = value.Trim();
 

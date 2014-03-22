@@ -24,10 +24,11 @@ namespace Pulsar.System
                 Type[] types = assemblies[i].GetTypes();
                 for (int j = 0; j < types.Length; j++)
                 {
-                    if(!HasAttributes(types[i]) && IsExclude(types[i]) && !IsAssignable(types[i]))
+                    Type currentType = types[j];
+                    if (!HasAttributes(currentType) || IsExclude(currentType) || !IsAssignable(currentType))
                         continue;
-                    
-                    result.Add(types[i]);
+
+                    result.Add(currentType);
                 }
             }
 

@@ -51,12 +51,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Serialization\ArrayReader.cs" />
-    <Compile Include="Serialization\BoolReader.cs" />
-    <Compile Include="Serialization\ColorReader.cs" />
+    <Compile Include="Serialization\ArraySerializer.cs" />
+    <Compile Include="Serialization\BoolSerializer.cs" />
+    <Compile Include="Serialization\ColorSerializer.cs" />
     <Compile Include="Serialization\ContentReaderAttribute.cs" />
-    <Compile Include="Serialization\IContentReader.cs" />
-    <Compile Include="Serialization\ContentReader.cs" />
+    <Compile Include="Serialization\IContentSerializer.cs" />
+    <Compile Include="Serialization\ContentSerializer.cs" />
     <Compile Include="Graphics\MaterialContent.cs" />
     <Compile Include="Graphics\MaterialDataContent.cs" />
     <Compile Include="Graphics\RawMaterialContent.cs" />
@@ -67,22 +67,22 @@
     <Compile Include="Graphics\ShaderTechniqueContent.cs" />
     <Compile Include="Graphics\ShaderConstantCollection.cs" />
     <Compile Include="Graphics\ShaderConstantContent.cs" />
-    <Compile Include="Serialization\Int32Reader.cs" />
+    <Compile Include="Serialization\Int32Serializer.cs" />
     <Compile Include="JsonHelper.cs" />
     <Compile Include="Serialization\MathSerializerHelper.cs" />
-    <Compile Include="Serialization\MatrixReader.cs" />
-    <Compile Include="Processors\MaterialProcessor.cs" />
+    <Compile Include="Serialization\MatrixSerializer.cs" />
+    <Compile Include="Processors\MaterialDefinitionProcessor.cs" />
     <Compile Include="Processors\MeshProcessor.cs" />
     <Compile Include="Processors\ShaderProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\Compiler\ShaderWriter.cs" />
-    <Compile Include="Serialization\ReaderContext.cs" />
+    <Compile Include="Serialization\SerializerContext.cs" />
     <Compile Include="Serialization\ReaderManager.cs" />
-    <Compile Include="Serialization\SingleReader.cs" />
-    <Compile Include="Serialization\TextureReader.cs" />
-    <Compile Include="Serialization\Vector2Reader.cs" />
-    <Compile Include="Serialization\Vector3Reader.cs" />
-    <Compile Include="Serialization\Vector4Reader.cs" />
+    <Compile Include="Serialization\SingleSerializer.cs" />
+    <Compile Include="Serialization\TextureSerializer.cs" />
+    <Compile Include="Serialization\Vector2Serializer.cs" />
+    <Compile Include="Serialization\Vector3Serializer.cs" />
+    <Compile Include="Serialization\Vector4Serializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pulsar.Graphics\Pulsar.Graphics.csproj">

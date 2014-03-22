@@ -13,6 +13,7 @@ using Pulsar.Pipeline.MaterialImporter.Properties;
 
 namespace Pulsar.Pipeline.MaterialImporter
 {
+    [ContentImporterAttribute(".pmtl", DefaultProcessor = "MaterialDefinitionProcessor", DisplayName = "Material Importer - Pulsar")]
     public class MaterialImporter : ContentImporter<RawMaterialContent>
     {
         #region Fields

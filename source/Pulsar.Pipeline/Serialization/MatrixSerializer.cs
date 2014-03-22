@@ -5,11 +5,11 @@ using Microsoft.Xna.Framework;
 namespace Pulsar.Pipeline.Serialization
 {
     [ContentReader]
-    public sealed class MatrixReader : ContentReader<Matrix>
+    public sealed class MatrixSerializer : ContentSerializer<Matrix>
     {
         #region Constructors
 
-        internal MatrixReader()
+        internal MatrixSerializer()
         {
         }
 
@@ -17,7 +17,7 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Methods
 
-        public override Matrix Read(string value, ReaderContext context)
+        public override Matrix Read(string value, SerializerContext context)
         {
             string[] splitVal = MathSerializerHelper.Split(value);
 

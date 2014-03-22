@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,7 +11,8 @@ using Pulsar.Pipeline.Serialization;
 
 namespace Pulsar.Pipeline.Processors
 {
-    public sealed class MaterialProcessor : ContentProcessor<RawMaterialContent, MaterialContent>
+    [ContentProcessor(DisplayName = "Material - Pulsar")]
+    public sealed class MaterialDefinitionProcessor : ContentProcessor<RawMaterialContent, MaterialContent>
     {
         #region Fields
 
@@ -35,46 +36,11 @@ namespace Pulsar.Pipeline.Processors
             { "vector", (Func<string, string>)GetVectorType }
         };
 
+        private readonly List<MaterialDataContent> _datas = new List<MaterialDataContent>();
+
         #endregion
 
         #region Static methods
-
-        private static void GenerateData(List<RawMaterialDataContent> rawCollection, MaterialContent content,
-            ContentProcessorContext context)
-        {
-            ReaderManager readerMngr = new ReaderManager();
-            for (int i = 0; i < rawCollection.Count; i++)
-            {
-                RawMaterialDataContent rawData = rawCollection[i];
-                if (rawData.Value.Length == 0)
-                    continue;
-
-                MaterialDataContent data = new MaterialDataContent(rawData.Name);
-                if (rawData.IsNativeArray)
-                {
-                    ReaderContext[] contextList = new ReaderContext[rawData.Value.Length];
-                    for (int j = 0; j < rawData.Value.Length; j++)
-                    {
-                        ReaderContext readerCtx = new ReaderContext(rawData.Parameters[j], context);
-                        contextList[j] = readerCtx;
-                    }
-                    Type type = GetType(rawData.Type, rawData.Value[0]);
-                    data.Value = readerMngr.ReadMultiples(type, rawData.Value, contextList);
-                }
-                else
-                {
-                    string value = rawData.Value[0];
-                    Type type = GetType(rawData.Type, value);
-                    if (IsArrayValue(value))
-                        type = type.MakeArrayType();
-
-                    ReaderContext readerCtx = new ReaderContext(rawData.Parameters[0], context);
-                    data.Value = readerMngr.Read(type, value, readerCtx);
-                }
-
-                content.Data.Add(data);
-            }
-        }
 
         private static bool IsArrayValue(string value)
         {
@@ -107,16 +73,52 @@ namespace Pulsar.Pipeline.Processors
 
         public override MaterialContent Process(RawMaterialContent input, ContentProcessorContext context)
         {
+            Debugger.Launch();
             if (input == null)
                 throw new ArgumentNullException("input");
 
             if (context == null)
                 throw new ArgumentNullException("context");
 
-            MaterialContent material = new MaterialContent(input.Name);
-            GenerateData(input.Data, material, context);
+            GenerateData(input.Data, context);
 
-            return material;
+            return new MaterialContent(input.Name, _datas);
+        }
+
+        private void GenerateData(List<RawMaterialDataContent> rawCollection, ContentProcessorContext context)
+        {
+            ReaderManager readerMngr = new ReaderManager();
+            for (int i = 0; i < rawCollection.Count; i++)
+            {
+                RawMaterialDataContent rawData = rawCollection[i];
+                if (rawData.Value.Length == 0)
+                    continue;
+
+                MaterialDataContent data = new MaterialDataContent(rawData.Name);
+                if (rawData.IsNativeArray)
+                {
+                    SerializerContext[] contextList = new SerializerContext[rawData.Value.Length];
+                    for (int j = 0; j < rawData.Value.Length; j++)
+                    {
+                        SerializerContext serializerCtx = new SerializerContext(rawData.Parameters[j], context);
+                        contextList[j] = serializerCtx;
+                    }
+                    Type type = GetType(rawData.Type, rawData.Value[0]);
+                    data.Value = readerMngr.ReadMultiples(type, rawData.Value, contextList);
+                }
+                else
+                {
+                    string value = rawData.Value[0];
+                    Type type = GetType(rawData.Type, value);
+                    if (IsArrayValue(value))
+                        type = type.MakeArrayType();
+
+                    SerializerContext serializerCtx = new SerializerContext(rawData.Parameters[0], context);
+                    data.Value = readerMngr.Read(type, value, serializerCtx);
+                }
+
+                _datas.Add(data);
+            }
         }
 
         #endregion

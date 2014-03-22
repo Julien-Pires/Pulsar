@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 namespace Pulsar.Pipeline.Serialization
 {
     [ContentReader]
-    public sealed class TextureReader : ContentReader<ExternalReference<TextureContent>>
+    public sealed class TextureSerializer : ContentSerializer<ExternalReference<TextureContent>>
     {
         #region Fields
 
@@ -33,7 +33,7 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Constructors
 
-        internal TextureReader()
+        internal TextureSerializer()
         {
         }
 
@@ -46,7 +46,7 @@ namespace Pulsar.Pipeline.Serialization
             _manager = manager;
         }
 
-        public override ExternalReference<TextureContent> Read(string value, ReaderContext context)
+        public override ExternalReference<TextureContent> Read(string value, SerializerContext context)
         {
             if(context == null)
                 throw new ArgumentNullException("context");
@@ -101,23 +101,23 @@ namespace Pulsar.Pipeline.Serialization
             object value;
             if (parameters.TryGetValue(ColorKeyColor, out value))
             {
-                ColorReader colorReader = (ColorReader)_manager.GetReader(typeof(Color));
-                Color keyColor = colorReader.Read((string)value, null);
+                ColorSerializer colorSerializer = (ColorSerializer)_manager.GetReader(typeof(Color));
+                Color keyColor = colorSerializer.Read((string)value, null);
                 parameters[ColorKeyColor] = keyColor;
             }
 
-            BoolReader boolReader = (BoolReader)_manager.GetReader(typeof(bool));
+            BoolSerializer boolSerializer = (BoolSerializer)_manager.GetReader(typeof(bool));
             if (parameters.TryGetValue(ColorKeyEnabled, out value))
-                parameters[ColorKeyEnabled] = boolReader.Read((string)value, null);
+                parameters[ColorKeyEnabled] = boolSerializer.Read((string)value, null);
 
             if (parameters.TryGetValue(GenerateMipmaps, out value))
-                parameters[GenerateMipmaps] = boolReader.Read((string)value, null);
+                parameters[GenerateMipmaps] = boolSerializer.Read((string)value, null);
 
             if (parameters.TryGetValue(PremultiplyAlpha, out value))
-                parameters[PremultiplyAlpha] = boolReader.Read((string)value, null);
+                parameters[PremultiplyAlpha] = boolSerializer.Read((string)value, null);
 
             if (parameters.TryGetValue(ResizeToPowerOfTwo, out value))
-                parameters[ResizeToPowerOfTwo] = boolReader.Read((string)value, null);
+                parameters[ResizeToPowerOfTwo] = boolSerializer.Read((string)value, null);
 
             if (parameters.TryGetValue(TextureFormat, out value))
                 parameters[TextureFormat] = Enum.Parse(typeof(TextureProcessorOutputFormat), (string)value);

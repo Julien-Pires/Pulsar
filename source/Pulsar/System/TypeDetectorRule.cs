@@ -5,14 +5,14 @@ namespace Pulsar.System
     [Flags]
     public enum TypeDetectorRule
     {
-        Public = 0,
-        Private = 1,
-        Interface = 2,
-        Class = 4,
-        ValueType = 8,
-        Abstract = 16,
-        Sealed = 32,
-        Nested = 64,
-        NoParameterLessCtor = 128
+        Public = 1,
+        Private = 2,
+        Interface = 4,
+        Class = 8,
+        ValueType = 16,
+        Abstract = 32,
+        Sealed = 64,
+        Nested = 128,
+        NoParameterLessCtor = 256
     }
 }

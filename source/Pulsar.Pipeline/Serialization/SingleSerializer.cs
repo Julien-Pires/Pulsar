@@ -3,11 +3,11 @@
 namespace Pulsar.Pipeline.Serialization
 {
     [ContentReader]
-    public sealed class Int32Reader : ContentReader<Int32>
+    public sealed class SingleSerializer : ContentSerializer<float>
     {
         #region Constructors
 
-        internal Int32Reader()
+        internal SingleSerializer()
         {
         }
 
@@ -15,11 +15,11 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Methods
 
-        public override int Read(string value, ReaderContext context)
+        public override float Read(string value, SerializerContext context)
         {
             string cleanValue = value.Trim();
 
-            return Int32.Parse(cleanValue);
+            return Single.Parse(cleanValue);
         }
 
         #endregion

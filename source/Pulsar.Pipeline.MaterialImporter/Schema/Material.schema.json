@@ -1,2 +1,14 @@
-﻿{
+{
+	"type" : "object",
+	"properties" : {
+		"Name" : {
+			"type" : "string",
+			"title" : "Name of the material",
+			"required" : true
+		},
+		"Data" : {
+			"type" : "object",
+			"title" : "Material data"
+		}
+	}
 }

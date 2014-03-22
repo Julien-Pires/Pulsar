@@ -4,17 +4,12 @@ namespace Pulsar.Pipeline.Graphics
 {
     public sealed class MaterialContent
     {
-        #region Fields
-
-        private readonly List<MaterialDataContent> _data = new List<MaterialDataContent>();
-
-        #endregion
-
         #region Constructors
 
-        public MaterialContent(string name)
+        public MaterialContent(string name, List<MaterialDataContent> datas)
         {
             Name = name;
+            Datas = datas;
         }
 
         #endregion
@@ -23,10 +18,7 @@ namespace Pulsar.Pipeline.Graphics
 
         public string Name { get; private set; }
 
-        public List<MaterialDataContent> Data
-        {
-            get { return _data; }
-        }
+        public List<MaterialDataContent> Datas { get; private set; }
 
         #endregion
     }

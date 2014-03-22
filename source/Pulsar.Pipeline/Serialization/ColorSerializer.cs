@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 namespace Pulsar.Pipeline.Serialization
 {
     [ContentReader]
-    public sealed class ColorReader : ContentReader<Color>
+    public sealed class ColorSerializer : ContentSerializer<Color>
     {
         #region Fields
 
@@ -17,7 +17,7 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Constructors
 
-        internal ColorReader()
+        internal ColorSerializer()
         {
         }
 
@@ -25,7 +25,7 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Methods
 
-        public override Color Read(string value, ReaderContext context)
+        public override Color Read(string value, SerializerContext context)
         {
             if (Regex.IsMatch(value, HexPattern))
             {

@@ -5,11 +5,11 @@ using Microsoft.Xna.Framework;
 namespace Pulsar.Pipeline.Serialization
 {
     [ContentReader]
-    public sealed class Vector3Reader : ContentReader<Vector3>
+    public sealed class Vector2Serializer : ContentSerializer<Vector2>
     {
         #region Constructors
 
-        internal Vector3Reader()
+        internal Vector2Serializer()
         {
         }
 
@@ -17,15 +17,14 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Methods
 
-        public override Vector3 Read(string value, ReaderContext context)
+        public override Vector2 Read(string value, SerializerContext context)
         {
             string[] splitVal = MathSerializerHelper.Split(value);
 
-            return new Vector3
+            return new Vector2
             {
-                X = Single.Parse(splitVal[0]),
-                Y = Single.Parse(splitVal[1]),
-                Z = Single.Parse(splitVal[2])
+                X = Single.Parse(splitVal[0]), 
+                Y = Single.Parse(splitVal[1])
             };
         }
 

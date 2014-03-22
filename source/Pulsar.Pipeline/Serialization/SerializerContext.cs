@@ -4,11 +4,11 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 
 namespace Pulsar.Pipeline.Serialization
 {
-    public sealed class ReaderContext
+    public sealed class SerializerContext
     {
         #region Constructors
 
-        public ReaderContext(Dictionary<string, object> parameters, ContentProcessorContext contentContext)
+        public SerializerContext(Dictionary<string, object> parameters, ContentProcessorContext contentContext)
         {
             Parameters = parameters;
             ContentContext = contentContext;

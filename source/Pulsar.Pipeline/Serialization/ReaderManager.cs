@@ -9,7 +9,7 @@ namespace Pulsar.Pipeline.Serialization
     {
         #region Fields
 
-        private readonly Dictionary<Type, IContentReader> _readersMap = new Dictionary<Type, IContentReader>();
+        private readonly Dictionary<Type, IContentSerializer> _readersMap = new Dictionary<Type, IContentSerializer>();
 
         #endregion
 
@@ -19,7 +19,7 @@ namespace Pulsar.Pipeline.Serialization
         {
             TypeDetector detector = new TypeDetector
             {
-                BaseType = typeof (ContentReader<>),
+                BaseType = typeof (ContentSerializer<>),
                 Exclude = (TypeDetectorRule.Abstract | TypeDetectorRule.Interface | TypeDetectorRule.Private |
                            TypeDetectorRule.ValueType | TypeDetectorRule.NoParameterLessCtor | TypeDetectorRule.Nested)
             };
@@ -27,8 +27,8 @@ namespace Pulsar.Pipeline.Serialization
 
             foreach (Type type in detector.GetTypes())
             {
-                IContentReader reader = (IContentReader)Activator.CreateInstance(type);
-                _readersMap.Add(reader.TargetType, reader);
+                IContentSerializer serializer = (IContentSerializer)Activator.CreateInstance(type);
+                _readersMap.Add(serializer.TargetType, serializer);
             }
         }
 
@@ -36,66 +36,66 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Methods
 
-        public object Read(Type type, string value, ReaderContext context = null)
+        public object Read(Type type, string value, SerializerContext context = null)
         {
-            IContentReader reader = GetReader(type);
+            IContentSerializer serializer = GetReader(type);
 
-            return reader.Read(value, context);
+            return serializer.Read(value, context);
         }
 
-        public T Read<T>(string value, ReaderContext context = null)
+        public T Read<T>(string value, SerializerContext context = null)
         {
             return (T)Read(typeof(T), value, context);
         }
 
-        public object[] ReadMultiples(Type type, IList<string> values, ReaderContext[] contextArr = null)
+        public object[] ReadMultiples(Type type, IList<string> values, SerializerContext[] contextArr = null)
         {
-            IContentReader reader = GetReader(type);
+            IContentSerializer serializer = GetReader(type);
             List<object> result = new List<object>();
             for(int i = 0; i < values.Count; i++)
             {
-                ReaderContext context = null;
+                SerializerContext context = null;
                 if (contextArr != null)
                     context = contextArr[i];
 
-                result.Add(reader.Read(values[i], context));
+                result.Add(serializer.Read(values[i], context));
             }
 
             return result.ToArray();
         }
 
-        public T[] ReadMultiples<T>(IList<string> values, ReaderContext[] contextArr = null)
+        public T[] ReadMultiples<T>(IList<string> values, SerializerContext[] contextArr = null)
         {
             object[] result = ReadMultiples(typeof (T), values, contextArr);
 
             return Array.ConvertAll(result, c => (T) c);
         }
 
-        public IContentReader GetReader(Type type)
+        public IContentSerializer GetReader(Type type)
         {
             if(type == null)
                 throw new ArgumentNullException("type");
 
-            IContentReader reader;
-            if (!_readersMap.TryGetValue(type, out reader))
+            IContentSerializer serializer;
+            if (!_readersMap.TryGetValue(type, out serializer))
             {
-                reader = CreateReader(type);
-                _readersMap.Add(type, reader);
+                serializer = CreateReader(type);
+                _readersMap.Add(type, serializer);
             }
 
-            return reader;
+            return serializer;
         }
 
-        private IContentReader CreateReader(Type type)
+        private IContentSerializer CreateReader(Type type)
         {
             if (type.IsArray)
             {
                 if(type.GetArrayRank() != 1)
                     throw new RankException("");
 
-                Type newType = typeof (ArrayReader<>).MakeGenericType(type.GetElementType());
+                Type newType = typeof (ArraySerializer<>).MakeGenericType(type.GetElementType());
 
-                return (IContentReader) Activator.CreateInstance(newType);
+                return (IContentSerializer) Activator.CreateInstance(newType);
             }
 
             throw new Exception("");

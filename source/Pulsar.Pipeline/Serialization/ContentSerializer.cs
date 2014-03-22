@@ -2,11 +2,11 @@
 
 namespace Pulsar.Pipeline.Serialization
 {
-    public abstract class ContentReader<T> : IContentReader
+    public abstract class ContentSerializer<T> : IContentSerializer
     {
         #region Constructors
 
-        protected ContentReader()
+        protected ContentSerializer()
         {
             TargetType = typeof (T);
         }
@@ -19,12 +19,12 @@ namespace Pulsar.Pipeline.Serialization
         {
         }
 
-        object IContentReader.Read(string value, ReaderContext context)
+        object IContentSerializer.Read(string value, SerializerContext context)
         {
             return Read(value, context);
         }
 
-        public abstract T Read(string value, ReaderContext context);
+        public abstract T Read(string value, SerializerContext context);
 
         #endregion
 
