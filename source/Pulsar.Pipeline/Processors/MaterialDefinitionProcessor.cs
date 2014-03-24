@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 
 using Pulsar.Graphics.Fx;
 using Pulsar.Pipeline.Graphics;
 using Pulsar.Pipeline.Serialization;
+using MaterialContent = Pulsar.Pipeline.Graphics.MaterialContent;
 
 namespace Pulsar.Pipeline.Processors
 {
@@ -27,7 +29,7 @@ namespace Pulsar.Pipeline.Processors
             { "vector3" , typeof(Vector3) },
             { "vector4" , typeof(Vector4) },
             { "matrix" , typeof(Matrix) },
-            { "texture" , typeof(Texture) },
+            { "texture" , typeof(ExternalReference<TextureContent>) },
             { "string", typeof(string) }
         };
 
@@ -103,13 +105,13 @@ namespace Pulsar.Pipeline.Processors
                         SerializerContext serializerCtx = new SerializerContext(rawData.Parameters[j], context);
                         contextList[j] = serializerCtx;
                     }
-                    Type type = GetType(rawData.Type, rawData.Value[0]);
+                    Type type = GetType(rawData.Type.ToLower(), rawData.Value[0]);
                     data.Value = readerMngr.ReadMultiples(type, rawData.Value, contextList);
                 }
                 else
                 {
                     string value = rawData.Value[0];
-                    Type type = GetType(rawData.Type, value);
+                    Type type = GetType(rawData.Type.ToLower(), value);
                     if (IsArrayValue(value))
                         type = type.MakeArrayType();
 

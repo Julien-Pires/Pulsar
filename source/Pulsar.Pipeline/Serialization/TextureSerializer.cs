@@ -10,11 +10,13 @@ using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 namespace Pulsar.Pipeline.Serialization
 {
     [ContentReader]
-    public sealed class TextureSerializer : ContentSerializer<ExternalReference<TextureContent>>
+    public sealed partial class TextureSerializer : ContentSerializer<ExternalReference<TextureContent>>
     {
         #region Fields
 
         private const string DefaultProcessor = "TextureProcessor";
+        private const string DefaultProcessorKey = "default";
+
         private const string ProcessorKey = "Processor";
         private const string ProcessorNameKey = "Name";
         private const string OpaqueDataKey = "Parameters";
@@ -54,41 +56,46 @@ namespace Pulsar.Pipeline.Serialization
             if(string.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException("value");
 
-            Dictionary<string, object> contextParameters = context.Parameters;
-            string processor = DefaultProcessor;
-            OpaqueDataDictionary opaqueData = null;
-            if (contextParameters.ContainsKey(ProcessorKey))
-            {
-                Dictionary<string, object> processorsParameters =
-                    contextParameters[ProcessorKey] as Dictionary<string, object>;
-                if(processorsParameters == null)
-                    throw new Exception("Invalid processor parameters format");
-
-                processor = (string)processorsParameters[ProcessorNameKey];
-                if (processorsParameters.ContainsKey(OpaqueDataKey))
-                {
-                    Dictionary<string, object> map = processorsParameters[OpaqueDataKey] as Dictionary<string, object>;
-                    if (map == null)
-                        throw new Exception("Invalid opaque data format");
-
-                    Dictionary<string, string> unprocessedOpaqueData = map.ToDictionary(c => c.Key, c => (string)c.Value);
-                    opaqueData = PrepareParameters(unprocessedOpaqueData);
-                }
-            }
-
+            TextureProcessorParameters processorInfos = GetProcessorParameters(context.Parameters);
             ExternalReference<TextureContent> extRef = new ExternalReference<TextureContent>(value);
 
-            return context.ContentContext.BuildAsset<TextureContent, TextureContent>(extRef, processor, opaqueData, null,
-                null);
+            return context.ContentContext.BuildAsset<TextureContent, TextureContent>(extRef, processorInfos.Processor,
+                processorInfos.OpaqueData, null, null);
         }
 
-        private OpaqueDataDictionary PrepareParameters(Dictionary<string, string> input)
+        private TextureProcessorParameters GetProcessorParameters(Dictionary<string, object> parameters)
         {
-            OpaqueDataDictionary result = new OpaqueDataDictionary{{UnprocessedParametersKey, true}};
-            if (input == null)
-                return result;
+            TextureProcessorParameters result = new TextureProcessorParameters();
+            if (parameters.ContainsKey(ProcessorKey))
+            {
+                Dictionary<string, object> processorsParameters = parameters[ProcessorKey] as Dictionary<string, object>;
+                if (processorsParameters == null)
+                    throw new Exception("Invalid processor parameters format");
 
-            foreach (KeyValuePair<string, string> pair in input)
+                string processorName = (string)processorsParameters[ProcessorNameKey];
+                if (!string.Equals(processorName.ToLower(), DefaultProcessorKey))
+                    result.Processor = processorName;
+
+                if (processorsParameters.ContainsKey(OpaqueDataKey))
+                {
+                    Dictionary<string, object> rawOpaqueData = processorsParameters[OpaqueDataKey] as Dictionary<string, object>;
+                    if (rawOpaqueData == null)
+                        throw new Exception("Invalid opaque data format");
+
+                    result.OpaqueData = ProcessOpaqueData(rawOpaqueData);
+                }
+            }
+            else
+                result.OpaqueData = ProcessOpaqueData(parameters);
+
+            return result;
+        }
+
+        private OpaqueDataDictionary ProcessOpaqueData(Dictionary<string, object> input)
+        {
+            Dictionary<string, string> rawOpaqueData = input.ToDictionary(c => c.Key, c => (string) c.Value);
+            OpaqueDataDictionary result = new OpaqueDataDictionary{{UnprocessedParametersKey, true}};
+            foreach (KeyValuePair<string, string> pair in rawOpaqueData)
                 result.Add(pair.Key, pair.Value);
 
             ConvertCommonParameters(result);

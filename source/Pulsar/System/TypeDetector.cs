@@ -81,7 +81,8 @@ namespace Pulsar.System
 
             if (((rule & TypeDetectorRule.NoParameterLessCtor) == TypeDetectorRule.NoParameterLessCtor))
             {
-                if (type.GetConstructor(Type.EmptyTypes) == null)
+                if (type.GetConstructor((BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    ,null, Type.EmptyTypes, null) == null)
                     return true;
             }
 

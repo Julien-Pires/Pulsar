@@ -79,6 +79,7 @@
     <Compile Include="Serialization\SerializerContext.cs" />
     <Compile Include="Serialization\ReaderManager.cs" />
     <Compile Include="Serialization\SingleSerializer.cs" />
+    <Compile Include="Serialization\TextureProcessorParameters.cs" />
     <Compile Include="Serialization\TextureSerializer.cs" />
     <Compile Include="Serialization\Vector2Serializer.cs" />
     <Compile Include="Serialization\Vector3Serializer.cs" />

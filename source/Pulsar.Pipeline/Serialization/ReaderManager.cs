@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Reflection;
 using Pulsar.System;
 
 namespace Pulsar.Pipeline.Serialization
@@ -8,6 +8,8 @@ namespace Pulsar.Pipeline.Serialization
     public sealed class ReaderManager
     {
         #region Fields
+
+        private const BindingFlags CtorFlag = (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
         private readonly Dictionary<Type, IContentSerializer> _readersMap = new Dictionary<Type, IContentSerializer>();
 
@@ -27,7 +29,12 @@ namespace Pulsar.Pipeline.Serialization
 
             foreach (Type type in detector.GetTypes())
             {
-                IContentSerializer serializer = (IContentSerializer)Activator.CreateInstance(type);
+                ConstructorInfo ctorInfo = type.GetConstructor(CtorFlag, null, Type.EmptyTypes, null);
+                if(ctorInfo == null)
+                    throw new Exception("");
+
+                IContentSerializer serializer = (IContentSerializer)ctorInfo.Invoke(null);
+                serializer.Initialize(this);
                 _readersMap.Add(serializer.TargetType, serializer);
             }
         }
