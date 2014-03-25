@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
-using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 namespace Pulsar.Pipeline.Serialization
 {
@@ -20,16 +17,6 @@ namespace Pulsar.Pipeline.Serialization
         private const string ProcessorKey = "Processor";
         private const string ProcessorNameKey = "Name";
         private const string OpaqueDataKey = "Parameters";
-        private const string UnprocessedParametersKey = "UnprocessedParameters";
-
-        private const string ColorKeyColor = "ColorKeyColor";
-        private const string ColorKeyEnabled = "ColorKeyEnabled";
-        private const string GenerateMipmaps = "GenerateMipmaps";
-        private const string PremultiplyAlpha = "PremultiplyAlpha";
-        private const string ResizeToPowerOfTwo = "ResizeToPowerOfTwo";
-        private const string TextureFormat = "TextureFormat";
-
-        private ReaderManager _manager;
 
         #endregion
 
@@ -41,12 +28,20 @@ namespace Pulsar.Pipeline.Serialization
 
         #endregion
 
-        #region Methods
+        #region Static methods
 
-        public override void Initialize(ReaderManager manager)
+        private static OpaqueDataDictionary ProcessOpaqueData(Dictionary<string, object> input)
         {
-            _manager = manager;
+            OpaqueDataDictionary result = new OpaqueDataDictionary();
+            foreach (KeyValuePair<string, object> pair in input)
+                result.Add(pair.Key, pair.Value);
+
+            return result;
         }
+
+        #endregion
+
+        #region Methods
 
         public override ExternalReference<TextureContent> Read(string value, SerializerContext context)
         {
@@ -89,45 +84,6 @@ namespace Pulsar.Pipeline.Serialization
                 result.OpaqueData = ProcessOpaqueData(parameters);
 
             return result;
-        }
-
-        private OpaqueDataDictionary ProcessOpaqueData(Dictionary<string, object> input)
-        {
-            Dictionary<string, string> rawOpaqueData = input.ToDictionary(c => c.Key, c => (string) c.Value);
-            OpaqueDataDictionary result = new OpaqueDataDictionary{{UnprocessedParametersKey, true}};
-            foreach (KeyValuePair<string, string> pair in rawOpaqueData)
-                result.Add(pair.Key, pair.Value);
-
-            ConvertCommonParameters(result);
-
-            return result;
-        }
-
-        private void ConvertCommonParameters(OpaqueDataDictionary parameters)
-        {
-            object value;
-            if (parameters.TryGetValue(ColorKeyColor, out value))
-            {
-                ColorSerializer colorSerializer = (ColorSerializer)_manager.GetReader(typeof(Color));
-                Color keyColor = colorSerializer.Read((string)value, null);
-                parameters[ColorKeyColor] = keyColor;
-            }
-
-            BoolSerializer boolSerializer = (BoolSerializer)_manager.GetReader(typeof(bool));
-            if (parameters.TryGetValue(ColorKeyEnabled, out value))
-                parameters[ColorKeyEnabled] = boolSerializer.Read((string)value, null);
-
-            if (parameters.TryGetValue(GenerateMipmaps, out value))
-                parameters[GenerateMipmaps] = boolSerializer.Read((string)value, null);
-
-            if (parameters.TryGetValue(PremultiplyAlpha, out value))
-                parameters[PremultiplyAlpha] = boolSerializer.Read((string)value, null);
-
-            if (parameters.TryGetValue(ResizeToPowerOfTwo, out value))
-                parameters[ResizeToPowerOfTwo] = boolSerializer.Read((string)value, null);
-
-            if (parameters.TryGetValue(TextureFormat, out value))
-                parameters[TextureFormat] = Enum.Parse(typeof(TextureProcessorOutputFormat), (string)value);
         }
 
         #endregion
