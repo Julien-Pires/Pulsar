@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
+
+using Pulsar.System;
 
 namespace Pulsar.Assets
 {
@@ -10,14 +13,17 @@ namespace Pulsar.Assets
     {
         #region Fields
 
+        private const BindingFlags CtorFlag = (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
         internal readonly DefaultLoader DefaultLoader = new DefaultLoader();
         internal readonly IServiceProvider ServiceProvider;
 
         private bool _isDisposed;
         private Storage _globalStorage;
         private Dictionary<string, Storage> _storages = new Dictionary<string, Storage>();
-        private readonly Dictionary<Type, IAssetLoader> _loaders = new Dictionary<Type, IAssetLoader>();
-        private readonly Dictionary<string, IAssetLoader> _loadersByName = new Dictionary<string, IAssetLoader>();
+        private readonly Dictionary<Type, IAssetLoader> _loadersMap = new Dictionary<Type, IAssetLoader>();
+        private readonly Dictionary<string, List<IAssetLoader>> _pendingInit =
+            new Dictionary<string, List<IAssetLoader>>();
 
         #endregion
 
@@ -31,6 +37,8 @@ namespace Pulsar.Assets
         {
             ServiceProvider = serviceProvider;
             _globalStorage = new Storage("GlobalStorage", this);
+
+            InternalInitializeLoaders();
         }
 
         #endregion
@@ -75,6 +83,38 @@ namespace Pulsar.Assets
             _isDisposed = true;
         }
 
+        public void InitializeLoaders(string category)
+        {
+            List<IAssetLoader> list;
+            if(!_pendingInit.TryGetValue(category, out list))
+                return;
+
+            for (int i = 0; i < list.Count; i++)
+                list[i].Initialize(this, ServiceProvider);
+            
+            list.Clear();
+        }
+
+        private void InternalInitializeLoaders()
+        {
+            TypeDetector detector = new TypeDetector
+            {
+                BaseType = typeof(IAssetLoader),
+                Exclude = (TypeDetectorRule.Abstract | TypeDetectorRule.Interface | TypeDetectorRule.Private |
+                           TypeDetectorRule.ValueType | TypeDetectorRule.NoParameterLessCtor | TypeDetectorRule.Nested)
+            };
+            detector.Attributes.Add(typeof(AssetLoaderAttribute));
+            foreach (Type type in detector.GetTypes())
+            {
+                ConstructorInfo ctorInfo = type.GetConstructor(CtorFlag, null, Type.EmptyTypes, null);
+                if (ctorInfo == null)
+                    throw new Exception("");
+
+                IAssetLoader loader = (IAssetLoader)ctorInfo.Invoke(null);
+                AddLoader(loader);
+            }
+        }
+
         /// <summary>
         /// Gets the loader for a specified type of asset
         /// </summary>
@@ -83,16 +123,6 @@ namespace Pulsar.Assets
         public IAssetLoader GetLoader<T>() 
         {
             return GetLoader(typeof (T));
-        }
-
-        /// <summary>
-        /// Gets the loader with a specified name
-        /// </summary>
-        /// <param name="name">Name of the loader</param>
-        /// <returns>Returns a loader</returns>
-        public IAssetLoader GetLoader(string name)
-        {
-            return _loadersByName[name];
         }
 
         /// <summary>
@@ -106,7 +136,7 @@ namespace Pulsar.Assets
                 throw new ArgumentNullException("assetType");
 
             IAssetLoader loader;
-            _loaders.TryGetValue(assetType, out loader);
+            _loadersMap.TryGetValue(assetType, out loader);
 
             return loader;
         }
@@ -115,23 +145,45 @@ namespace Pulsar.Assets
         /// Adds an asset loader
         /// </summary>
         /// <param name="loader">Loader to add</param>
-        public void AddLoader(IAssetLoader loader)
+        private void AddLoader(IAssetLoader loader)
         {
             if(loader == null)
                 throw new ArgumentNullException("loader");
 
-            Type[] supportedTypes = loader.SupportedTypes;
+            object[] attributes = loader.GetType().GetCustomAttributes(typeof (AssetLoaderAttribute), false);
+            if(attributes.Length == 0)
+                throw new Exception("");
+
+            AssetLoaderAttribute loaderAttr = (AssetLoaderAttribute)attributes[0];
+            Type[] supportedTypes = loaderAttr.AssetTypes;
             if(supportedTypes.Length == 0) return;
 
             for (int i = 0; i < supportedTypes.Length; i++)
             {
-                if(_loaders.ContainsKey(supportedTypes[i]))
+                if(_loadersMap.ContainsKey(supportedTypes[i]))
                     throw new Exception(string.Format("{0} already managed by another loader", supportedTypes[i]));
 
-                _loaders.Add(supportedTypes[i], loader);
+                _loadersMap.Add(supportedTypes[i], loader);
             }
 
-            loader.Initialize(this);
+            if(!string.IsNullOrWhiteSpace(loaderAttr.LazyInitCategory))
+                AddLazyInitLoader(loader, loaderAttr.LazyInitCategory);
+            else
+                loader.Initialize(this, ServiceProvider);
+        }
+
+        private void AddLazyInitLoader(IAssetLoader loader, string category)
+        {
+            List<IAssetLoader> list;
+            if (!_pendingInit.TryGetValue(category, out list))
+            {
+                list = new List<IAssetLoader>();
+                _pendingInit.Add(category, list);
+            }
+
+            if (list.Contains(loader)) return;
+
+            list.Add(loader);
         }
 
         /// <summary>
@@ -152,7 +204,7 @@ namespace Pulsar.Assets
             if(assetType == null)
                 throw new ArgumentNullException("assetType");
 
-            _loaders[assetType] = null;
+            _loadersMap[assetType] = null;
         }
 
         /// <summary>
@@ -165,34 +217,23 @@ namespace Pulsar.Assets
             if(loader == null)
                 throw new ArgumentNullException("loader");
 
-            Type[] assetType = loader.SupportedTypes;
+            object[] attributes = loader.GetType().GetCustomAttributes(typeof(AssetLoaderAttribute), false);
+            if (attributes.Length == 0)
+                throw new Exception("");
+
+            AssetLoaderAttribute loaderAttr = (AssetLoaderAttribute)attributes[0];
+            Type[] assetType = loaderAttr.AssetTypes;
             for (int i = 0; i < assetType.Length; i++)
             {
                 IAssetLoader currentLoader;
-                if (!_loaders.TryGetValue(assetType[i], out currentLoader))
+                if (!_loadersMap.TryGetValue(assetType[i], out currentLoader))
                     continue;
 
                 if (currentLoader == loader)
-                    _loaders.Remove(assetType[i]);
+                    _loadersMap.Remove(assetType[i]);
             }
 
-            _loadersByName.Remove(loader.Name);
-
             return true;
-        }
-
-        /// <summary>
-        /// Removes a loader with a specified name
-        /// </summary>
-        /// <param name="name">Name of the loader</param>
-        /// <returns>Returns true if the loader is removed successfully otherwise false</returns>
-        public bool RemoveLoader(string name)
-        {
-            IAssetLoader loader;
-            if (!_loadersByName.TryGetValue(name, out loader))
-                return false;
-
-            return RemoveLoader(loader);
         }
 
         /// <summary>

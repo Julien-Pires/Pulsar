@@ -50,7 +50,9 @@
     <Compile Include="Assets\AssetEngineService.cs" />
     <Compile Include="Assets\AssetFolder.cs" />
     <Compile Include="Assets\AssetLoader.cs" />
+    <Compile Include="Assets\AssetLoaderAttribute.cs" />
     <Compile Include="Assets\AssetSource.cs" />
+    <Compile Include="Assets\ContentReader.cs" />
     <Compile Include="Assets\DefaultLoader.cs" />
     <Compile Include="Assets\FolderManager.cs" />
     <Compile Include="Assets\IAssetEngineService.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="Components\System.cs" />
     <Compile Include="Components\SystemManager.cs" />
     <Compile Include="Components\World.cs" />
+    <Compile Include="DelegateMapper.cs" />
     <Compile Include="EventType.cs" />
     <Compile Include="Extension\ArrayExtension.cs" />
     <Compile Include="Extension\EnumExtension.cs" />

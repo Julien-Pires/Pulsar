@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="Assets\AssetEngineService.cs" />
     <Compile Include="Assets\AssetFolder.cs" />
+    <Compile Include="Assets\AssetLoaderAttribute.cs" />
+    <Compile Include="Assets\ContentReader.cs" />
     <Compile Include="Assets\FolderManager.cs" />
     <Compile Include="Assets\AssetLoader.cs" />
     <Compile Include="Assets\DefaultLoader.cs" />
@@ -65,6 +67,7 @@
     <Compile Include="Assets\IAssetLoader.cs" />
     <Compile Include="Assets\PathHelpers.cs" />
     <Compile Include="Assets\SearchResult.cs" />
+    <Compile Include="DelegateMapper.cs" />
     <Compile Include="GlobalConstant.cs" />
     <Compile Include="ICastable.cs" />
     <Compile Include="Assets\LoadedAsset.cs" />

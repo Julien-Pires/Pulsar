@@ -72,9 +72,9 @@ namespace Pulsar.Assets
         /// Adds a folder
         /// </summary>
         /// <param name="path">Path of the folder</param>
-        public void AddFolder(string path)
+        public AssetFolder AddFolder(string path)
         {
-            AddFolder(path, path);
+            return AddFolder(path, path);
         }
 
         /// <summary>
@@ -82,13 +82,15 @@ namespace Pulsar.Assets
         /// </summary>
         /// <param name="path">Path of the folder</param>
         /// <param name="name">Name of the folder</param>
-        public void AddFolder(string path, string name)
+        public AssetFolder AddFolder(string path, string name)
         {
             if(_foldersMap.ContainsKey(name))
                 throw new ArgumentException(string.Format("Failed to add, a folder named {0} already presents", name));
 
             AssetFolder folder = new AssetFolder(path, _engine);
             _foldersMap.Add(name, folder);
+
+            return folder;
         }
 
         /// <summary>

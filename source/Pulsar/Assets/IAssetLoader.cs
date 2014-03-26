@@ -13,7 +13,7 @@ namespace Pulsar.Assets
         /// Initializes the loader
         /// </summary>
         /// <param name="engine">Asset engine that use this loader</param>
-        void Initialize(AssetEngine engine);
+        void Initialize(AssetEngine engine, IServiceProvider serviceProvider);
 
         /// <summary>
         /// Loads an asset
@@ -25,20 +25,6 @@ namespace Pulsar.Assets
         /// <param name="assetFolder">Folder where the asset will be stored</param>
         /// <returns>Returns a loaded asset</returns>
         LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder);
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the name of the loader
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// Gets the list of assets supported by this loader
-        /// </summary>
-        Type[] SupportedTypes { get; }
 
         #endregion
     }

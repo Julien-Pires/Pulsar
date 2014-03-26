@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,20 +12,18 @@ namespace Pulsar.Graphics.Asset
     /// <summary>
     /// Represents a loader for Texture asset
     /// </summary>
+    [AssetLoader(AssetTypes = new[] { typeof(Texture), typeof(XnaTexture), typeof(Texture2D) })]
     public sealed class TextureLoader : AssetLoader
     {
         #region Fields
 
-        internal const string LoaderName = "TextureLoader";
-
         private const string MissingTexture2DName = "Missing_Texture_2D";
         private const int MissingTexture2DSize = 256;
 
-        private readonly Type[] _supportedTypes = { typeof(Texture), typeof(XnaTexture), typeof(Texture2D) };
         private readonly TextureParameters _defaultParameters;
         private readonly LoadedAsset _result = new LoadedAsset();
         private readonly LoadedAsset _fromFileResult = new LoadedAsset();
-        private readonly GraphicsDeviceManager _deviceManager;
+        private GraphicsDeviceManager _deviceManager;
         private AssetFolder _textureFolder;
 
         #endregion
@@ -36,12 +33,8 @@ namespace Pulsar.Graphics.Asset
         /// <summary>
         /// Constructor of TextureLoader class
         /// </summary>
-        /// <param name="deviceManager">GraphicsDeviceManager</param>
-        internal TextureLoader(GraphicsDeviceManager deviceManager)
+        internal TextureLoader()
         {
-            Debug.Assert(deviceManager != null);
-
-            _deviceManager = deviceManager;
             _defaultParameters = new TextureParameters { Level = TextureLevel.Texture2D };
             UseMissingTexture = true;
         }
@@ -54,9 +47,11 @@ namespace Pulsar.Graphics.Asset
         /// Initializes the loader
         /// </summary>
         /// <param name="engine">Asset engine that use this loader</param>
-        public override void Initialize(AssetEngine engine)
+        public override void Initialize(AssetEngine engine, IServiceProvider serviceProvider)
         {
-            base.Initialize(engine);
+            base.Initialize(engine, serviceProvider);
+
+            _deviceManager = serviceProvider.GetService(typeof (IGraphicsDeviceManager)) as GraphicsDeviceManager;
 
             _textureFolder = engine[GraphicsConstant.Storage][GraphicsConstant.TextureFolderName];
             if (!_textureFolder.IsLoaded(MissingTexture2DName))
@@ -154,22 +149,6 @@ namespace Pulsar.Graphics.Asset
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets the name of the loader
-        /// </summary>
-        public override string Name
-        {
-            get { return LoaderName; }
-        }
-
-        /// <summary>
-        /// Gets the list of assets supported by this loader
-        /// </summary>
-        public override Type[] SupportedTypes
-        {
-            get { return _supportedTypes; }
-        }
 
         /// <summary>
         /// Gets or sets a value that indicate if a missing texture is used when a load failed

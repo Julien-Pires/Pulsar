@@ -19,6 +19,7 @@ namespace Pulsar.Pipeline.MaterialImporter
         #region Fields
 
         private const string NameProperty = "Name";
+        private const string ShaderProperty = "Shader";
         private const string DataProperty = "Data";
 
         private const string DataTypeProperty = "Type";
@@ -90,7 +91,8 @@ namespace Pulsar.Pipeline.MaterialImporter
 
             JObject jObject = JObject.Parse(text);
             string name = JsonHelper.GetString(jObject, NameProperty);
-            RawMaterialContent material = new RawMaterialContent(name);
+            string shader = JsonHelper.GetString(jObject, ShaderProperty);
+            RawMaterialContent material = new RawMaterialContent(name, shader);
             ImportData((JObject)jObject[DataProperty], material);
 
             return material;

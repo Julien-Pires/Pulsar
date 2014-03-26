@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Pulsar.Pipeline.Graphics
 {
@@ -12,9 +13,16 @@ namespace Pulsar.Pipeline.Graphics
 
         #region Constructors
 
-        public RawMaterialContent(string name)
+        public RawMaterialContent(string name, string shader)
         {
+            if(string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("name");
+
+            if(string.IsNullOrWhiteSpace(shader))
+                throw new ArgumentNullException("shader");
+
             Name = name;
+            Shader = shader;
         }
 
         #endregion
@@ -22,6 +30,8 @@ namespace Pulsar.Pipeline.Graphics
         #region Properties
 
         public string Name { get; private set; }
+
+        public string Shader { get; private set; }
 
         public List<RawMaterialDataContent> Data
         {

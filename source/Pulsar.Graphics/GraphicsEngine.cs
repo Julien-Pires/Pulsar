@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 using Pulsar.Assets;
-using Pulsar.Graphics.Asset;
+using Pulsar.Graphics.Fx;
 using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics
@@ -19,11 +19,13 @@ namespace Pulsar.Graphics
 
         private bool _isDisposed;
         private readonly GraphicsDeviceManager _deviceManager;
-        private readonly AssetEngine _assetEngine;
+        private AssetEngine _assetEngine;
+        private GraphicsStorage _graphicsStorage;
         private Window _window;
         private Renderer _renderer;
         private readonly BufferManager _bufferManager;
-        private PrefabFactory _prefabFactory;
+        private readonly BuiltInShaderManager _shaderManager;
+        private readonly PrefabFactory _prefabFactory;
         private Dictionary<string, BaseScene> _scenes = new Dictionary<string, BaseScene>();
         private readonly FrameStatistics _frameStats = new FrameStatistics();
         private readonly Stopwatch _watch = new Stopwatch();
@@ -52,11 +54,14 @@ namespace Pulsar.Graphics
                 throw new NullReferenceException("Failed to find AssetEngine service");
 
             _deviceManager = deviceManager;
-            _bufferManager = new BufferManager(_deviceManager);
             _assetEngine = assetService.AssetEngine;
+            _graphicsStorage = new GraphicsStorage(_assetEngine);
 
-            InitializeStorage();
-            InitializeResources();
+            _bufferManager = new BufferManager(_deviceManager);
+            _shaderManager = new BuiltInShaderManager(_graphicsStorage);
+            _renderer = new Renderer(_deviceManager, _assetEngine);
+            _window = new Window(_deviceManager, _renderer);
+            _prefabFactory = new PrefabFactory(_assetEngine);
         }
 
         #endregion
@@ -64,71 +69,32 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Initializes resources
-        /// </summary>
-        private void InitializeResources()
-        {
-            _renderer = new Renderer(_deviceManager, _assetEngine);
-            _window = new Window(_deviceManager, _renderer);
-            _prefabFactory = new PrefabFactory(_assetEngine);
-        }
-
-        /// <summary>
-        /// Initializes storage and loaders
-        /// </summary>
-        private void InitializeStorage()
-        {
-            Storage storage = _assetEngine.CreateStorage(GraphicsConstant.Storage);
-            storage.AddFolder(GraphicsConstant.TextureFolder, GraphicsConstant.TextureFolderName);
-            storage.AddFolder(GraphicsConstant.MaterialFolder, GraphicsConstant.MaterialFolderName);
-            storage.AddFolder(GraphicsConstant.ShaderFolder, GraphicsConstant.ShaderFolderName);
-            storage.AddFolder(GraphicsConstant.MeshFolder, GraphicsConstant.MeshFolderName);
-
-            _assetEngine.AddLoader(new TextureLoader(_deviceManager));
-            _assetEngine.AddLoader(new ShaderLoader());
-            _assetEngine.AddLoader(new MaterialLoader());
-            _assetEngine.AddLoader(new MeshLoader(_deviceManager, _bufferManager));
-        }
-
-        /// <summary>
-        /// Releases storage and loaders
-        /// </summary>
-        private void ReleaseStorage()
-        {
-            _assetEngine.RemoveLoader(ShaderLoader.LoaderName);
-            _assetEngine.RemoveLoader(MeshLoader.LoaderName);
-            _assetEngine.RemoveLoader(MaterialLoader.LoaderName);
-            _assetEngine.RemoveLoader(TextureLoader.LoaderName);
-            
-            _assetEngine[GraphicsConstant.Storage].Dispose();
-        }
-
-        /// <summary>
         /// Disposes all resources
         /// </summary>
         public void Dispose()
         {
-            if(_isDisposed) return;
+            if(_isDisposed) 
+                return;
 
             try
             {
                 foreach (BaseScene graph in _scenes.Values)
                     graph.Dispose();
 
+                _scenes.Clear();
                 _window.Dispose();
                 _renderer.Dispose();
-                ReleaseStorage();
+                _graphicsStorage.Dispose();
             }
             finally
             {
-                _scenes.Clear();
+                _graphicsStorage = null;
+                _assetEngine = null;
                 _scenes = null;
                 _window = null;
                 _renderer = null;
-
-                _assetEngine.DestroyStorage(GraphicsConstant.Storage);
+                _isDisposed = true;
             }
-            _isDisposed = true;
         }
 
         /// <summary>
@@ -194,6 +160,11 @@ namespace Pulsar.Graphics
 
         #region Properties
 
+        public GraphicsDeviceManager DeviceManager
+        {
+            get { return _deviceManager; }
+        }
+
         /// <summary>
         /// Gets statistics about drawn frames
         /// </summary>
@@ -232,6 +203,11 @@ namespace Pulsar.Graphics
         internal Renderer Renderer
         {
             get { return _renderer; }
+        }
+
+        internal BuiltInShaderManager ShaderManager
+        {
+            get { return _shaderManager; }
         }
 
         #endregion

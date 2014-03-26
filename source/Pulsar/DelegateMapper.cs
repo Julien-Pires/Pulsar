@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Pulsar.Graphics.Fx
+namespace Pulsar
 {
     /// <summary>
     /// Represents a collection of delegate associated to a key
     /// </summary>
     /// <typeparam name="TKey">Key</typeparam>
-    internal class DelegateMapper<TKey> : Dictionary<TKey, Delegate>
+    public sealed class DelegateMapper<TKey> : Dictionary<TKey, Delegate>
     {
         #region Methods
 

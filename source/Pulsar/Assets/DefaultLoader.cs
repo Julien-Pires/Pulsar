@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pulsar.Assets
+﻿namespace Pulsar.Assets
 {
     /// <summary>
     /// Implements default loader behaviour
@@ -9,9 +7,6 @@ namespace Pulsar.Assets
     {
         #region Fields
 
-        private const string LoaderName = "DefaultLoader";
-
-        private readonly Type[] _supportedTypes = {};
         private readonly LoadedAsset _result = new LoadedAsset();
 
         #endregion
@@ -33,26 +28,6 @@ namespace Pulsar.Assets
             LoadFromFile<T>(path, assetFolder, _result);
 
             return _result;
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the name of the loader
-        /// </summary>
-        public override string Name
-        {
-            get { return LoaderName; }
-        }
-
-        /// <summary>
-        /// Gets the list of assets supported by this loader
-        /// </summary>
-        public override Type[] SupportedTypes
-        {
-            get { return _supportedTypes; }
         }
 
         #endregion

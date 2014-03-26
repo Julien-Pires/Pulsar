@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
+using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Graphics.Fx;
 using Pulsar.Pipeline.Graphics;
 using Pulsar.Pipeline.Serialization;
 using MaterialContent = Pulsar.Pipeline.Graphics.MaterialContent;
@@ -14,23 +13,23 @@ using MaterialContent = Pulsar.Pipeline.Graphics.MaterialContent;
 namespace Pulsar.Pipeline.Processors
 {
     [ContentProcessor(DisplayName = "Material - Pulsar")]
-    public sealed class MaterialDefinitionProcessor : ContentProcessor<RawMaterialContent, MaterialContent>
+    public sealed partial class MaterialDefinitionProcessor : ContentProcessor<RawMaterialContent, MaterialContent>
     {
         #region Fields
 
         private const char FirstArrayDelimiter = '[';
         private const char LastArrayDelimiter = ']';
 
-        private static readonly Dictionary<string, Type> TypeMap = new Dictionary<string, Type>
+        private static readonly Dictionary<string, MaterialDataType> TypeMap = new Dictionary<string, MaterialDataType>
         {
-            { "integer", typeof(int) },
-            { "floating" , typeof(float) },
-            { "vector2" , typeof(Vector2) },
-            { "vector3" , typeof(Vector3) },
-            { "vector4" , typeof(Vector4) },
-            { "matrix" , typeof(Matrix) },
-            { "texture" , typeof(ExternalReference<TextureContent>) },
-            { "string", typeof(string) }
+            { "integer", new MaterialDataType(typeof(int), typeof(int)) },
+            { "floating" , new MaterialDataType(typeof(float), typeof(float)) },
+            { "vector2" , new MaterialDataType(typeof(Vector2), typeof(Vector2)) },
+            { "vector3" , new MaterialDataType(typeof(Vector3), typeof(Vector3)) },
+            { "vector4" , new MaterialDataType(typeof(Vector4), typeof(Vector4)) },
+            { "matrix" , new MaterialDataType(typeof(Matrix), typeof(Matrix)) },
+            { "texture" , new MaterialDataType(typeof(ExternalReference<TextureContent>), typeof(Texture)) },
+            { "string", new MaterialDataType(typeof(string), typeof(string)) }
         };
 
         private static readonly DelegateMapper<string> FindRealTypeDelegateMap = new DelegateMapper<string>
@@ -46,10 +45,13 @@ namespace Pulsar.Pipeline.Processors
 
         private static bool IsArrayValue(string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
             return (value[0] == FirstArrayDelimiter) && (value[value.Length - 1] == LastArrayDelimiter);
         }
 
-        private static Type GetType(string type, string value)
+        private static MaterialDataType GetType(string type, string value)
         {
             if (!FindRealTypeDelegateMap.ContainsKey(type))
                 return TypeMap[type];
@@ -75,7 +77,6 @@ namespace Pulsar.Pipeline.Processors
 
         public override MaterialContent Process(RawMaterialContent input, ContentProcessorContext context)
         {
-            Debugger.Launch();
             if (input == null)
                 throw new ArgumentNullException("input");
 
@@ -84,7 +85,7 @@ namespace Pulsar.Pipeline.Processors
 
             GenerateData(input.Data, context);
 
-            return new MaterialContent(input.Name, _datas);
+            return new MaterialContent(input.Name, input.Shader, _datas);
         }
 
         private void GenerateData(List<RawMaterialDataContent> rawCollection, ContentProcessorContext context)
@@ -105,18 +106,22 @@ namespace Pulsar.Pipeline.Processors
                         SerializerContext serializerCtx = new SerializerContext(rawData.Parameters[j], context);
                         contextList[j] = serializerCtx;
                     }
-                    Type type = GetType(rawData.Type.ToLower(), rawData.Value[0]);
-                    data.Value = readerMngr.ReadMultiples(type, rawData.Value, contextList);
+                    MaterialDataType type = GetType(rawData.Type.ToLower(), rawData.Value[0]);
+                    data.Type = type.RuntimeType;
+                    data.Value = readerMngr.ReadMultiples(type.ReaderType, rawData.Value, contextList);
                 }
                 else
                 {
                     string value = rawData.Value[0];
-                    Type type = GetType(rawData.Type.ToLower(), value);
+                    MaterialDataType typeInfo = GetType(rawData.Type.ToLower(), value);
+                    data.Type = typeInfo.RuntimeType;
+
+                    Type readerType = typeInfo.ReaderType;
                     if (IsArrayValue(value))
-                        type = type.MakeArrayType();
+                        readerType = readerType.MakeArrayType();
 
                     SerializerContext serializerCtx = new SerializerContext(rawData.Parameters[0], context);
-                    data.Value = readerMngr.Read(type, value, serializerCtx);
+                    data.Value = readerMngr.Read(readerType, value, serializerCtx);
                 }
 
                 _datas.Add(data);

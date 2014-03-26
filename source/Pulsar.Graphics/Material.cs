@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 using Pulsar.Graphics.Fx;
+using ContentReader = Pulsar.Assets.ContentReader;
 
 namespace Pulsar.Graphics
 {
@@ -46,6 +47,24 @@ namespace Pulsar.Graphics
             Specular = Color.White;
             SpecularMap = null;
             SpecularPower = 50.0f;
+        }
+
+        #endregion
+
+        #region Static methods
+
+        internal static Material Read(Microsoft.Xna.Framework.Content.ContentReader input)
+        {
+            string name = input.ReadString();
+            Material material = new Material(name);
+
+            int count = input.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                string key = input.ReadString();
+                Type type = Type.GetType(input.ReadString());
+                object value = ContentReader.ReadObject(input, type);
+            }
         }
 
         #endregion

@@ -314,6 +314,11 @@ namespace Pulsar.Assets
             get { return _assetsMap.Count; }
         }
 
+        public IServiceProvider ServiceProvider
+        {
+            get { return _engine.ServiceProvider; }
+        }
+
         #endregion
     }
 }

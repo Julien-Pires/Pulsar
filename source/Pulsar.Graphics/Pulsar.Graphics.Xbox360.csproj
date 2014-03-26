@@ -57,7 +57,6 @@
     <Compile Include="Asset\MeshLoader.cs" />
     <Compile Include="Asset\MeshParameters.cs" />
     <Compile Include="Asset\ShaderLoader.cs" />
-    <Compile Include="Asset\ShaderParameters.cs" />
     <Compile Include="Asset\ShaderReader.cs" />
     <Compile Include="Asset\TextureLoader.cs" />
     <Compile Include="Asset\TextureParameters.cs" />
@@ -72,9 +71,10 @@
     <Compile Include="Fx\AutomaticBinding.cs" />
     <Compile Include="Fx\AutomaticDelegateMapper.cs" />
     <Compile Include="Fx\BaseDelegateBinding.cs" />
+    <Compile Include="Fx\BuiltInShaderInfo.cs" />
+    <Compile Include="Fx\BuiltInShaderManager.cs" />
     <Compile Include="Fx\ConstantBinding.cs" />
     <Compile Include="Fx\DelegateBinding.cs" />
-    <Compile Include="Fx\DelegateMapper.cs" />
     <Compile Include="Fx\EffectParameterHelper.cs" />
     <Compile Include="Fx\EffectParameterWriter.cs" />
     <Compile Include="Fx\KeyedBinding.cs" />
@@ -93,6 +93,7 @@
     <Compile Include="GraphicsConstant.cs" />
     <Compile Include="GraphicsEngine.cs" />
     <Compile Include="GraphicsEngineService.cs" />
+    <Compile Include="GraphicsStorage.cs" />
     <Compile Include="IBufferWrapper.cs" />
     <Compile Include="IGraphicsEngineService.cs" />
     <Compile Include="IndexBufferObject.cs" />

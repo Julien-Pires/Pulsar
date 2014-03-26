@@ -7,13 +7,11 @@ namespace Pulsar.Graphics.Asset
     /// <summary>
     /// Represents a loader for Material asset
     /// </summary>
+    [AssetLoader(AssetTypes = new[]{ typeof(Material) })]
     public sealed class MaterialLoader : AssetLoader
     {
         #region Fields
 
-        internal const string LoaderName = "MaterialLoader";
-
-        private readonly Type[] _supportedTypes = { typeof(Material) };
         private readonly LoadedAsset _result = new LoadedAsset();
         private readonly MaterialParameters _defaultParameter = new MaterialParameters();
 
@@ -70,26 +68,6 @@ namespace Pulsar.Graphics.Asset
             _result.Asset = material;
 
             return _result;
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the name of the loader
-        /// </summary>
-        public override string Name
-        {
-            get { return LoaderName; }
-        }
-
-        /// <summary>
-        /// Gets the list of assets supported by this loader
-        /// </summary>
-        public override Type[] SupportedTypes
-        {
-            get { return _supportedTypes; }
         }
 
         #endregion

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,18 +12,16 @@ namespace Pulsar.Graphics.Asset
     /// <summary>
     /// Represents a loader for Mesh asset
     /// </summary>
+    [AssetLoader(AssetTypes = new[] { typeof(Mesh) })]
     public sealed class MeshLoader : AssetLoader
     {
         #region Fields
-
-        internal const string LoaderName = "MeshLoader";
 
         private const string DiffuseMapKey = "Texture";
         private const string NormalMapKey = "NormalMap";
         private const string SpecularMapKey = "SpecularMap";
 
-        private readonly Type[] _supportedTypes = { typeof(Mesh) };
-        private readonly BufferManager _bufferManager;
+        private BufferManager _bufferManager;
         private readonly MeshParameters _defaultParameters = new MeshParameters();
         private readonly LoadedAsset _result = new LoadedAsset();
         private readonly LoadedAsset _fromFileResult = new LoadedAsset();
@@ -36,14 +33,8 @@ namespace Pulsar.Graphics.Asset
         /// <summary>
         /// Constructor of MeshLoader class
         /// </summary>
-        /// <param name="deviceManager">GraphicsDeviceManager</param>
-        /// <param name="bufferManager">Buffer manager</param>
-        internal MeshLoader(GraphicsDeviceManager deviceManager, BufferManager bufferManager)
+        internal MeshLoader()
         {
-            Debug.Assert(deviceManager != null);
-            Debug.Assert(bufferManager != null);
-
-            _bufferManager = bufferManager;
         }
 
         #endregion
@@ -188,6 +179,18 @@ namespace Pulsar.Graphics.Asset
 
         #region Methods
 
+        public override void Initialize(AssetEngine engine, IServiceProvider serviceProvider)
+        {
+            base.Initialize(engine, serviceProvider);
+
+            IGraphicsEngineService engineService =
+                serviceProvider.GetService(typeof (IGraphicsEngineService)) as IGraphicsEngineService;
+            if(engineService == null)
+                throw new Exception("");
+
+            _bufferManager = engineService.Engine.BufferManager;
+        }
+
         /// <summary>
         /// Loads an asset
         /// </summary>
@@ -237,26 +240,6 @@ namespace Pulsar.Graphics.Asset
             _fromFileResult.Reset();
 
             return _result;
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the name of the loader
-        /// </summary>
-        public override string Name
-        {
-            get { return LoaderName; }
-        }
-
-        /// <summary>
-        /// Gets the list of assets supported by this loader
-        /// </summary>
-        public override Type[] SupportedTypes
-        {
-            get { return _supportedTypes; }
         }
 
         #endregion

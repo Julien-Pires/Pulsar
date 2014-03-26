@@ -57,6 +57,7 @@ namespace Pulsar.Graphics.Fx
                 as IGraphicsDeviceService;
             if (graphicsDeviceService == null)
                 throw new Exception("Failed to find a graphics device service");
+
             if (graphicsDeviceService.GraphicsDevice == null)
                 throw new Exception("Failed to find a graphics device");
             

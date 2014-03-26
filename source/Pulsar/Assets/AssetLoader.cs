@@ -13,7 +13,7 @@ namespace Pulsar.Assets
         /// Initializes the loader
         /// </summary>
         /// <param name="engine">Asset engine using this loader</param>
-        public virtual void Initialize(AssetEngine engine)
+        public virtual void Initialize(AssetEngine engine, IServiceProvider serviceProvider)
         {
         }
 
@@ -45,20 +45,6 @@ namespace Pulsar.Assets
 
             assetFolder.LoadFromFile<T>(path, result);
         }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the name of the loader
-        /// </summary>
-        public abstract string Name { get; }
-
-        /// <summary>
-        /// Gets the list of assets supported by this loader
-        /// </summary>
-        public abstract Type[] SupportedTypes { get; }
 
         #endregion
     }
