@@ -28,6 +28,7 @@ namespace Pulsar.Pipeline.ShaderImporter
         private const string FileProperty = "File";
         private const string InstancingProperty = "Instancing";
         private const string FallbackProperty = "Fallback";
+        private const string DefaultProperty = "Default";
 
         private const string ConstantProperty = "Constants";
         private const string ConstantSourceProperty = "Source";
@@ -72,6 +73,7 @@ namespace Pulsar.Pipeline.ShaderImporter
         {
             content.Instancing = GetStringValue(shaderBlock, InstancingProperty);
             content.Fallback = GetStringValue(shaderBlock, FallbackProperty);
+            content.Default = GetStringValue(shaderBlock, DefaultProperty);
         }
 
         /// <summary>

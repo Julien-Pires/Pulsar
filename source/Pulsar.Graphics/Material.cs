@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.Collections;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -58,18 +60,38 @@ namespace Pulsar.Graphics
             string name = input.ReadString();
             Material material = new Material(name);
 
+            string shaderName = input.ReadString();
+            string technique = input.ReadString();
+            Shader shader = input.ContentManager.Load<Shader>(shaderName);
+            material.BindShader(shader, technique);
+
             int count = input.ReadInt32();
             for (int i = 0; i < count; i++)
             {
                 string key = input.ReadString();
                 Type type = Type.GetType(input.ReadString());
                 object value = ContentReader.ReadObject(input, type);
+                material.SetValue(key, value);
+                material._currentTechnique.TrySetConstantValue(key, value);
             }
+
+            return material;
         }
 
         #endregion
 
         #region Methods
+
+        public void BindShader(Shader shader, string technique = null)
+        {
+            if(shader == null)
+                throw new ArgumentNullException("shader");
+
+            if (string.IsNullOrWhiteSpace(technique))
+                technique = shader.DefaultTechnique;
+
+            _currentTechnique = new ShaderTechniqueBinding(shader, technique);
+        }
 
         private void InitializeDataMap()
         {
@@ -81,6 +103,12 @@ namespace Pulsar.Graphics
         public void UnsafeSetValue<T>(string key, T value)
         {
             Dictionary<string, T> map = (Dictionary<string, T>)_dataMap[typeof(T)];
+            map[key] = value;
+        }
+
+        private void SetValue(string key, object value)
+        {
+            IDictionary map = EnsureDictionary(value.GetType());
             map[key] = value;
         }
 
@@ -103,6 +131,15 @@ namespace Pulsar.Graphics
             T result;
 
             return !map.TryGetValue(key, out result) ? default(T) : result;
+        }
+
+        private IDictionary EnsureDictionary(Type type)
+        {
+            MethodInfo methodInf = typeof (Material).GetMethod("EnsureDictionary", 
+                BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
+            MethodInfo ensureMethod = methodInf.MakeGenericMethod(new[] {type});
+            
+            return (IDictionary)ensureMethod.Invoke(this, null);
         }
 
         private Dictionary<string, T> EnsureDictionary<T>()

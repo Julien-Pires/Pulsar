@@ -12,7 +12,7 @@ namespace Pulsar.Graphics.Fx
 
         private static readonly Action<ShaderConstantBinding<T>> WriteToParameter;
 
-        internal T InternalValue;
+        protected internal T InternalValue;
 
         #endregion
 
@@ -65,6 +65,12 @@ namespace Pulsar.Graphics.Fx
         public T Value
         {
             get { return InternalValue; }
+        }
+
+        internal override object UntypedValue
+        {
+            get { return InternalValue; }
+            set { InternalValue = (T)value; }
         }
 
         #endregion

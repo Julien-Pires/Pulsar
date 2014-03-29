@@ -78,7 +78,7 @@ namespace Pulsar.Graphics.Fx
                     break;
 
                 case ShaderConstantSource.Constant:
-                    binding = new ConstantBinding<T>(definition, default(T));
+                    binding = new ConstantBinding<T>(definition);
                     break;
 
                 case ShaderConstantSource.Delegate:

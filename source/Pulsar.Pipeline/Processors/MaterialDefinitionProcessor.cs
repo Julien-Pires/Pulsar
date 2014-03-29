@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
@@ -38,6 +39,8 @@ namespace Pulsar.Pipeline.Processors
         };
 
         private readonly List<MaterialDataContent> _datas = new List<MaterialDataContent>();
+        private string _shader;
+        private string _technique;
 
         #endregion
 
@@ -83,9 +86,28 @@ namespace Pulsar.Pipeline.Processors
             if (context == null)
                 throw new ArgumentNullException("context");
 
+            ExtractTechnique(input.Shader);
             GenerateData(input.Data, context);
 
-            return new MaterialContent(input.Name, input.Shader, _datas);
+            return new MaterialContent(input.Name, _datas)
+            {
+                Shader = _shader,
+                Technique = _technique
+            };
+        }
+
+        private void ExtractTechnique(string rawShader)
+        {
+            if(string.IsNullOrWhiteSpace(rawShader))
+                throw new ArgumentNullException("rawShader");
+
+            rawShader = rawShader.Replace("/", @"\");
+            string[] splitValues = rawShader.Split('/');
+            if(splitValues.Length <= 1)
+                throw new Exception("");
+
+            _technique = splitValues[splitValues.Length - 1];
+            _shader = string.Join(@"\", splitValues.Take(splitValues.Length - 1));
         }
 
         private void GenerateData(List<RawMaterialDataContent> rawCollection, ContentProcessorContext context)

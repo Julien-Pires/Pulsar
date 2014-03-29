@@ -40,8 +40,10 @@ namespace Pulsar.Pipeline.Graphics
             output.Write(CompiledEffect);
             WriteTechniques(output);
             WriteConstants(output);
+
             output.Write(Fallback);
             output.Write(Instancing);
+            output.Write(Default);
         }
 
         /// <summary>
@@ -100,15 +102,17 @@ namespace Pulsar.Pipeline.Graphics
             get { return _techniques; }
         }
 
+        public string Default { get; set; }
+
         /// <summary>
         /// Gets the name of the fallback technique
         /// </summary>
-        public string Fallback { get; internal set; }
+        public string Fallback { get; set; }
 
         /// <summary>
         /// Gets the name of the instancing technique
         /// </summary>
-        public string Instancing { get; internal set; }
+        public string Instancing { get; set; }
 
         #endregion
     }

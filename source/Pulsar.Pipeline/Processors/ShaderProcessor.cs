@@ -65,7 +65,8 @@ namespace Pulsar.Pipeline.Processors
             ShaderContent shader = new ShaderContent(compiledFx.GetEffectCode())
             {
                 Fallback = input.Fallback,
-                Instancing = input.Instancing
+                Instancing = input.Instancing,
+                Default = input.Default
             };
             
             foreach (ShaderTechniqueContent shaderTech in input.Techniques.Values)

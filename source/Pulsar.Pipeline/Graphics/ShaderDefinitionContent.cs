@@ -33,7 +33,7 @@ namespace Pulsar.Pipeline.Graphics
         /// <summary>
         /// Gets an external reference to the associated effect file
         /// </summary>
-        public ExternalReference<EffectContent> EffectFile { get; internal set; }
+        public ExternalReference<EffectContent> EffectFile { get; set; }
 
         /// <summary>
         /// Gets a list of constant definition
@@ -51,15 +51,17 @@ namespace Pulsar.Pipeline.Graphics
             get { return _techniques; }
         }
 
+        public string Default { get; set; }
+
         /// <summary>
         /// Gets the name of the instancing technique
         /// </summary>
-        public string Instancing { get; internal set; }
+        public string Instancing { get; set; }
 
         /// <summary>
         /// Gets the name of the fallback technique
         /// </summary>
-        public string Fallback { get; internal set; }
+        public string Fallback { get; set; }
 
         #endregion
     }

@@ -83,6 +83,20 @@ namespace Pulsar.Graphics.Fx
             return (idx > -1) ? _bindings[idx] as T : null;
         }
 
+        public bool TryGetBinding(string name, out ShaderConstantBinding binding)
+        {
+            binding = GetBinding(name);
+
+            return binding != null;
+        }
+
+        public bool TryGetBinding<T>(string name, out T binding) where T : ShaderConstantBinding
+        {
+            binding = GetBinding<T>(name);
+
+            return binding != null;
+        }
+
         /// <summary>
         /// Gets the index of a binding with a specified name
         /// </summary>

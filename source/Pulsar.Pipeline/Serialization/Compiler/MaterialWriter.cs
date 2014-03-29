@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 
 using Pulsar.Graphics;
+using Pulsar.Graphics.Asset;
 using Pulsar.Pipeline.Graphics;
 
 namespace Pulsar.Pipeline.Serialization.Compiler
@@ -10,6 +11,11 @@ namespace Pulsar.Pipeline.Serialization.Compiler
     public sealed class MaterialWriter : ContentTypeWriter<MaterialContent>
     {
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
+        {
+            return typeof (MaterialReader).AssemblyQualifiedName;
+        }
+
+        public override string GetRuntimeType(TargetPlatform targetPlatform)
         {
             return typeof (Material).AssemblyQualifiedName;
         }

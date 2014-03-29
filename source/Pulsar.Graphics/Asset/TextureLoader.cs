@@ -12,7 +12,8 @@ namespace Pulsar.Graphics.Asset
     /// <summary>
     /// Represents a loader for Texture asset
     /// </summary>
-    [AssetLoader(AssetTypes = new[] { typeof(Texture), typeof(XnaTexture), typeof(Texture2D) })]
+    [AssetLoader(AssetTypes = new[] { typeof(Texture), typeof(XnaTexture), typeof(Texture2D) }, 
+        LazyInitCategory = GraphicsConstant.LoadersCategory)]
     public sealed class TextureLoader : AssetLoader
     {
         #region Fields
@@ -52,6 +53,8 @@ namespace Pulsar.Graphics.Asset
             base.Initialize(engine, serviceProvider);
 
             _deviceManager = serviceProvider.GetService(typeof (IGraphicsDeviceManager)) as GraphicsDeviceManager;
+            if(_deviceManager == null)
+                throw new Exception("");
 
             _textureFolder = engine[GraphicsConstant.Storage][GraphicsConstant.TextureFolderName];
             if (!_textureFolder.IsLoaded(MissingTexture2DName))

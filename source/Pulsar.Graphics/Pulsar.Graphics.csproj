@@ -72,6 +72,7 @@
     <Compile Include="Asset\Freezable.cs" />
     <Compile Include="Asset\MaterialLoader.cs" />
     <Compile Include="Asset\MaterialParameters.cs" />
+    <Compile Include="Asset\MaterialReader.cs" />
     <Compile Include="Asset\MeshLoader.cs" />
     <Compile Include="Asset\MeshParameters.cs" />
     <Compile Include="Asset\ShaderLoader.cs" />

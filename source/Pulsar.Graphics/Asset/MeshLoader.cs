@@ -12,7 +12,7 @@ namespace Pulsar.Graphics.Asset
     /// <summary>
     /// Represents a loader for Mesh asset
     /// </summary>
-    [AssetLoader(AssetTypes = new[] { typeof(Mesh) })]
+    [AssetLoader(AssetTypes = new[] { typeof(Mesh) }, LazyInitCategory = GraphicsConstant.LoadersCategory)]
     public sealed class MeshLoader : AssetLoader
     {
         #region Fields

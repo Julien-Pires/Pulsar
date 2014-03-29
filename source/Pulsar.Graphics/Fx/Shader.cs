@@ -20,6 +20,7 @@ namespace Pulsar.Graphics.Fx
         private Effect _underlyingEffect;
         private string _fallback = string.Empty;
         private string _instancing = string.Empty;
+        private string _default = string.Empty;
         private Dictionary<string, ShaderTechniqueDefinition> _techniquesMap
             = new Dictionary<string, ShaderTechniqueDefinition>();
         private Dictionary<string, ShaderConstantDefinition> _constantsMap
@@ -69,8 +70,10 @@ namespace Pulsar.Graphics.Fx
             shader.ReadConstants(input);
             shader.CreateMissingTechniqueDefinition();
             shader.CreateMissingConstantDefinition();
+
             shader.Fallback = input.ReadString();
             shader.Instancing = input.ReadString();
+            shader.DefaultTechnique = input.ReadString();
 
             return shader;
         }
@@ -290,6 +293,18 @@ namespace Pulsar.Graphics.Fx
         /// Gets the collection of constants binding used for global update
         /// </summary>
         public ShaderConstantBindingCollection GlobalConstantsBinding { get; private set; }
+
+        public string DefaultTechnique
+        {
+            get { return _default; }
+            set
+            {
+                if(!_techniquesMap.ContainsKey(value))
+                    throw new Exception("");
+
+                _default = value;
+            }
+        }
 
         /// <summary>
         /// Gets the name of the technique used as fallback

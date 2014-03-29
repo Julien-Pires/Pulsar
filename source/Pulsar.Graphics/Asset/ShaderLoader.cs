@@ -8,7 +8,7 @@ namespace Pulsar.Graphics.Asset
     /// <summary>
     /// Represents a loader for Shader asset
     /// </summary>
-    [AssetLoader(AssetTypes = new[] { typeof(Shader) })]
+    [AssetLoader(AssetTypes = new[] { typeof(Shader) }, LazyInitCategory = GraphicsConstant.LoadersCategory)]
     public sealed class ShaderLoader : AssetLoader
     {
         #region Fields

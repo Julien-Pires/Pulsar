@@ -14,6 +14,10 @@
 			"type" : "string",
 			"title" : "Technique used as fallback"
 		},
+		"Default" : {
+			"type" : "boolean",
+			"title" : "Default technique for this shader"
+		},
 		"Techniques" : {
 			"type" : "object",
 			"title" : "List of techniques",

@@ -12,11 +12,20 @@
         /// Constructor of ConstantBinding class
         /// </summary>
         /// <param name="definition">Constant definition</param>
-        /// <param name="value">Value</param>
-        internal ConstantBinding(ShaderConstantDefinition definition, T value)
+        internal ConstantBinding(ShaderConstantDefinition definition)
             : base(definition)
         {
-            InternalValue = value;
+            InternalValue = default(T);
+        }
+
+        #endregion
+
+        #region Properties
+
+        public new T Value
+        {
+            get { return InternalValue; }
+            set { InternalValue = value; }
         }
 
         #endregion

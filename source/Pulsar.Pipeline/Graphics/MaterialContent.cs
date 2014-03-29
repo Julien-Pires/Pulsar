@@ -8,11 +8,10 @@ namespace Pulsar.Pipeline.Graphics
     {
         #region Constructors
 
-        public MaterialContent(string name, string shader, List<MaterialDataContent> datas)
+        public MaterialContent(string name, List<MaterialDataContent> datas)
         {
             Name = name;
             Datas = datas;
-            Shader = shader;
         }
 
         #endregion
@@ -22,6 +21,9 @@ namespace Pulsar.Pipeline.Graphics
         internal void Write(ContentWriter output)
         {
             output.Write(Name);
+            output.Write(Shader);
+            output.Write(Technique);
+
             output.Write(Datas.Count);
             for (int i = 0; i < Datas.Count; i++)
             {
@@ -37,7 +39,9 @@ namespace Pulsar.Pipeline.Graphics
 
         public string Name { get; private set; }
 
-        public string Shader { get; private set; }
+        public string Shader { get; set; }
+
+        public string Technique { get; set; }
 
         public List<MaterialDataContent> Datas { get; private set; }
 

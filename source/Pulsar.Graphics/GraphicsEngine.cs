@@ -62,6 +62,8 @@ namespace Pulsar.Graphics
             _renderer = new Renderer(_deviceManager, _assetEngine);
             _window = new Window(_deviceManager, _renderer);
             _prefabFactory = new PrefabFactory(_assetEngine);
+
+            _assetEngine.InitializeLoaders(GraphicsConstant.LoadersCategory);
         }
 
         #endregion

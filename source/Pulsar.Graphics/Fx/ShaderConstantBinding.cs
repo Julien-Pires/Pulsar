@@ -54,6 +54,8 @@ namespace Pulsar.Graphics.Fx
             get { return FxParameter.Name; }
         }
 
+        internal abstract object UntypedValue { get; set; }
+
         #endregion
     }
 }

@@ -28,7 +28,7 @@
         /// <summary>
         /// Gets a value that indicate if the technique use transparency
         /// </summary>
-        public bool IsTransparent { get; internal set; }
+        public bool IsTransparent { get; set; }
 
         #endregion
     }

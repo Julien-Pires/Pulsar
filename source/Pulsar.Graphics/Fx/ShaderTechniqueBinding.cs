@@ -16,6 +16,11 @@ namespace Pulsar.Graphics.Fx
 
         #region Constructors
 
+        internal ShaderTechniqueBinding(Shader shader, string technique) 
+            : this(shader, shader.GetTechniqueDefinition(technique))
+        {
+        }
+
         /// <summary>
         /// Constructor of ShaderTechniqueBinding class
         /// </summary>
@@ -67,6 +72,34 @@ namespace Pulsar.Graphics.Fx
         internal ShaderPassEnumerator GetPassEnumerator()
         {
             return new ShaderPassEnumerator(_technique);
+        }
+
+        internal void TrySetConstantValue(string constant, object value)
+        {
+            ShaderConstantDefinition definition = _shader.GetConstantDefinition(constant);
+            if(definition == null)
+                return;
+
+            ShaderConstantBinding binding = null;
+            switch (definition.UpdateFrequency)
+            {
+                case UpdateFrequency.Material:
+                    binding = MaterialConstantsBinding.GetBinding(constant);
+                    break;
+
+                case UpdateFrequency.Instance:
+                    binding = InstanceConstantsBinding.GetBinding(constant);
+                    break;
+
+                case UpdateFrequency.Global:
+                    binding = GlobalConstantsBinding.GetBinding(constant);
+                    break;
+            }
+
+            if(binding == null)
+                return;
+
+            binding.UntypedValue = value;
         }
 
         #endregion
