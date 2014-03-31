@@ -87,6 +87,7 @@
     <Compile Include="Fx\ShaderConstantDefinition.cs" />
     <Compile Include="Fx\ShaderConstantSemantic.cs" />
     <Compile Include="Fx\ShaderConstantSource.cs" />
+    <Compile Include="Fx\ShaderPassDefinition.cs" />
     <Compile Include="Fx\ShaderPassEnumerator.cs" />
     <Compile Include="Fx\ShaderTechniqueBinding.cs" />
     <Compile Include="Fx\ShaderTechniqueDefinition.cs" />
@@ -117,6 +118,8 @@
     <Compile Include="RenderingTechnique\SimpleRenderingTechnique.cs" />
     <Compile Include="RenderQueue.cs" />
     <Compile Include="RenderQueueGroup.cs" />
+    <Compile Include="RenderState.cs" />
+    <Compile Include="RenderStateId.cs" />
     <Compile Include="RenderTarget.cs" />
     <Compile Include="ResizeRule.cs" />
     <Compile Include="SceneGraph\BaseScene.cs" />
@@ -128,7 +131,7 @@
     <Compile Include="SceneGraph\Node.cs" />
     <Compile Include="SceneGraph\SceneNode.cs" />
     <Compile Include="SceneGraph\SubEntity.cs" />
-    <Compile Include="Shader_Old.cs" />
+    <Compile Include="StateObject.cs" />
     <Compile Include="SubMesh.cs" />
     <Compile Include="SubMeshData.cs" />
     <Compile Include="Texture.cs" />

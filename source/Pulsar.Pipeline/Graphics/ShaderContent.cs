@@ -74,6 +74,29 @@ namespace Pulsar.Pipeline.Graphics
             {
                 output.Write(_techniques[i].Name);
                 output.Write(_techniques[i].IsTransparent);
+                
+                List<ShaderPassContent> pass = _techniques[i].Passes;
+                output.Write(pass.Count);
+                for (int j = 0; j < pass.Count; j++)
+                {
+                    output.Write(pass[i].Name);
+                    output.Write((int)pass[i].Cull);
+                    output.Write((int)pass[i].FillMode);
+                    output.Write(pass[i].DepthWrite);
+                    output.Write((int)pass[i].DepthCompare);
+                    output.Write(pass[i].StencilRef);
+                    output.Write(pass[i].StencilMask);
+                    output.Write(pass[i].StencilWriteMask);
+                    output.Write((int)pass[i].StencilPass);
+                    output.Write((int)pass[i].StencilFail);
+                    output.Write((int)pass[i].StencilDepthFail);
+                    output.Write((int)pass[i].ColorBlend);
+                    output.Write((int)pass[i].AlphaBlend);
+                    output.Write((int)pass[i].ColorSource);
+                    output.Write((int)pass[i].ColorDestination);
+                    output.Write((int)pass[i].AlphaSource);
+                    output.Write((int)pass[i].AlphaDestination);
+                }
             }
         }
 

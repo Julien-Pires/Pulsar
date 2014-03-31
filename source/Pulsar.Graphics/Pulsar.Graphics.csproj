@@ -93,6 +93,7 @@
     <Compile Include="Fx\BaseDelegateBinding.cs" />
     <Compile Include="Fx\EffectParameterHelper.cs" />
     <Compile Include="Fx\KeyedBinding.cs" />
+    <Compile Include="Fx\ShaderPassDefinition.cs" />
     <Compile Include="Fx\ShaderTechniqueBinding.cs" />
     <Compile Include="Fx\ShaderPassEnumerator.cs" />
     <Compile Include="Fx\ShaderTechniqueDefinition.cs" />
@@ -135,6 +136,9 @@
     <Compile Include="RenderTarget.cs" />
     <Compile Include="ResizeRule.cs" />
     <Compile Include="Fx\Shader.cs" />
+    <Compile Include="RenderState.cs" />
+    <Compile Include="RenderStateId.cs" />
+    <Compile Include="StateObject.cs" />
     <Compile Include="VertexBufferObject.cs" />
     <Compile Include="VertexBufferWrapper.cs" />
     <Compile Include="VertexData.cs" />
@@ -153,7 +157,6 @@
     <Compile Include="SceneGraph\SceneNode.cs" />
     <Compile Include="SceneGraph\BaseScene.cs" />
     <Compile Include="SceneGraph\SubEntity.cs" />
-    <Compile Include="Shader_Old.cs" />
     <Compile Include="SubMesh.cs" />
     <Compile Include="SubMeshData.cs" />
     <Compile Include="Texture.cs" />

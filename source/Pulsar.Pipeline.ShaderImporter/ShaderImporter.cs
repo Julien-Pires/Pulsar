@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
-
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 
@@ -38,6 +38,29 @@ namespace Pulsar.Pipeline.ShaderImporter
 
         private const string TechniquesProperty = "Techniques";
         private const string TechniqueTransparentProperty = "Transparent";
+        private const string TechniquePassesProperty = "Pass";
+
+        private const string PassRasterizerProperty = "Rasterizer";
+        private const string PassDepthProperty = "Depth";
+        private const string PassStencilProperty = "Stencil";
+        private const string PassBlendingProperty = "Blending";
+        private const string CullProperty = "Cull";
+        private const string FillModeProperty = "FillMode";
+        private const string DepthWriteProperty = "Write";
+        private const string DepthCompareProperty = "Compare";
+        private const string StencilRefProperty = "Reference";
+        private const string StencilMaskProperty = "Mask";
+        private const string StencilWriteMaskProperty = "WriteMask";
+        private const string StencilCompareProperty = "Compare";
+        private const string StencilPassProperty = "Pass";
+        private const string StencilFailProperty = "Fail";
+        private const string StencilDepthFailProperty = "DepthFail";
+        private const string ColorBlendProperty = "ColorBlend";
+        private const string AlphaBlendProperty = "AlphaBlend";
+        private const string ColorSourceProperty = "ColorSource";
+        private const string ColorDestinationProperty = "ColorDestination";
+        private const string AlphaSourceProperty = "AlphaSource";
+        private const string AlphaDestinationProperty = "AlphaDestination";
 
         #endregion
 
@@ -95,7 +118,80 @@ namespace Pulsar.Pipeline.ShaderImporter
                 if (prop != null)
                     techniqueContent.IsTransparent = (bool)prop;
 
+                ImportPasses((JObject)techniqueInfo[TechniquePassesProperty], techniqueContent);
+
                 content.Techniques.Add(techniqueContent.Name, techniqueContent);
+            }
+        }
+
+        private static void ImportPasses(JObject passesBlock, ShaderTechniqueContent content)
+        {
+            if(passesBlock == null)
+                return;
+
+            Dictionary<string, object> passes = JsonHelper.ConvertObjectToMap(passesBlock);
+            foreach (KeyValuePair<string, object> pair in passes)
+            {
+                ShaderPassContent pass = new ShaderPassContent(pair.Key);
+
+                object obj;
+                Dictionary<string, object> map;
+                Dictionary<string, object> passProperties = (Dictionary<string, object>) pair.Value;
+                if (passProperties.TryGetValue(PassRasterizerProperty, out obj))
+                {
+                    map = (Dictionary<string, object>) obj;
+                    if (map.TryGetValue(CullProperty, out obj))
+                        pass.Cull = (CullMode) Enum.Parse(typeof (CullMode), (string) obj);
+                    if (map.TryGetValue(FillModeProperty, out obj))
+                        pass.FillMode = (FillMode) Enum.Parse(typeof (FillMode), (string) obj);
+                }
+
+                if (passProperties.TryGetValue(PassDepthProperty, out obj))
+                {
+                    map = (Dictionary<string, object>) obj;
+                    if (map.TryGetValue(DepthWriteProperty, out obj))
+                        pass.DepthWrite = bool.Parse((string) obj);
+                    if (map.TryGetValue(DepthCompareProperty, out obj))
+                        pass.DepthCompare = (CompareFunction) Enum.Parse(typeof (CompareFunction), (string) obj);
+                }
+
+                if (passProperties.TryGetValue(PassStencilProperty, out obj))
+                {
+                    map = (Dictionary<string, object>) obj;
+                    if (map.TryGetValue(StencilRefProperty, out obj))
+                        pass.StencilRef = Int32.Parse((string) obj);
+                    if (map.TryGetValue(StencilMaskProperty, out obj))
+                        pass.StencilMask = Int32.Parse((string) obj);
+                    if (map.TryGetValue(StencilWriteMaskProperty, out obj))
+                        pass.StencilWriteMask = Int32.Parse((string) obj);
+                    if (map.TryGetValue(StencilCompareProperty, out obj))
+                        pass.StencilCompare = (CompareFunction) Enum.Parse(typeof (CompareFunction), (string) obj);
+                    if (map.TryGetValue(StencilPassProperty, out obj))
+                        pass.StencilPass = (StencilOperation) Enum.Parse(typeof (StencilOperation), (string) obj);
+                    if (map.TryGetValue(StencilFailProperty, out obj))
+                        pass.StencilFail = (StencilOperation) Enum.Parse(typeof (StencilOperation), (string) obj);
+                    if (map.TryGetValue(StencilDepthFailProperty, out obj))
+                        pass.StencilDepthFail = (StencilOperation) Enum.Parse(typeof (StencilOperation), (string) obj);
+                }
+
+                if (passProperties.TryGetValue(PassBlendingProperty, out obj))
+                {
+                    map = (Dictionary<string, object>) obj;
+                    if (map.TryGetValue(ColorBlendProperty, out obj))
+                        pass.ColorBlend = (BlendFunction)Enum.Parse(typeof(BlendFunction), (string)obj);
+                    if (map.TryGetValue(AlphaBlendProperty, out obj))
+                        pass.AlphaBlend = (BlendFunction) Enum.Parse(typeof (BlendFunction), (string) obj);
+                    if (map.TryGetValue(ColorSourceProperty, out obj))
+                        pass.ColorSource = (Blend) Enum.Parse(typeof (Blend), (string) obj);
+                    if (map.TryGetValue(ColorDestinationProperty, out obj))
+                        pass.ColorDestination = (Blend) Enum.Parse(typeof (Blend), (string) obj);
+                    if (map.TryGetValue(AlphaSourceProperty, out obj))
+                        pass.AlphaSource = (Blend) Enum.Parse(typeof (Blend), (string) obj);
+                    if (map.TryGetValue(AlphaDestinationProperty, out obj))
+                        pass.AlphaDestination = (Blend) Enum.Parse(typeof (Blend), (string) obj);
+                }
+
+                content.Passes.Add(pass);
             }
         }
 
