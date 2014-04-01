@@ -1,27 +1,63 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsar.Graphics
 {
-    internal sealed class StateObject<T> where T : GraphicsResource
+    public sealed class StateObject<T> : IDisposable where T : GraphicsResource
     {
         #region Fields
 
-        internal readonly ushort Id;
-        internal readonly T State;
+        private static readonly IndexPool IndexPool = new IndexPool();
+
+        private readonly ushort _id;
+        private bool _isDisposed;
 
         #endregion
 
         #region Constructors
 
-        internal StateObject(ushort id, T state)
+        internal StateObject(T state)
         {
             Debug.Assert(state != null);
 
-            Id = id;
+            _id = (ushort)IndexPool.Get();
             State = state;
         }
+
+        #endregion
+
+        #region Methods
+
+        public void Dispose()
+        {
+            if(_isDisposed) 
+                return;
+
+            try
+            {
+                State.Dispose();
+            }
+            finally
+            {
+                State = null;
+                IndexPool.Release(_id);
+
+                _isDisposed = true;
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        public ushort Id
+        {
+            get { return _id; }
+        }
+
+        public T State { get; private set; }
 
         #endregion
     }

@@ -163,7 +163,7 @@ namespace Pulsar.Graphics.Fx
         /// Reads techniques definition from a binary input
         /// </summary>
         /// <param name="input">Input</param>
-        internal void ReadTechniques(ContentReader input)
+        private void ReadTechniques(ContentReader input)
         {
             int count = input.ReadInt32();
             for (int i = 0; i < count; i++)
@@ -174,11 +174,35 @@ namespace Pulsar.Graphics.Fx
                     throw new Exception(
                         string.Format("Shader definition contains a technique {0} but doesn't exist in effect", name));
 
-                ShaderTechniqueDefinition definition = new ShaderTechniqueDefinition(name, technique)
+                ShaderTechniqueDefinition techDef = new ShaderTechniqueDefinition(name, technique)
                 {
                     IsTransparent = input.ReadBoolean()
                 };
-                _techniquesMap.Add(name, definition);
+                int passesCount = input.ReadInt32();
+                for (int j = 0; j < passesCount; j++)
+                {
+                    string passName = input.ReadString();
+                    EffectPass pass = technique.Passes[passName];
+                    if(pass == null)
+                        throw new Exception("");
+
+                    StateObject<RasterizerState> rasterizerState =
+                        RenderState.GetRasterizerState((CullMode) input.ReadInt32(), (FillMode) input.ReadInt32());
+                    StateObject<DepthStencilState> depthStencilState =
+                        RenderState.GetDepthStencilState(input.ReadBoolean(),(CompareFunction) input.ReadInt32(), 
+                        input.ReadInt32(), input.ReadInt32(), input.ReadInt32(), (CompareFunction)input.ReadInt32(),
+                        (StencilOperation)input.ReadInt32(), (StencilOperation) input.ReadInt32(), 
+                        (StencilOperation) input.ReadInt32());
+                    StateObject<BlendState> blendState = RenderState.GetBlendState((BlendFunction) input.ReadInt32(),
+                        (BlendFunction) input.ReadInt32(), (Blend) input.ReadInt32(), (Blend) input.ReadInt32(),
+                        (Blend) input.ReadInt32(), (Blend)input.ReadInt32());
+                    RenderState renderState = RenderState.GetRenderState(rasterizerState, depthStencilState, blendState);
+
+                    ShaderPassDefinition passDef = new ShaderPassDefinition(passName, pass, renderState);
+                    techDef.Passes.Add(passDef.Name, passDef);
+                }
+
+                _techniquesMap.Add(name, techDef);
             }
         }
 
@@ -186,7 +210,7 @@ namespace Pulsar.Graphics.Fx
         /// Reads constants definition from a binary input
         /// </summary>
         /// <param name="input">Input</param>
-        internal void ReadConstants(ContentReader input)
+        private void ReadConstants(ContentReader input)
         {
             int count = input.ReadInt32();
             for (int i = 0; i < count; i++)

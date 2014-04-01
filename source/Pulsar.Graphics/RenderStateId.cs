@@ -8,19 +8,19 @@ namespace Pulsar.Graphics
         #region Fields
 
         [FieldOffset(0)]
-        public readonly ulong _id;
+        public readonly ulong Id;
 
         [FieldOffset(0)]
-        public readonly ushort _rasterizerStateId;
+        public readonly ushort RasterizerStateId;
 
         [FieldOffset(2)]
-        public readonly ushort _depthStencilStateId;
+        public readonly ushort DepthStencilStateId;
 
         [FieldOffset(4)]
-        public readonly ushort _blendStateId;
+        public readonly ushort BlendStateId;
 
         [FieldOffset(6)]
-        public readonly ushort _samplerStateId;
+        public readonly ushort SamplerStateId;
 
         #endregion
 
@@ -28,21 +28,21 @@ namespace Pulsar.Graphics
 
         internal RenderStateId(ulong id)
         {
-            _rasterizerStateId = 0;
-            _depthStencilStateId = 0;
-            _blendStateId = 0;
-            _samplerStateId = 0;
-            _id = id;
+            RasterizerStateId = 0;
+            DepthStencilStateId = 0;
+            BlendStateId = 0;
+            SamplerStateId = 0;
+            Id = id;
         }
 
         internal RenderStateId(ushort rasterizerStateid, ushort depthStencilStateId, ushort blendStateId,
             ushort samplerStateId)
         {
-            _id = 0;
-            _rasterizerStateId = rasterizerStateid;
-            _depthStencilStateId = depthStencilStateId;
-            _blendStateId = blendStateId;
-            _samplerStateId = samplerStateId;
+            Id = 0;
+            RasterizerStateId = rasterizerStateid;
+            DepthStencilStateId = depthStencilStateId;
+            BlendStateId = blendStateId;
+            SamplerStateId = samplerStateId;
         }
 
         #endregion
@@ -51,7 +51,7 @@ namespace Pulsar.Graphics
 
         public static implicit operator ulong(RenderStateId renderStateId)
         {
-            return renderStateId._id;
+            return renderStateId.Id;
         }
 
         public static implicit operator RenderStateId(ulong id)

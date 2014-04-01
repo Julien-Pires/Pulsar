@@ -80,16 +80,20 @@ namespace Pulsar.Pipeline.Graphics
                 for (int j = 0; j < pass.Count; j++)
                 {
                     output.Write(pass[i].Name);
+
                     output.Write((int)pass[i].Cull);
                     output.Write((int)pass[i].FillMode);
+
                     output.Write(pass[i].DepthWrite);
                     output.Write((int)pass[i].DepthCompare);
                     output.Write(pass[i].StencilRef);
                     output.Write(pass[i].StencilMask);
                     output.Write(pass[i].StencilWriteMask);
+                    output.Write((int)pass[i].StencilCompare);
                     output.Write((int)pass[i].StencilPass);
                     output.Write((int)pass[i].StencilFail);
                     output.Write((int)pass[i].StencilDepthFail);
+
                     output.Write((int)pass[i].ColorBlend);
                     output.Write((int)pass[i].AlphaBlend);
                     output.Write((int)pass[i].ColorSource);

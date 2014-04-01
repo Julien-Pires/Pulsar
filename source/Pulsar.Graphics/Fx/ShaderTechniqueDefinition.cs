@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsar.Graphics.Fx
 {
@@ -7,6 +8,12 @@ namespace Pulsar.Graphics.Fx
     /// </summary>
     public sealed class ShaderTechniqueDefinition
     {
+        #region Fields
+
+        private Dictionary<string, ShaderPassDefinition> _passesMap = new Dictionary<string, ShaderPassDefinition>();
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
@@ -28,6 +35,11 @@ namespace Pulsar.Graphics.Fx
         /// Gets the underlying effect technique
         /// </summary>
         internal EffectTechnique Technique { get; private set; }
+
+        internal Dictionary<string, ShaderPassDefinition> Passes
+        {
+            get { return _passesMap; }
+        }
 
         /// <summary>
         /// Gets the name of the technique
