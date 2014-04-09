@@ -44,8 +44,10 @@ namespace Pulsar.Pipeline.ShaderImporter
         private const string PassDepthProperty = "Depth";
         private const string PassStencilProperty = "Stencil";
         private const string PassBlendingProperty = "Blending";
+
         private const string CullProperty = "Cull";
         private const string FillModeProperty = "FillMode";
+
         private const string DepthWriteProperty = "Write";
         private const string DepthCompareProperty = "Compare";
         private const string StencilRefProperty = "Reference";
@@ -55,6 +57,7 @@ namespace Pulsar.Pipeline.ShaderImporter
         private const string StencilPassProperty = "Pass";
         private const string StencilFailProperty = "Fail";
         private const string StencilDepthFailProperty = "DepthFail";
+
         private const string ColorBlendProperty = "ColorBlend";
         private const string AlphaBlendProperty = "AlphaBlend";
         private const string ColorSourceProperty = "ColorSource";

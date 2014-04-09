@@ -5,31 +5,36 @@ namespace Pulsar.Graphics.Fx
     /// <summary>
     /// Represents a binding to a specific technique used by a material
     /// </summary>
-    public sealed class ShaderTechniqueBinding : IDisposable
+    public sealed class TechniqueBinding : IDisposable
     {
         #region Fields
 
         private Shader _shader;
-        private ShaderTechniqueDefinition _technique;
 
         #endregion
 
         #region Constructors
 
-        internal ShaderTechniqueBinding(Shader shader, string technique) 
-            : this(shader, shader.GetTechniqueDefinition(technique))
+        internal TechniqueBinding(Shader shader, string technique, ushort materialId) 
+            : this(shader, shader.GetTechniqueDefinition(technique), materialId)
         {
         }
 
         /// <summary>
-        /// Constructor of ShaderTechniqueBinding class
+        /// Constructor of TechniqueBinding class
         /// </summary>
         /// <param name="shader">Shader that contains the technique</param>
         /// <param name="technique">Technique</param>
-        internal ShaderTechniqueBinding(Shader shader, ShaderTechniqueDefinition technique)
+        internal TechniqueBinding(Shader shader, TechniqueDefinition technique, ushort materialId)
         {
             _shader = shader;
-            _technique = technique;
+            Definition = technique;
+
+            PassDefinition[] passes = technique.Passes;
+            PassesBindings = new PassBinding[passes.Length];
+            for(int i = 0; i < PassesBindings.Length; i++)
+                PassesBindings[i] = new PassBinding(passes[i], materialId);
+
             MaterialConstantsBinding = shader.CreateConstantsBinding(UpdateFrequency.Material);
             InstanceConstantsBinding = shader.CreateConstantsBinding(UpdateFrequency.Instance);
         }
@@ -53,7 +58,7 @@ namespace Pulsar.Graphics.Fx
                 MaterialConstantsBinding = null;
                 InstanceConstantsBinding = null;
                 _shader = null;
-                _technique = null;
+                Definition = null;
             }
         }
 
@@ -62,16 +67,16 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         internal void UseTechnique()
         {
-            _shader.SetCurrentTechnique(_technique);
+            _shader.SetCurrentTechnique(Definition);
         }
 
         /// <summary>
         /// Gets an enumerator to a collection of pass for the technique
         /// </summary>
         /// <returns>Returns a pass enumerator</returns>
-        internal ShaderPassEnumerator GetPassEnumerator()
+        internal PassBindingEnumerator GetPassEnumerator()
         {
-            return new ShaderPassEnumerator(_technique);
+            return new PassBindingEnumerator(this);
         }
 
         internal void TrySetConstantValue(string constant, object value)
@@ -106,6 +111,10 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
+        internal TechniqueDefinition Definition { get; private set; }
+
+        internal PassBinding[] PassesBindings { get; private set; }
+
         /// <summary>
         /// Gets the collection of constants binding used for a global update
         /// </summary>
@@ -129,7 +138,7 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         public string Name
         {
-            get { return _technique.Name; }
+            get { return Definition.Name; }
         }
 
         /// <summary>
@@ -137,7 +146,7 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         public bool IsTransparent
         {
-            get { return _technique.IsTransparent; }
+            get { return Definition.IsTransparent; }
         }
 
         #endregion

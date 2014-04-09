@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsar.Graphics
@@ -15,6 +15,7 @@ namespace Pulsar.Graphics
             new List<StateObject<DepthStencilState>>();
         private static readonly List<StateObject<BlendState>> BlendStates = new List<StateObject<BlendState>>();
         private static readonly Dictionary<ulong, RenderState> RenderStates = new Dictionary<ulong, RenderState>();
+        public static readonly RenderState Default;
 
         private readonly RenderStateId _id;
         private readonly StateObject<RasterizerState> _rasterizerState;
@@ -24,6 +25,16 @@ namespace Pulsar.Graphics
         #endregion
 
         #region Constructors
+
+        static RenderState()
+        {
+            StateObject<RasterizerState> rasterizerState = RegisterState(RasterizerState.CullCounterClockwise,
+                RasterizerStates);
+            StateObject<DepthStencilState> depthstencilState = RegisterState(DepthStencilState.Default,
+                DepthStencilStates);
+            StateObject<BlendState> blendState = RegisterState(BlendState.Opaque, BlendStates);
+            Default = GetRenderState(rasterizerState, depthstencilState, blendState);
+        }
 
         internal RenderState(StateObject<RasterizerState> rasterizerState,
             StateObject<DepthStencilState> depthStencilState, StateObject<BlendState> blendState)
@@ -37,6 +48,16 @@ namespace Pulsar.Graphics
         #endregion
 
         #region Static methods
+
+        private static StateObject<T> RegisterState<T>(T state, List<StateObject<T>> list) where T :GraphicsResource
+        {
+            Debug.Assert(state != null);
+
+            StateObject<T> result = new StateObject<T>(state);
+            list.Add(result);
+
+            return result;
+        }
 
         public static RenderState GetRenderState(StateObject<RasterizerState> rasterizerState, 
             StateObject<DepthStencilState> depthStencilState, StateObject<BlendState> blendState)
@@ -75,10 +96,8 @@ namespace Pulsar.Graphics
                 CullMode = cull,
                 FillMode = mode
             };
-            StateObject<RasterizerState> stateObj = new StateObject<RasterizerState>(newState);
-            RasterizerStates.Add(stateObj);
 
-            return stateObj;
+            return RegisterState(newState, RasterizerStates);
         }
 
         public static StateObject<DepthStencilState> GetDepthStencilState(bool zWrite, CompareFunction zCompare,
@@ -111,10 +130,8 @@ namespace Pulsar.Graphics
                 StencilFail = fail,
                 StencilDepthBufferFail = depthFail
             };
-            StateObject<DepthStencilState> stateObj = new StateObject<DepthStencilState>(newState);
-            DepthStencilStates.Add(stateObj);
 
-            return stateObj;
+            return RegisterState(newState, DepthStencilStates);
         }
 
         public static StateObject<BlendState> GetBlendState(BlendFunction colorBlend, BlendFunction alphaBlend, 
@@ -141,10 +158,8 @@ namespace Pulsar.Graphics
                 AlphaSourceBlend = alphaSrc,
                 AlphaDestinationBlend = alphaDst
             };
-            StateObject<BlendState> stateObj = new StateObject<BlendState>(newState);
-            BlendStates.Add(stateObj);
 
-            return stateObj;
+            return RegisterState(newState, BlendStates);
         }
 
         #endregion

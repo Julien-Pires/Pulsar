@@ -4,41 +4,33 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsar.Graphics.Fx
 {
-    public sealed class ShaderPassDefinition
+    public sealed class PassDefinition
     {
-        #region Fields
-
-        private static readonly IndexPool IndexPool = new IndexPool();
-
-        private readonly ushort _id;
-
-        #endregion
-
         #region Constructors
 
-        internal ShaderPassDefinition(string name, EffectPass pass, RenderState state)
+        internal PassDefinition(EffectPass pass, RenderState state)
         {
             Debug.Assert(pass != null);
             Debug.Assert(state != null);
 
-            Name = name;
             Pass = pass;
             State = state;
-            _id = (ushort)IndexPool.Get();
         }
 
         #endregion
 
         #region Properties
 
-        public ushort Id
-        {
-            get { return _id; }
-        }
+        public ushort Id { get; internal set; }
+
+        public ushort Index { get; internal set; }
 
         internal EffectPass Pass { get; private set; }
 
-        public string Name { get; private set; }
+        public string Name
+        {
+            get { return Pass.Name; }
+        }
 
         public RenderState State { get; private set; }
 

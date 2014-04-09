@@ -21,9 +21,7 @@ namespace Pulsar.Pipeline.Graphics
         internal void Write(ContentWriter output)
         {
             output.Write(Name);
-            output.Write(Shader);
-            output.Write(Technique);
-
+            
             output.Write(Datas.Count);
             for (int i = 0; i < Datas.Count; i++)
             {
@@ -31,6 +29,9 @@ namespace Pulsar.Pipeline.Graphics
                 output.Write(Datas[i].Type.AssemblyQualifiedName);
                 output.WriteObject(Datas[i].Value);
             }
+
+            output.Write(Shader);
+            output.Write(Technique);
         }
 
         #endregion

@@ -1,19 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-using Microsoft.Xna.Framework.Graphics;
-
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
     /// Enumerates a collection of pass
     /// </summary>
-    internal struct ShaderPassEnumerator : IEnumerator<EffectPass>
+    internal struct PassBindingEnumerator : IEnumerator<PassBinding>
     {
         #region Fields
 
-        private EffectPass _current;
-        private EffectPassCollection _passCollection;
+        private PassBinding _current;
+        private PassBinding[] _passArray;
         private int _index;
 
         #endregion
@@ -21,12 +19,12 @@ namespace Pulsar.Graphics.Fx
         #region Constructors
 
         /// <summary>
-        /// Constructor of ShaderPassEnumerator struct
+        /// Constructor of PassBindingEnumerator struct
         /// </summary>
         /// <param name="definition">Technique that contains pass to enumerate</param>
-        internal ShaderPassEnumerator(ShaderTechniqueDefinition definition)
+        internal PassBindingEnumerator(TechniqueBinding definition)
         {
-            _passCollection = definition.Technique.Passes;
+            _passArray = definition.PassesBindings;
             _index = 0;
             _current = null;
         }
@@ -40,7 +38,7 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         public void Dispose()
         {
-            _passCollection = null;
+            _passArray = null;
             _current = null;
         }
 
@@ -50,16 +48,16 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns true if there is a next pass otherwise false</returns>
         public bool MoveNext()
         {
-            if (_index < _passCollection.Count)
+            if (_index < _passArray.Length)
             {
-                _current = _passCollection[_index];
+                _current = _passArray[_index];
                 _index++;
 
                 return true;
             }
 
             _current = null;
-            _index = _passCollection.Count;
+            _index = _passArray.Length;
 
             return false;
         }
@@ -80,7 +78,7 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Gets the current pass
         /// </summary>
-        public EffectPass Current
+        public PassBinding Current
         {
             get { return _current; }
         }

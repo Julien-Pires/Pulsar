@@ -23,6 +23,9 @@ namespace Pulsar.Graphics
         private const string NormalMapKey = "NormalMap";
         private const string OpacityKey = "Opacity";
 
+        private static readonly IndexPool IndexPool = new IndexPool();
+
+        private readonly ushort _id;
         private float _opacity;
         private Color _diffuse;
         private Texture _diffuseMap;
@@ -31,7 +34,13 @@ namespace Pulsar.Graphics
         private float _specularPower;
         private Texture _normalMap;
         private readonly Dictionary<Type, object> _dataMap = new Dictionary<Type, object>();
-        private ShaderTechniqueBinding _currentTechnique;
+        private TechniqueBinding _currentTechnique;
+
+        #endregion
+
+        #region Events
+
+        public event MaterialTechniqueChangedHandler TechniqueChanged;
 
         #endregion
 
@@ -39,6 +48,7 @@ namespace Pulsar.Graphics
 
         public Material(string name)
         {
+            _id = GetId();
             Name = name;
 
             InitializeDataMap();
@@ -55,15 +65,19 @@ namespace Pulsar.Graphics
 
         #region Static methods
 
+        private static ushort GetId()
+        {
+            int id = IndexPool.Get();
+            if(id > ushort.MaxValue)
+                throw new Exception("");
+
+            return (ushort)id;
+        }
+
         internal static Material Read(Microsoft.Xna.Framework.Content.ContentReader input)
         {
             string name = input.ReadString();
             Material material = new Material(name);
-
-            string shaderName = input.ReadString();
-            string technique = input.ReadString();
-            Shader shader = input.ContentManager.Load<Shader>(shaderName);
-            material.BindShader(shader, technique);
 
             int count = input.ReadInt32();
             for (int i = 0; i < count; i++)
@@ -72,8 +86,12 @@ namespace Pulsar.Graphics
                 Type type = Type.GetType(input.ReadString());
                 object value = ContentReader.ReadObject(input, type);
                 material.SetValue(key, value);
-                material._currentTechnique.TrySetConstantValue(key, value);
             }
+
+            string shaderName = input.ReadString();
+            string technique = input.ReadString();
+            Shader shader = input.ContentManager.Load<Shader>(shaderName);
+            material.BindShader(shader, technique);
 
             return material;
         }
@@ -90,7 +108,28 @@ namespace Pulsar.Graphics
             if (string.IsNullOrWhiteSpace(technique))
                 technique = shader.DefaultTechnique;
 
-            _currentTechnique = new ShaderTechniqueBinding(shader, technique);
+            _currentTechnique = new TechniqueBinding(shader, technique, _id);
+            IsTransparent = _currentTechnique.IsTransparent;
+            BindConstantValue();
+
+            OnTechniqueChanged(this, _currentTechnique.Definition);
+        }
+
+        private void BindConstantValue()
+        {
+            foreach (object value in _dataMap.Values)
+            {
+                IDictionary map = (IDictionary)value;
+                foreach (DictionaryEntry entry in map)
+                    _currentTechnique.TrySetConstantValue((string)entry.Key, entry.Value);
+            }
+        }
+
+        private void OnTechniqueChanged(Material material, TechniqueDefinition definition)
+        {
+            MaterialTechniqueChangedHandler handler = TechniqueChanged;
+            if (handler != null)
+                handler(material, definition);
         }
 
         private void InitializeDataMap()
@@ -162,12 +201,14 @@ namespace Pulsar.Graphics
 
         #region Properties
 
+        public ushort Id
+        {
+            get { return _id; }
+        }
+
         public string Name { get; private set; }
 
-        public bool IsTransparent
-        {
-            get { return _currentTechnique.IsTransparent; }
-        }
+        public bool IsTransparent { get; private set; }
 
         public float Opacity
         {

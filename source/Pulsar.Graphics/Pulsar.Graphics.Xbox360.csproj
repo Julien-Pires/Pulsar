@@ -79,6 +79,12 @@
     <Compile Include="Fx\EffectParameterHelper.cs" />
     <Compile Include="Fx\EffectParameterWriter.cs" />
     <Compile Include="Fx\KeyedBinding.cs" />
+    <Compile Include="Fx\MaterialTechniqueChangedHandler.cs" />
+    <Compile Include="Fx\PassBinding.cs" />
+    <Compile Include="Fx\PassBindingEnumerator.cs" />
+    <Compile Include="Fx\PassDefinition.cs" />
+    <Compile Include="Fx\PassIdPool.cs" />
+    <Compile Include="Fx\PassIdRange.cs" />
     <Compile Include="Fx\Shader.cs" />
     <Compile Include="Fx\ShaderConstantBinding.cs" />
     <Compile Include="Fx\ShaderConstantBindingCollection.cs" />
@@ -87,10 +93,8 @@
     <Compile Include="Fx\ShaderConstantDefinition.cs" />
     <Compile Include="Fx\ShaderConstantSemantic.cs" />
     <Compile Include="Fx\ShaderConstantSource.cs" />
-    <Compile Include="Fx\ShaderPassDefinition.cs" />
-    <Compile Include="Fx\ShaderPassEnumerator.cs" />
-    <Compile Include="Fx\ShaderTechniqueBinding.cs" />
-    <Compile Include="Fx\ShaderTechniqueDefinition.cs" />
+    <Compile Include="Fx\TechniqueBinding.cs" />
+    <Compile Include="Fx\TechniqueDefinition.cs" />
     <Compile Include="Fx\UpdateFrequency.cs" />
     <Compile Include="GraphicsConstant.cs" />
     <Compile Include="GraphicsEngine.cs" />
@@ -107,6 +111,7 @@
     <Compile Include="IRenderingTechnique.cs" />
     <Compile Include="ITextureWrapper.cs" />
     <Compile Include="Material.cs" />
+    <Compile Include="MaterialPassId.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="MeshData.cs" />
     <Compile Include="PrefabFactory.cs" />

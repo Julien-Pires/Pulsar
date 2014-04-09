@@ -21,8 +21,8 @@ namespace Pulsar.Graphics.Fx
         private string _fallback = string.Empty;
         private string _instancing = string.Empty;
         private string _default = string.Empty;
-        private Dictionary<string, ShaderTechniqueDefinition> _techniquesMap
-            = new Dictionary<string, ShaderTechniqueDefinition>();
+        private Dictionary<string, TechniqueDefinition> _techniquesMap
+            = new Dictionary<string, TechniqueDefinition>();
         private Dictionary<string, ShaderConstantDefinition> _constantsMap
             = new Dictionary<string, ShaderConstantDefinition>();
         private Dictionary<int, List<ShaderConstantDefinition>> _constantsPerUpdate
@@ -78,6 +78,17 @@ namespace Pulsar.Graphics.Fx
             return shader;
         }
 
+        private static int GetPassIndex(string name, EffectPassCollection passCollection)
+        {
+            for (int i = 0; i < passCollection.Count; i++)
+            {
+                if (string.Equals(name, passCollection[i].Name, StringComparison.Ordinal))
+                    return i;
+            }
+
+            return -1;
+        }
+
         #endregion
 
         #region Methods
@@ -121,7 +132,9 @@ namespace Pulsar.Graphics.Fx
                 EffectTechnique technique = _underlyingEffect.Techniques[i];
                 if (_techniquesMap.ContainsKey(technique.Name)) continue;
 
-                ShaderTechniqueDefinition definition = new ShaderTechniqueDefinition(technique.Name, technique);
+                TechniqueDefinition definition = new TechniqueDefinition(technique);
+                definition.CreateMissingPass();
+
                 _techniquesMap.Add(technique.Name, definition);
             }
         }
@@ -159,6 +172,23 @@ namespace Pulsar.Graphics.Fx
             }
         }
 
+        private PassDefinition ReadPass(ContentReader input, EffectPass pass)
+        {
+            StateObject<RasterizerState> rasterizerState =
+                        RenderState.GetRasterizerState((CullMode)input.ReadInt32(), (FillMode)input.ReadInt32());
+            StateObject<DepthStencilState> depthStencilState =
+                RenderState.GetDepthStencilState(input.ReadBoolean(), (CompareFunction)input.ReadInt32(),
+                input.ReadInt32(), input.ReadInt32(), input.ReadInt32(), (CompareFunction)input.ReadInt32(),
+                (StencilOperation)input.ReadInt32(), (StencilOperation)input.ReadInt32(),
+                (StencilOperation)input.ReadInt32());
+            StateObject<BlendState> blendState = RenderState.GetBlendState((BlendFunction)input.ReadInt32(),
+                (BlendFunction)input.ReadInt32(), (Blend)input.ReadInt32(), (Blend)input.ReadInt32(),
+                (Blend)input.ReadInt32(), (Blend)input.ReadInt32());
+            RenderState renderState = RenderState.GetRenderState(rasterizerState, depthStencilState, blendState);
+
+            return new PassDefinition(pass, renderState);
+        }
+
         /// <summary>
         /// Reads techniques definition from a binary input
         /// </summary>
@@ -174,35 +204,30 @@ namespace Pulsar.Graphics.Fx
                     throw new Exception(
                         string.Format("Shader definition contains a technique {0} but doesn't exist in effect", name));
 
-                ShaderTechniqueDefinition techDef = new ShaderTechniqueDefinition(name, technique)
+                TechniqueDefinition techniqueDefinition = new TechniqueDefinition(technique)
                 {
                     IsTransparent = input.ReadBoolean()
                 };
+
                 int passesCount = input.ReadInt32();
+                EffectPassCollection passCollection = technique.Passes;
+                if (passesCount != passCollection.Count)
+                    throw new Exception("");
+
                 for (int j = 0; j < passesCount; j++)
                 {
                     string passName = input.ReadString();
-                    EffectPass pass = technique.Passes[passName];
-                    if(pass == null)
+                    int passIndex = GetPassIndex(passName, passCollection);
+                    if(passIndex == -1)
                         throw new Exception("");
 
-                    StateObject<RasterizerState> rasterizerState =
-                        RenderState.GetRasterizerState((CullMode) input.ReadInt32(), (FillMode) input.ReadInt32());
-                    StateObject<DepthStencilState> depthStencilState =
-                        RenderState.GetDepthStencilState(input.ReadBoolean(),(CompareFunction) input.ReadInt32(), 
-                        input.ReadInt32(), input.ReadInt32(), input.ReadInt32(), (CompareFunction)input.ReadInt32(),
-                        (StencilOperation)input.ReadInt32(), (StencilOperation) input.ReadInt32(), 
-                        (StencilOperation) input.ReadInt32());
-                    StateObject<BlendState> blendState = RenderState.GetBlendState((BlendFunction) input.ReadInt32(),
-                        (BlendFunction) input.ReadInt32(), (Blend) input.ReadInt32(), (Blend) input.ReadInt32(),
-                        (Blend) input.ReadInt32(), (Blend)input.ReadInt32());
-                    RenderState renderState = RenderState.GetRenderState(rasterizerState, depthStencilState, blendState);
-
-                    ShaderPassDefinition passDef = new ShaderPassDefinition(passName, pass, renderState);
-                    techDef.Passes.Add(passDef.Name, passDef);
+                    EffectPass pass = technique.Passes[passIndex];
+                    PassDefinition passDefinition = ReadPass(input, pass);
+                    techniqueDefinition.SetPassDefinition(passIndex, passDefinition);
                 }
+                techniqueDefinition.CreateMissingPass();
 
-                _techniquesMap.Add(name, techDef);
+                _techniquesMap.Add(name, techniqueDefinition);
             }
         }
 
@@ -245,7 +270,7 @@ namespace Pulsar.Graphics.Fx
         /// Sets the current technique
         /// </summary>
         /// <param name="definition">Technique</param>
-        internal void SetCurrentTechnique(ShaderTechniqueDefinition definition)
+        internal void SetCurrentTechnique(TechniqueDefinition definition)
         {
             _underlyingEffect.CurrentTechnique = definition.Technique;
         }
@@ -302,9 +327,9 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         /// <param name="name">Name of the technique</param>
         /// <returns>Returns a technique definition if found otherwise null</returns>
-        public ShaderTechniqueDefinition GetTechniqueDefinition(string name)
+        public TechniqueDefinition GetTechniqueDefinition(string name)
         {
-            ShaderTechniqueDefinition technique;
+            TechniqueDefinition technique;
 
             return !_techniquesMap.TryGetValue(name, out technique) ? null : technique;
         }
@@ -341,7 +366,7 @@ namespace Pulsar.Graphics.Fx
                 if(string.Equals(_fallback, value, StringComparison.OrdinalIgnoreCase))
                     return;
 
-                ShaderTechniqueDefinition definition;
+                TechniqueDefinition definition;
                 if (_techniquesMap.TryGetValue(_fallback, out definition))
                     definition.IsFallback = false;
 
@@ -371,7 +396,7 @@ namespace Pulsar.Graphics.Fx
                 if (string.Equals(_instancing, value, StringComparison.OrdinalIgnoreCase))
                     return;
 
-                ShaderTechniqueDefinition definition;
+                TechniqueDefinition definition;
                 if (_techniquesMap.TryGetValue(_instancing, out definition))
                     definition.IsInstancing = false;
 
