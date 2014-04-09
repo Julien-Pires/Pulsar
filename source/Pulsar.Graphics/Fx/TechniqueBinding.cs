@@ -141,14 +141,6 @@ namespace Pulsar.Graphics.Fx
             get { return Definition.Name; }
         }
 
-        /// <summary>
-        /// Gets a value that indicate if the technique use transparency
-        /// </summary>
-        public bool IsTransparent
-        {
-            get { return Definition.IsTransparent; }
-        }
-
         #endregion
     }
 }

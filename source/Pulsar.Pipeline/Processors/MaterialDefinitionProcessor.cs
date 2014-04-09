@@ -21,16 +21,16 @@ namespace Pulsar.Pipeline.Processors
         private const char FirstArrayDelimiter = '[';
         private const char LastArrayDelimiter = ']';
 
-        private static readonly Dictionary<string, MaterialDataType> TypeMap = new Dictionary<string, MaterialDataType>
+        private static readonly Dictionary<string, Tuple<Type, Type>> TypeMap = new Dictionary<string, Tuple<Type, Type>>
         {
-            { "integer", new MaterialDataType(typeof(int), typeof(int)) },
-            { "floating" , new MaterialDataType(typeof(float), typeof(float)) },
-            { "vector2" , new MaterialDataType(typeof(Vector2), typeof(Vector2)) },
-            { "vector3" , new MaterialDataType(typeof(Vector3), typeof(Vector3)) },
-            { "vector4" , new MaterialDataType(typeof(Vector4), typeof(Vector4)) },
-            { "matrix" , new MaterialDataType(typeof(Matrix), typeof(Matrix)) },
-            { "texture" , new MaterialDataType(typeof(ExternalReference<TextureContent>), typeof(Texture)) },
-            { "string", new MaterialDataType(typeof(string), typeof(string)) }
+            { "integer", new Tuple<Type, Type>(typeof(int), typeof(int)) },
+            { "floating" , new Tuple<Type, Type>(typeof(float), typeof(float)) },
+            { "vector2" , new Tuple<Type, Type>(typeof(Vector2), typeof(Vector2)) },
+            { "vector3" , new Tuple<Type, Type>(typeof(Vector3), typeof(Vector3)) },
+            { "vector4" , new Tuple<Type, Type>(typeof(Vector4), typeof(Vector4)) },
+            { "matrix" , new Tuple<Type, Type>(typeof(Matrix), typeof(Matrix)) },
+            { "texture" , new Tuple<Type, Type>(typeof(ExternalReference<TextureContent>), typeof(Texture)) },
+            { "string", new Tuple<Type, Type>(typeof(string), typeof(string)) }
         };
 
         private static readonly DelegateMapper<string> FindRealTypeDelegateMap = new DelegateMapper<string>
@@ -54,7 +54,7 @@ namespace Pulsar.Pipeline.Processors
             return (value[0] == FirstArrayDelimiter) && (value[value.Length - 1] == LastArrayDelimiter);
         }
 
-        private static MaterialDataType GetType(string type, string value)
+        private static Tuple<Type, Type> GetType(string type, string value)
         {
             if (!FindRealTypeDelegateMap.ContainsKey(type))
                 return TypeMap[type];
@@ -128,17 +128,17 @@ namespace Pulsar.Pipeline.Processors
                         SerializerContext serializerCtx = new SerializerContext(rawData.Parameters[j], context);
                         contextList[j] = serializerCtx;
                     }
-                    MaterialDataType type = GetType(rawData.Type.ToLower(), rawData.Value[0]);
-                    data.Type = type.RuntimeType;
-                    data.Value = readerMngr.ReadMultiples(type.ReaderType, rawData.Value, contextList);
+                    Tuple<Type, Type> type = GetType(rawData.Type.ToLower(), rawData.Value[0]);
+                    data.Type = type.Item2;
+                    data.Value = readerMngr.ReadMultiples(type.Item1, rawData.Value, contextList);
                 }
                 else
                 {
                     string value = rawData.Value[0];
-                    MaterialDataType typeInfo = GetType(rawData.Type.ToLower(), value);
-                    data.Type = typeInfo.RuntimeType;
+                    Tuple<Type, Type> typeInfo = GetType(rawData.Type.ToLower(), value);
+                    data.Type = typeInfo.Item2;
 
-                    Type readerType = typeInfo.ReaderType;
+                    Type readerType = typeInfo.Item1;
                     if (IsArrayValue(value))
                         readerType = readerType.MakeArrayType();
 

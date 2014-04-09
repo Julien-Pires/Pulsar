@@ -109,7 +109,7 @@ namespace Pulsar.Graphics
                 technique = shader.DefaultTechnique;
 
             _currentTechnique = new TechniqueBinding(shader, technique, _id);
-            IsTransparent = _currentTechnique.IsTransparent;
+            IsTransparent = _currentTechnique.Definition.IsTransparent;
             BindConstantValue();
 
             OnTechniqueChanged(this, _currentTechnique.Definition);
