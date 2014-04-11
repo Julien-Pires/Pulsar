@@ -6,19 +6,17 @@ namespace Pulsar.Graphics.Fx
     {
         #region Fields
 
-        private readonly MaterialPassId _id;
         private readonly PassDefinition _passDefinition;
 
         #endregion
 
         #region Constructors
 
-        internal PassBinding(PassDefinition passDefinition, ushort materialId)
+        internal PassBinding(PassDefinition passDefinition)
         {
             Debug.Assert(passDefinition != null);
 
             _passDefinition = passDefinition;
-            _id = new MaterialPassId(materialId, passDefinition.Id);
         }
 
         #endregion
@@ -34,9 +32,9 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
-        public MaterialPassId Id
+        public ushort Id
         {
-            get { return _id; }
+            get { return _passDefinition.Id; }
         }
 
         public string Name

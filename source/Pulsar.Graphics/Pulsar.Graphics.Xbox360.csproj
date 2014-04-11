@@ -65,6 +65,7 @@
     <Compile Include="BufferManager.cs" />
     <Compile Include="BufferObject.cs" />
     <Compile Include="Debugger\MeshBoundingBox.cs" />
+    <Compile Include="Depth24.cs" />
     <Compile Include="FrameContext.cs" />
     <Compile Include="FrameDetail.cs" />
     <Compile Include="FrameStatistics.cs" />
@@ -79,7 +80,6 @@
     <Compile Include="Fx\EffectParameterHelper.cs" />
     <Compile Include="Fx\EffectParameterWriter.cs" />
     <Compile Include="Fx\KeyedBinding.cs" />
-    <Compile Include="Fx\MaterialTechniqueChangedHandler.cs" />
     <Compile Include="Fx\PassBinding.cs" />
     <Compile Include="Fx\PassBindingEnumerator.cs" />
     <Compile Include="Fx\PassDefinition.cs" />
@@ -111,7 +111,7 @@
     <Compile Include="IRenderingTechnique.cs" />
     <Compile Include="ITextureWrapper.cs" />
     <Compile Include="Material.cs" />
-    <Compile Include="MaterialPassId.cs" />
+    <Compile Include="MaterialTechniqueChangedHandler.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="MeshData.cs" />
     <Compile Include="PrefabFactory.cs" />
@@ -123,6 +123,7 @@
     <Compile Include="RenderingTechnique\SimpleRenderingTechnique.cs" />
     <Compile Include="RenderQueue.cs" />
     <Compile Include="RenderQueueGroup.cs" />
+    <Compile Include="RenderQueueKey.cs" />
     <Compile Include="RenderState.cs" />
     <Compile Include="RenderStateId.cs" />
     <Compile Include="RenderTarget.cs" />

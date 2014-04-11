@@ -15,8 +15,8 @@ namespace Pulsar.Graphics.Fx
 
         #region Constructors
 
-        internal TechniqueBinding(Shader shader, string technique, ushort materialId) 
-            : this(shader, shader.GetTechniqueDefinition(technique), materialId)
+        internal TechniqueBinding(Shader shader, string technique) 
+            : this(shader, shader.GetTechniqueDefinition(technique))
         {
         }
 
@@ -25,7 +25,7 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         /// <param name="shader">Shader that contains the technique</param>
         /// <param name="technique">Technique</param>
-        internal TechniqueBinding(Shader shader, TechniqueDefinition technique, ushort materialId)
+        internal TechniqueBinding(Shader shader, TechniqueDefinition technique)
         {
             _shader = shader;
             Definition = technique;
@@ -33,7 +33,7 @@ namespace Pulsar.Graphics.Fx
             PassDefinition[] passes = technique.Passes;
             PassesBindings = new PassBinding[passes.Length];
             for(int i = 0; i < PassesBindings.Length; i++)
-                PassesBindings[i] = new PassBinding(passes[i], materialId);
+                PassesBindings[i] = new PassBinding(passes[i]);
 
             MaterialConstantsBinding = shader.CreateConstantsBinding(UpdateFrequency.Material);
             InstanceConstantsBinding = shader.CreateConstantsBinding(UpdateFrequency.Instance);

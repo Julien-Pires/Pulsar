@@ -80,6 +80,7 @@
     <Compile Include="Asset\TextureLoader.cs" />
     <Compile Include="Asset\TextureParameters.cs" />
     <Compile Include="Debugger\MeshBoundingBox.cs" />
+    <Compile Include="Depth24.cs" />
     <Compile Include="FrameContext.cs" />
     <Compile Include="FrameDetail.cs" />
     <Compile Include="FrameStatistics.cs" />
@@ -88,7 +89,7 @@
     <Compile Include="Fx\AutomaticDelegateMapper.cs" />
     <Compile Include="Fx\BuiltInShaderInfo.cs" />
     <Compile Include="Fx\BuiltInShaderManager.cs" />
-    <Compile Include="Fx\MaterialTechniqueChangedHandler.cs" />
+    <Compile Include="MaterialTechniqueChangedHandler.cs" />
     <Compile Include="Fx\ConstantBinding.cs" />
     <Compile Include="Fx\DelegateBinding.cs" />
     <Compile Include="Fx\BaseDelegateBinding.cs" />
@@ -118,9 +119,9 @@
     <Compile Include="IRenderable.cs" />
     <Compile Include="ITextureWrapper.cs" />
     <Compile Include="Material.cs" />
-    <Compile Include="MaterialPassId.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="MeshData.cs" />
+    <Compile Include="RenderQueueKey.cs" />
     <Compile Include="SceneGraph\Node.cs" />
     <Compile Include="PrefabFactory.cs" />
     <Compile Include="BufferAllocatedEventArgs.cs" />
