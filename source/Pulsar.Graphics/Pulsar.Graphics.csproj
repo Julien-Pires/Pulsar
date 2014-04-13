@@ -122,6 +122,7 @@
     <Compile Include="Mesh.cs" />
     <Compile Include="MeshData.cs" />
     <Compile Include="RenderQueueKey.cs" />
+    <Compile Include="RenderQueueKeyComparer.cs" />
     <Compile Include="SceneGraph\Node.cs" />
     <Compile Include="PrefabFactory.cs" />
     <Compile Include="BufferAllocatedEventArgs.cs" />

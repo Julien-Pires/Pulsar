@@ -6,7 +6,6 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        private ulong _id;
         private ulong _material;
         private ulong _pass;
         private ulong _depth;
@@ -29,30 +28,27 @@ namespace Pulsar.Graphics
 
         private void UpdateDepthFirst()
         {
-            _id |= _pass;
-            _id |= _material << 16;
-            _id |= _depth << 32;
-            _id |= _transparency << 56;
-            _id |= _group << 57;
+            Id |= _pass;
+            Id |= _material << 16;
+            Id |= _depth << 32;
+            Id |= _transparency << 56;
+            Id |= _group << 57;
         }
 
         private void UpdateMaterialFirst()
         {
-            _id |= _depth;
-            _id |= _pass << 24;
-            _id |= _material << 40;
-            _id |= _transparency << 56;
-            _id |= _group << 57;
+            Id |= _depth;
+            Id |= _pass << 24;
+            Id |= _material << 40;
+            Id |= _transparency << 56;
+            Id |= _group << 57;
         }
 
         #endregion
 
         #region Properties
 
-        public ulong Id
-        {
-            get { return _id; }
-        }
+        public ulong Id { get; private set; }
 
         public byte Group
         {
