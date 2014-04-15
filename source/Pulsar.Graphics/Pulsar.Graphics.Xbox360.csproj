@@ -119,12 +119,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="RenderingInfo.cs" />
-    <Compile Include="RenderingTechnique\SimpleRenderingShader.cs" />
-    <Compile Include="RenderingTechnique\SimpleRenderingTechnique.cs" />
     <Compile Include="RenderQueue.cs" />
-    <Compile Include="RenderQueueGroup.cs" />
+    <Compile Include="RenderQueueElement.cs" />
+    <Compile Include="RenderQueueElementComparer.cs" />
     <Compile Include="RenderQueueKey.cs" />
-    <Compile Include="RenderQueueKeyComparer.cs" />
     <Compile Include="RenderState.cs" />
     <Compile Include="RenderStateId.cs" />
     <Compile Include="RenderTarget.cs" />

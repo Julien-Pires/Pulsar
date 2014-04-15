@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Assets;
-using Pulsar.Graphics.RenderingTechnique;
 using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics

@@ -47,7 +47,7 @@ namespace Pulsar.Graphics
         /// <param name="renderable">Renderable object to add</param>
         internal void AddDrawable(IRenderable renderable)
         {
-            InstanceBatch batch = GetInstanceBatch(renderable.Id, renderable.RenderQueueId);
+            InstanceBatch batch = GetInstanceBatch(renderable.Id, renderable.RenderQueueGroup);
             batch.AddDrawable(renderable);
         }
 

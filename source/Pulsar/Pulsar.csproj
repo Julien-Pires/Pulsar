@@ -89,6 +89,7 @@
     <Compile Include="AxisAlignedBox.cs" />
     <Compile Include="EventType.cs" />
     <Compile Include="IndexPool.cs" />
+    <Compile Include="Pool.cs" />
     <Compile Include="System\AssemblyDetector.cs" />
     <Compile Include="System\TypeDetector.cs" />
     <Compile Include="System\TypeDetectorRule.cs" />
@@ -99,7 +100,6 @@
     <Compile Include="IEventHandler.cs" />
     <Compile Include="Mediator.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="Pool.cs" />
     <Compile Include="Input\AbstractButton.cs" />
     <Compile Include="Input\Axis.cs" />
     <Compile Include="Input\AxisCommand.cs" />

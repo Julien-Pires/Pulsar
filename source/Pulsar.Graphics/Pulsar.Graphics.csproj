@@ -121,8 +121,10 @@
     <Compile Include="Material.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="MeshData.cs" />
+    <Compile Include="RenderQueue.cs" />
+    <Compile Include="RenderQueueElement.cs" />
     <Compile Include="RenderQueueKey.cs" />
-    <Compile Include="RenderQueueKeyComparer.cs" />
+    <Compile Include="RenderQueueElementComparer.cs" />
     <Compile Include="SceneGraph\Node.cs" />
     <Compile Include="PrefabFactory.cs" />
     <Compile Include="BufferAllocatedEventArgs.cs" />
@@ -138,8 +140,6 @@
     <Compile Include="ProjectionType.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="RenderingInfo.cs" />
-    <Compile Include="RenderingTechnique\SimpleRenderingShader.cs" />
-    <Compile Include="RenderingTechnique\SimpleRenderingTechnique.cs" />
     <Compile Include="RenderTarget.cs" />
     <Compile Include="ResizeRule.cs" />
     <Compile Include="Fx\Shader.cs" />
@@ -159,8 +159,6 @@
     <Compile Include="SceneGraph\Entity.cs" />
     <Compile Include="SceneGraph\IMovable.cs" />
     <Compile Include="SceneGraph\Movable.cs" />
-    <Compile Include="RenderQueue.cs" />
-    <Compile Include="RenderQueueGroup.cs" />
     <Compile Include="SceneGraph\SceneNode.cs" />
     <Compile Include="SceneGraph\BaseScene.cs" />
     <Compile Include="SceneGraph\SubEntity.cs" />
