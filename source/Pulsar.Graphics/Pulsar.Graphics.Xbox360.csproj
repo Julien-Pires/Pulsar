@@ -105,8 +105,6 @@
     <Compile Include="IndexBufferObject.cs" />
     <Compile Include="IndexBufferWrapper.cs" />
     <Compile Include="IndexData.cs" />
-    <Compile Include="InstanceBatch.cs" />
-    <Compile Include="InstanceBatchManager.cs" />
     <Compile Include="IRenderable.cs" />
     <Compile Include="IRenderingTechnique.cs" />
     <Compile Include="ITextureWrapper.cs" />

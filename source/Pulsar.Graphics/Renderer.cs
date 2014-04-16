@@ -21,7 +21,6 @@ namespace Pulsar.Graphics
         private readonly GraphicsDeviceManager _graphicsDeviceManager;
         private GraphicsDevice _graphicDevice;
         private SpriteBatch _spriteBatch;
-        private readonly InstanceBatchManager _instancingManager;
         private readonly IRenderingTechnique _renderingTechnique;
 
         #endregion
@@ -40,8 +39,7 @@ namespace Pulsar.Graphics
             deviceManager.DeviceCreated += GraphicsDeviceCreated;
 
             _spriteBatch = new SpriteBatch(_graphicDevice);
-            _instancingManager = new InstanceBatchManager(this);
-            _renderingTechnique = new SimpleRenderingTechnique(this, assetEngine[GraphicsConstant.Storage]);
+            //_renderingTechnique = new SimpleRenderingTechnique(this, assetEngine[GraphicsConstant.Storage]);
         }
 
         #endregion
@@ -81,7 +79,6 @@ namespace Pulsar.Graphics
         /// </summary>
         private void BeginRender()
         {
-            _instancingManager.Reset();
             _graphicDevice.DepthStencilState = DepthStencilState.Default;
         }
 
@@ -217,7 +214,7 @@ namespace Pulsar.Graphics
             FrameDetail.AddDrawCall((uint)renderingInfo.VertexCount, (uint)renderingInfo.PrimitiveCount, 1);
         }
 
-        /// <summary>
+        /*/// <summary>
         /// Draws a geometry batch
         /// </summary>
         /// <param name="batch">Bztch of geometric shapes</param>
@@ -237,7 +234,7 @@ namespace Pulsar.Graphics
             int instanceCount = batch.InstanceCount;
             FrameDetail.AddDrawCall((uint)(renderInfo.VertexCount * instanceCount), (uint)(renderInfo.PrimitiveCount * instanceCount), 
                 (uint)instanceCount);
-        }
+        }*/
 
         #endregion
 
@@ -249,14 +246,6 @@ namespace Pulsar.Graphics
         internal GraphicsDevice GraphicsDevice
         {
             get { return _graphicDevice; }
-        }
-
-        /// <summary>
-        /// Gets the InstanceBatch manager
-        /// </summary>
-        internal InstanceBatchManager InstancingManager
-        {
-            get { return _instancingManager; }
         }
 
         #endregion

@@ -135,8 +135,6 @@
     <Compile Include="IndexBufferObject.cs" />
     <Compile Include="IndexBufferWrapper.cs" />
     <Compile Include="IndexData.cs" />
-    <Compile Include="InstanceBatch.cs" />
-    <Compile Include="InstanceBatchManager.cs" />
     <Compile Include="IRenderingTechnique.cs" />
     <Compile Include="ProjectionType.cs" />
     <Compile Include="Renderer.cs" />
