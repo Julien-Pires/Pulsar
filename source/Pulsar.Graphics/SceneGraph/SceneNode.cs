@@ -93,18 +93,24 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Finds all visible objects attached to this scene node
         /// </summary>
-        /// <param name="cam">Current camera</param>
+        /// <param name="camera">Current camera</param>
         /// <param name="queue">Current render queue</param>
         /// <param name="addChildren">Boolean indicating if the search goes through childrens</param>
-        internal void FindVisibleObjects(Camera cam, RenderQueue queue, bool addChildren)
+        internal void FindVisibleObjects(Camera camera, RenderQueue queue, bool addChildren)
         {
             for (int i = 0; i < _movablesList.Count; i++)
-                queue.ProcessesVisibleObject(cam, _movablesList[i]);
+            {
+                IMovable movable = _movablesList[i];
+                movable.FrustumCulling(camera);
+
+                if (movable.IsRendered)
+                    movable.UpdateRenderQueue(queue, camera);
+            }
 
             if (addChildren)
             {
                 for (int j = 0; j < Childrens.Count; j++)
-                    ((SceneNode)Childrens[j]).FindVisibleObjects(cam, queue, true);
+                    ((SceneNode)Childrens[j]).FindVisibleObjects(camera, queue, true);
             }
         }
         

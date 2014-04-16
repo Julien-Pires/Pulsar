@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
+using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics
 {
@@ -9,6 +10,12 @@ namespace Pulsar.Graphics
     /// </summary>
     public interface IRenderable
     {
+        #region Methods
+
+        float GetViewDepth(Camera camera);
+
+        #endregion
+
         #region Properties
 
         /// <summary>

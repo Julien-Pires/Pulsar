@@ -17,7 +17,7 @@ namespace Pulsar.Graphics
 
         #region Constructors
 
-        internal RenderQueueKey()
+        public RenderQueueKey()
         {
             _update = UpdateMaterialFirst;
         }

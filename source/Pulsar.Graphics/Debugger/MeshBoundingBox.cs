@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pulsar.Assets;
 
 using Pulsar.Graphics.Asset;
+using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics.Debugger
 {
@@ -36,6 +37,8 @@ namespace Pulsar.Graphics.Debugger
         private Storage _storage;
         private Mesh _internalMesh;
         private VertexBufferObject _vbo;
+        private Vector3 _min;
+        private Vector3 _max;
         private readonly VertexPositionNormalTexture[] _vertices = new VertexPositionNormalTexture[VertexCount];
         private readonly List<RenderQueueKey> _keys = new List<RenderQueueKey>(1);
 
@@ -190,30 +193,42 @@ namespace Pulsar.Graphics.Debugger
         /// <param name="box">Boundig box used to update buffers data</param>
         internal void UpdateBox(AxisAlignedBox box)
         {
-            Vector3 min = box.Minimum;
-            Vector3 max = box.Maximum;
-            Vector3 xOffset = new Vector3((max.X - min.X), 0, 0);
-            Vector3 zOffset = new Vector3(0, 0, (max.Z - min.Z));
+            _min = box.Minimum;
+            _max = box.Maximum;
+            Vector3 xOffset = new Vector3((_max.X - _min.X), 0, 0);
+            Vector3 zOffset = new Vector3(0, 0, (_max.Z - _min.Z));
 
             Vector3 minOpposite;
             Vector3 maxOpposite;
             Vector3.Add(ref xOffset, ref zOffset, out minOpposite);
-            Vector3.Subtract(ref max, ref minOpposite, out maxOpposite);
-            Vector3.Add(ref min, ref minOpposite, out minOpposite);
+            Vector3.Subtract(ref _max, ref minOpposite, out maxOpposite);
+            Vector3.Add(ref _min, ref minOpposite, out minOpposite);
 
             // Front vertices
-            _vertices[FrontTopRight].Position = max;
+            _vertices[FrontTopRight].Position = _max;
             _vertices[FrontBottomRight].Position = minOpposite;
-            Vector3.Subtract(ref max, ref xOffset, out _vertices[FrontTopLeft].Position);
+            Vector3.Subtract(ref _max, ref xOffset, out _vertices[FrontTopLeft].Position);
             Vector3.Subtract(ref minOpposite, ref xOffset, out _vertices[FrontBottomLeft].Position);
 
             // Bottom vertices
-            _vertices[BackBottomLeft].Position = min;
+            _vertices[BackBottomLeft].Position = _min;
             _vertices[BackTopLeft].Position = maxOpposite;
-            Vector3.Add(ref min, ref xOffset, out _vertices[BackBottomRight].Position);
+            Vector3.Add(ref _min, ref xOffset, out _vertices[BackBottomRight].Position);
             Vector3.Add(ref maxOpposite, ref xOffset, out _vertices[BackTopRight].Position);
 
             _vbo.SetData(_vertices);
+        }
+
+        public float GetViewDepth(Camera camera)
+        {
+            Vector3 middle, distance;
+            Vector3.Subtract(ref _max, ref _max, out middle);
+            Vector3.Multiply(ref middle, 0.5f, out middle);
+            Vector3.Add(ref middle, ref _min, out middle);
+
+            Vector3.Subtract(ref camera.WorldTransformPosition, ref middle, out distance);
+
+            return distance.LengthSquared();
         }
 
         #endregion

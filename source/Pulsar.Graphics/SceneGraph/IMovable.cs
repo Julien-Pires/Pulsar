@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
 
 namespace Pulsar.Graphics.SceneGraph
@@ -36,7 +37,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// Updates the render queue
         /// </summary>
         /// <param name="queue">Current render queue</param>
-        void UpdateRenderQueue(RenderQueue queue);
+        void UpdateRenderQueue(RenderQueue queue, Camera camera);
 
         #endregion
 

@@ -38,9 +38,10 @@ namespace Pulsar.Graphics
 
         #region Methods
 
-        public void Reset()
+        internal void Reset()
         {
-            
+            _pool.Release(_renderables);
+            _renderables.Clear();
         }
 
         public void AddRenderable(RenderQueueKey key, IRenderable renderable)

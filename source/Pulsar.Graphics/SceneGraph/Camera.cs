@@ -1,5 +1,7 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
+
 using Pulsar.Mathematic;
 
 namespace Pulsar.Graphics.SceneGraph
@@ -77,7 +79,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <remarks>Not supported for the Camera class </remarks>
         /// </summary>
         /// <param name="queue">Current render queue</param>
-        void IMovable.UpdateRenderQueue(RenderQueue queue)
+        void IMovable.UpdateRenderQueue(RenderQueue queue, Camera camera)
         {
             throw new NotSupportedException();
         }

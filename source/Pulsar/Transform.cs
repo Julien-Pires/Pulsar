@@ -21,15 +21,15 @@ namespace Pulsar
     {
         #region Fields
 
-        protected Matrix WorldTransform = Matrix.Identity;
-        protected Matrix InverseWorldTransform = Matrix.Identity;
-        protected Quaternion WorldTransformRotation = Quaternion.Identity;
-        protected Quaternion LocalTransformRotation = Quaternion.Identity;
-        protected Vector3 WorldTransformPosition;
-        protected Vector3 WorldTransformScale = Vector3.One;
-        protected Vector3 LocalTransformPosition;
-        protected Vector3 LocalTransformScale = Vector3.One;
-        protected Transform ParentTransform;
+        protected internal Matrix WorldTransform = Matrix.Identity;
+        protected internal Matrix InverseWorldTransform = Matrix.Identity;
+        protected internal Quaternion WorldTransformRotation = Quaternion.Identity;
+        protected internal Quaternion LocalTransformRotation = Quaternion.Identity;
+        protected internal Vector3 WorldTransformPosition;
+        protected internal Vector3 WorldTransformScale = Vector3.One;
+        protected internal Vector3 LocalTransformPosition;
+        protected internal Vector3 LocalTransformScale = Vector3.One;
+        protected internal Transform ParentTransform;
 
         private bool _transformChanged;
         private bool _matrixDirty;

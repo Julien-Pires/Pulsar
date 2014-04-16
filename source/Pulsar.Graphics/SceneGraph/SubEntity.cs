@@ -71,6 +71,11 @@ namespace Pulsar.Graphics.SceneGraph
             }
         }
 
+        public float GetViewDepth(Camera camera)
+        {
+            return _parent.Parent.GetViewDepth(camera);
+        }
+
         private void OnMaterialTechniqueChanged(Material material, TechniqueDefinition definition)
         {
             CreateKeys(material.PassCount, _renderQueueKeys.Count);

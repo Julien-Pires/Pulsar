@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
+using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
+
 using Pulsar.Graphics.Debugger;
 
 namespace Pulsar.Graphics.SceneGraph
@@ -90,18 +92,33 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Updates the given render queue with all the sub-entities of this Entity
+        /// Updates the given render queue with all the sub-entities of this entity
         /// </summary>
         /// <param name="queue">RenderQueue to fill</param>
-        public override void UpdateRenderQueue(RenderQueue queue)
+        /// <param name="camera">Current camera</param>
+        public override void UpdateRenderQueue(RenderQueue queue, Camera camera)
         {
             for (int i = 0; i < _subEntities.Count; i++)
-                queue.AddRenderable(_subEntities[i]);
+            {
+                SubEntity renderable = _subEntities[i];
+                IList<RenderQueueKey> keys = renderable.RenderQueueKeys;
+                float depth = renderable.GetViewDepth(camera);
+                for (int j = 0; j < keys.Count; j++)
+                {
+                    RenderQueueKey key = keys[j];
+                    key.Depth = depth;
+                    queue.AddRenderable(key, renderable);
+                }
+            }
 
-            if (!RenderAabb) return;
+            if (!RenderAabb) 
+                return;
 
             _meshAabb.UpdateBox(WorldAabb);
-            queue.AddRenderable(_meshAabb);
+
+            RenderQueueKey aabbKey = _meshAabb.RenderQueueKeys[0];
+            aabbKey.Depth = _meshAabb.GetViewDepth(camera);
+            queue.AddRenderable(aabbKey, _meshAabb);
         }
 
         /// <summary>

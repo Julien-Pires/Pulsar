@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Pulsar.Graphics
+using Microsoft.Xna.Framework;
+
+namespace Pulsar.Graphics.SceneGraph
 {
     /// <summary>
     /// Represents a node in a tree
@@ -83,10 +85,13 @@ namespace Pulsar.Graphics
         /// <param name="child">Node to add as a child</param>
         public void AddChild(Node child)
         {
-            if (child == null) throw new ArgumentNullException("child");
+            if (child == null) 
+                throw new ArgumentNullException("child");
+
             if (child._parentNode != null)
             {
-                if (child._parentNode != this) throw new ArgumentException("", "child");
+                if (child._parentNode != this) 
+                    throw new ArgumentException("", "child");
 
                 return;
             }
@@ -119,12 +124,16 @@ namespace Pulsar.Graphics
             bool changed = (parent != _parentNode);
             _parentNode = parent;
             ParentTransform = parent;
-            if (!changed) return;
+            if (!changed) 
+                return;
 
-            if (_parentNode != null) _depth = _parentNode._depth + 1;
-            else _depth = 0;
+            if (_parentNode != null) 
+                _depth = _parentNode._depth + 1;
+            else 
+                _depth = 0;
 
-            for(int i = 0; i < Childrens.Count; i++) Childrens[i].UpdateDepthLevel();
+            for(int i = 0; i < Childrens.Count; i++) 
+                Childrens[i].UpdateDepthLevel();
         }
 
         /// <summary>
@@ -133,7 +142,16 @@ namespace Pulsar.Graphics
         private void UpdateDepthLevel()
         {
             _depth = _parentNode._depth + 1;
-            for (int i = 0; i < Childrens.Count; i++) Childrens[i].UpdateDepthLevel();
+            for (int i = 0; i < Childrens.Count; i++) 
+                Childrens[i].UpdateDepthLevel();
+        }
+
+        public float GetViewDepth(Camera camera)
+        {
+            Vector3 diff;
+            Vector3.Subtract(ref WorldTransformPosition, ref camera.WorldTransformPosition, out diff);
+
+            return diff.LengthSquared();
         }
 
         /// <summary>
@@ -174,7 +192,8 @@ namespace Pulsar.Graphics
             _parentAskedForUpdate = false;
             UpdateWithParent();
 
-            if (!updateChild) return;
+            if (!updateChild) 
+                return;
 
             if (_needUpdateChild)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Pulsar.Assets;
 
 namespace Pulsar.Graphics.SceneGraph
@@ -59,13 +60,14 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Draws the entire scene
         /// </summary>
-        public void RenderScene(Viewport vp, Camera cam)
+        public void RenderScene(Viewport viewport, Camera camera)
         {
-            Clean();
-
             UpdateGraph();
-            FindVisibleObjects(cam);
-            _renderer.Render(vp, cam, _queue);
+            FindVisibleObjects(camera);
+
+            _renderer.Render(viewport, camera, _queue);
+
+            _queue.Reset();
         }
         
         /// <summary>
@@ -77,20 +79,12 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Cleans the render queue for the next frame
-        /// </summary>
-        private void Clean()
-        {
-            _queue.Clear();
-        }
-
-        /// <summary>
         /// Finds all the visible objects in the scene
         /// </summary>
-        /// <param name="cam">Current camera</param>
-        private void FindVisibleObjects(Camera cam)
+        /// <param name="camera">Current camera</param>
+        private void FindVisibleObjects(Camera camera)
         {
-            _root.FindVisibleObjects(cam, _queue, true);
+            _root.FindVisibleObjects(camera, _queue, true);
         }
 
         /// <summary>
