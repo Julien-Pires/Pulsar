@@ -123,6 +123,7 @@
     <Compile Include="MeshData.cs" />
     <Compile Include="RenderQueue.cs" />
     <Compile Include="RenderQueueElement.cs" />
+    <Compile Include="RenderQueueGroup.cs" />
     <Compile Include="RenderQueueKey.cs" />
     <Compile Include="RenderQueueElementComparer.cs" />
     <Compile Include="SceneGraph\Node.cs" />

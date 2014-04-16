@@ -122,6 +122,7 @@
     <Compile Include="RenderQueue.cs" />
     <Compile Include="RenderQueueElement.cs" />
     <Compile Include="RenderQueueElementComparer.cs" />
+    <Compile Include="RenderQueueGroup.cs" />
     <Compile Include="RenderQueueKey.cs" />
     <Compile Include="RenderState.cs" />
     <Compile Include="RenderStateId.cs" />

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+
+using Microsoft.Xna.Framework;
 
 namespace Pulsar.Graphics
 {
@@ -24,10 +26,12 @@ namespace Pulsar.Graphics
         /// </summary>
         bool UseInstancing { get; set; }
 
+        IList<RenderQueueKey> RenderQueueKeys { get; }
+
         /// <summary>
         /// Get the ID of the render queue to be attached on
         /// </summary>
-        int RenderQueueId { get; }
+        byte RenderQueueGroup { get; }
 
         /// <summary>
         /// Get the full transform matrix

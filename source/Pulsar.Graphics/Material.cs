@@ -108,7 +108,7 @@ namespace Pulsar.Graphics
             if (string.IsNullOrWhiteSpace(technique))
                 technique = shader.DefaultTechnique;
 
-            _currentTechnique = new TechniqueBinding(shader, technique, _id);
+            _currentTechnique = new TechniqueBinding(shader, technique);
             IsTransparent = _currentTechnique.Definition.IsTransparent;
             BindConstantValue();
 
@@ -209,6 +209,21 @@ namespace Pulsar.Graphics
         public string Name { get; private set; }
 
         public bool IsTransparent { get; private set; }
+
+        public TechniqueDefinition Technique
+        {
+            get { return (_currentTechnique == null) ? null : _currentTechnique.Definition; }
+        }
+
+        public int PassCount
+        {
+            get
+            {
+                TechniqueDefinition definition = Technique;
+
+                return (Technique == null) ? 0 : Technique.PassCount;
+            }
+        }
 
         public float Opacity
         {
