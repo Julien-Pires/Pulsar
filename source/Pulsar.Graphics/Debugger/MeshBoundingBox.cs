@@ -33,7 +33,7 @@ namespace Pulsar.Graphics.Debugger
         private const int BackBottomRight = 7;
 
         private bool _isDisposed;
-        private readonly Storage _storage;
+        private Storage _storage;
         private Mesh _internalMesh;
         private VertexBufferObject _vbo;
         private readonly VertexPositionNormalTexture[] _vertices = new VertexPositionNormalTexture[VertexCount];
@@ -113,13 +113,21 @@ namespace Pulsar.Graphics.Debugger
         /// </summary>
         public void Dispose()
         {
-            if(_isDisposed) return;
+            if(_isDisposed) 
+                return;
 
-            _storage[GraphicsConstant.MeshFolderName].Unload(Name);
-            _vbo = null;
-            _internalMesh = null;
+            try
+            {
+                _storage[GraphicsConstant.MeshFolderName].Unload(Name);
+            }
+            finally
+            {
+                _vbo = null;
+                _internalMesh = null;
+                _storage = null;
 
-            _isDisposed = true;
+                _isDisposed = true;
+            }
         }
 
         /// <summary>

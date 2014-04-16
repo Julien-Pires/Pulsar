@@ -15,8 +15,9 @@ namespace Pulsar.Graphics.SceneGraph
         internal Matrix[] BonesTransform;
         internal int BonesCount;
 
+        private bool _isDisposed;
         private bool _renderAabb;
-        private readonly BaseScene _sceneTree;
+        private BaseScene _sceneTree;
         private MeshBoundingBox _meshAabb;
         private Mesh _mesh;
         private readonly List<SubEntity> _subEntities = new List<SubEntity>();
@@ -40,10 +41,22 @@ namespace Pulsar.Graphics.SceneGraph
 
         protected override void Dispose(bool dispose)
         {
-            if (!dispose) return;
+            if (!dispose || _isDisposed) 
+                return;
 
-            if(_meshAabb != null)
-                _meshAabb.Dispose();
+            try
+            {
+                if (_meshAabb != null)
+                    _meshAabb.Dispose();
+            }
+            finally
+            {
+                _meshAabb = null;
+                _mesh = null;
+                _sceneTree = null;
+
+                _isDisposed = true;
+            }
         }
 
         /// <summary>
