@@ -4,7 +4,7 @@
     {
         #region Fields
 
-        public RenderQueueKey Key;
+        public ulong Key;
 
         public IRenderable Renderable;
 

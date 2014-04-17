@@ -30,7 +30,7 @@ namespace Pulsar.Graphics
 
         private static void ResetPair(RenderQueueElement element)
         {
-            element.Key = null;
+            element.Key = 0;
             element.Renderable = null;
         }
 
@@ -55,6 +55,15 @@ namespace Pulsar.Graphics
         internal void Sort()
         {
             _renderables.Sort(Comparer);
+        }
+
+        #endregion
+
+        #region Properties
+
+        internal List<RenderQueueElement> Renderables
+        {
+            get { return _renderables; }
         }
 
         #endregion

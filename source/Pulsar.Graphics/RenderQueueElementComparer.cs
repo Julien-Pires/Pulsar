@@ -8,10 +8,10 @@ namespace Pulsar.Graphics
 
         public int Compare(RenderQueueElement x, RenderQueueElement y)
         {
-            if (x.Key.Id > y.Key.Id)
+            if (x.Key > y.Key)
                 return 1;
 
-            return (x.Key.Id == y.Key.Id) ? 0 : -1;
+            return (x.Key == y.Key) ? 0 : -1;
         }
 
         #endregion
