@@ -3,8 +3,7 @@
 	"properties" : {
 		"File" : {
 			"type" : "string",
-			"title" : "Path to effect file",
-			"required" : true
+			"title" : "Path to effect file"
 		},
 		"Instancing" : {
 			"type" : "string",
@@ -27,6 +26,103 @@
 					"Transparent" : {
 						"type" : "boolean",
 						"title" : "Indicate that the technique use transparency"
+					},
+					"Pass" : {
+						"type" : "object",
+						"title" : "List of pass informations",
+						"additionalProperties" : {
+							"type" : "object",
+							"properties" : {
+								"Rasterizer" : {
+									"type" : "object",
+									"properties" : {
+										"Cull" : {
+											"type" : "string", 
+											"title" : "Cull mode" 
+										},
+										"FillMode" : {
+											"type" : "string",
+											"title" : "Fill mode"
+										}
+									}
+								},
+								"Depth" : {
+									"type" : "object",
+									"properties" : {
+										"Write" : {
+											"type" : "boolean",
+											"title" : "Write to the z-buffer"
+										},
+										"Compare" : {
+											"type" : "string",
+											"title" : "Z-buffer compare method"
+										}
+									}
+								},
+								"Stencil" : {
+									"type" : "object",
+									"properties" : {
+										"Reference" : {
+											"type" : "integer",
+											"title" : "Stencil reference value"
+										},
+										"Mask" : {
+											"type" : "integer",
+											"title" : "Stencil mask"
+										},
+										"WriteMask" : {
+											"type" : "integer",
+											"title" : "Stencil write mask"
+										},
+										"Compare" : {
+											"type" : "string",
+											"title" : "Stencil compare method"
+										},
+										"Pass" : {
+											"type" : "string",
+											"title" : "Stencil pass action"
+										},
+										"Fail" : {
+											"type" : "string",
+											"title" : "Stencil fail action"
+										},
+										"DepthFail" : {
+											"type" : "string",
+											"title" : "Depth fail action"
+										}
+									}
+								},
+								"Blending" : {
+									"type" : "object",
+									"properties" : {
+										"ColorBlend" : {
+											"type" : "string",
+											"title" : "Color blend action"
+										},
+										"AlphaBlend" : {
+											"type" : "string",
+											"title" : "Alpha blend action"
+										},
+										"ColorSource" : {
+											"type" : "string",
+											"title" : "Color source weight"
+										},
+										"ColorDestination" : {
+											"type" : "string",
+											"title" : "Color destination weight"
+										},
+										"AlphaSource" : {
+											"type" : "string",
+											"title" : "Alpha source weight"
+										},
+										"AlphaDestination" : {
+											"type" : "string",
+											"title" : "Alpha destination weight"
+										}
+									}
+								}
+							} 
+						}
 					}
 				}
 			}

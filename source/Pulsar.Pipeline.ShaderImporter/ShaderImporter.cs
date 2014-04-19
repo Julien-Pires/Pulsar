@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
@@ -6,8 +7,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Graphics;
+
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
 
 using Pulsar.Graphics.Fx;
 using Pulsar.Pipeline.Graphics;
@@ -78,16 +79,16 @@ namespace Pulsar.Pipeline.ShaderImporter
         private static string GetEffectFilePath(JObject definition, string definitionPath)
         {
             JToken fileToken = definition[FileProperty];
-            string filePath;
+            string file;
             if (fileToken == null)
             {
-                filePath = Path.GetFileName(definitionPath);
-                filePath = Path.ChangeExtension(filePath, EffectExtension);
+                file = Path.GetFileName(definitionPath);
+                file = Path.ChangeExtension(file, EffectExtension);
             }
             else
-                filePath = (string)fileToken;
+                file = (string) fileToken;
 
-            return filePath;
+            return Path.Combine(Path.GetDirectoryName(definitionPath), file);
         }
 
         /// <summary>
@@ -97,9 +98,9 @@ namespace Pulsar.Pipeline.ShaderImporter
         /// <param name="content">Content object that received imported data</param>
         private static void ImportShaderInfo(JObject shaderBlock, ShaderDefinitionContent content)
         {
-            content.Instancing = GetStringValue(shaderBlock, InstancingProperty);
-            content.Fallback = GetStringValue(shaderBlock, FallbackProperty);
-            content.Default = GetStringValue(shaderBlock, DefaultProperty);
+            content.Instancing = JsonHelper.GetString(shaderBlock, InstancingProperty);
+            content.Fallback = JsonHelper.GetString(shaderBlock, FallbackProperty);
+            content.Default = JsonHelper.GetString(shaderBlock, DefaultProperty);
         }
 
         /// <summary>
@@ -214,89 +215,19 @@ namespace Pulsar.Pipeline.ShaderImporter
                 JObject shaderConstantInfo = (JObject)shaderConstant.Value;
 
                 ShaderConstantSource source;
-                if (GetEnumValue(shaderConstantInfo, ConstantSourceProperty, out source))
+                if (JsonHelper.GetEnumValue(shaderConstantInfo, ConstantSourceProperty, out source))
                     constantContent.Source = source;
 
                 UpdateFrequency update;
-                if (GetEnumValue(shaderConstantInfo, ConstantUpdateFrequencyProperty, out update))
+                if (JsonHelper.GetEnumValue(shaderConstantInfo, ConstantUpdateFrequencyProperty, out update))
                     constantContent.UpdateFrequency = update;
 
-                constantContent.Semantic = GetStringValue(shaderConstantInfo, ConstantSemanticProperty);
+                constantContent.Semantic = JsonHelper.GetString(shaderConstantInfo, ConstantSemanticProperty);
                 constantContent.EquivalentType =
-                    GetStringValue(shaderConstantInfo, ConstantEquivalentTypeProperty).ToLower();
+                    JsonHelper.GetString(shaderConstantInfo, ConstantEquivalentTypeProperty).ToLower();
 
                 content.Constants.Add(constantContent.Name, constantContent);
             }
-        }
-
-        /// <summary>
-        /// Parses a json string property to an enum
-        /// </summary>
-        /// <typeparam name="T">Enum type</typeparam>
-        /// <param name="jObject">Json object</param>
-        /// <param name="key">Name of the property</param>
-        /// <param name="result">Result value</param>
-        /// <returns>Returns true if the property is parsed successfully otherwise false</returns>
-        private static bool GetEnumValue<T>(JObject jObject, string key, out T result) where T : struct
-        {
-            result = default(T);
-            JToken token = jObject[key];
-            if (token == null)
-                return false;
-
-            string value = (string)token;
-            if (string.IsNullOrWhiteSpace(value))
-                return false;
-
-            if (!Enum.TryParse(value, out result))
-                throw new Exception(string.Format("Failed to cast {0} to enum {1}", value, typeof(T)));
-
-            return true;
-        }
-
-        /// <summary>
-        /// Gets the string value of a json property
-        /// </summary>
-        /// <param name="jObject">Json object</param>
-        /// <param name="key">Name of the property</param>
-        /// <returns>Returns the value of the property if found otherwise an empty string</returns>
-        private static string GetStringValue(JObject jObject, string key)
-        {
-            JToken token = jObject[key];
-            if (token == null)
-                return string.Empty;
-
-            return (string) token;
-        }
-
-        /// <summary>
-        /// Checks if the definition file match the definition schema
-        /// </summary>
-        /// <param name="definition">Imported data</param>
-        /// <param name="error">Error message</param>
-        /// <returns>Returns true if the definition is valid otherwise false</returns>
-        private static bool IsValidDefinitionFormat(JObject definition, out string error)
-        {
-            string schema = Encoding.UTF8.GetString(Resources.ShaderDefinitionSchema);
-            JsonSchema jSchema = JsonSchema.Parse(schema);
-            IList<string> validationMsg;
-            bool result = definition.IsValid(jSchema, out validationMsg);
-
-            error = null;
-            if (!result)
-            {
-                int length = 0;
-                for (int i = 0; i < validationMsg.Count; i++)
-                    length += validationMsg[i].Length + Environment.NewLine.Length;
-
-                StringBuilder strBuilder = new StringBuilder(length);
-                for (int i = 0; i < validationMsg.Count; i++)
-                    strBuilder.AppendLine(validationMsg[i]);
-
-                error = strBuilder.ToString();
-            }
-
-            return result;
         }
 
         #endregion
@@ -315,11 +246,12 @@ namespace Pulsar.Pipeline.ShaderImporter
             if(string.IsNullOrWhiteSpace(text))
                 throw new Exception(string.Format("Failed to load shader definition, {0} is empty", filename));
 
-            JObject definition = JObject.Parse(text);
+            string schema = Encoding.UTF8.GetString(Resources.ShaderDefinitionSchema);
             string error;
-            if(!IsValidDefinitionFormat(definition, out error))
+            if (!JsonHelper.IsValid(text, schema, out error))
                 throw new Exception(string.Format("Invalid definition format : {0}", error));
 
+            JObject definition = JObject.Parse(text);
             string filePath = GetEffectFilePath(definition, filename);
             if(!File.Exists(filePath))
                 throw new Exception("Failed to load shader definition, effect file missing");

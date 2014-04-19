@@ -43,6 +43,31 @@ namespace Pulsar.Pipeline
         }
 
         /// <summary>
+        /// Parses a json string property to an enum
+        /// </summary>
+        /// <typeparam name="T">Enum type</typeparam>
+        /// <param name="jObject">Json object</param>
+        /// <param name="key">Name of the property</param>
+        /// <param name="result">Result value</param>
+        /// <returns>Returns true if the property is parsed successfully otherwise false</returns>
+        public static bool GetEnumValue<T>(JObject jObject, string key, out T result) where T : struct
+        {
+            result = default(T);
+            JToken token = jObject[key];
+            if (token == null)
+                return false;
+
+            string value = (string)token;
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            if (!Enum.TryParse(value, out result))
+                throw new Exception(string.Format("Failed to cast {0} to enum {1}", value, typeof(T)));
+
+            return true;
+        }
+
+        /// <summary>
         /// Gets the string value of a json property
         /// </summary>
         /// <param name="jObject">Json object</param>
