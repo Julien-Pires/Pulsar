@@ -37,7 +37,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// Updates the render queue
         /// </summary>
         /// <param name="queue">Current render queue</param>
-        void UpdateRenderQueue(RenderQueue queue, Camera camera);
+        void UpdateRenderQueue(IRenderQueue queue, Camera camera);
 
         #endregion
 

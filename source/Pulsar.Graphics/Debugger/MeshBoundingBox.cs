@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 using Microsoft.Xna.Framework;
@@ -40,7 +39,7 @@ namespace Pulsar.Graphics.Debugger
         private Vector3 _min;
         private Vector3 _max;
         private readonly VertexPositionNormalTexture[] _vertices = new VertexPositionNormalTexture[VertexCount];
-        private readonly List<RenderQueueKey> _keys = new List<RenderQueueKey>(1);
+        private readonly RenderQueueKey _key = new RenderQueueKey();
 
         #endregion
 
@@ -155,14 +154,9 @@ namespace Pulsar.Graphics.Debugger
             else
                 Material = _storage[GraphicsConstant.MaterialFolderName].Load<Material>(AabbMaterial);
 
-            RenderQueueKey key = new RenderQueueKey
-            {
-                Transparency = Material.IsTransparent,
-                Material = Material.Id,
-                Pass = Material.Technique.Passes[0].Id,
-                Group = RenderQueueGroup
-            };
-            _keys.Add(key);
+            _key.Transparency = Material.IsTransparent;
+            _key.Material = Material.Id;
+            _key.Group = RenderQueueGroup;     
         }
 
         /// <summary>
@@ -257,9 +251,9 @@ namespace Pulsar.Graphics.Debugger
             get { return RenderInfo.Id; } 
         }
 
-        public IList<RenderQueueKey> RenderQueueKeys
+        public RenderQueueKey Key
         {
-            get { return _keys; }
+            get { return _key; }
         }
 
         /// <summary>

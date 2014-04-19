@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 using Microsoft.Xna.Framework;
 
@@ -16,16 +14,13 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
-        private const int RenderQueueKeyCount = 2;
-
         private bool _isDisposed;
         private readonly string _name = string.Empty;
         private Entity _parent;
         private SubMesh _subMesh;
         private Material _material;
         private byte _group;
-        private readonly List<RenderQueueKey> _renderQueueKeys = new List<RenderQueueKey>(RenderQueueKeyCount);
-        private readonly ReadOnlyCollection<RenderQueueKey> _readRenderQueueKeys;
+        private readonly RenderQueueKey _key = new RenderQueueKey();
 
         #endregion
 
@@ -39,8 +34,6 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="sub">ModelMeshPart associated to this SubEntity</param>
         internal SubEntity(string name, Entity parent, SubMesh sub)
         {
-            _readRenderQueueKeys = new ReadOnlyCollection<RenderQueueKey>(_renderQueueKeys);
-
             _name = name;
             _parent = parent;
             _subMesh = sub;
@@ -78,42 +71,13 @@ namespace Pulsar.Graphics.SceneGraph
 
         private void OnMaterialTechniqueChanged(Material material, TechniqueDefinition definition)
         {
-            CreateKeys(material.PassCount, _renderQueueKeys.Count);
             UpdateKeysMaterialPart();
-        }
-
-        private void CreateKeys(int passesCount, int oldPassesCount)
-        {
-            int diff = passesCount - oldPassesCount;
-            if (diff > 0)
-            {
-                for(int i = 0; i < diff; i++)
-                    _renderQueueKeys.Add(new RenderQueueKey());
-            }
-            else
-            {
-                diff = Math.Abs(diff);
-                for (int i = 0; i < diff; i++)
-                    _renderQueueKeys.RemoveAt(_renderQueueKeys.Count - 1);
-            }
         }
 
         private void UpdateKeysMaterialPart()
         {
-            PassDefinition[] definitions = _material.Technique.Passes;
-            for (int i = 0; i < definitions.Length; i++)
-            {
-                RenderQueueKey key = _renderQueueKeys[i];
-                key.Material = _material.Id;
-                key.Pass = definitions[i].Id;
-                key.Transparency = _material.IsTransparent;
-            }
-        }
-
-        private void UpdateKeysGroupPart()
-        {
-            for (int i = 0; i < _renderQueueKeys.Count; i++)
-                _renderQueueKeys[i].Group = _group;
+            _key.Material = _material.Id;
+            _key.Transparency = _material.IsTransparent;
         }
 
         #endregion
@@ -126,6 +90,11 @@ namespace Pulsar.Graphics.SceneGraph
         public uint Id
         {
             get { return _subMesh.RenderInfo.Id; }
+        }
+
+        public RenderQueueKey Key
+        {
+            get { return _key; }
         }
 
         /// <summary>
@@ -169,8 +138,6 @@ namespace Pulsar.Graphics.SceneGraph
                 if ((oldMtl == newMtl) && (oldMtl.Technique == newMtl.Technique))
                     return;
 
-                int oldPassCount = (oldMtl == null) ? 0 : oldMtl.PassCount;
-                CreateKeys(newMtl.PassCount, oldPassCount);
                 UpdateKeysMaterialPart();
 
                 if(oldMtl != null)
@@ -195,11 +162,6 @@ namespace Pulsar.Graphics.SceneGraph
             }
         }
 
-        public IList<RenderQueueKey> RenderQueueKeys
-        {
-            get { return _readRenderQueueKeys; }
-        }
-
         /// <summary>
         /// Get the ID of the render queue used by this SubEntity
         /// </summary>
@@ -209,7 +171,7 @@ namespace Pulsar.Graphics.SceneGraph
             set
             {
                 _group = value;
-                UpdateKeysGroupPart();
+                _key.Group = value;
             }
         }
 

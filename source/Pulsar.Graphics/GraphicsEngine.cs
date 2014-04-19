@@ -28,6 +28,7 @@ namespace Pulsar.Graphics
         private readonly PrefabFactory _prefabFactory;
         private Dictionary<string, BaseScene> _scenes = new Dictionary<string, BaseScene>();
         private readonly FrameStatistics _frameStats = new FrameStatistics();
+        private FrameContext _context = new FrameContext();
         private readonly Stopwatch _watch = new Stopwatch();
 
         #endregion
@@ -59,11 +60,9 @@ namespace Pulsar.Graphics
 
             _bufferManager = new BufferManager(_deviceManager);
             _shaderManager = new BuiltInShaderManager(_graphicsStorage);
-            _renderer = new Renderer(_deviceManager, _assetEngine);
+            _renderer = new Renderer(_deviceManager);
             _window = new Window(_deviceManager, _renderer);
             _prefabFactory = new PrefabFactory(_assetEngine);
-
-            _assetEngine.InitializeLoaders(GraphicsConstant.LoadersCategory);
         }
 
         #endregion
@@ -95,8 +94,14 @@ namespace Pulsar.Graphics
                 _scenes = null;
                 _window = null;
                 _renderer = null;
+
                 _isDisposed = true;
             }
+        }
+
+        internal void Initialize()
+        {
+            _assetEngine.InitializeLoaders(GraphicsConstant.LoadersCategory);
         }
 
         /// <summary>
@@ -106,8 +111,10 @@ namespace Pulsar.Graphics
         public void Render(GameTime time)
         {
             _watch.Reset();
+            _context.Reset();
+
             _watch.Start();
-            _window.Render(time);
+            _window.Render(time, _context);
             _watch.Stop();
 
             FrameDetail currentFrame = _frameStats.CurrentFrame;

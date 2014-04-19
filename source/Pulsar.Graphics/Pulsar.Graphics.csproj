@@ -89,6 +89,7 @@
     <Compile Include="Fx\AutomaticDelegateMapper.cs" />
     <Compile Include="Fx\BuiltInShaderInfo.cs" />
     <Compile Include="Fx\BuiltInShaderManager.cs" />
+    <Compile Include="IRenderQueue.cs" />
     <Compile Include="MaterialTechniqueChangedHandler.cs" />
     <Compile Include="Fx\ConstantBinding.cs" />
     <Compile Include="Fx\DelegateBinding.cs" />
@@ -100,7 +101,6 @@
     <Compile Include="Fx\PassBinding.cs" />
     <Compile Include="Fx\PassDefinition.cs" />
     <Compile Include="Fx\TechniqueBinding.cs" />
-    <Compile Include="Fx\PassBindingEnumerator.cs" />
     <Compile Include="Fx\TechniqueDefinition.cs" />
     <Compile Include="Fx\ShaderConstantBinding.cs" />
     <Compile Include="Fx\ShaderConstantBindingCollection.cs" />
@@ -121,7 +121,8 @@
     <Compile Include="Material.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="MeshData.cs" />
-    <Compile Include="RenderQueue.cs" />
+    <Compile Include="RenderingTechnique\UnlitRendering.cs" />
+    <Compile Include="RenderingTechnique\UnlitRenderQueue.cs" />
     <Compile Include="RenderQueueElement.cs" />
     <Compile Include="RenderQueueGroup.cs" />
     <Compile Include="RenderQueueKey.cs" />
@@ -135,7 +136,7 @@
     <Compile Include="IndexBufferObject.cs" />
     <Compile Include="IndexBufferWrapper.cs" />
     <Compile Include="IndexData.cs" />
-    <Compile Include="IRenderingTechnique.cs" />
+    <Compile Include="RenderingTechnique\IRenderingTechnique.cs" />
     <Compile Include="ProjectionType.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="RenderingInfo.cs" />
@@ -173,7 +174,9 @@
       <Name>Pulsar</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Renderer\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

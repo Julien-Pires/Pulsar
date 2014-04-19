@@ -58,12 +58,12 @@ namespace Pulsar.Graphics.SceneGraph
         /// Renders the scene in a specific viewport
         /// </summary>
         /// <param name="vp">Viewport in which to render the scene</param>
-        public void Render(Viewport vp)
+        public void Render(Viewport vp, FrameContext context)
         {
             if (vp != _viewport) 
                 CurrentViewport = vp;
 
-            _owner.RenderScene(vp, this);
+            _owner.RenderScene(vp, this, context);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <remarks>Not supported for the Camera class </remarks>
         /// </summary>
         /// <param name="queue">Current render queue</param>
-        void IMovable.UpdateRenderQueue(RenderQueue queue, Camera camera)
+        void IMovable.UpdateRenderQueue(IRenderQueue queue, Camera camera)
         {
             throw new NotSupportedException();
         }
@@ -296,7 +296,8 @@ namespace Pulsar.Graphics.SceneGraph
             internal set
             {
                 _viewport = value;
-                if (!_automaticAspect) return;
+                if (!_automaticAspect) 
+                    return;
 
                 _aspectRatio = _viewport.AspectRatio;
                 RequireFrustumUpdate();

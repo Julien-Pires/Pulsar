@@ -22,12 +22,12 @@ namespace Pulsar.Graphics.Fx
             Debug.Assert(storage != null);
 
             _storage = storage;
-            List<BuiltInShaderInfo> shadersList = _storage.ShaderFolder.Load<List<BuiltInShaderInfo>>(BuiltInFile);
+            /*List<BuiltInShaderInfo> shadersList = _storage.ShaderFolder.Load<List<BuiltInShaderInfo>>(BuiltInFile);
             for (int i = 0; i < shadersList.Count; i++)
             {
                 BuiltInShaderInfo shaderInfo = shadersList[i];
                 _shaderMap.Add(shaderInfo.Name, shaderInfo);
-            }
+            }*/
         }
 
         #endregion

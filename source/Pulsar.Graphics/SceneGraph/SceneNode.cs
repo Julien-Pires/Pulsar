@@ -96,7 +96,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="camera">Current camera</param>
         /// <param name="queue">Current render queue</param>
         /// <param name="addChildren">Boolean indicating if the search goes through childrens</param>
-        internal void FindVisibleObjects(Camera camera, RenderQueue queue, bool addChildren)
+        internal void FindVisibleObjects(Camera camera, IRenderQueue queue, bool addChildren)
         {
             for (int i = 0; i < _movablesList.Count; i++)
             {

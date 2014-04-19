@@ -36,7 +36,6 @@ namespace Pulsar.Graphics.Fx
                 PassesBindings[i] = new PassBinding(passes[i]);
 
             MaterialConstantsBinding = shader.CreateConstantsBinding(UpdateFrequency.Material);
-            InstanceConstantsBinding = shader.CreateConstantsBinding(UpdateFrequency.Instance);
         }
 
         #endregion
@@ -51,12 +50,10 @@ namespace Pulsar.Graphics.Fx
             try
             {
                 MaterialConstantsBinding.Clear();
-                InstanceConstantsBinding.Clear();
             }
             finally
             {
                 MaterialConstantsBinding = null;
-                InstanceConstantsBinding = null;
                 _shader = null;
                 Definition = null;
             }
@@ -68,15 +65,6 @@ namespace Pulsar.Graphics.Fx
         internal void UseTechnique()
         {
             _shader.SetCurrentTechnique(Definition);
-        }
-
-        /// <summary>
-        /// Gets an enumerator to a collection of pass for the technique
-        /// </summary>
-        /// <returns>Returns a pass enumerator</returns>
-        internal PassBindingEnumerator GetPassEnumerator()
-        {
-            return new PassBindingEnumerator(this);
         }
 
         internal void TrySetConstantValue(string constant, object value)
@@ -111,7 +99,7 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
-        internal TechniqueDefinition Definition { get; private set; }
+        public TechniqueDefinition Definition { get; private set; }
 
         internal PassBinding[] PassesBindings { get; private set; }
 
@@ -131,7 +119,10 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Gets the collection of constants binding used for instance update
         /// </summary>
-        public ShaderConstantBindingCollection InstanceConstantsBinding { get; private set; }
+        public ShaderConstantBindingCollection InstanceConstantsBinding
+        {
+            get { return _shader.InstanceConstantsBinding; }
+        }
 
         /// <summary>
         /// Gets the name of the technique

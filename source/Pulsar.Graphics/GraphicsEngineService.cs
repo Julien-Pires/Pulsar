@@ -31,6 +31,7 @@ namespace Pulsar.Graphics
 
             game.Services.AddService(typeof(IGraphicsEngineService), this);
             _engine = new GraphicsEngine(game.Services);
+            _engine.Initialize();
         }
 
         #endregion

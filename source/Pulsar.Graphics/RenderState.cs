@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsar.Graphics
@@ -18,9 +19,9 @@ namespace Pulsar.Graphics
         public static readonly RenderState Default;
 
         private readonly RenderStateId _id;
-        private readonly StateObject<RasterizerState> _rasterizerState;
-        private readonly StateObject<DepthStencilState> _depthStencilState;
-        private readonly StateObject<BlendState> _blendState;
+        private readonly RasterizerState _rasterizerState;
+        private readonly DepthStencilState _depthStencilState;
+        private readonly BlendState _blendState;
 
         #endregion
 
@@ -39,9 +40,9 @@ namespace Pulsar.Graphics
         internal RenderState(StateObject<RasterizerState> rasterizerState,
             StateObject<DepthStencilState> depthStencilState, StateObject<BlendState> blendState)
         {
-            _rasterizerState = rasterizerState;
-            _depthStencilState = depthStencilState;
-            _blendState = blendState;
+            _rasterizerState = rasterizerState.State;
+            _depthStencilState = depthStencilState.State;
+            _blendState = blendState.State;
             _id = new RenderStateId(rasterizerState.Id, depthStencilState.Id, blendState.Id, 0);
         }
 
@@ -171,19 +172,19 @@ namespace Pulsar.Graphics
             get { return _id; }
         }
 
-        public RasterizerState RasterizerState
+        public RasterizerState Rasterizer
         {
-            get { return _rasterizerState.State; }
+            get { return _rasterizerState; }
         }
 
-        public DepthStencilState DepthStencilState
+        public DepthStencilState DepthStencil
         {
-            get { return _depthStencilState.State; }
+            get { return _depthStencilState; }
         }
 
-        public BlendState BlendState
+        public BlendState Blend
         {
-            get { return _blendState.State; }
+            get { return _blendState; }
         }
 
         #endregion

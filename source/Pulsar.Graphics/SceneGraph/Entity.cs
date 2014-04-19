@@ -28,10 +28,10 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Constructors
 
-        internal Entity(string name, Mesh m, BaseScene sceneTree)
+        internal Entity(string name, Mesh mesh, BaseScene sceneTree)
         {
             _sceneTree = sceneTree;
-            _mesh = m;
+            _mesh = mesh;
             Name = name;
             Visible = true;
             ProcessMesh();
@@ -96,19 +96,14 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         /// <param name="queue">RenderQueue to fill</param>
         /// <param name="camera">Current camera</param>
-        public override void UpdateRenderQueue(RenderQueue queue, Camera camera)
+        public override void UpdateRenderQueue(IRenderQueue queue, Camera camera)
         {
             for (int i = 0; i < _subEntities.Count; i++)
             {
                 SubEntity renderable = _subEntities[i];
-                IList<RenderQueueKey> keys = renderable.RenderQueueKeys;
-                float depth = renderable.GetViewDepth(camera);
-                for (int j = 0; j < keys.Count; j++)
-                {
-                    RenderQueueKey key = keys[j];
-                    key.Depth = depth;
-                    queue.AddRenderable(key, renderable);
-                }
+                RenderQueueKey key = renderable.Key;
+                key.Depth = renderable.GetViewDepth(camera);
+                queue.AddRenderable(key, renderable);
             }
 
             if (!RenderAabb) 
@@ -116,7 +111,7 @@ namespace Pulsar.Graphics.SceneGraph
 
             _meshAabb.UpdateBox(WorldAabb);
 
-            RenderQueueKey aabbKey = _meshAabb.RenderQueueKeys[0];
+            RenderQueueKey aabbKey = _meshAabb.Key;
             aabbKey.Depth = _meshAabb.GetViewDepth(camera);
             queue.AddRenderable(aabbKey, _meshAabb);
         }

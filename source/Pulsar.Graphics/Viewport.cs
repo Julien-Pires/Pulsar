@@ -2,6 +2,7 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics
@@ -70,14 +71,19 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Renders the scene from the associated camera
         /// </summary>
-        public void Render()
+        public void Render(FrameContext context)
         {
             if (_isDirty) 
                 UpdateDimension();
 
             _frameDetail.Reset();
-            if(Camera != null) 
-                Camera.Render(this);
+            IsRendered = false;
+            if (Camera == null) 
+                return;
+
+            context.Camera = Camera;
+            Camera.Render(this, context);
+            IsRendered = true;
         }
 
         /// <summary>
@@ -136,6 +142,8 @@ namespace Pulsar.Graphics
         {
             get { return _frameDetail; }
         }
+
+        internal bool IsRendered { get; set; }
 
         /// <summary>
         /// Gets a value that indicates if the viewport is always cleared before rendering

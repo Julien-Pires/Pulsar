@@ -103,6 +103,7 @@ namespace Pulsar.Graphics.Fx
             try
             {
                 GlobalConstantsBinding.Clear();
+                InstanceConstantsBinding.Clear();
                 _constantsMap.Clear();
                 _constantsPerUpdate.Clear();
                 _techniquesMap.Clear();
@@ -112,6 +113,7 @@ namespace Pulsar.Graphics.Fx
             finally
             {
                 GlobalConstantsBinding = null;
+                InstanceConstantsBinding = null;
                 _constantsMap = null;
                 _constantsPerUpdate = null;
                 _techniquesMap = null;
@@ -176,14 +178,17 @@ namespace Pulsar.Graphics.Fx
         {
             StateObject<RasterizerState> rasterizerState =
                         RenderState.GetRasterizerState((CullMode)input.ReadInt32(), (FillMode)input.ReadInt32());
+
             StateObject<DepthStencilState> depthStencilState =
                 RenderState.GetDepthStencilState(input.ReadBoolean(), (CompareFunction)input.ReadInt32(),
                 input.ReadInt32(), input.ReadInt32(), input.ReadInt32(), (CompareFunction)input.ReadInt32(),
                 (StencilOperation)input.ReadInt32(), (StencilOperation)input.ReadInt32(),
                 (StencilOperation)input.ReadInt32());
+
             StateObject<BlendState> blendState = RenderState.GetBlendState((BlendFunction)input.ReadInt32(),
                 (BlendFunction)input.ReadInt32(), (Blend)input.ReadInt32(), (Blend)input.ReadInt32(),
                 (Blend)input.ReadInt32(), (Blend)input.ReadInt32());
+
             RenderState renderState = RenderState.GetRenderState(rasterizerState, depthStencilState, blendState);
 
             return new PassDefinition(pass, renderState);
@@ -264,6 +269,7 @@ namespace Pulsar.Graphics.Fx
             }
 
             GlobalConstantsBinding = CreateConstantsBinding(UpdateFrequency.Global);
+            InstanceConstantsBinding = CreateConstantsBinding(UpdateFrequency.Instance);
         }
 
         /// <summary>
@@ -342,6 +348,8 @@ namespace Pulsar.Graphics.Fx
         /// Gets the collection of constants binding used for global update
         /// </summary>
         public ShaderConstantBindingCollection GlobalConstantsBinding { get; private set; }
+
+        public ShaderConstantBindingCollection InstanceConstantsBinding { get; private set; }
 
         public string DefaultTechnique
         {

@@ -123,7 +123,7 @@ namespace Pulsar.Graphics
         /// Fills the render target by rendering each viewports
         /// </summary>
         /// <param name="time">Time since last render</param>
-        internal void Render(GameTime time)
+        internal void Render(GameTime time, FrameContext context)
         {
             _frameDetail.Reset();
             Renderer.FrameDetail.Reset();
@@ -133,8 +133,16 @@ namespace Pulsar.Graphics
             if (_isDirty) 
                 ApplyChanges();
 
-            if (Target != null) 
+            if (Target != null)
+            {
+                for (int i = 0; i < Viewports.Count; i++)
+                {
+                    Viewport vp = Viewports[i];
+                    vp.Render(context);
+                }
+
                 Renderer.RenderToTarget(this);
+            }
 
             PostRender();
 

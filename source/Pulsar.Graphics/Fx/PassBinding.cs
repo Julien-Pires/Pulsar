@@ -2,7 +2,7 @@
 
 namespace Pulsar.Graphics.Fx
 {
-    public sealed class PassBinding
+    internal sealed class PassBinding
     {
         #region Fields
 
@@ -40,6 +40,11 @@ namespace Pulsar.Graphics.Fx
         public string Name
         {
             get { return _passDefinition.Name; }
+        }
+
+        public RenderState RenderState
+        {
+            get { return _passDefinition.State; }
         }
 
         #endregion

@@ -33,7 +33,7 @@ namespace Pulsar.Graphics
         /// </summary>
         bool UseInstancing { get; set; }
 
-        IList<RenderQueueKey> RenderQueueKeys { get; }
+        RenderQueueKey Key { get; }
 
         /// <summary>
         /// Get the ID of the render queue to be attached on

@@ -94,7 +94,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// Updates the render queue with renderable instances
         /// </summary>
         /// <param name="queue">Render queue</param>
-        public abstract void UpdateRenderQueue(RenderQueue queue, Camera camera);
+        public abstract void UpdateRenderQueue(IRenderQueue queue, Camera camera);
 
         #endregion
 

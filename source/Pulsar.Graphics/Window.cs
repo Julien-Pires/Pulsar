@@ -152,7 +152,8 @@ namespace Pulsar.Graphics
         {
             base.PreRender();
 
-            if (!_deviceDirty) return;
+            if (!_deviceDirty) 
+                return;
 
             DeviceManager.ApplyChanges();
             _deviceDirty = false;

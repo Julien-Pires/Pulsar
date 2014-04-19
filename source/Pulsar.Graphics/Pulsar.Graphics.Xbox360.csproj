@@ -81,7 +81,6 @@
     <Compile Include="Fx\EffectParameterWriter.cs" />
     <Compile Include="Fx\KeyedBinding.cs" />
     <Compile Include="Fx\PassBinding.cs" />
-    <Compile Include="Fx\PassBindingEnumerator.cs" />
     <Compile Include="Fx\PassDefinition.cs" />
     <Compile Include="Fx\PassIdPool.cs" />
     <Compile Include="Fx\PassIdRange.cs" />
@@ -106,7 +105,7 @@
     <Compile Include="IndexBufferWrapper.cs" />
     <Compile Include="IndexData.cs" />
     <Compile Include="IRenderable.cs" />
-    <Compile Include="IRenderingTechnique.cs" />
+    <Compile Include="IRenderQueue.cs" />
     <Compile Include="ITextureWrapper.cs" />
     <Compile Include="Material.cs" />
     <Compile Include="MaterialTechniqueChangedHandler.cs" />
@@ -117,7 +116,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="RenderingInfo.cs" />
-    <Compile Include="RenderQueue.cs" />
+    <Compile Include="RenderingTechnique\IRenderingTechnique.cs" />
+    <Compile Include="RenderingTechnique\UnlitRendering.cs" />
+    <Compile Include="RenderingTechnique\UnlitRenderQueue.cs" />
     <Compile Include="RenderQueueElement.cs" />
     <Compile Include="RenderQueueElementComparer.cs" />
     <Compile Include="RenderQueueGroup.cs" />

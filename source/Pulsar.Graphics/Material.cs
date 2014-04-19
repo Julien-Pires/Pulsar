@@ -210,19 +210,9 @@ namespace Pulsar.Graphics
 
         public bool IsTransparent { get; private set; }
 
-        public TechniqueDefinition Technique
+        public TechniqueBinding Technique
         {
-            get { return (_currentTechnique == null) ? null : _currentTechnique.Definition; }
-        }
-
-        public int PassCount
-        {
-            get
-            {
-                TechniqueDefinition definition = Technique;
-
-                return (Technique == null) ? 0 : Technique.PassCount;
-            }
+            get { return _currentTechnique; }
         }
 
         public float Opacity

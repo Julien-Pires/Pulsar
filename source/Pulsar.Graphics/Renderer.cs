@@ -1,10 +1,7 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
-using Pulsar.Assets;
-using Pulsar.Graphics.SceneGraph;
 
 namespace Pulsar.Graphics
 {
@@ -21,7 +18,6 @@ namespace Pulsar.Graphics
         private readonly GraphicsDeviceManager _graphicsDeviceManager;
         private GraphicsDevice _graphicDevice;
         private SpriteBatch _spriteBatch;
-        private readonly IRenderingTechnique _renderingTechnique;
 
         #endregion
 
@@ -31,15 +27,13 @@ namespace Pulsar.Graphics
         /// Constructor of Renderer class
         /// </summary>
         /// <param name="deviceManager">GraphicsDeviceManager</param>
-        /// <param name="assetEngine">AssetEngine</param>
-        internal Renderer(GraphicsDeviceManager deviceManager, AssetEngine assetEngine)
+        internal Renderer(GraphicsDeviceManager deviceManager)
         {
             _graphicsDeviceManager = deviceManager;
             _graphicDevice = deviceManager.GraphicsDevice;
             deviceManager.DeviceCreated += GraphicsDeviceCreated;
 
             _spriteBatch = new SpriteBatch(_graphicDevice);
-            //_renderingTechnique = new SimpleRenderingTechnique(this, assetEngine[GraphicsConstant.Storage]);
         }
 
         #endregion
@@ -72,21 +66,6 @@ namespace Pulsar.Graphics
             if(_spriteBatch != null) 
                 _spriteBatch.Dispose();
             _spriteBatch = new SpriteBatch(_graphicDevice);
-        }
-
-        /// <summary>
-        /// Prepares rendering operations
-        /// </summary>
-        private void BeginRender()
-        {
-            _graphicDevice.DepthStencilState = DepthStencilState.Default;
-        }
-
-        /// <summary>
-        /// Ends all rendering operations
-        /// </summary>
-        private void EndRender()
-        {
         }
 
         /// <summary>
@@ -124,19 +103,19 @@ namespace Pulsar.Graphics
             _graphicDevice.SetRenderTarget(null);
         }
 
-        /// <summary>
-        /// Renders a scene graph into a viewport
-        /// </summary>
-        /// <param name="vp">Viewport in which the rendering is sent</param>
-        /// <param name="cam">Camera representing the point of view</param>
-        /// <param name="queue">Queue of objects to render</param>
-        internal void Render(Viewport vp, Camera cam, RenderQueue queue)
+        internal void SetDepthStencilState(DepthStencilState state)
         {
-            BeginRender();
+            _graphicDevice.DepthStencilState = state;
+        }
 
-            _renderingTechnique.Render(vp, cam, queue);
+        internal void SetRasterizerState(RasterizerState state)
+        {
+            _graphicDevice.RasterizerState = state;
+        }
 
-            EndRender();
+        internal void SetBlendState(BlendState state)
+        {
+            _graphicDevice.BlendState = state;
         }
 
         /// <summary>
@@ -145,29 +124,24 @@ namespace Pulsar.Graphics
         /// <param name="renderTarget">RenderTarget to render</param>
         internal void RenderToTarget(RenderTarget renderTarget)
         {
-            bool noViewports = (renderTarget.Viewports.Count == 0);
-            if (!noViewports)
-            {
-                for (int i = 0; i < renderTarget.Viewports.Count; i++)
-                {
-                    Viewport vp = renderTarget.Viewports[i];
-                    vp.Render();
-                }
-            }
-
             _graphicDevice.SetRenderTarget(renderTarget.Target);
             if(renderTarget.AlwaysClear) 
                 _graphicDevice.Clear(renderTarget.ClearColor);
 
-            if (!noViewports)
+            List<Viewport> viewports = renderTarget.Viewports;
+            if (viewports.Count > 0)
             {
                 _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.PointClamp,
                     DepthStencilState.None, RasterizerState.CullCounterClockwise);
-                for (int i = 0; i < renderTarget.Viewports.Count; i++)
+                for (int i = 0; i < viewports.Count; i++)
                 {
-                    Viewport vp = renderTarget.Viewports[i];
-                    Rectangle rect = new Rectangle(vp.PixelLeft, vp.PixelTop, vp.PixelWidth, vp.PixelHeight);
-                    _spriteBatch.Draw(vp.Target, rect, Color.White);
+                    Viewport viewport = viewports[i];
+                    if(!viewport.IsRendered)
+                        continue;
+
+                    Rectangle rect = new Rectangle(viewport.PixelLeft, viewport.PixelTop, viewport.PixelWidth,
+                        viewport.PixelHeight);
+                    _spriteBatch.Draw(viewport.Target, rect, Color.White);
                 }
                 _spriteBatch.End();
             }
@@ -209,6 +183,7 @@ namespace Pulsar.Graphics
             }
             else
                 _graphicDevice.DrawPrimitives(renderingInfo.PrimitiveType, 0, renderingInfo.PrimitiveCount);
+
             UnsetBuffers();
 
             FrameDetail.AddDrawCall((uint)renderingInfo.VertexCount, (uint)renderingInfo.PrimitiveCount, 1);

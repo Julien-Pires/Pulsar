@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 using Pulsar.Assets;
+using Pulsar.Graphics.RenderingTechnique;
 
 namespace Pulsar.Graphics.SceneGraph
 {
@@ -13,12 +15,11 @@ namespace Pulsar.Graphics.SceneGraph
         #region Fields
 
         private bool _isDisposed;
-        private readonly Renderer _renderer;
         private readonly CameraManager _camManager;
-        private readonly RenderQueue _queue = new RenderQueue();
         private readonly SceneNode _root;
-        private readonly Dictionary<string, IMovable> _movablesMap = new Dictionary<string, IMovable>();
+        private Dictionary<string, IMovable> _movablesMap = new Dictionary<string, IMovable>();
         private readonly List<SceneNode>  _nodes = new List<SceneNode>();
+        private IRenderingTechnique _rendering;
 
         #endregion
 
@@ -32,9 +33,13 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="assetEngine">AssetEngine</param>
         internal BaseScene(string name, Renderer renderer, AssetEngine assetEngine)
         {
+            Debug.Assert(renderer != null);
+            Debug.Assert(assetEngine != null);
+
             Name = name;
-            _renderer = renderer;
+            _rendering = new UnlitRendering(renderer);
             AssetEngine = assetEngine;
+
             _camManager = new CameraManager(this);
             _root = CreateNode();
         }
@@ -48,26 +53,36 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         public void Dispose()
         {
-            if (_isDisposed) return;
+            if (_isDisposed) 
+                return;
 
-            foreach (IMovable movable in _movablesMap.Values)
-                movable.Dispose();
+            try
+            {
+                foreach (IMovable movable in _movablesMap.Values)
+                    movable.Dispose();
+                _movablesMap.Clear();
 
-            _movablesMap.Clear();
-            _isDisposed = true;
+                _rendering.Dispose();
+            }
+            finally
+            {
+                _movablesMap = null;
+                _rendering = null;
+
+                _isDisposed = true;
+            }
         }
 
         /// <summary>
         /// Draws the entire scene
         /// </summary>
-        public void RenderScene(Viewport viewport, Camera camera)
+        public void RenderScene(Viewport viewport, Camera camera, FrameContext context)
         {
             UpdateGraph();
+
             FindVisibleObjects(camera);
 
-            _renderer.Render(viewport, camera, _queue);
-
-            _queue.Reset();
+            _rendering.Render(viewport, camera, context);
         }
         
         /// <summary>
@@ -84,7 +99,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="camera">Current camera</param>
         private void FindVisibleObjects(Camera camera)
         {
-            _root.FindVisibleObjects(camera, _queue, true);
+            _root.FindVisibleObjects(camera, _rendering.RenderQueue, true);
         }
 
         /// <summary>

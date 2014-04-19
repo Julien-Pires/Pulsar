@@ -132,6 +132,15 @@ namespace Pulsar.Graphics.Fx
             _bindings.Clear();
         }
 
+        internal void UpdateAndWrite(FrameContext context)
+        {
+            for (int i = 0; i < _bindings.Count; i++)
+            {
+                _bindings[i].Update(context);
+                _bindings[i].Write();
+            }
+        }
+
         /// <summary>
         /// Updates all binding
         /// </summary>
@@ -154,6 +163,8 @@ namespace Pulsar.Graphics.Fx
         #endregion
 
         #region Properties
+
+        internal bool AlreadyUpdated { get; set; }
 
         /// <summary>
         /// Gets the number of binding in the collection
