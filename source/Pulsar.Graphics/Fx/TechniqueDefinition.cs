@@ -12,10 +12,8 @@ namespace Pulsar.Graphics.Fx
     {
         #region Fields
 
-        private readonly static PassIdPool IdPool = new PassIdPool();
-
-        private readonly ushort _firstPassId;
         private bool _isDisposed;
+        private PassDefinition[] _passes;
 
         #endregion
 
@@ -27,9 +25,30 @@ namespace Pulsar.Graphics.Fx
         /// <param name="technique">Effect technique</param>
         internal TechniqueDefinition(EffectTechnique technique)
         {
+            Debug.Assert(technique != null);
+
             Technique = technique;
-            Passes = new PassDefinition[technique.Passes.Count];
-            _firstPassId = IdPool.GetRange((ushort)Passes.Length);
+
+            EffectPassCollection passes = technique.Passes;
+            _passes = new PassDefinition[passes.Count];
+            for (int i = 0; i < passes.Count; i++)
+            {
+                PassDefinition definition = new PassDefinition(passes[i])
+                {
+                    Index = (ushort)i,
+                    State = RenderState.Default
+                };
+                _passes[i] = definition;
+            }
+        }
+
+        #endregion
+
+        #region Operators
+
+        public PassDefinition this[string name]
+        {
+            get { return GetPass(name); }
         }
 
         #endregion
@@ -41,39 +60,33 @@ namespace Pulsar.Graphics.Fx
             if(_isDisposed)
                 return;
 
-            try
-            {
-                IdPool.ReleaseRange(_firstPassId, (ushort) Passes.Length);
-            }
-            finally
-            {
-                Technique = null;
-                Passes = null;
+            Technique = null;
+            _passes = null;
 
-                _isDisposed = true;
-            }
+            _isDisposed = true;
         }
 
-        internal void SetPassDefinition(int index, PassDefinition passDefinition)
+        public PassDefinition GetPass(int index)
         {
-            Debug.Assert(passDefinition != null);
-
-            passDefinition.Index = (ushort) index;
-            passDefinition.Id = (ushort)(_firstPassId + passDefinition.Index);
-            Passes[index] = passDefinition;
+            return _passes[index];
         }
 
-        internal void CreateMissingPass()
+        public PassDefinition GetPass(string name)
         {
-            EffectPassCollection passCollection = Technique.Passes;
-            for (int i = 0; i < passCollection.Count; i++)
-            {
-                if(Passes[i] != null)
-                    continue;
+            int index = GetPassIndex(name);
 
-                PassDefinition definition = new PassDefinition(passCollection[i], RenderState.Default);
-                SetPassDefinition(i, definition);
+            return (index > -1) ? _passes[index] : null;
+        }
+
+        private int GetPassIndex(string name)
+        {
+            for (int i = 0; i < _passes.Length; i++)
+            {
+                if (string.Equals(name, _passes[i].Name, StringComparison.OrdinalIgnoreCase))
+                    return i;
             }
+
+            return -1;
         }
 
         #endregion
@@ -85,7 +98,10 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         internal EffectTechnique Technique { get; private set; }
 
-        internal PassDefinition[] Passes { get; private set; }
+        internal PassDefinition[] Passes
+        {
+            get { return _passes; }
+        }
 
         /// <summary>
         /// Gets the name of the technique
@@ -97,7 +113,7 @@ namespace Pulsar.Graphics.Fx
 
         public int PassCount
         {
-            get { return Passes.Length; }
+            get { return _passes.Length; }
         }
 
         /// <summary>

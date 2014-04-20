@@ -14,12 +14,10 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Constructor of ShaderConstantDefinition class
         /// </summary>
-        /// <param name="name">Name of the constant</param>
         /// <param name="parameter">Effect parameter</param>
         /// <param name="type">Constant type</param>
-        internal ShaderConstantDefinition(string name, EffectParameter parameter, Type type)
+        internal ShaderConstantDefinition(EffectParameter parameter, Type type)
         {
-            Name = name;
             Parameter = parameter;
             Type = type;
         }
@@ -36,12 +34,15 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Gets the name of the constant
         /// </summary>
-        public string Name { get; private set; }
+        public string Name
+        {
+            get { return Parameter.Name; }
+        }
 
         /// <summary>
         /// Gets the type
         /// </summary>
-        public Type Type { get; private set; }
+        public Type Type { get; internal set; }
 
         /// <summary>
         /// Gets the semantic

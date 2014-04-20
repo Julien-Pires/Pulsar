@@ -82,8 +82,6 @@
     <Compile Include="Fx\KeyedBinding.cs" />
     <Compile Include="Fx\PassBinding.cs" />
     <Compile Include="Fx\PassDefinition.cs" />
-    <Compile Include="Fx\PassIdPool.cs" />
-    <Compile Include="Fx\PassIdRange.cs" />
     <Compile Include="Fx\Shader.cs" />
     <Compile Include="Fx\ShaderConstantBinding.cs" />
     <Compile Include="Fx\ShaderConstantBindingCollection.cs" />

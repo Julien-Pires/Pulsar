@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Extension;
-
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
@@ -21,12 +19,10 @@ namespace Pulsar.Graphics.Fx
         private string _fallback = string.Empty;
         private string _instancing = string.Empty;
         private string _default = string.Empty;
-        private Dictionary<string, TechniqueDefinition> _techniquesMap
-            = new Dictionary<string, TechniqueDefinition>();
-        private Dictionary<string, ShaderConstantDefinition> _constantsMap
-            = new Dictionary<string, ShaderConstantDefinition>();
-        private Dictionary<int, List<ShaderConstantDefinition>> _constantsPerUpdate
-            = new Dictionary<int, List<ShaderConstantDefinition>>();
+        private Dictionary<string, TechniqueDefinition> _techniquesMap;
+        private Dictionary<string, ShaderConstantDefinition> _constantsMap;
+        private Dictionary<int, List<ShaderConstantDefinition>> _constantsPerUpdate =
+            new Dictionary<int, List<ShaderConstantDefinition>>();
 
         #endregion
 
@@ -41,6 +37,29 @@ namespace Pulsar.Graphics.Fx
             Debug.Assert(effect != null);
 
             _underlyingEffect = effect;
+
+            EffectTechniqueCollection techniques = effect.Techniques;
+            _techniquesMap = new Dictionary<string, TechniqueDefinition>(techniques.Count);
+            for (int i = 0; i < techniques.Count; i++)
+            {
+                TechniqueDefinition techniqueDefinition = new TechniqueDefinition(techniques[i]);
+                _techniquesMap.Add(techniqueDefinition.Name, techniqueDefinition);
+            }
+
+            EffectParameterCollection constants = effect.Parameters;
+            _constantsMap = new Dictionary<string, ShaderConstantDefinition>(constants.Count);
+            for (int i = 0; i < constants.Count; i++)
+            {
+                EffectParameter effectConstant = constants[i];
+                Type constantType = EffectParameterHelper.GetManagedType(effectConstant, null);
+                ShaderConstantDefinition constantDefinition = new ShaderConstantDefinition(effectConstant, constantType)
+                {
+                    Semantic = effectConstant.Semantic,
+                    UpdateFrequency = UpdateFrequency.Instance,
+                    Source = ShaderConstantSource.Custom
+                };
+                _constantsMap.Add(constantDefinition.Name, constantDefinition);
+            }
         }
 
         #endregion
@@ -54,8 +73,8 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns a shader instance</returns>
         internal static Shader Read(ContentReader input)
         {
-            IGraphicsDeviceService graphicsDeviceService = input.ContentManager.ServiceProvider.GetService(typeof(IGraphicsDeviceService))
-                as IGraphicsDeviceService;
+            IGraphicsDeviceService graphicsDeviceService =
+                input.ContentManager.ServiceProvider.GetService(typeof (IGraphicsDeviceService)) as IGraphicsDeviceService;
             if (graphicsDeviceService == null)
                 throw new Exception("Failed to find a graphics device service");
 
@@ -68,25 +87,39 @@ namespace Pulsar.Graphics.Fx
             Shader shader = new Shader(fx);
             shader.ReadTechniques(input);
             shader.ReadConstants(input);
-            shader.CreateMissingTechniqueDefinition();
-            shader.CreateMissingConstantDefinition();
-
             shader.Fallback = input.ReadString();
             shader.Instancing = input.ReadString();
             shader.DefaultTechnique = input.ReadString();
 
+            foreach (ShaderConstantDefinition definition in shader._constantsMap.Values)
+            {
+                List<ShaderConstantDefinition> list = shader.EnsureConstantsList(definition.UpdateFrequency);
+                list.Add(definition);
+            }
+
+            shader.GlobalConstantsBinding = shader.CreateConstantsBinding(UpdateFrequency.Global);
+            shader.InstanceConstantsBinding = shader.CreateConstantsBinding(UpdateFrequency.Instance);
+
             return shader;
         }
 
-        private static int GetPassIndex(string name, EffectPassCollection passCollection)
+        private static void ReadPass(ContentReader input, PassDefinition definition)
         {
-            for (int i = 0; i < passCollection.Count; i++)
-            {
-                if (string.Equals(name, passCollection[i].Name, StringComparison.Ordinal))
-                    return i;
-            }
+            StateObject<RasterizerState> rasterizerState =
+                        RenderState.GetRasterizerState((CullMode)input.ReadInt32(), (FillMode)input.ReadInt32());
 
-            return -1;
+            StateObject<DepthStencilState> depthStencilState =
+                RenderState.GetDepthStencilState(input.ReadBoolean(), (CompareFunction)input.ReadInt32(),
+                input.ReadInt32(), input.ReadInt32(), input.ReadInt32(), (CompareFunction)input.ReadInt32(),
+                (StencilOperation)input.ReadInt32(), (StencilOperation)input.ReadInt32(),
+                (StencilOperation)input.ReadInt32());
+
+            StateObject<BlendState> blendState = RenderState.GetBlendState((BlendFunction)input.ReadInt32(),
+                (BlendFunction)input.ReadInt32(), (Blend)input.ReadInt32(), (Blend)input.ReadInt32(),
+                (Blend)input.ReadInt32(), (Blend)input.ReadInt32());
+
+            RenderState renderState = RenderState.GetRenderState(rasterizerState, depthStencilState, blendState);
+            definition.State = renderState;
         }
 
         #endregion
@@ -125,76 +158,6 @@ namespace Pulsar.Graphics.Fx
         }
 
         /// <summary>
-        /// Creates missing defintion for techniques
-        /// </summary>
-        private void CreateMissingTechniqueDefinition()
-        {
-            for (int i = 0; i < _underlyingEffect.Techniques.Count; i++)
-            {
-                EffectTechnique technique = _underlyingEffect.Techniques[i];
-                if (_techniquesMap.ContainsKey(technique.Name)) continue;
-
-                TechniqueDefinition definition = new TechniqueDefinition(technique);
-                definition.CreateMissingPass();
-
-                _techniquesMap.Add(technique.Name, definition);
-            }
-        }
-
-        /// <summary>
-        /// Creates missing definition for constants
-        /// </summary>
-        private void CreateMissingConstantDefinition()
-        {
-            for (int i = 0; i < _underlyingEffect.Parameters.Count; i++)
-            {
-                EffectParameter parameter = _underlyingEffect.Parameters[i];
-                if (_constantsMap.ContainsKey(parameter.Name)) continue;
-
-                Type type = EffectParameterHelper.GetManagedType(parameter, string.Empty);
-                ShaderConstantDefinition definition = new ShaderConstantDefinition(parameter.Name, parameter, type)
-                {
-                    UpdateFrequency = UpdateFrequency.Instance
-                };
-
-                if (!string.IsNullOrEmpty(parameter.Semantic))
-                {
-                    ShaderConstantSemantic semantic;
-                    definition.Source = EnumExtension.TryParse(parameter.Semantic, true, out semantic) ?
-                        ShaderConstantSource.Auto : ShaderConstantSource.Keyed;
-                    definition.Semantic = parameter.Semantic;
-                }
-                else
-                    definition.Source = ShaderConstantSource.Custom;
-
-                _constantsMap.Add(parameter.Name, definition);
-
-                List<ShaderConstantDefinition> list = EnsureConstantsList( definition.UpdateFrequency);
-                list.Add(definition);
-            }
-        }
-
-        private PassDefinition ReadPass(ContentReader input, EffectPass pass)
-        {
-            StateObject<RasterizerState> rasterizerState =
-                        RenderState.GetRasterizerState((CullMode)input.ReadInt32(), (FillMode)input.ReadInt32());
-
-            StateObject<DepthStencilState> depthStencilState =
-                RenderState.GetDepthStencilState(input.ReadBoolean(), (CompareFunction)input.ReadInt32(),
-                input.ReadInt32(), input.ReadInt32(), input.ReadInt32(), (CompareFunction)input.ReadInt32(),
-                (StencilOperation)input.ReadInt32(), (StencilOperation)input.ReadInt32(),
-                (StencilOperation)input.ReadInt32());
-
-            StateObject<BlendState> blendState = RenderState.GetBlendState((BlendFunction)input.ReadInt32(),
-                (BlendFunction)input.ReadInt32(), (Blend)input.ReadInt32(), (Blend)input.ReadInt32(),
-                (Blend)input.ReadInt32(), (Blend)input.ReadInt32());
-
-            RenderState renderState = RenderState.GetRenderState(rasterizerState, depthStencilState, blendState);
-
-            return new PassDefinition(pass, renderState);
-        }
-
-        /// <summary>
         /// Reads techniques definition from a binary input
         /// </summary>
         /// <param name="input">Input</param>
@@ -204,35 +167,22 @@ namespace Pulsar.Graphics.Fx
             for (int i = 0; i < count; i++)
             {
                 string name = input.ReadString();
-                EffectTechnique technique = _underlyingEffect.Techniques[name];
-                if (technique == null)
-                    throw new Exception(
-                        string.Format("Shader definition contains a technique {0} but doesn't exist in effect", name));
-
-                TechniqueDefinition techniqueDefinition = new TechniqueDefinition(technique)
-                {
-                    IsTransparent = input.ReadBoolean()
-                };
-
-                int passesCount = input.ReadInt32();
-                EffectPassCollection passCollection = technique.Passes;
-                if (passesCount != passCollection.Count)
+                TechniqueDefinition technique;
+                if(!_techniquesMap.TryGetValue(name, out technique))
                     throw new Exception("");
 
+                technique.IsTransparent = input.ReadBoolean();
+
+                int passesCount = input.ReadInt32();
                 for (int j = 0; j < passesCount; j++)
                 {
                     string passName = input.ReadString();
-                    int passIndex = GetPassIndex(passName, passCollection);
-                    if(passIndex == -1)
+                    PassDefinition passDefinition = technique[passName];
+                    if(passDefinition == null)
                         throw new Exception("");
 
-                    EffectPass pass = technique.Passes[passIndex];
-                    PassDefinition passDefinition = ReadPass(input, pass);
-                    techniqueDefinition.SetPassDefinition(passIndex, passDefinition);
+                    ReadPass(input, passDefinition);
                 }
-                techniqueDefinition.CreateMissingPass();
-
-                _techniquesMap.Add(name, techniqueDefinition);
             }
         }
 
@@ -246,30 +196,18 @@ namespace Pulsar.Graphics.Fx
             for (int i = 0; i < count; i++)
             {
                 string name = input.ReadString();
-                EffectParameter parameter = _underlyingEffect.Parameters[name];
-                if (parameter == null)
-                    throw new Exception(
-                        string.Format("Shader definition contains a constant {0} but doesn't exist in effect", name));
+                ShaderConstantDefinition constantDefinition;
+                if(!_constantsMap.TryGetValue(name, out constantDefinition))
+                    throw new Exception("");
 
-                ShaderConstantSource source = (ShaderConstantSource) input.ReadInt32();
-                UpdateFrequency update = (UpdateFrequency) input.ReadInt32();
-                string semantic = input.ReadString();
+                constantDefinition.Source = (ShaderConstantSource)input.ReadInt32();
+                constantDefinition.UpdateFrequency = (UpdateFrequency)input.ReadInt32();
+                constantDefinition.Semantic = input.ReadString();
+
                 string equivalentType = input.ReadString();
-                Type type = EffectParameterHelper.GetManagedType(parameter, equivalentType);
-                ShaderConstantDefinition definition = new ShaderConstantDefinition(name, parameter, type)
-                {
-                    Source = source,
-                    UpdateFrequency = update,
-                    Semantic = semantic
-                };
-                _constantsMap.Add(name, definition);
-
-                List<ShaderConstantDefinition> list = EnsureConstantsList(definition.UpdateFrequency);
-                list.Add(definition);
+                constantDefinition.Type = EffectParameterHelper.GetManagedType(constantDefinition.Parameter,
+                    equivalentType);
             }
-
-            GlobalConstantsBinding = CreateConstantsBinding(UpdateFrequency.Global);
-            InstanceConstantsBinding = CreateConstantsBinding(UpdateFrequency.Instance);
         }
 
         /// <summary>
@@ -284,11 +222,11 @@ namespace Pulsar.Graphics.Fx
         /// <summary>
         /// Creates a collection of constants binding for a specified update frequency
         /// </summary>
-        /// <param name="usage">Update frequency</param>
+        /// <param name="update">Update frequency</param>
         /// <returns>Returns a collection of constants binding</returns>
-        internal ShaderConstantBindingCollection CreateConstantsBinding(UpdateFrequency usage)
+        internal ShaderConstantBindingCollection CreateConstantsBinding(UpdateFrequency update)
         {
-            List<ShaderConstantDefinition> constantList = EnsureConstantsList(usage);
+            List<ShaderConstantDefinition> constantList = EnsureConstantsList(update);
             ShaderConstantBindingCollection bindingCollection = new ShaderConstantBindingCollection(constantList.Count);
             for (int i = 0; i < constantList.Count; i++)
             {
@@ -344,6 +282,11 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
+        public string Name
+        {
+            get { return _underlyingEffect.Name; }
+        }
+
         /// <summary>
         /// Gets the collection of constants binding used for global update
         /// </summary>
@@ -356,8 +299,11 @@ namespace Pulsar.Graphics.Fx
             get { return _default; }
             set
             {
-                if(!_techniquesMap.ContainsKey(value))
-                    throw new Exception("");
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    if (!_techniquesMap.ContainsKey(value))
+                        throw new Exception(string.Format("Failed to set technique {0} as default", value));
+                }
 
                 _default = value;
             }

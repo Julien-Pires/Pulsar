@@ -32,11 +32,6 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
-        public ushort Id
-        {
-            get { return _passDefinition.Id; }
-        }
-
         public string Name
         {
             get { return _passDefinition.Name; }

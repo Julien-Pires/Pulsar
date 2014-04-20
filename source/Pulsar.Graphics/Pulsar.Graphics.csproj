@@ -96,8 +96,6 @@
     <Compile Include="Fx\BaseDelegateBinding.cs" />
     <Compile Include="Fx\EffectParameterHelper.cs" />
     <Compile Include="Fx\KeyedBinding.cs" />
-    <Compile Include="Fx\PassIdPool.cs" />
-    <Compile Include="Fx\PassIdRange.cs" />
     <Compile Include="Fx\PassBinding.cs" />
     <Compile Include="Fx\PassDefinition.cs" />
     <Compile Include="Fx\TechniqueBinding.cs" />
