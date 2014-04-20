@@ -6,9 +6,57 @@
 			"title" : "Name of the material",
 			"required" : true
 		},
+		"Shader" : {
+			"type" : "string",
+			"title" : "Shader and technique used by the material"
+		},
 		"Data" : {
 			"type" : "object",
-			"title" : "Material data"
+			"title" : "Material data",
+			"additionalProperties" : {
+				"type" : "object",
+				"properties" : {
+					"Type" : {
+						"type" : "string",
+						"title" : "Type of the data",
+						"required" : true
+					},
+					"Value" : {
+						"oneOf" : [
+							{ "$ref" : "#/definitions/StringValue" },
+							{ "$ref" : "#/definitions/ArrayValue" }
+						],
+						"required" : true
+					},
+					"Parameters" : {
+						"title" : "Additional parameters",
+						"oneOf" : [
+							{ "$ref" : "#/definitions/ObjectParameters" },
+							{ "$ref" : "#/definitions/ArrayParameters" }
+						]
+					}
+				}
+			}
+		}
+	},
+	"definitions" : {
+		"StringValue" : {
+			"type" : "string"
+		},
+		"ArrayValue" : {
+			"type" : "array",
+			"items" : {
+				"type" : "string"
+			}
+		},
+		"ObjectParameters" : {
+			"type" : "object"
+		},
+		"ArrayParameters" : {
+			"type" : "array",
+			"items" : {
+				"type" : "object"
+			}
 		}
 	}
 }
