@@ -37,11 +37,13 @@
 									"type" : "object",
 									"properties" : {
 										"Cull" : {
-											"type" : "string", 
+											"type" : "string",
+											"enum" : ["CullClockwiseFace", "CullCounterClockwiseFace", "None"],
 											"title" : "Cull mode" 
 										},
 										"FillMode" : {
 											"type" : "string",
+											"enum" : ["Solid", "WireFrame"],
 											"title" : "Fill mode"
 										}
 									}
@@ -55,6 +57,8 @@
 										},
 										"Compare" : {
 											"type" : "string",
+											"enum" : ["Always", "Equal", "Greater", "GreaterEqual", "Less", "LessEqual", 
+												"Never", "NotEqual"],
 											"title" : "Z-buffer compare method"
 										}
 									}
@@ -76,18 +80,26 @@
 										},
 										"Compare" : {
 											"type" : "string",
+											"enum" : ["Always", "Equal", "Greater", "GreaterEqual", "Less", "LessEqual", 
+												"Never", "NotEqual"],
 											"title" : "Stencil compare method"
 										},
 										"Pass" : {
 											"type" : "string",
+											"enum" : ["Decrement", "DecrementSaturation", "Increment", "IncrementSaturation", "Invert", "Keep", 
+												"Replace", "Zero"],
 											"title" : "Stencil pass action"
 										},
 										"Fail" : {
 											"type" : "string",
+											"enum" : ["Decrement", "DecrementSaturation", "Increment", "IncrementSaturation", "Invert", "Keep", 
+												"Replace", "Zero"],
 											"title" : "Stencil fail action"
 										},
 										"DepthFail" : {
 											"type" : "string",
+											"enum" : ["Decrement", "DecrementSaturation", "Increment", "IncrementSaturation", "Invert", "Keep", 
+												"Replace", "Zero"],
 											"title" : "Depth fail action"
 										}
 									}
@@ -97,27 +109,41 @@
 									"properties" : {
 										"ColorBlend" : {
 											"type" : "string",
+											"enum" : ["Add", "Max", "Min", "ReverseSubtract", "Subtract"],
 											"title" : "Color blend action"
 										},
 										"AlphaBlend" : {
 											"type" : "string",
+											"enum" : ["Add", "Max", "Min", "ReverseSubtract", "Subtract"],
 											"title" : "Alpha blend action"
 										},
 										"ColorSource" : {
 											"type" : "string",
-											"title" : "Color source weight"
+											"enum" : ["Zero", "One", "SourceColor", "InverseSourceColor", "SourceAlpha", "InverseSourceAlpha",
+												"DestinationAlpha", "InverseDestinationAlpha", "DestinationColor", "InverseDestinationColor",
+												"SourceAlphaSaturation", "BlendFactor", "InverseBlendFactor"],
+											"title" : "Color source factor"
 										},
 										"ColorDestination" : {
 											"type" : "string",
-											"title" : "Color destination weight"
+											"enum" : ["Zero", "One", "SourceColor", "InverseSourceColor", "SourceAlpha", "InverseSourceAlpha",
+												"DestinationAlpha", "InverseDestinationAlpha", "DestinationColor", "InverseDestinationColor",
+												"SourceAlphaSaturation", "BlendFactor", "InverseBlendFactor"],
+											"title" : "Color destination factor"
 										},
 										"AlphaSource" : {
 											"type" : "string",
-											"title" : "Alpha source weight"
+											"enum" : ["Zero", "One", "SourceColor", "InverseSourceColor", "SourceAlpha", "InverseSourceAlpha",
+												"DestinationAlpha", "InverseDestinationAlpha", "DestinationColor", "InverseDestinationColor",
+												"SourceAlphaSaturation", "BlendFactor", "InverseBlendFactor"],
+											"title" : "Alpha source factor"
 										},
 										"AlphaDestination" : {
 											"type" : "string",
-											"title" : "Alpha destination weight"
+											"enum" : ["Zero", "One", "SourceColor", "InverseSourceColor", "SourceAlpha", "InverseSourceAlpha",
+												"DestinationAlpha", "InverseDestinationAlpha", "DestinationColor", "InverseDestinationColor",
+												"SourceAlphaSaturation", "BlendFactor", "InverseBlendFactor"],
+											"title" : "Alpha destination factor"
 										}
 									}
 								}
@@ -135,6 +161,7 @@
 				"properties" : {
 					"Source" : {
 						"type" : "string",
+						"enum" : ["Custom", "Auto", "Delegate", "Keyed", "Constant"],
 						"title" : "Source of the value used by the constant"
 					},
 					"Semantic" : {
@@ -143,6 +170,7 @@
 					},
 					"UpdateFrequency" : {
 						"type" : "string",
+						"enum" : ["Instance", "Material", "Global"],
 						"title" : "Update frequency of the constant"
 					},
 					"EquivalentType" : {
