@@ -1,8 +1,8 @@
 ﻿using System;
 
-using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
+using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 using Pulsar.Graphics.Fx;
 using Pulsar.Pipeline.Graphics;
@@ -25,12 +25,16 @@ namespace Pulsar.Pipeline.Processors
         {
             foreach (ShaderConstantContent shaderConstant in input.Constants.Values)
             {
+                if (string.IsNullOrWhiteSpace(shaderConstant.Semantic))
+                    shaderConstant.Semantic = shaderConstant.Name;
+
                 switch (shaderConstant.Source)
                 {
                     case ShaderConstantSource.Auto:
                         ShaderConstantSemantic semantic;
                         if (!Enum.TryParse(shaderConstant.Semantic, out semantic))
-                            throw new Exception(string.Format("{0} is an invalid semantic when source is set to Auto", shaderConstant.Semantic));
+                            throw new Exception(string.Format("{0} is an invalid semantic when source is set to Auto",
+                                shaderConstant.Semantic));
                         break;
 
                     case ShaderConstantSource.Keyed:
@@ -61,7 +65,8 @@ namespace Pulsar.Pipeline.Processors
 
             ValidateConstantsDefinition(input);
 
-            CompiledEffectContent compiledFx = context.BuildAndLoadAsset<EffectContent, CompiledEffectContent>(input.EffectFile, "EffectProcessor");
+            CompiledEffectContent compiledFx =
+                context.BuildAndLoadAsset<EffectContent, CompiledEffectContent>(input.EffectFile, "EffectProcessor");
             ShaderContent shader = new ShaderContent(compiledFx.GetEffectCode())
             {
                 Fallback = input.Fallback,
