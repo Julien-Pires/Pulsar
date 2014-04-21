@@ -41,31 +41,34 @@ namespace Pulsar.Graphics.Asset
         /// <returns>Returns a loaded asset</returns>
         public override LoadedAsset Load<T>(string assetName, string path, object parameters, AssetFolder assetFolder)
         {
-            MaterialParameters matParameters;
+            _result.Reset();
+
+            MaterialParameters materialParameters;
             if (parameters != null)
             {
-                matParameters = parameters as MaterialParameters;
-                if(matParameters == null)
+                materialParameters = parameters as MaterialParameters;
+                if (materialParameters == null)
                     throw new Exception("Invalid parameters for this loader");
             }
             else
-                matParameters = _defaultParameter;
+            {
+                materialParameters = _defaultParameter;
+                materialParameters.Filename = path;
+            }
 
-            Material material;
-            switch (matParameters.Source)
+            switch (materialParameters.Source)
             {
                 case AssetSource.FromFile:
-                    throw new NotSupportedException("Cannot load material from file");
+                    LoadFromFile<Material>(path, assetFolder, _result);
+                    break;
 
                 case AssetSource.NewInstance:
-                    material = new Material(assetName);
+                    _result.Asset = new Material(assetName);
                     break;
 
                 default:
                     throw new Exception("Invalid asset source provided");
             }
-            _result.Reset();
-            _result.Asset = material;
 
             return _result;
         }

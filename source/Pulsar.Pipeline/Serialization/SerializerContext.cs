@@ -8,9 +8,8 @@ namespace Pulsar.Pipeline.Serialization
     {
         #region Constructors
 
-        public SerializerContext(Dictionary<string, object> parameters, ContentProcessorContext contentContext)
+        public SerializerContext(ContentProcessorContext contentContext)
         {
-            Parameters = parameters;
             ContentContext = contentContext;
         }
 
@@ -18,7 +17,7 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Properties
 
-        public Dictionary<string, object> Parameters { get; private set; }
+        public Dictionary<string, object> Parameters { get; internal set; }
 
         public ContentProcessorContext ContentContext { get; private set; }
 

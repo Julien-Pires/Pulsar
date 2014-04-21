@@ -17,9 +17,11 @@ namespace Pulsar.Pipeline.Graphics
 
         public string Name { get; private set; }
 
-        public Type Type { get; set; }
+        public Type BuildType { get; internal set; }
 
-        public object Value { get; set; }
+        public Type RuntimeType { get; internal set; }
+
+        public object Value { get; internal set; }
 
         #endregion
     }

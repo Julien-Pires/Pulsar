@@ -38,18 +38,16 @@ namespace Pulsar.Pipeline.Serialization
             }
 
             string[] splitValue = MathSerializerHelper.Split(value);
-            if ((splitValue.Length > 0) || (splitValue.Length < 5))
-            {
-                float[] parsedValues = new float[4];
-                for (int i = 0; i < splitValue.Length; i++)
-                    parsedValues[i] = Single.Parse(splitValue[i]);
+            if ((splitValue.Length <= 0) && (splitValue.Length >= 5)) 
+                throw new Exception("Invalid color format");
 
-                Vector4 vec4 = new Vector4(parsedValues[0], parsedValues[1], parsedValues[2], parsedValues[3]);
+            float[] parsedValues = new float[4];
+            for (int i = 0; i < splitValue.Length; i++)
+                parsedValues[i] = Single.Parse(splitValue[i]);
 
-                return new Color(vec4);
-            }
+            Vector4 vec4 = new Vector4(parsedValues[0], parsedValues[1], parsedValues[2], parsedValues[3]);
 
-            throw new Exception("Invalid color format");
+            return new Color(vec4);
         }
 
         #endregion

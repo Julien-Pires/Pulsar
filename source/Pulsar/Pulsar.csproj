@@ -58,7 +58,7 @@
     <Compile Include="Assets\AssetEngineService.cs" />
     <Compile Include="Assets\AssetFolder.cs" />
     <Compile Include="Assets\AssetLoaderAttribute.cs" />
-    <Compile Include="Assets\ContentReader.cs" />
+    <Compile Include="Assets\ContentReaderHelper.cs" />
     <Compile Include="Assets\FolderManager.cs" />
     <Compile Include="Assets\AssetLoader.cs" />
     <Compile Include="Assets\DefaultLoader.cs" />

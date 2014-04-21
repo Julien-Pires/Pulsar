@@ -55,6 +55,7 @@
     <Compile Include="Serialization\ArraySerializer.cs" />
     <Compile Include="Serialization\BoolSerializer.cs" />
     <Compile Include="Serialization\ColorSerializer.cs" />
+    <Compile Include="Serialization\Compiler\ContentWriterHelper.cs" />
     <Compile Include="Serialization\Compiler\MaterialWriter.cs" />
     <Compile Include="Serialization\ContentReaderAttribute.cs" />
     <Compile Include="Serialization\IContentSerializer.cs" />

@@ -5,9 +5,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
-
+using Pulsar.Assets;
 using Pulsar.Graphics.Fx;
-using ContentReader = Pulsar.Assets.ContentReader;
 
 namespace Pulsar.Graphics
 {
@@ -84,7 +83,10 @@ namespace Pulsar.Graphics
             {
                 string key = input.ReadString();
                 Type type = Type.GetType(input.ReadString());
-                object value = ContentReader.ReadObject(input, type);
+                if(type == null)
+                    throw new Exception("");
+
+                object value = ContentReaderHelper.Read(input, type);
                 material.SetValue(key, value);
             }
 

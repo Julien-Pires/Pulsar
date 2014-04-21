@@ -17,7 +17,7 @@ namespace Pulsar.Graphics
 
         internal GraphicsStorage(AssetEngine assetEngine)
         {
-            ContentReader.AddReadObject(c => c.ReadExternalReference<Texture>(), typeof(Texture));
+            ContentReaderHelper.AddReadMethod(c => c.ReadExternalReference<Texture>(), typeof(Texture));
 
             Storage storage = assetEngine.CreateStorage(GraphicsConstant.Storage);
             TextureFolder = storage.AddFolder(GraphicsConstant.TextureFolder, GraphicsConstant.TextureFolderName);

@@ -12,7 +12,6 @@ namespace Pulsar.Pipeline.Serialization
         #region Fields
 
         private const string DefaultProcessor = "TextureProcessor";
-        private const string DefaultProcessorKey = "default";
 
         private const string ProcessorKey = "Processor";
         private const string ProcessorNameKey = "Name";
@@ -33,6 +32,9 @@ namespace Pulsar.Pipeline.Serialization
         private static OpaqueDataDictionary ProcessOpaqueData(Dictionary<string, object> input)
         {
             OpaqueDataDictionary result = new OpaqueDataDictionary();
+            if (input == null)
+                return result;
+
             foreach (KeyValuePair<string, object> pair in input)
                 result.Add(pair.Key, pair.Value);
 
@@ -61,27 +63,25 @@ namespace Pulsar.Pipeline.Serialization
         private TextureProcessorParameters GetProcessorParameters(Dictionary<string, object> parameters)
         {
             TextureProcessorParameters result = new TextureProcessorParameters();
+            Dictionary<string, object> opaqueData = parameters;
             if (parameters.ContainsKey(ProcessorKey))
             {
                 Dictionary<string, object> processorsParameters = parameters[ProcessorKey] as Dictionary<string, object>;
                 if (processorsParameters == null)
                     throw new Exception("Invalid processor parameters format");
 
-                string processorName = (string)processorsParameters[ProcessorNameKey];
-                if (!string.Equals(processorName.ToLower(), DefaultProcessorKey))
-                    result.Processor = processorName;
+                object processorName;
+                if (parameters.TryGetValue(ProcessorNameKey, out processorName))
+                    result.Processor = (string) processorName;
+                else
+                    result.Processor = DefaultProcessor;
 
+                opaqueData = null;
                 if (processorsParameters.ContainsKey(OpaqueDataKey))
-                {
-                    Dictionary<string, object> rawOpaqueData = processorsParameters[OpaqueDataKey] as Dictionary<string, object>;
-                    if (rawOpaqueData == null)
-                        throw new Exception("Invalid opaque data format");
-
-                    result.OpaqueData = ProcessOpaqueData(rawOpaqueData);
-                }
+                    opaqueData = processorsParameters[OpaqueDataKey] as Dictionary<string, object>;
             }
-            else
-                result.OpaqueData = ProcessOpaqueData(parameters);
+
+            result.OpaqueData = ProcessOpaqueData(opaqueData);
 
             return result;
         }
