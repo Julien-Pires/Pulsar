@@ -116,8 +116,14 @@ namespace Pulsar.Pipeline.Processors
 
                 Tuple<Type, Type> type = GetType(rawData.Type.ToLower(), rawData.Value);
                 SerializerContext serializerCtx = new SerializerContext(context);
-                MaterialDataContent data = new MaterialDataContent(rawData.Name);
                 List<Dictionary<string, object>> parameters = rawData.Parameters;
+                MaterialDataContent data = new MaterialDataContent(rawData.Name)
+                {
+                    BuildType = type.Item1,
+                    RuntimeType = type.Item2
+                };
+
+                object value;
                 if (rawData.IsNativeArray)
                 {
                     object[] values = new object[rawData.Value.Length];
@@ -127,17 +133,16 @@ namespace Pulsar.Pipeline.Processors
                         serializerCtx.Parameters = (parameters.Count > 0) ? parameters[parametersIdx] : null;
                         values[j] = _readerManager.Read(type.Item1, rawData.Value[j], serializerCtx);
                     }
-                    data.Value = values;
-                    data.BuildType = type.Item1.MakeArrayType();
-                    data.RuntimeType = type.Item2.MakeArrayType();
+                    value = values;
+                    data.BuildType = data.BuildType.MakeArrayType();
+                    data.RuntimeType = data.RuntimeType.MakeArrayType();
                 }
                 else
                 {
                     serializerCtx.Parameters = (parameters.Count > 0) ? parameters[0] : null;
-                    data.Value = _readerManager.Read(type.Item1, rawData.Value[0], serializerCtx);
-                    data.BuildType = type.Item1;
-                    data.RuntimeType = type.Item2;
+                    value = _readerManager.Read(type.Item1, rawData.Value[0], serializerCtx);
                 }
+                data.Value = value;
 
                 _datas.Add(data);
             }
