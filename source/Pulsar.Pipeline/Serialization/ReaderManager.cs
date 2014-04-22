@@ -42,6 +42,25 @@ namespace Pulsar.Pipeline.Serialization
 
         #endregion
 
+        #region Static methods
+
+        private static IContentSerializer CreateReader(Type type)
+        {
+            if (type.IsArray)
+            {
+                if (type.GetArrayRank() != 1)
+                    throw new RankException("");
+
+                Type newType = typeof(ArraySerializer<>).MakeGenericType(type.GetElementType());
+
+                return (IContentSerializer)Activator.CreateInstance(newType);
+            }
+
+            throw new Exception("");
+        }
+
+        #endregion
+
         #region Methods
 
         public object Read(Type type, string value, SerializerContext context = null)
@@ -59,7 +78,7 @@ namespace Pulsar.Pipeline.Serialization
         public object[] ReadMultiples(Type type, IList<string> values, SerializerContext[] contextArr = null)
         {
             IContentSerializer serializer = GetReader(type);
-            List<object> result = new List<object>();
+            List<object> result = new List<object>(values.Count);
             for(int i = 0; i < values.Count; i++)
             {
                 SerializerContext context = null;
@@ -92,21 +111,6 @@ namespace Pulsar.Pipeline.Serialization
             }
 
             return serializer;
-        }
-
-        private IContentSerializer CreateReader(Type type)
-        {
-            if (type.IsArray)
-            {
-                if(type.GetArrayRank() != 1)
-                    throw new RankException("");
-
-                Type newType = typeof (ArraySerializer<>).MakeGenericType(type.GetElementType());
-
-                return (IContentSerializer) Activator.CreateInstance(newType);
-            }
-
-            throw new Exception("");
         }
 
         #endregion
