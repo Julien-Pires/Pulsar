@@ -2,6 +2,9 @@
 
 namespace Pulsar.System
 {
+    /// <summary>
+    /// Enumerates criteria for filtering a search for specific types
+    /// </summary>
     [Flags]
     public enum TypeDetectorRule
     {

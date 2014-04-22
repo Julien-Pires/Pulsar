@@ -11,7 +11,7 @@ namespace Pulsar
     {
         #region Fields
 
-        private static T instance = null;
+        private static T _instance;
         private static object locker = new object();
 
         #endregion
@@ -25,27 +25,25 @@ namespace Pulsar
         {
             get
             {
-                if (Singleton<T>.instance == null)
-                {
-                    lock (Singleton<T>.locker)
-                    {
-                        if (Singleton<T>.instance == null)
-                        {
-                            Type type = typeof(T);
-                            ConstructorInfo[] constructInfo = type.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
-                            if (constructInfo.Length == 0)
-                            {
-                                throw new Exception(
-                                    string.Format("Failed to instantiate instance of type {0}, no private constructor declared", type)
-                                );
-                            }
+                if (_instance != null) 
+                    return _instance;
 
-                            instance = (T)constructInfo[0].Invoke(null);
-                        }
-                    }
+                lock (locker)
+                {
+                    if (_instance != null) 
+                        return _instance;
+
+                    Type type = typeof(T);
+                    ConstructorInfo[] constructInfo = type.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (constructInfo.Length == 0)
+                        throw new Exception(
+                            string.Format(
+                                "Failed to instantiate instance of type {0}, no private constructor declared", type));
+
+                    _instance = (T)constructInfo[0].Invoke(null);
                 }
 
-                return Singleton<T>.instance;
+                return _instance;
             }
         }
 

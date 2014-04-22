@@ -8,7 +8,7 @@
         #region Properties
 
         /// <summary>
-        /// Get an InputManager instance
+        /// Gets the InputManager instance
         /// </summary>
         InputManager Input { get; }
 

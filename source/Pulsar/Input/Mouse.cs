@@ -11,28 +11,6 @@ namespace Pulsar.Input
     using XnaMouse = Microsoft.Xna.Framework.Input.Mouse;
 
     /// <summary>
-    /// Enumerates digital mouse button
-    /// </summary>
-    public enum MouseButtons
-    {
-        Left, 
-        Right, 
-        Middle, 
-        XButton1, 
-        XButton2
-    }
-
-    /// <summary>
-    /// Enumerates analog mouse button
-    /// </summary>
-    public enum MouseAnalogButtons
-    {
-        MouseX,
-        MouseY, 
-        MouseWheel
-    }
-
-    /// <summary>
     /// Allows to retrieve the state of the mouse
     /// </summary>
     public static class Mouse
@@ -67,7 +45,7 @@ namespace Pulsar.Input
         #region Static methods
 
         /// <summary>
-        /// Update mouse states
+        /// Updates mouse states
         /// </summary>
         internal static void Update()
         {
@@ -82,7 +60,8 @@ namespace Pulsar.Input
             InternalButtonPressed.Clear();
             for (int i = 0; i < AllDigital.Length; i++)
             {
-                if(IsUp(AllDigital[i])) continue;
+                if(IsUp(AllDigital[i])) 
+                    continue;
 
                 AbstractButton btn = new AbstractButton(AllDigital[i]);
                 InternalButtonPressed.Add(new ButtonEvent(btn));
@@ -90,7 +69,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if any key is pressed
+        /// Checks if any key is pressed
         /// </summary>
         /// <returns></returns>
         public static bool AnyKeyPressed()
@@ -99,14 +78,14 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the value of an analog mouse button
+        /// Gets the value of an analog mouse button
         /// </summary>
-        /// <param name="btn">Analog button</param>
+        /// <param name="button">Analog button</param>
         /// <returns>Return the value of the button</returns>
-        public static float GetValue(MouseAnalogButtons btn)
+        public static float GetValue(MouseAnalogButtons button)
         {
             float result = 0.0f;
-            switch (btn)
+            switch (button)
             {
                 case MouseAnalogButtons.MouseX: 
                     result = _currentPosition.X;
@@ -123,14 +102,14 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the delta value of an anlog mouse button
+        /// Gets the delta value of an anlog mouse button
         /// </summary>
-        /// <param name="btn">Analog button</param>
+        /// <param name="button">Analog button</param>
         /// <returns>Return the delta value of the button</returns>
-        public static float GetDeltaValue(MouseAnalogButtons btn)
+        public static float GetDeltaValue(MouseAnalogButtons button)
         {
             float result = 0.0f;
-            switch (btn)
+            switch (button)
             {
                 case MouseAnalogButtons.MouseX: 
                     result = _positionDelta.X;
@@ -147,14 +126,14 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if a button has been pressed
+        /// Checks if a button has been pressed
         /// </summary>
-        /// <param name="btn">Button to check</param>
+        /// <param name="button">Button to check</param>
         /// <returns>Return true if the button has been pressed otherwise false</returns>
-        public static bool IsPressed(MouseButtons btn)
+        public static bool IsPressed(MouseButtons button)
         {
             bool result = false;
-            switch (btn)
+            switch (button)
             {
                 case MouseButtons.Left: 
                     result = (_previousState.LeftButton == ButtonState.Released) &&
@@ -182,14 +161,14 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if a button has been released
+        /// Checks if a button has been released
         /// </summary>
-        /// <param name="btn">Button to check</param>
+        /// <param name="button">Button to check</param>
         /// <returns>Return true if the button has been released otherwise false</returns>
-        public static bool IsReleased(MouseButtons btn)
+        public static bool IsReleased(MouseButtons button)
         {
             bool result = false;
-            switch (btn)
+            switch (button)
             {
                 case MouseButtons.Left:
                     result = (_previousState.LeftButton == ButtonState.Pressed) &&
@@ -217,14 +196,14 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if a button is down
+        /// Checks if a button is down
         /// </summary>
-        /// <param name="btn">Button to check</param>
+        /// <param name="button">Button to check</param>
         /// <returns>Return true if the button is down otherwise false</returns>
-        public static bool IsDown(MouseButtons btn)
+        public static bool IsDown(MouseButtons button)
         {
             bool result = false;
-            switch (btn)
+            switch (button)
             {
                 case MouseButtons.Left:
                     result = _currentState.LeftButton == ButtonState.Pressed;
@@ -247,14 +226,14 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Check if a button is up
+        /// Checks if a button is up
         /// </summary>
-        /// <param name="btn">Button to check</param>
+        /// <param name="button">Button to check</param>
         /// <returns>Return true if the button is up otherwise false</returns>
-        public static bool IsUp(MouseButtons btn)
+        public static bool IsUp(MouseButtons button)
         {
             bool result = false;
-            switch (btn)
+            switch (button)
             {
                 case MouseButtons.Left: 
                     result = _currentState.LeftButton == ButtonState.Released;
@@ -289,7 +268,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the X position of the mouse
+        /// Gets the X position of the mouse
         /// </summary>
         public static float X
         {
@@ -297,7 +276,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the Y position of the mouse
+        /// Gets the Y position of the mouse
         /// </summary>
         public static float Y
         {
@@ -305,7 +284,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the X position delta of the mouse
+        /// Gets the X position delta of the mouse
         /// </summary>
         public static float DeltaX
         {
@@ -313,7 +292,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the Y position delta of the mouse
+        /// Gets the Y position delta of the mouse
         /// </summary>
         public static float DeltaY
         {
@@ -321,7 +300,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the position of the mouse
+        /// Gets the position of the mouse
         /// </summary>
         public static Vector2 Position
         {
@@ -329,7 +308,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the position delta of the mouse
+        /// Gets the position delta of the mouse
         /// </summary>
         public static Vector2 PositionDelta
         {
@@ -337,7 +316,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get the wheel value delta of the mouse
+        /// Gets the wheel value delta of the mouse
         /// </summary>
         public static float WheelDelta { get; private set; }
 

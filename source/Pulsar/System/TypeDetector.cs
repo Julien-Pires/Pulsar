@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Pulsar.System
 {
+    /// <summary>
+    /// Provides mechanismes to search for specific types instance
+    /// </summary>
     public sealed class TypeDetector
     {
         #region Fields
@@ -15,6 +18,10 @@ namespace Pulsar.System
 
         #region Methods
 
+        /// <summary>
+        /// Gets a list of types that match specified criteria
+        /// </summary>
+        /// <returns>Returns a list of types</returns>
         public List<Type> GetTypes()
         {
             List<Assembly> assemblies = _assemblyDetector.GetAssemblies();
@@ -35,23 +42,31 @@ namespace Pulsar.System
             return result;
         }
 
+        /// <summary>
+        /// Checks if a type is assignable to the base type
+        /// </summary>
+        /// <param name="type">Type to checks</param>
+        /// <returns>Returns true if it is assignable otherwise false</returns>
         private bool IsAssignable(Type type)
         {
             if (BaseType == null)
                 return true;
 
-            if (BaseType.IsGenericTypeDefinition)
-            {
-                Type parent = type.BaseType;
-                while ((parent != null) && (!parent.IsGenericType || (parent.GetGenericTypeDefinition() != BaseType)))
-                    parent = parent.BaseType;
+            if (!BaseType.IsGenericTypeDefinition) 
+                return BaseType.IsAssignableFrom(type);
 
-                return parent != null;
-            }
+            Type parent = type.BaseType;
+            while ((parent != null) && (!parent.IsGenericType || (parent.GetGenericTypeDefinition() != BaseType)))
+                parent = parent.BaseType;
 
-            return BaseType.IsAssignableFrom(type);
+            return parent != null;
         }
 
+        /// <summary>
+        /// Checks if a type is exclude from the search
+        /// </summary>
+        /// <param name="type">Type to checks</param>
+        /// <returns>Returns true if the type is excluded otherwise false</returns>
         private bool IsExclude(Type type)
         {
             TypeDetectorRule rule = Exclude;
@@ -89,6 +104,11 @@ namespace Pulsar.System
             return false;
         }
 
+        /// <summary>
+        /// Checks if a type has all specified attributes
+        /// </summary>
+        /// <param name="type">Type to checks</param>
+        /// <returns>Returns true if the type has all attributes otherwise false</returns>
         private bool HasAttributes(Type type)
         {
             bool result = true;
@@ -102,18 +122,30 @@ namespace Pulsar.System
 
         #region Properties
 
+        /// <summary>
+        /// Gets the assembly detector instance used for the search
+        /// </summary>
         public AssemblyDetector AssemblyDetector
         {
             get { return _assemblyDetector; }
         }
 
+        /// <summary>
+        /// Gets or sets the base type that classes must inherit or implement
+        /// </summary>
         public Type BaseType { get; set; }
 
+        /// <summary>
+        /// Gets the list of attributes that classes must have
+        /// </summary>
         public List<Type> Attributes
         {
             get { return _attributesList; }
         }
 
+        /// <summary>
+        /// Gets or sets criteria to filter the search
+        /// </summary>
         public TypeDetectorRule Exclude { get; set; }
 
         #endregion

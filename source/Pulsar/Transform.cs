@@ -5,12 +5,6 @@ using Pulsar.Mathematic;
 namespace Pulsar
 {
     /// <summary>
-    /// Represents the methods that be called when a transform changed
-    /// </summary>
-    /// <param name="transform"></param>
-    public delegate void TransformChangedEventHandler(Transform transform);
-
-    /// <summary>
     /// Represents a transformation in a 3D space
     /// A transformation is defined by a position - rotation - scale
     /// Each transformation can have a parent transformation but when a parent changed it doesn't notify

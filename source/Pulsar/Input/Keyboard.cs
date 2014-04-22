@@ -49,7 +49,8 @@ namespace Pulsar.Input
             InternalButtonPressed.Clear();
             for (int i = 0; i < AllDigital.Length; i++)
             {
-                if (_currentState.IsKeyUp(AllDigital[i])) continue;
+                if (_currentState.IsKeyUp(AllDigital[i]))
+                    continue;
 
                 AbstractButton btn = new AbstractButton(AllDigital[i]);
                 InternalButtonPressed.Add(new ButtonEvent(btn));

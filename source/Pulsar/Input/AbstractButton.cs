@@ -3,15 +3,6 @@
 namespace Pulsar.Input
 {
     /// <summary>
-    /// Describe a type of button
-    /// </summary>
-    public enum ButtonType : byte
-    {
-        Analog,
-        Digital
-    }
-
-    /// <summary>
     /// Allows to abstract any button for use in virtual input
     /// </summary>
     public struct AbstractButton
@@ -97,7 +88,7 @@ namespace Pulsar.Input
         #region Methods
 
         /// <summary>
-        /// Get the value of the underlying button
+        /// Gets the value of the underlying button
         /// </summary>
         /// <param name="player">Index of the player</param>
         /// <returns>Return the value of the button</returns>
@@ -137,6 +128,11 @@ namespace Pulsar.Input
             return val;
         }
 
+        /// <summary>
+        /// Checks if the button has been pressed
+        /// </summary>
+        /// <param name="player">Index of the player</param>
+        /// <returns>Returns true if the button has been pressed otherwise false</returns>
         public bool IsPressed(short player)
         {
             if (Type != ButtonType.Digital) return false;
@@ -159,6 +155,11 @@ namespace Pulsar.Input
             return val;
         }
 
+        /// <summary>
+        /// Checks if the button has been released
+        /// </summary>
+        /// <param name="player">Index of the player</param>
+        /// <returns>Returns true if the button has been released otherwise false</returns>
         public bool IsReleased(short player)
         {
             if (Type != ButtonType.Digital) return false;

@@ -3,15 +3,6 @@
 namespace Pulsar.Input
 {
     /// <summary>
-    /// Type of event for an axis
-    /// </summary>
-    public enum AxisEventType : byte
-    {
-        IsInactive,
-        IsActive
-    }
-
-    /// <summary>
     /// Checks the state of an axis for a specific event
     /// </summary>
     internal sealed class AxisCommand : IInputCommand
@@ -20,7 +11,7 @@ namespace Pulsar.Input
 
         private readonly AxisEventType _axisEvent;
         private readonly Axis _axis;
-        private CheckCommandState _checkMethod;
+        private Func<bool> _checkMethod;
 
         #endregion
 

@@ -5,7 +5,7 @@ using XnaGame = Microsoft.Xna.Framework.Game;
 namespace Pulsar.Input
 {
     /// <summary>
-    /// Provides a input service
+    /// Provides service to retrieve an input manager
     /// </summary>
     public sealed class InputService : IInputService
     {
@@ -38,7 +38,7 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Get a InputManager instance
+        /// Gets a InputManager instance
         /// </summary>
         public InputManager Input
         {

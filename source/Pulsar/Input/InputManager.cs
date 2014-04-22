@@ -4,19 +4,6 @@ using System.Collections.Generic;
 namespace Pulsar.Input
 {
     /// <summary>
-    /// Enumerate all input devices
-    /// </summary>
-    [Flags]
-    public enum InputDevice : byte
-    { 
-        None = 0,
-        Mouse = 1,
-        Keyboard = 2,
-        GamePad = 4,
-        AllGamePad = 8
-    }
-
-    /// <summary>
     /// Manages all input device and virtual input
     /// </summary>
     public sealed class InputManager
@@ -30,13 +17,14 @@ namespace Pulsar.Input
         #region Methods
 
         /// <summary>
-        /// Create a new player
+        /// Creates a new player
         /// </summary>
         /// <param name="player">Index of the player</param>
-        /// <returns>Return a Player instance</returns>
+        /// <returns>Returns a Player instance</returns>
         public Player CreatePlayer(short player)
         {
-            if (_players.ContainsKey(player)) throw new Exception(string.Format("Failed to create the player {0}, he already exists", player));
+            if (_players.ContainsKey(player))
+                throw new Exception(string.Format("Failed to create the player {0}, he already exists", player));
 
             Player input = new Player(player);
             _players.Add(player, input);
@@ -45,17 +33,17 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Remove a player
+        /// Removes a player
         /// </summary>
         /// <param name="player">Index of the player</param>
-        /// <returns>Return true if the player is removed otherwise false</returns>
+        /// <returns>Returns true if the player is removed otherwise false</returns>
         public bool RemovePlayer(short player)
         {
             return _players.Remove(player);
         }
 
         /// <summary>
-        /// Remove all players
+        /// Removes all players
         /// </summary>
         public void RemoveAllPlayers()
         {
@@ -63,17 +51,17 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get a player
+        /// Gets a player
         /// </summary>
         /// <param name="player">Index of the player</param>
-        /// <returns>Return a Player instance</returns>
+        /// <returns>Returns a Player instance</returns>
         public Player GetPlayer(short player)
         {
             return _players[player];
         }
 
         /// <summary>
-        /// Update the states of devices and players
+        /// Updates the states of devices and players
         /// </summary>
         public void Update()
         {

@@ -83,6 +83,10 @@ namespace Pulsar.Assets
             _isDisposed = true;
         }
 
+        /// <summary>
+        /// Initialize a category of asset loaders
+        /// </summary>
+        /// <param name="category">Name of the category</param>
         public void InitializeLoaders(string category)
         {
             List<IAssetLoader> list;
@@ -95,6 +99,9 @@ namespace Pulsar.Assets
             list.Clear();
         }
 
+        /// <summary>
+        /// Finds all asset loaders in each loaded assembly
+        /// </summary>
         private void InternalInitializeLoaders()
         {
             TypeDetector detector = new TypeDetector
@@ -156,7 +163,8 @@ namespace Pulsar.Assets
 
             AssetLoaderAttribute loaderAttr = (AssetLoaderAttribute)attributes[0];
             Type[] supportedTypes = loaderAttr.AssetTypes;
-            if(supportedTypes.Length == 0) return;
+            if(supportedTypes.Length == 0) 
+                return;
 
             for (int i = 0; i < supportedTypes.Length; i++)
             {
@@ -172,6 +180,11 @@ namespace Pulsar.Assets
                 loader.Initialize(this, ServiceProvider);
         }
 
+        /// <summary>
+        /// Adds an asset loader to a specified pending list for initialization
+        /// </summary>
+        /// <param name="loader">Asset loader</param>
+        /// <param name="category">Name of the category</param>
         private void AddLazyInitLoader(IAssetLoader loader, string category)
         {
             List<IAssetLoader> list;
@@ -181,7 +194,8 @@ namespace Pulsar.Assets
                 _pendingInit.Add(category, list);
             }
 
-            if (list.Contains(loader)) return;
+            if (list.Contains(loader)) 
+                return;
 
             list.Add(loader);
         }

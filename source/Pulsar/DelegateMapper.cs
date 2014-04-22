@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Pulsar
 {
     /// <summary>
-    /// Represents a collection of delegate associated to a key
+    /// Represents a collection of delegates associated to a key
     /// </summary>
     /// <typeparam name="TKey">Key</typeparam>
     public sealed class DelegateMapper<TKey> : Dictionary<TKey, Delegate>

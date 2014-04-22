@@ -158,8 +158,9 @@ namespace Pulsar.Components
             if(gameObjectManager == null)
                 throw new ArgumentNullException("gameObjectManager");
 
-            if(IndexOfManager(gameObjectManager.GetType()) > -1)
-                throw new Exception(string.Format("Failed to add, a GameObject Manager with type {0} already exists", gameObjectManager.GetType()));
+            if (IndexOfManager(gameObjectManager.GetType()) > -1)
+                throw new Exception(string.Format("Failed to add, a GameObject Manager with type {0} already exists",
+                    gameObjectManager.GetType()));
 
             _customsGoManagers.Add(gameObjectManager);
         }

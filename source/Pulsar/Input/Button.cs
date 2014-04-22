@@ -50,7 +50,8 @@ namespace Pulsar.Input
             /// <returns>Return a value indicating the position of the first instance</returns>
             internal static int Comparison(ButtonBinding first, ButtonBinding second)
             {
-                if (first._priority < second._priority) return -1;
+                if (first._priority < second._priority) 
+                    return -1;
 
                 return (first._priority > second._priority) ? 1 : 0;
             }
@@ -71,6 +72,9 @@ namespace Pulsar.Input
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of Button class
+        /// </summary>
         internal Button()
         {
         }
@@ -82,11 +86,11 @@ namespace Pulsar.Input
         /// <summary>
         /// Links a real button to the virtual button
         /// </summary>
-        /// <param name="btn">Button instance</param>
+        /// <param name="button">Button instance</param>
         /// <param name="priority">Priority of the button</param>
-        public void AddButton(AbstractButton btn, short priority)
+        public void AddButton(AbstractButton button, short priority)
         {
-            ButtonBinding binding = new ButtonBinding(btn, priority);
+            ButtonBinding binding = new ButtonBinding(button, priority);
             _hardwareButtons.Add(binding);
             _hardwareButtons.Sort(ButtonBinding.Comparison);
         }
@@ -118,7 +122,8 @@ namespace Pulsar.Input
                     _pressedValue = btn.GetValue(Owner.PlayerIndex.GamePadIndex);
                     _down = _pressedValue > DeadZone;
                 }
-                if (_down) break;
+                if (_down) 
+                    break;
             }
         }
 

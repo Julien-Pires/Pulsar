@@ -88,7 +88,8 @@ namespace Pulsar.Input
         public bool DestroyEvent(string name)
         {
             int idx;
-            if (!_eventsMap.TryGetValue(name, out idx)) return false;
+            if (!_eventsMap.TryGetValue(name, out idx)) 
+                return false;
 
             _events.RemoveAt(idx);
             _eventsMap.Remove(name);
@@ -121,7 +122,7 @@ namespace Pulsar.Input
                 throw new ArgumentNullException("name");
 
             if (_buttonsMap.ContainsKey(name))
-                throw new Exception(string.Format("A button named {0} already exists in this virtual input", name)); 
+                throw new Exception(string.Format("A button named {0} already exists in this virtual input", name));
 
             Button btn = new Button();
             _buttons.Add(btn);
@@ -159,7 +160,8 @@ namespace Pulsar.Input
         public bool DestroyButton(string name)
         {
             int idx;
-            if (!_buttonsMap.TryGetValue(name, out idx)) return false;
+            if (!_buttonsMap.TryGetValue(name, out idx)) 
+                return false;
 
             Button btn = _buttons[idx];
             btn.Owner = null;
@@ -178,7 +180,8 @@ namespace Pulsar.Input
         public bool DestroyAxis(string name)
         {
             int idx;
-            if (!_axesMap.TryGetValue(name, out idx)) return false;
+            if (!_axesMap.TryGetValue(name, out idx)) 
+                return false;
 
             Axis axis = _axes[idx];
             axis.Owner = null;

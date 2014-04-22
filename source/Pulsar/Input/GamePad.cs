@@ -13,25 +13,15 @@ namespace Pulsar.Input
     using XnaPlayerIndex = Microsoft.Xna.Framework.PlayerIndex;
 
     /// <summary>
-    /// Enumerates analog buttons for a gamepad
-    /// </summary>
-    public enum AnalogButtons 
-    { 
-        LeftThumbStickX, 
-        LeftThumbStickY,
-        RightThumbStickX,
-        RightThumbStickY,
-        LeftTrigger, 
-        RightTrigger 
-    }
-
-    /// <summary>
     /// Defines a Xbox 360 controller
     /// </summary>
     public sealed class GamePad
     {
         #region Fields
 
+        /// <summary>
+        /// Max number of gamepad
+        /// </summary>
         public const short GamePadCount = 4;
 
         private static readonly Buttons[] AllDigital;
@@ -219,7 +209,8 @@ namespace Pulsar.Input
                         Disconnected(this, new GamePadEventArgs(this));
                 }
             }
-            if (!_currentState.IsConnected) return;
+            if (!_currentState.IsConnected) 
+                return;
 
             GamePadThumbSticks prevThumb = _previousState.ThumbSticks;
             GamePadThumbSticks currThumb = _currentState.ThumbSticks;
@@ -234,7 +225,8 @@ namespace Pulsar.Input
             InternalButtonPressed.Clear();
             for (short i = 0; i < AllDigital.Length; i++)
             {
-                if(_currentState.IsButtonUp(AllDigital[i])) continue;
+                if(_currentState.IsButtonUp(AllDigital[i])) 
+                    continue;
                 
                 AbstractButton btn = new AbstractButton(AllDigital[i]);
                 InternalButtonPressed.Add(new ButtonEvent(btn, (short)_gamePadIndex));

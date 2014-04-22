@@ -13,6 +13,7 @@ namespace Pulsar.Assets
         /// Initializes the loader
         /// </summary>
         /// <param name="engine">Asset engine using this loader</param>
+        /// <param name="serviceProvider">Service provider</param>
         public virtual void Initialize(AssetEngine engine, IServiceProvider serviceProvider)
         {
         }

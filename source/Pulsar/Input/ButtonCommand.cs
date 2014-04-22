@@ -3,17 +3,6 @@
 namespace Pulsar.Input
 {
     /// <summary>
-    /// Type of event for a button
-    /// </summary>
-    public enum ButtonEventType : byte
-    {
-        IsPressed,
-        IsReleased,
-        IsDown,
-        IsUp
-    }
-
-    /// <summary>
     /// Checks the state of a button for a specific event
     /// </summary>
     internal sealed class ButtonCommand : IInputCommand
@@ -22,7 +11,7 @@ namespace Pulsar.Input
 
         private readonly ButtonEventType _buttonEvent;
         private readonly Button _button;
-        private CheckCommandState _checkMethod;
+        private Func<bool> _checkMethod;
 
         #endregion
 
@@ -31,12 +20,12 @@ namespace Pulsar.Input
         /// <summary>
         /// Constructor of ButtonCommand class
         /// </summary>
-        /// <param name="btn">Button instance</param>
-        /// <param name="btnEvent">Type of event</param>
-        internal ButtonCommand(Button btn, ButtonEventType btnEvent)
+        /// <param name="button">Button instance</param>
+        /// <param name="buttonEvent">Type of event</param>
+        internal ButtonCommand(Button button, ButtonEventType buttonEvent)
         {
-            _button = btn;
-            _buttonEvent = btnEvent;
+            _button = button;
+            _buttonEvent = buttonEvent;
             AssignCheckMethod();
         }
 

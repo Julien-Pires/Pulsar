@@ -241,7 +241,8 @@ namespace Pulsar.Assets
                 IAssetLoader loader = _engine.GetLoader<T>() ?? _engine.DefaultLoader;
                 LoadedAsset result = loader.Load<T>(assetName, path, parameters, this);
                 if (result == null)
-                    throw new NullReferenceException("");
+                    throw new NullReferenceException(string.Format("Failed to load asset {0}, no result returned",
+                        assetName));
 
                 _assetsMap.Add(assetName, result.Asset);
 
@@ -312,11 +313,6 @@ namespace Pulsar.Assets
         public int Count
         {
             get { return _assetsMap.Count; }
-        }
-
-        public IServiceProvider ServiceProvider
-        {
-            get { return _engine.ServiceProvider; }
         }
 
         #endregion

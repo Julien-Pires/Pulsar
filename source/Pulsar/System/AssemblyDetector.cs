@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Pulsar.System
 {
+    /// <summary>
+    /// Provides mechanismes to search for loaded assemblies
+    /// </summary>
     public sealed class AssemblyDetector
     {
         #region Fields
@@ -26,6 +29,10 @@ namespace Pulsar.System
 
         #region Methods
 
+        /// <summary>
+        /// Gets the list of loaded assemblies
+        /// </summary>
+        /// <returns>Returns a list of assemblies that are currently loaded</returns>
         public List<Assembly> GetAssemblies()
         {
             List<Assembly> result = new List<Assembly>();
@@ -43,6 +50,11 @@ namespace Pulsar.System
             return result;
         }
 
+        /// <summary>
+        /// Loads an assembly and recursively load all its referenced assembly
+        /// </summary>
+        /// <param name="assembly">Assembly to load</param>
+        /// <param name="loadedAssemblies">List of already loaded assemblies</param>
         private void LoadAssemblyAndReferences(Assembly assembly, List<Assembly> loadedAssemblies)
         {
             if (!loadedAssemblies.Contains(assembly))
@@ -62,13 +74,18 @@ namespace Pulsar.System
 
                     LoadAssemblyAndReferences(refAssembly, loadedAssemblies);
                 }
-                catch
+                catch (Exception)
                 {
                 }
             }
 #endif
         }
 
+        /// <summary>
+        /// Checks if an assembly is a system assembly
+        /// </summary>
+        /// <param name="name">Name of the assembly</param>
+        /// <returns>Returns true if the assembly is system otherwise false</returns>
         private bool IsSystem(string name)
         {
             for (int i = 0; i < SystemsName.Length; i++)
@@ -86,6 +103,11 @@ namespace Pulsar.System
             return false;
         }
 
+        /// <summary>
+        /// Checks if an assembly should be excluded from the search
+        /// </summary>
+        /// <param name="name">Name of the assembly</param>
+        /// <returns>Returns true if the assembly should be excluded otherwise false</returns>
         private bool IsExclude(string name)
         {
             for (int i = 0; i < _excludeName.Count; i++)
@@ -103,6 +125,11 @@ namespace Pulsar.System
             return false;
         }
 
+        /// <summary>
+        /// Checks if an assembly can be included in the search
+        /// </summary>
+        /// <param name="name">Name of the assembly</param>
+        /// <returns>Returns true if the assembly is included in the search otherwise false</returns>
         private bool CanInclude(string name)
         {
             if (IncludeAll)
@@ -115,13 +142,22 @@ namespace Pulsar.System
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets a value that indicates all assemblies will be include in the search
+        /// </summary>
         public bool IncludeAll { get; set; }
 
+        /// <summary>
+        /// Gets the list of excluded assemblies
+        /// </summary>
         public List<string> ExcludeAssembly
         {
             get { return _excludeName; }
         }
 
+        /// <summary>
+        /// Gets a list that contains the beginning of an assembly name to exclude of the search
+        /// </summary>
         public List<string> ExcludeAssemblyBeginBy
         {
             get { return _excludeStartWith; }

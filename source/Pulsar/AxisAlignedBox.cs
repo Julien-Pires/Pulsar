@@ -7,7 +7,7 @@ using Pulsar.Mathematic;
 namespace Pulsar
 {
     /// <summary>
-    /// Defines an Axis Aligned Bounding Box
+    /// Defines an Axis Aligned Bounding Box describes by a center and a half size
     /// </summary>
     public sealed class AxisAlignedBox
     {
@@ -112,7 +112,8 @@ namespace Pulsar
             Vector3.Dot(ref Center, ref plane.Normal, out s);
             s += plane.D;
 
-            if (s - e > 0) return PlaneIntersectionType.Back;
+            if (s - e > 0) 
+                return PlaneIntersectionType.Back;
 
             return (s + e < 0) ? PlaneIntersectionType.Front : PlaneIntersectionType.Intersecting;
         }

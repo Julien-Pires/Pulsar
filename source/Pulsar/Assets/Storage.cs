@@ -84,7 +84,7 @@ namespace Pulsar.Assets
         /// <param name="name">Name of the folder</param>
         public AssetFolder AddFolder(string path, string name)
         {
-            if(_foldersMap.ContainsKey(name))
+            if (_foldersMap.ContainsKey(name))
                 throw new ArgumentException(string.Format("Failed to add, a folder named {0} already presents", name));
 
             AssetFolder folder = new AssetFolder(path, _engine);

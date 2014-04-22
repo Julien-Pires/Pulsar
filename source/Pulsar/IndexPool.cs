@@ -31,10 +31,7 @@ namespace Pulsar
         /// <returns>Returns a based-zero index</returns>
         public int Get()
         {
-            if (_indexes.Count > 0)
-                return _indexes[_indexes.Count - 1];
-
-            return _nextIndex++;
+            return (_indexes.Count > 0) ? _indexes[_indexes.Count - 1] : _nextIndex++;
         }
 
         /// <summary>

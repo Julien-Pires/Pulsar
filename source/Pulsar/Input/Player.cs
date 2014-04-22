@@ -35,11 +35,11 @@ namespace Pulsar.Input
         /// </summary>
         internal void Update()
         {
-            if (_currentContext != null)
-            {
-                _currentContext.Update();
-                DispatchButtonEvent();
-            }
+            if (_currentContext == null) 
+                return;
+
+            _currentContext.Update();
+            DispatchButtonEvent();
         }
 
         /// <summary>
@@ -82,13 +82,15 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Create a new context
+        /// Creates a new context
         /// </summary>
         /// <param name="name">Name of the context</param>
         /// <returns>Return a VirtualInput instance</returns>
         public VirtualInput CreateContext(string name)
         {
-            if (_contextMap.ContainsKey(name)) throw new Exception(string.Format("A context named {0} already exists", name));
+            if (_contextMap.ContainsKey(name))
+                throw new Exception(string.Format("A context named {0} already exists", name));
+
             VirtualInput vInput = new VirtualInput(_playerIndex);
             _contextMap.Add(name, vInput);
 
@@ -96,7 +98,7 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Remove a context
+        /// Removes a context
         /// </summary>
         /// <param name="name">Name of the context</param>
         /// <returns>Return true if the context is removed otherwise false</returns>
@@ -106,50 +108,54 @@ namespace Pulsar.Input
         }
 
         /// <summary>
-        /// Get a context
+        /// Gets a context
         /// </summary>
         /// <param name="name">Name of the player</param>
         /// <returns>Return a VirtualInput instance</returns>
         public VirtualInput GetContext(string name)
         {
             VirtualInput input;
-            if (!_contextMap.TryGetValue(name, out input)) throw new Exception(string.Format("Failed to find a context named {0}", name));
+            if (!_contextMap.TryGetValue(name, out input))
+                throw new Exception(string.Format("Failed to find a context named {0}", name));
 
             return input;
         }
 
         /// <summary>
-        /// Set the current context
+        /// Sets the current context
         /// </summary>
         /// <param name="name">Name of the context</param>
         public void SetCurrentContext(string name)
         {
             VirtualInput input;
-            if (!_contextMap.TryGetValue(name, out input)) throw new Exception(string.Format("Failed to find a context named {0}", name));
+            if (!_contextMap.TryGetValue(name, out input))
+                throw new Exception(string.Format("Failed to find a context named {0}", name));
 
             _currentContext = input;
         }
 
         /// <summary>
-        /// Get a button from the current context
+        /// Gets a button from the current context
         /// </summary>
         /// <param name="name">Name of the button</param>
         /// <returns>Return a Button instance</returns>
         public Button GetButton(string name)
         {
-            if (_currentContext == null) throw new Exception("No current context set");
+            if (_currentContext == null) 
+                throw new Exception("No current context set");
 
             return _currentContext.GetButton(name);
         }
 
         /// <summary>
-        /// Get an axis from the current context
+        /// Gets an axis from the current context
         /// </summary>
         /// <param name="name">Name of the axis</param>
         /// <returns>Return an axis instance</returns>
         public Axis GetAxis(string name)
         {
-            if (_currentContext == null) throw new Exception("No current context set");
+            if (_currentContext == null) 
+                throw new Exception("No current context set");
 
             return _currentContext.GetAxis(name);
         }
@@ -159,25 +165,30 @@ namespace Pulsar.Input
         #region Properties
 
         /// <summary>
-        /// Get the index of the player
+        /// Gets the index of the player
         /// </summary>
         public short PlayerIndex
         {
             get { return _playerIndex.Index; }
         }
 
+        /// <summary>
+        /// Gets or sets the gamepad index associated to this player
+        /// </summary>
         public short GamePadIndex
         {
             get { return _playerIndex.GamePadIndex; }
             set
             {
-                if(value > (GamePad.GamePadCount - 1) || (value < 0)) throw new ArgumentOutOfRangeException("value");
+                if(value > (GamePad.GamePadCount - 1) || (value < 0)) 
+                    throw new ArgumentOutOfRangeException("value");
+
                 _playerIndex.GamePadIndex = value;
             }
         }
 
         /// <summary>
-        /// Get the current context
+        /// Gets the current context
         /// </summary>
         public VirtualInput CurrentContext
         {

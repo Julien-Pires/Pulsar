@@ -114,7 +114,8 @@ namespace Pulsar
         public void UnregisterListener(EventType eventType)
         {
             List<IEventHandler> listeners = GetListeners(eventType);
-            if(listeners == null) return;
+            if(listeners == null) 
+                return;
 
             listeners.Clear();
         }
@@ -139,7 +140,8 @@ namespace Pulsar
         public void UnregisterListener(EventType eventType, IEventHandler listener)
         {
             List<IEventHandler> listeners = GetListeners(eventType);
-            if (listeners == null) return;
+            if (listeners == null) 
+                return;
 
             listeners.Remove(listener);
         }
@@ -152,7 +154,8 @@ namespace Pulsar
         {
             List<IEventHandler> listeners;
             _eventListenersMap.TryGetValue(msg.Event.EventHash, out listeners);
-            if (listeners == null) return;
+            if (listeners == null) 
+                return;
 
             _queueList[_activeQueue].Enqueue(msg);
         }
@@ -183,7 +186,8 @@ namespace Pulsar
         {
             List<IEventHandler> listeners;
             _eventListenersMap.TryGetValue(msg.Event.EventHash, out listeners);
-            if ((listeners == null) || (listeners.Count == 0)) return;
+            if ((listeners == null) || (listeners.Count == 0)) 
+                return;
 
             for (int i = 0; i < listeners.Count; i++)
                 listeners[i].HandleEvent(msg);
@@ -210,18 +214,23 @@ namespace Pulsar
 
                 List<IEventHandler> listeners;
                 _eventListenersMap.TryGetValue(msg.Event.EventHash, out listeners);
-                if ((listeners == null) || (listeners.Count == 0)) continue;
+                if ((listeners == null) || (listeners.Count == 0)) 
+                    continue;
 
                 for (int i = 0; i < listeners.Count; i++)
                     listeners[i].HandleEvent(msg);
 
                 currentTime = Stopwatch.GetTimestamp();
-                if (maxProcessTime == InfiniteTime) continue;
-                if (currentTime >= maxTime) break;
+                if (maxProcessTime == InfiniteTime) 
+                    continue;
+
+                if (currentTime >= maxTime) 
+                    break;
             }
 
             bool emptyQueue = (processedQueue.Count == 0);
-            if (emptyQueue) return;
+            if (emptyQueue) 
+                return;
 
             while (processedQueue.Count > 0)
             {

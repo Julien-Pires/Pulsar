@@ -2,6 +2,9 @@
 
 namespace Pulsar
 {
+    /// <summary>
+    /// Contains constant for the project
+    /// </summary>
     internal static class GlobalConstant
     {
         #region Fields
@@ -12,6 +15,9 @@ namespace Pulsar
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name of the content folder
+        /// </summary>
         public static string ContentFolder
         {
             get { return _contentFolder; }

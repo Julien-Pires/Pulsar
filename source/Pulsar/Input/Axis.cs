@@ -84,6 +84,9 @@ namespace Pulsar.Input
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of Axis class
+        /// </summary>
         internal Axis()
         {
         }
@@ -178,7 +181,8 @@ namespace Pulsar.Input
                 }
                 _value = rawValue;
 
-                if (activated) break;
+                if (activated) 
+                    break;
             }
         }
 

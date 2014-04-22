@@ -3,13 +3,6 @@
 namespace Pulsar.Input
 {
     /// <summary>
-    /// Delegate used when an input event is triggerd
-    /// </summary>
-    /// <param name="inputEvent">InputEvent that trigger the event</param>
-    /// <param name="propagate">Use to indicate that after the end of the method event should stop calling anothers</param>
-    public delegate void InputEventFired(InputEvent inputEvent, ref bool propagate);
-
-    /// <summary>
     /// Represents an event that is triggered by a set of commands
     /// </summary>
     public sealed class InputEvent
@@ -47,13 +40,15 @@ namespace Pulsar.Input
             for (int i = 0; i < _commands.Count; i++)
                 isTriggered &= _commands[i].IsTriggered;
 
-            if (!isTriggered) return;
+            if (!isTriggered) 
+                return;
 
             bool propagate = true;
             for (int i = 0; i < _listeners.Count; i++)
             {
                 _listeners[i](this, ref propagate);
-                if(!propagate) break;
+                if(!propagate) 
+                    break;
             }
         }
 

@@ -84,20 +84,28 @@
     <Compile Include="IEventHandler.cs" />
     <Compile Include="IndexPool.cs" />
     <Compile Include="Input\AbstractButton.cs" />
+    <Compile Include="Input\AnalogButtons.cs" />
     <Compile Include="Input\Axis.cs" />
     <Compile Include="Input\AxisCommand.cs" />
+    <Compile Include="Input\AxisEventType.cs" />
     <Compile Include="Input\Button.cs" />
     <Compile Include="Input\ButtonCommand.cs" />
     <Compile Include="Input\ButtonEvent.cs" />
+    <Compile Include="Input\ButtonEventType.cs" />
+    <Compile Include="Input\ButtonType.cs" />
     <Compile Include="Input\GamePad.cs" />
     <Compile Include="Input\GamePadEventArgs.cs" />
     <Compile Include="Input\IInputCommand.cs" />
     <Compile Include="Input\IInputService.cs" />
+    <Compile Include="Input\InputDevice.cs" />
     <Compile Include="Input\InputEvent.cs" />
+    <Compile Include="Input\InputEventFired.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\InputService.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\Mouse.cs" />
+    <Compile Include="Input\MouseAnalogButtons.cs" />
+    <Compile Include="Input\MouseButtons.cs" />
     <Compile Include="Input\Player.cs" />
     <Compile Include="Input\PlayerIndex.cs" />
     <Compile Include="Input\VirtualInput.cs" />
@@ -113,6 +121,7 @@
     <Compile Include="System\TypeDetector.cs" />
     <Compile Include="System\TypeDetectorRule.cs" />
     <Compile Include="Transform.cs" />
+    <Compile Include="TransformChangedEventHandler.cs" />
     <Compile Include="TransformSpace.cs" />
   </ItemGroup>
   <ItemGroup>
