@@ -4,11 +4,10 @@ using Microsoft.Xna.Framework;
 
 using Pulsar.Graphics.Fx;
 
-namespace Pulsar.Graphics.SceneGraph
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
-    /// Class representing a part of an Entity
-    /// A SubEntity is attached to a ModelMeshPart instance
+    /// Represents a part of an Entity
     /// </summary>
     public sealed class SubEntity : IRenderable, IDisposable
     {
@@ -44,6 +43,9 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Methods
 
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
         public void Dispose()
         {
             if(_isDisposed)
@@ -64,16 +66,29 @@ namespace Pulsar.Graphics.SceneGraph
             }
         }
 
+        /// <summary>
+        /// Computes the squared distance between this sub-entity and a camera
+        /// </summary>
+        /// <param name="camera">Camera</param>
+        /// <returns>Returns the squared distance</returns>
         public float GetViewDepth(Camera camera)
         {
             return _parent.Parent.GetViewDepth(camera);
         }
 
+        /// <summary>
+        /// Called when the associated material change its technique
+        /// </summary>
+        /// <param name="material">Material</param>
+        /// <param name="definition">New technique used</param>
         private void OnMaterialTechniqueChanged(Material material, TechniqueDefinition definition)
         {
             UpdateKeysMaterialPart();
         }
 
+        /// <summary>
+        /// Updates the render queue key
+        /// </summary>
         private void UpdateKeysMaterialPart()
         {
             _key.Material = _material.Id;
@@ -85,20 +100,23 @@ namespace Pulsar.Graphics.SceneGraph
         #region Properties
 
         /// <summary>
-        /// Get the ID of this sub entity, the ID correspond to the ID of the submesh attached to this instance
+        /// Gets the ID of this sub entity, the ID correspond to the ID of the submesh attached to this instance
         /// </summary>
         public uint Id
         {
             get { return _subMesh.RenderInfo.Id; }
         }
 
+        /// <summary>
+        /// Gets the render queue key
+        /// </summary>
         public RenderQueueKey Key
         {
             get { return _key; }
         }
 
         /// <summary>
-        /// Get the name of this SubEntity
+        /// Gets the name of this SubEntity
         /// </summary>
         public string Name
         {
@@ -106,7 +124,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get or set a boolean indicating if this instance use instancing
+        /// Gets or sets a boolean indicating if this instance use instancing
         /// </summary>
         public bool UseInstancing
         {
@@ -115,7 +133,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get the rendering info
+        /// Gets the rendering info
         /// </summary>
         public RenderingInfo RenderInfo
         {
@@ -123,7 +141,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get or set the material used by this sub entity
+        /// Gets or sets the material used by this sub entity
         /// </summary>
         public Material Material
         {
@@ -149,7 +167,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get the full transform matrix
+        /// Gets the full transform matrix
         /// </summary>
         public Matrix Transform
         {
@@ -163,7 +181,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Get the ID of the render queue used by this SubEntity
+        /// Gets or sets the render queue group
         /// </summary>
         public byte RenderQueueGroup
         {

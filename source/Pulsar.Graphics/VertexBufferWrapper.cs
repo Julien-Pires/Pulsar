@@ -12,9 +12,9 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        protected readonly TBuffer Buffer;
+        protected TBuffer Buffer;
 
-        private bool _disposed;
+        private bool _isDisposed;
 
         #endregion
 
@@ -51,7 +51,7 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Disposes resources
+        /// Releases all resources
         /// </summary>
         public void Dispose()
         {
@@ -59,17 +59,35 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Disposes resources
+        /// Releases all resources
         /// </summary>
         /// <param name="disposing">Indicates whether the methods is called from IDisposable.Dispose</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_isDisposed) 
+                return;
 
-            if (disposing) Buffer.Dispose();
-            _disposed = true;
+            try
+            {
+                if (disposing)
+                    Buffer.Dispose();
+            }
+            finally
+            {
+                Buffer = null;
+
+                _isDisposed = true;
+            }
         }
 
+        /// <summary>
+        /// Gets the data stored in the buffer
+        /// </summary>
+        /// <typeparam name="T">Type of vertex stored in the buffer</typeparam>
+        /// <param name="bufferOffset">Offset in the buffer</param>
+        /// <param name="data">Array that receives the data</param>
+        /// <param name="startIndex">Starting index in the buffer</param>
+        /// <param name="elementCount">Number of element to get</param>
         public void GetData<T>(int bufferOffset, T[] data, int startIndex, int elementCount) where T : struct
         {
             int vertexStride = Buffer.VertexDeclaration.VertexStride;

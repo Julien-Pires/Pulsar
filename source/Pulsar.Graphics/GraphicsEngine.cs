@@ -6,12 +6,12 @@ using Microsoft.Xna.Framework;
 
 using Pulsar.Assets;
 using Pulsar.Graphics.Fx;
-using Pulsar.Graphics.SceneGraph;
+using Pulsar.Graphics.Graph;
 
 namespace Pulsar.Graphics
 {
     /// <summary>
-    /// Represents an entry point for the Graphics system
+    /// Represents an entry point for the Graphics engine
     /// </summary>
     public sealed class GraphicsEngine : IDisposable
     {
@@ -26,7 +26,7 @@ namespace Pulsar.Graphics
         private readonly BufferManager _bufferManager;
         private readonly BuiltInShaderManager _shaderManager;
         private readonly PrefabFactory _prefabFactory;
-        private Dictionary<string, BaseScene> _scenes = new Dictionary<string, BaseScene>();
+        private Dictionary<string, SceneGraph> _scenes = new Dictionary<string, SceneGraph>();
         private readonly FrameStatistics _frameStats = new FrameStatistics();
         private FrameContext _context = new FrameContext();
         private readonly Stopwatch _watch = new Stopwatch();
@@ -70,7 +70,7 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Disposes all resources
+        /// Releases all resources
         /// </summary>
         public void Dispose()
         {
@@ -79,7 +79,7 @@ namespace Pulsar.Graphics
 
             try
             {
-                foreach (BaseScene graph in _scenes.Values)
+                foreach (SceneGraph graph in _scenes.Values)
                     graph.Dispose();
 
                 _scenes.Clear();
@@ -99,6 +99,9 @@ namespace Pulsar.Graphics
             }
         }
 
+        /// <summary>
+        /// Initialize the engine
+        /// </summary>
         internal void Initialize()
         {
             _assetEngine.InitializeLoaders(GraphicsConstant.LoadersCategory);
@@ -131,9 +134,9 @@ namespace Pulsar.Graphics
         /// </summary>
         /// <param name="name">Name of the scene graph</param>
         /// <returns>Returns an instance of SceneGraph class</returns>
-        public BaseScene CreateSceneGraph(string name)
+        public SceneGraph CreateSceneGraph(string name)
         {
-            BaseScene graph = new BaseScene(name, _renderer, _assetEngine);
+            SceneGraph graph = new SceneGraph(name, _renderer, _assetEngine);
             _scenes.Add(name, graph);
 
             return graph;
@@ -146,7 +149,7 @@ namespace Pulsar.Graphics
         /// <returns>Returns true if the scene graph is removed otherwise false</returns>
         public bool RemoveSceneGraph(string name)
         {
-            BaseScene graph;
+            SceneGraph graph;
             if (!_scenes.TryGetValue(name, out graph))
                 return false;
 
@@ -160,7 +163,7 @@ namespace Pulsar.Graphics
         /// </summary>
         /// <param name="name">Name of the scene graph</param>
         /// <returns>Returns an instance of SceneGraph</returns>
-        public BaseScene GetScene(string name)
+        public SceneGraph GetScene(string name)
         {
             return !_scenes.ContainsKey(name) ? null : _scenes[name];
         }
@@ -169,6 +172,9 @@ namespace Pulsar.Graphics
 
         #region Properties
 
+        /// <summary>
+        /// Gets the graphics device manager used by the engine
+        /// </summary>
         public GraphicsDeviceManager DeviceManager
         {
             get { return _deviceManager; }
@@ -214,6 +220,9 @@ namespace Pulsar.Graphics
             get { return _renderer; }
         }
 
+        /// <summary>
+        /// Gets the manager for built-in shaders
+        /// </summary>
         internal BuiltInShaderManager ShaderManager
         {
             get { return _shaderManager; }

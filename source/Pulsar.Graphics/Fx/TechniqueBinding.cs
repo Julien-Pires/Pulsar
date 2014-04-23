@@ -43,7 +43,7 @@ namespace Pulsar.Graphics.Fx
         #region Methods
 
         /// <summary>
-        /// Releases resources
+        /// Releases all resources
         /// </summary>
         public void Dispose()
         {
@@ -67,6 +67,11 @@ namespace Pulsar.Graphics.Fx
             _shader.SetCurrentTechnique(Definition);
         }
 
+        /// <summary>
+        /// Sets the value for a specified constant
+        /// </summary>
+        /// <param name="constant">Name of the constant</param>
+        /// <param name="value">Value</param>
         internal void TrySetConstantValue(string constant, object value)
         {
             ShaderConstantDefinition definition = _shader.GetConstantDefinition(constant);
@@ -99,8 +104,22 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name of the technique
+        /// </summary>
+        public string Name
+        {
+            get { return Definition.Name; }
+        }
+
+        /// <summary>
+        /// Gets the technique definition
+        /// </summary>
         public TechniqueDefinition Definition { get; private set; }
 
+        /// <summary>
+        /// Gets the list of pass binding
+        /// </summary>
         internal PassBinding[] PassesBindings { get; private set; }
 
         /// <summary>
@@ -122,14 +141,6 @@ namespace Pulsar.Graphics.Fx
         public ShaderConstantBindingCollection InstanceConstantsBinding
         {
             get { return _shader.InstanceConstantsBinding; }
-        }
-
-        /// <summary>
-        /// Gets the name of the technique
-        /// </summary>
-        public string Name
-        {
-            get { return Definition.Name; }
         }
 
         #endregion

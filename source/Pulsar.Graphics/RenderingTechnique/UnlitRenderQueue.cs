@@ -3,10 +3,16 @@ using System.Collections.Generic;
 
 namespace Pulsar.Graphics.RenderingTechnique
 {
+    /// <summary>
+    /// Represents a basic rendering technique with no light no shadows
+    /// </summary>
     internal sealed partial class UnlitRendering
     {
         #region Nested
 
+        /// <summary>
+        /// Describes a render queue
+        /// </summary>
         public sealed class UnlitRenderQueue : IRenderQueue, IDisposable
         {
             #region Fields
@@ -20,6 +26,9 @@ namespace Pulsar.Graphics.RenderingTechnique
 
             #region Constructors
 
+            /// <summary>
+            /// Constructor of UnlitRenderQueue
+            /// </summary>
             internal UnlitRenderQueue()
             {
             }
@@ -28,11 +37,19 @@ namespace Pulsar.Graphics.RenderingTechnique
 
             #region Static methods
 
+            /// <summary>
+            /// Used to create RenderQueueElement instance
+            /// </summary>
+            /// <returns>Returns a new instance of RenderQueueElement</returns>
             private static RenderQueueElement CreateElement()
             {
                 return new RenderQueueElement();
             }
 
+            /// <summary>
+            /// Used to reset a RenderQueueElement
+            /// </summary>
+            /// <param name="element">RenderQueueElement instance</param>
             private static void ResetElement(RenderQueueElement element)
             {
                 element.Key = 0;
@@ -43,6 +60,9 @@ namespace Pulsar.Graphics.RenderingTechnique
 
             #region Methods
 
+            /// <summary>
+            /// Releases all resources
+            /// </summary>
             public void Dispose()
             {
                 if(_isDisposed)
@@ -62,12 +82,20 @@ namespace Pulsar.Graphics.RenderingTechnique
                 }
             }
 
+            /// <summary>
+            /// Resets the render queue
+            /// </summary>
             internal void Reset()
             {
                 _pool.Release(_renderables);
                 _renderables.Clear();
             }
 
+            /// <summary>
+            /// Adds a renderable object to the render queue
+            /// </summary>
+            /// <param name="key">Key</param>
+            /// <param name="renderable">Renderable object</param>
             public void AddRenderable(RenderQueueKey key, IRenderable renderable)
             {
                 RenderQueueElement element = _pool.Get();
@@ -76,6 +104,9 @@ namespace Pulsar.Graphics.RenderingTechnique
                 _renderables.Add(element);
             }
 
+            /// <summary>
+            /// Sorts the render queue
+            /// </summary>
             internal void Sort()
             {
                 _renderables.Sort(_comparer);
@@ -85,6 +116,9 @@ namespace Pulsar.Graphics.RenderingTechnique
 
             #region Properties
 
+            /// <summary>
+            /// Gets the list of renderables object
+            /// </summary>
             internal List<RenderQueueElement> Renderables
             {
                 get { return _renderables; }

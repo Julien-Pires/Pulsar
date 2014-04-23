@@ -46,6 +46,11 @@ namespace Pulsar.Graphics.Fx
 
         #region Operators
 
+        /// <summary>
+        /// Gets a pass definition for a specified name
+        /// </summary>
+        /// <param name="name">Name of the pass</param>
+        /// <returns>Returns an instance of PassDefinition if found otherwise false</returns>
         public PassDefinition this[string name]
         {
             get { return GetPass(name); }
@@ -55,6 +60,9 @@ namespace Pulsar.Graphics.Fx
 
         #region Methods
 
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
         public void Dispose()
         {
             if(_isDisposed)
@@ -66,11 +74,21 @@ namespace Pulsar.Graphics.Fx
             _isDisposed = true;
         }
 
+        /// <summary>
+        /// Gets a pass definition at a specified index
+        /// </summary>
+        /// <param name="index">Index of the pass</param>
+        /// <returns>Returns a PassDefinition instance</returns>
         public PassDefinition GetPass(int index)
         {
             return _passes[index];
         }
 
+        /// <summary>
+        /// Gets a pass definition for a specified name
+        /// </summary>
+        /// <param name="name">Name of the pass</param>
+        /// <returns>Returns an instance of PassDefinition if found otherwise false</returns>
         public PassDefinition GetPass(string name)
         {
             int index = GetPassIndex(name);
@@ -78,6 +96,11 @@ namespace Pulsar.Graphics.Fx
             return (index > -1) ? _passes[index] : null;
         }
 
+        /// <summary>
+        /// Finds the index of a specified pass
+        /// </summary>
+        /// <param name="name">Name of the pass</param>
+        /// <returns>Returns a based zero index if found otherwise -1</returns>
         private int GetPassIndex(string name)
         {
             for (int i = 0; i < _passes.Length; i++)
@@ -98,6 +121,9 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         internal EffectTechnique Technique { get; private set; }
 
+        /// <summary>
+        /// Gets the list of pass definition
+        /// </summary>
         internal PassDefinition[] Passes
         {
             get { return _passes; }
@@ -111,6 +137,9 @@ namespace Pulsar.Graphics.Fx
             get { return Technique.Name; }
         }
 
+        /// <summary>
+        /// Gets the number of pass for this technique
+        /// </summary>
         public int PassCount
         {
             get { return _passes.Length; }

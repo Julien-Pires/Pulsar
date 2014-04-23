@@ -179,6 +179,11 @@ namespace Pulsar.Graphics.Asset
 
         #region Methods
 
+        /// <summary>
+        /// Initializes the loader
+        /// </summary>
+        /// <param name="engine">Asset engine that owns this loader</param>
+        /// <param name="serviceProvider">Service provider</param>
         public override void Initialize(AssetEngine engine, IServiceProvider serviceProvider)
         {
             base.Initialize(engine, serviceProvider);
@@ -186,7 +191,7 @@ namespace Pulsar.Graphics.Asset
             IGraphicsEngineService engineService =
                 serviceProvider.GetService(typeof (IGraphicsEngineService)) as IGraphicsEngineService;
             if(engineService == null)
-                throw new Exception("");
+                throw new Exception("Failed to find graphics engine service");
 
             _bufferManager = engineService.Engine.BufferManager;
         }

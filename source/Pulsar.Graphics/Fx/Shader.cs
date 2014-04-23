@@ -103,6 +103,11 @@ namespace Pulsar.Graphics.Fx
             return shader;
         }
 
+        /// <summary>
+        /// Reads a binary input to extract pass definition
+        /// </summary>
+        /// <param name="input">Input</param>
+        /// <param name="definition">Existing instance</param>
         private static void ReadPass(ContentReader input, PassDefinition definition)
         {
             StateObject<RasterizerState> rasterizerState =
@@ -168,8 +173,9 @@ namespace Pulsar.Graphics.Fx
             {
                 string name = input.ReadString();
                 TechniqueDefinition technique;
-                if(!_techniquesMap.TryGetValue(name, out technique))
-                    throw new Exception("");
+                if (!_techniquesMap.TryGetValue(name, out technique))
+                    throw new Exception(string.Format("Failed to load shader, {0} doesn't have a technique named {1}",
+                        Name, name));
 
                 technique.IsTransparent = input.ReadBoolean();
 
@@ -178,8 +184,9 @@ namespace Pulsar.Graphics.Fx
                 {
                     string passName = input.ReadString();
                     PassDefinition passDefinition = technique[passName];
-                    if(passDefinition == null)
-                        throw new Exception("");
+                    if (passDefinition == null)
+                        throw new Exception(string.Format("Failed to load shader, {0} doesn't have a pass named {1}",
+                            Name, passName));
 
                     ReadPass(input, passDefinition);
                 }
@@ -197,8 +204,9 @@ namespace Pulsar.Graphics.Fx
             {
                 string name = input.ReadString();
                 ShaderConstantDefinition constantDefinition;
-                if(!_constantsMap.TryGetValue(name, out constantDefinition))
-                    throw new Exception("");
+                if (!_constantsMap.TryGetValue(name, out constantDefinition))
+                    throw new Exception(string.Format("Failed to load shader, {0} doesn't have a constant named {1}",
+                        Name, name));
 
                 constantDefinition.Source = (ShaderConstantSource)input.ReadInt32();
                 constantDefinition.UpdateFrequency = (UpdateFrequency)input.ReadInt32();
@@ -282,6 +290,9 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name of the shader
+        /// </summary>
         public string Name
         {
             get { return _underlyingEffect.Name; }
@@ -292,12 +303,18 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         public ShaderConstantBindingCollection GlobalConstantsBinding { get; private set; }
 
+        /// <summary>
+        /// Gets the collection of constants binding used for instance update
+        /// </summary>
         public ShaderConstantBindingCollection InstanceConstantsBinding { get; private set; }
 
+        /// <summary>
+        /// Gets the name of the default technique
+        /// </summary>
         public string DefaultTechnique
         {
             get { return _default; }
-            set
+            internal set
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {

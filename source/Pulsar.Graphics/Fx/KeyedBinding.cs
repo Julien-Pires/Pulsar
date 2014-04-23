@@ -3,7 +3,7 @@
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents a shader constant binding that use a key to retrieve its value on a material instance
+    /// Represents a binding to a shader constant that use a key to retrieve its value on a material instance
     /// </summary>
     /// <typeparam name="T">Constant type</typeparam>
     public sealed class KeyedBinding<T> : ShaderConstantBinding<T>

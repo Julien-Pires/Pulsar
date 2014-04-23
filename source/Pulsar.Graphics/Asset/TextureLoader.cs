@@ -48,13 +48,14 @@ namespace Pulsar.Graphics.Asset
         /// Initializes the loader
         /// </summary>
         /// <param name="engine">Asset engine that use this loader</param>
+        /// <param name="serviceProvider">Service provider</param>
         public override void Initialize(AssetEngine engine, IServiceProvider serviceProvider)
         {
             base.Initialize(engine, serviceProvider);
 
             _deviceManager = serviceProvider.GetService(typeof (IGraphicsDeviceManager)) as GraphicsDeviceManager;
             if(_deviceManager == null)
-                throw new Exception("");
+                throw new Exception("Failed to find graphics device manager");
 
             _textureFolder = engine[GraphicsConstant.Storage][GraphicsConstant.TextureFolderName];
             if (!_textureFolder.IsLoaded(MissingTexture2DName))

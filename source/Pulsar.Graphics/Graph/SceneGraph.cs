@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using Pulsar.Assets;
 using Pulsar.Graphics.RenderingTechnique;
 
-namespace Pulsar.Graphics.SceneGraph
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Represents a basic scene graph
     /// </summary>
-    public class BaseScene : IDisposable
+    public class SceneGraph : IDisposable
     {
         #region Fields
 
@@ -26,12 +26,12 @@ namespace Pulsar.Graphics.SceneGraph
         #region Constructors
 
         /// <summary>
-        /// Constructor of BaseScene class
+        /// Constructor of SceneGraph class
         /// </summary>
         /// <param name="name">Name of the scene tree</param>
         /// <param name="renderer">Renderer</param>
         /// <param name="assetEngine">AssetEngine</param>
-        internal BaseScene(string name, Renderer renderer, AssetEngine assetEngine)
+        internal SceneGraph(string name, Renderer renderer, AssetEngine assetEngine)
         {
             Debug.Assert(renderer != null);
             Debug.Assert(assetEngine != null);
@@ -49,7 +49,7 @@ namespace Pulsar.Graphics.SceneGraph
         #region Methods
 
         /// <summary>
-        /// Disposes all resources
+        /// Releases all resources
         /// </summary>
         public void Dispose()
         {
@@ -190,7 +190,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="node">Node to destroy</param>
         public void DestroyNode(SceneNode node)
         {
-            if(node.Scene != this) 
+            if(node.Graph != this) 
                 throw new ArgumentException("Already attached to another tree", "node");
 
             if(node == _root) 

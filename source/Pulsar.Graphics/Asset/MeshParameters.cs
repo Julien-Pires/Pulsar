@@ -52,7 +52,7 @@ namespace Pulsar.Graphics.Asset
             set
             {
                 if(IsFrozen)
-                    throw new Exception("");
+                    throw new Exception("Failed to change value, object is frozen");
 
                 Source = string.IsNullOrEmpty(value) ? AssetSource.NewInstance : AssetSource.FromFile;
                 _filename = value;

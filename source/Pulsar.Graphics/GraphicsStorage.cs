@@ -4,6 +4,9 @@ using Pulsar.Assets;
 
 namespace Pulsar.Graphics
 {
+    /// <summary>
+    /// Manages the asset storage used by the graphics engine
+    /// </summary>
     internal sealed class GraphicsStorage : IDisposable
     {
         #region Fields
@@ -15,6 +18,10 @@ namespace Pulsar.Graphics
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of GraphicsStorage class
+        /// </summary>
+        /// <param name="assetEngine">Asset engine</param>
         internal GraphicsStorage(AssetEngine assetEngine)
         {
             ContentReaderHelper.AddReadMethod(c => c.ReadExternalReference<Texture>(), typeof(Texture));
@@ -30,9 +37,13 @@ namespace Pulsar.Graphics
 
         #region Methods
 
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
         public void Dispose()
         {
-            if(_isDisposed) return;
+            if(_isDisposed) 
+                return;
 
             try
             {
@@ -54,12 +65,24 @@ namespace Pulsar.Graphics
 
         #region Properties
 
+        /// <summary>
+        /// Gets the texture folder
+        /// </summary>
         public AssetFolder TextureFolder { get; private set; }
 
+        /// <summary>
+        /// Gets the shader folder
+        /// </summary>
         public AssetFolder ShaderFolder { get; private set; }
 
+        /// <summary>
+        /// Gets the material folder
+        /// </summary>
         public AssetFolder MaterialFolder { get; private set; }
 
+        /// <summary>
+        /// Gets the mesh folder
+        /// </summary>
         public AssetFolder MeshFolder { get; private set; }
 
         #endregion

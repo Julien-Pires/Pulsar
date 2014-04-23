@@ -7,7 +7,7 @@ namespace Pulsar.Graphics.Fx
     using XnaTexture = Microsoft.Xna.Framework.Graphics.Texture;
 
     /// <summary>
-    /// Manages a list of delegate used for automatic binding
+    /// Manages a list of delegates used for automatic binding
     /// </summary>
     internal static class AutomaticDelegateMapper
     {

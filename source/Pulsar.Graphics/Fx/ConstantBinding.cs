@@ -1,7 +1,7 @@
 ﻿namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents a shader constant binding to a constant value
+    /// Represents a binding to a shader constant that need to be manually updated
     /// </summary>
     /// <typeparam name="T">Constant type</typeparam>
     public sealed class ConstantBinding<T> : ShaderConstantBinding<T>
@@ -22,6 +22,9 @@
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets the value of the constant
+        /// </summary>
         public new T Value
         {
             get { return InternalValue; }

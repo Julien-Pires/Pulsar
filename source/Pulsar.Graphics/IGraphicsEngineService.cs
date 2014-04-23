@@ -8,7 +8,7 @@
         #region Properties
 
         /// <summary>
-        /// Get the graphic engine
+        /// Gets the graphic engine
         /// </summary>
         GraphicsEngine Engine { get; }
 

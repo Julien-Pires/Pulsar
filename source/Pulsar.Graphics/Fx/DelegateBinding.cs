@@ -3,7 +3,7 @@
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents a shader constant binding that use a delegate to update its value
+    /// Represents a binding to a shader constant that use a delegate to update its value
     /// </summary>
     /// <typeparam name="T">Constant type</typeparam>
     public sealed class DelegateBinding<T> : BaseDelegateBinding<T>

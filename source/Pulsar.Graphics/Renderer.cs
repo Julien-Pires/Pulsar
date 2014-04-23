@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -15,7 +16,7 @@ namespace Pulsar.Graphics
         internal readonly FrameDetail FrameDetail = new FrameDetail();
 
         private bool _disposed;
-        private readonly GraphicsDeviceManager _graphicsDeviceManager;
+        private GraphicsDeviceManager _graphicsDeviceManager;
         private GraphicsDevice _graphicDevice;
         private SpriteBatch _spriteBatch;
 
@@ -41,17 +42,27 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Disposes all ressources
+        /// Releases all ressources
         /// </summary>
         public void Dispose()
         {
-            if(_disposed) return;
+            if(_disposed) 
+                return;
 
-            _graphicsDeviceManager.DeviceCreated -= GraphicsDeviceCreated;
-            if(_spriteBatch != null) 
-                _spriteBatch.Dispose();
+            try
+            {
+                _graphicsDeviceManager.DeviceCreated -= GraphicsDeviceCreated;
+                if (_spriteBatch != null)
+                    _spriteBatch.Dispose();
+            }
+            finally
+            {
+                _graphicsDeviceManager = null;
+                _graphicDevice = null;
+                _spriteBatch = null;
 
-            _disposed = true;
+                _disposed = true;
+            }
         }
 
         /// <summary>
@@ -103,16 +114,28 @@ namespace Pulsar.Graphics
             _graphicDevice.SetRenderTarget(null);
         }
 
+        /// <summary>
+        /// Sets the depthstencil state
+        /// </summary>
+        /// <param name="state">DepthStencil</param>
         internal void SetDepthStencilState(DepthStencilState state)
         {
             _graphicDevice.DepthStencilState = state;
         }
 
+        /// <summary>
+        /// Sets the rasterizer state
+        /// </summary>
+        /// <param name="state">Rasterizer</param>
         internal void SetRasterizerState(RasterizerState state)
         {
             _graphicDevice.RasterizerState = state;
         }
 
+        /// <summary>
+        /// Sets the blend state
+        /// </summary>
+        /// <param name="state">Blend</param>
         internal void SetBlendState(BlendState state)
         {
             _graphicDevice.BlendState = state;

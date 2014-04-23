@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Graphics.SceneGraph;
+using Pulsar.Graphics.Graph;
 
 namespace Pulsar.Graphics
 {
@@ -11,6 +11,9 @@ namespace Pulsar.Graphics
     {
         #region Methods
 
+        /// <summary>
+        /// Resets the context
+        /// </summary>
         internal void Reset()
         {
             ElapsedTime = 0.0f;
@@ -42,14 +45,29 @@ namespace Pulsar.Graphics
         /// </summary>
         public IRenderable Renderable { get; internal set; }
 
+        /// <summary>
+        /// Gets the current material
+        /// </summary>
         public Material Material { get; internal set; }
 
+        /// <summary>
+        /// Gets the current render state
+        /// </summary>
         public RenderState RenderState { get; internal set; }
 
+        /// <summary>
+        /// Gets the current depthstencil state
+        /// </summary>
         public DepthStencilState DepthStencilState { get; internal set; }
 
+        /// <summary>
+        /// Gets the current rasterizer state
+        /// </summary>
         public RasterizerState RasterizerState { get; internal set; }
 
+        /// <summary>
+        /// Gets the blend state
+        /// </summary>
         public BlendState BlendState { get; internal set; }
 
         #endregion

@@ -1,30 +1,37 @@
 ﻿using System;
 
-using Pulsar.Graphics.SceneGraph;
+using Pulsar.Graphics.Graph;
 
 namespace Pulsar.Graphics.RenderingTechnique
 {
     /// <summary>
-    /// Interfaces for rendering technique used by Renderer class to render a scene graph
+    /// Describes a rendering technique
+    /// A rendering technique must provide its own render queue
     /// </summary>
     internal interface IRenderingTechnique : IDisposable
     {
         #region Methods
 
         /// <summary>
-        /// Render a scene graph into a viewport
+        /// Render a scene for a specified viewport and camera
         /// </summary>
         /// <param name="viewport">Viewport in which the rendering is sent</param>
         /// <param name="camera">Camera representing the point of view</param>
-        /// <param name="queue">Queue of objects to render</param>
+        /// <param name="context">Frame context</param>
         void Render(Viewport viewport, Camera camera, FrameContext context);
 
         #endregion
 
         #region Properties
 
+        /// <summary>
+        /// Gets the number of pass for this rendering technique
+        /// </summary>
         int PassCount { get; }
 
+        /// <summary>
+        /// Gets the render queue
+        /// </summary>
         IRenderQueue RenderQueue { get; }
 
         #endregion

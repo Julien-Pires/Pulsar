@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Graphics.SceneGraph
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Represents a node in a tree
@@ -52,12 +52,13 @@ namespace Pulsar.Graphics.SceneGraph
         protected abstract void DestroyChildIntern(Node child);
 
         /// <summary>
-        /// Destroys a child node
+        /// Destroys a child node and all its subsequent childs
         /// </summary>
         /// <param name="child">Child to destroy</param>
         public void DestroyChild(Node child)
         {
-            if (child._parentNode != this) throw new ArgumentException("", "child");
+            if (child._parentNode != this)
+                throw new ArgumentException(string.Format("{0} is not a child of {1}", child.Name, Name), "child");
 
             child.DestroyAllChild();
             RemoveChild(child);
@@ -80,7 +81,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Add a child
+        /// Adds a child
         /// </summary>
         /// <param name="child">Node to add as a child</param>
         public void AddChild(Node child)
@@ -90,8 +91,9 @@ namespace Pulsar.Graphics.SceneGraph
 
             if (child._parentNode != null)
             {
-                if (child._parentNode != this) 
-                    throw new ArgumentException("", "child");
+                if (child._parentNode != this)
+                    throw new ArgumentException(
+                        string.Format("Failed to add node, {0} already has a parent", child.Name), "child");
 
                 return;
             }
@@ -101,13 +103,15 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Remove a child
+        /// Removes a child
         /// </summary>
         /// <param name="child">Child to remove</param>
         /// <returns></returns>
         public bool RemoveChild(Node child)
         {
-            if(child._parentNode != this) throw new ArgumentException("", "child");
+            if (child._parentNode != this)
+                throw new ArgumentException(
+                    string.Format("Failed to remove child, {0} isn't the parent of {1}", Name, child.Name), "child");
 
             Childrens.Remove(child);
             child.SetParent(null);
@@ -137,7 +141,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Update the depth of this node and all its childs
+        /// Updates the depth of this node and all its childs
         /// </summary>
         private void UpdateDepthLevel()
         {
@@ -146,6 +150,11 @@ namespace Pulsar.Graphics.SceneGraph
                 Childrens[i].UpdateDepthLevel();
         }
 
+        /// <summary>
+        /// Computes the squared distance between this node and a camera
+        /// </summary>
+        /// <param name="camera">Camera</param>
+        /// <returns>Returns the squared distance</returns>
         public float GetViewDepth(Camera camera)
         {
             Vector3 diff;

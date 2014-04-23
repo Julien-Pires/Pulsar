@@ -135,6 +135,7 @@ namespace Pulsar.Graphics
         public override IBufferWrapper Wrapper
         {
             get { return _wrapper; }
+            internal set { _wrapper = (IVertexBufferWrapper)value; }
         }
 
         /// <summary>

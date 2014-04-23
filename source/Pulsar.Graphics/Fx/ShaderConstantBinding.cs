@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Represents the base class for a shader constant binding
+    /// Represents the base class for a binding to a shader constant
     /// </summary>
     public abstract class ShaderConstantBinding
     {
@@ -54,6 +54,9 @@ namespace Pulsar.Graphics.Fx
             get { return FxParameter.Name; }
         }
 
+        /// <summary>
+        /// Gets or sets the value of the constant
+        /// </summary>
         internal abstract object UntypedValue { get; set; }
 
         #endregion

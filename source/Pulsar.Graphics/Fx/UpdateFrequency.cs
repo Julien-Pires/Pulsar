@@ -1,7 +1,7 @@
 ﻿namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Enumerates update frequency for a variable
+    /// Enumerates update frequency for a constant
     /// </summary>
     public enum UpdateFrequency
     {

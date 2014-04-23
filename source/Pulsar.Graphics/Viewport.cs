@@ -3,7 +3,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Graphics.SceneGraph;
+using Pulsar.Graphics.Graph;
 
 namespace Pulsar.Graphics
 {
@@ -143,6 +143,9 @@ namespace Pulsar.Graphics
             get { return _frameDetail; }
         }
 
+        /// <summary>
+        /// Gets or sets a value that indicates if the viewport should be rendered
+        /// </summary>
         internal bool IsRendered { get; set; }
 
         /// <summary>

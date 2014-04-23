@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Pulsar.Graphics.Fx
 {
+    /// <summary>
+    /// Manages all built-in shaders of the engine
+    /// </summary>
     internal class BuiltInShaderManager
     {
         #region Static
@@ -17,6 +20,10 @@ namespace Pulsar.Graphics.Fx
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of BuiltInShaderManager class
+        /// </summary>
+        /// <param name="storage">Storage used by the graphics engine</param>
         internal BuiltInShaderManager(GraphicsStorage storage)
         {
             Debug.Assert(storage != null);
@@ -34,6 +41,11 @@ namespace Pulsar.Graphics.Fx
 
         #region Methods
 
+        /// <summary>
+        /// Gets a shader for a specified name
+        /// </summary>
+        /// <param name="name">Name of the shader</param>
+        /// <returns>Returns a Shader instance if found otherwise null</returns>
         public Shader GetShader(string name)
         {
             BuiltInShaderInfo shaderInfo;

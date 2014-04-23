@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pulsar.Assets;
 
 using Pulsar.Graphics.Asset;
-using Pulsar.Graphics.SceneGraph;
+using Pulsar.Graphics.Graph;
 
 namespace Pulsar.Graphics.Debugger
 {
@@ -49,7 +49,7 @@ namespace Pulsar.Graphics.Debugger
         /// Constructor of MeshBoundingBox class
         /// </summary>
         /// <param name="name">Name of the mesh</param>
-        /// <param name="assetEngine">AssetEngine</param>
+        /// <param name="assetEngine">Asset engine</param>
         internal MeshBoundingBox(string name, AssetEngine assetEngine)
         {
             Debug.Assert(assetEngine != null);
@@ -213,6 +213,11 @@ namespace Pulsar.Graphics.Debugger
             _vbo.SetData(_vertices);
         }
 
+        /// <summary>
+        /// Computes the squared distance between the bounding box and a camera
+        /// </summary>
+        /// <param name="camera">Camera</param>
+        /// <returns>Returns the squared distance</returns>
         public float GetViewDepth(Camera camera)
         {
             Vector3 middle, distance;
@@ -235,7 +240,7 @@ namespace Pulsar.Graphics.Debugger
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets or set a boolean to enable instancing
+        /// Gets or sets a boolean to enable instancing
         /// </summary>
         public bool UseInstancing 
         {
@@ -251,6 +256,9 @@ namespace Pulsar.Graphics.Debugger
             get { return RenderInfo.Id; } 
         }
 
+        /// <summary>
+        /// Gets the key used by the render queue
+        /// </summary>
         public RenderQueueKey Key
         {
             get { return _key; }

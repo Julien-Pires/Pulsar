@@ -9,16 +9,6 @@ using XnaTexture = Microsoft.Xna.Framework.Graphics.Texture;
 namespace Pulsar.Graphics
 {
     /// <summary>
-    /// Enumerates type of texture
-    /// </summary>
-    public enum TextureLevel
-    {
-        Texture,
-        Texture2D,
-        Texture3D
-    }
-
-    /// <summary>
     /// Contains information about a texture
     /// </summary>
     public class Texture : ICastable<XnaTexture>, ICastable<Texture2D>, ICastable<Texture3D>,

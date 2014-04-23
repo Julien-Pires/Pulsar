@@ -83,6 +83,12 @@ namespace Pulsar.Graphics.Fx
             return (idx > -1) ? _bindings[idx] as T : null;
         }
 
+        /// <summary>
+        /// Gets a binding with a specified name
+        /// </summary>
+        /// <param name="name">Name of the constant</param>
+        /// <param name="binding">Result that contains an instance if found otherwise null</param>
+        /// <returns>Returns true if found otherwise false</returns>
         public bool TryGetBinding(string name, out ShaderConstantBinding binding)
         {
             binding = GetBinding(name);
@@ -90,6 +96,13 @@ namespace Pulsar.Graphics.Fx
             return binding != null;
         }
 
+        /// <summary>
+        /// Gets a binding with a specified name
+        /// </summary>
+        /// <typeparam name="T">Binding type</typeparam>
+        /// <param name="name">Name of the constant</param>
+        /// <param name="binding">Result that contains an instance if found otherwise null</param>
+        /// <returns>Returns true if found otherwise false</returns>
         public bool TryGetBinding<T>(string name, out T binding) where T : ShaderConstantBinding
         {
             binding = GetBinding<T>(name);
@@ -132,6 +145,10 @@ namespace Pulsar.Graphics.Fx
             _bindings.Clear();
         }
 
+        /// <summary>
+        /// Updates and writes all binding
+        /// </summary>
+        /// <param name="context"></param>
         internal void UpdateAndWrite(FrameContext context)
         {
             for (int i = 0; i < _bindings.Count; i++)
@@ -164,6 +181,9 @@ namespace Pulsar.Graphics.Fx
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets a value that indicates if bindings have been updated
+        /// </summary>
         internal bool AlreadyUpdated { get; set; }
 
         /// <summary>

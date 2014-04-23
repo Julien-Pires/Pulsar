@@ -37,11 +37,19 @@ namespace Pulsar.Graphics
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed)
+                return;
+
+            try
             {
-                if(Wrapper != null) Wrapper.Dispose();
+                if (Wrapper != null)
+                    Wrapper.Dispose();
             }
-            _disposed = true;
+            finally
+            {
+                Wrapper = null;
+                _disposed = true;
+            }
         }
 
         /// <summary>
@@ -115,7 +123,9 @@ namespace Pulsar.Graphics
         /// <param name="elementCount">Number of elements to get</param>
         public void GetData<T>(int bufferOffset, T[] data, int startIndex, int elementCount) where T : struct
         {
-            if (Wrapper == null) return;
+            if (Wrapper == null) 
+                return;
+
             Wrapper.GetData(bufferOffset, data, startIndex, elementCount);
         }
 
@@ -224,11 +234,17 @@ namespace Pulsar.Graphics
         /// </param>
         public void RemoveData<T>(int offset, int length, bool resetOnly) where T : struct
         {
-            if(length == 0) return;
+            if(length == 0) 
+                return;
 
-            if(length > ElementCount) throw new ArgumentException("Length cannot be larger than element count", "length");
-            if((offset < 0) || (offset >= ElementCount)) throw new IndexOutOfRangeException("Offset out of range");
-            if((offset + length) >= ElementCount) throw new Exception("Length cannot go out of range");
+            if(length > ElementCount) 
+                throw new ArgumentException("Length cannot be larger than element count", "length");
+
+            if((offset < 0) || (offset >= ElementCount)) 
+                throw new IndexOutOfRangeException("Offset out of range");
+
+            if((offset + length) >= ElementCount) 
+                throw new Exception("Length cannot go out of range");
 
             if (resetOnly)
             {
@@ -239,7 +255,8 @@ namespace Pulsar.Graphics
             else
             {
                 int remainingSize = ElementCount - length;
-                if(remainingSize == 0) throw new Exception("Buffer cannot contains zero element");
+                if(remainingSize == 0) 
+                    throw new Exception("Buffer cannot contains zero element");
 
                 T[] bufferData = new T[ElementCount];
                 GetData(bufferData);
@@ -264,7 +281,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Gets the wrapper that encapsulate the underlaying buffer
         /// </summary>
-        public abstract IBufferWrapper Wrapper { get; }
+        public abstract IBufferWrapper Wrapper { get; internal set; }
 
         /// <summary>
         /// Gets the number of elements in the buffer

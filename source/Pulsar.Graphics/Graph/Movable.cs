@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Graphics.SceneGraph
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Represents a movable object in a scene graph
@@ -22,21 +22,29 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Methods
 
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
         public void Dispose()
         {
-            if(_isDisposed) return;
+            if(_isDisposed) 
+                return;
 
             Dispose(true);
 
             _isDisposed = true;
         }
 
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
+        /// <param name="dispose">Indicates if the method is called from Dispose</param>
         protected virtual void Dispose(bool dispose)
         {
         }
 
         /// <summary>
-        /// Attaches a parent node
+        /// Attaches this node to a parent node
         /// </summary>
         /// <param name="parent">Parent node</param>
         void IMovable.AttachParent(SceneNode parent)
@@ -48,7 +56,7 @@ namespace Pulsar.Graphics.SceneGraph
         }
 
         /// <summary>
-        /// Detaches parent node
+        /// Detaches current parent node
         /// </summary>
         void IMovable.DetachParent()
         {

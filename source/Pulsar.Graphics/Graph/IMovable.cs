@@ -2,7 +2,7 @@
 
 using Microsoft.Xna.Framework;
 
-namespace Pulsar.Graphics.SceneGraph
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Defines a movable object in a scene graph
@@ -37,6 +37,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// Updates the render queue
         /// </summary>
         /// <param name="queue">Current render queue</param>
+        /// <param name="camera">Camera</param>
         void UpdateRenderQueue(IRenderQueue queue, Camera camera);
 
         #endregion

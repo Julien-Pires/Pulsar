@@ -1,17 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
 
-using Microsoft.Xna.Framework;
-using Pulsar.Graphics.SceneGraph;
+using Pulsar.Graphics.Graph;
 
 namespace Pulsar.Graphics
 {
     /// <summary>
-    /// Interface defining a renderable object in the scene graph
+    /// Defines a renderable object
     /// </summary>
     public interface IRenderable
     {
         #region Methods
 
+        /// <summary>
+        /// Computes the squared distance between the renderable and a camera
+        /// </summary>
+        /// <param name="camera">Camera</param>
+        /// <returns>Returns the squared distance</returns>
         float GetViewDepth(Camera camera);
 
         #endregion
@@ -19,39 +23,42 @@ namespace Pulsar.Graphics
         #region Properties
 
         /// <summary>
-        /// Get the ID of this renderable
+        /// Gets the ID of this renderable
         /// </summary>
         uint Id { get; }
 
         /// <summary>
-        /// Get the name of this instance
+        /// Gets the name of this instance
         /// </summary>
         string Name { get; }
 
         /// <summary>
-        /// Get or set a boolean indicating if this instance use instancing
+        /// Gets or sets a boolean indicating if this instance use instancing
         /// </summary>
         bool UseInstancing { get; set; }
 
+        /// <summary>
+        /// Gets the render queue key
+        /// </summary>
         RenderQueueKey Key { get; }
 
         /// <summary>
-        /// Get the ID of the render queue to be attached on
+        /// Gets the render queue group
         /// </summary>
         byte RenderQueueGroup { get; }
 
         /// <summary>
-        /// Get the full transform matrix
+        /// Gets the full transform matrix
         /// </summary>
         Matrix Transform { get; }
 
         /// <summary>
-        /// Get the rendering info
+        /// Gets the rendering info
         /// </summary>
         RenderingInfo RenderInfo { get; }
 
         /// <summary>
-        /// Get the material associated to this renderable object
+        /// Gets the material associated to this renderable object
         /// </summary>
         Material Material { get; }
 

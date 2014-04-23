@@ -182,7 +182,8 @@ namespace Pulsar.Graphics
         /// <returns>Return a SubMeshBufferData with informations about vertex buffer</returns>
         private static SubMeshBufferData GetSubVertexData(SubMesh sub)
         {
-            if(sub.VertexData.BufferCount == 0) return new SubMeshBufferData();
+            if(sub.VertexData.BufferCount == 0) 
+                return new SubMeshBufferData();
 
             VertexData vertexData = sub.VertexData;
 
@@ -197,7 +198,8 @@ namespace Pulsar.Graphics
         /// <returns>Return a SubMeshBufferData with informations about index buffer</returns>
         private static SubMeshBufferData GetSubIndexData(SubMesh sub)
         {
-            if(sub.IndexData.IndexBuffer == null) return new SubMeshBufferData();
+            if(sub.IndexData.IndexBuffer == null) 
+                return new SubMeshBufferData();
 
             IndexData indexData = sub.IndexData;
 
@@ -209,9 +211,13 @@ namespace Pulsar.Graphics
 
         #region Methods
 
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
         public void Dispose()
         {
-            if(_isDisposed) return;
+            if(_isDisposed) 
+                return;
 
             try
             {
@@ -403,9 +409,11 @@ namespace Pulsar.Graphics
         /// <param name="position">Position</param>
         public void Position(ref Vector3 position)
         {
-            if(_currentSub == -1) throw new Exception("Begin or Update must be called first");
+            if(_currentSub == -1) 
+                throw new Exception("Begin or Update must be called first");
 
-            if (_pendingVertex) _currentVertices.Add(_currentPoint);
+            if (_pendingVertex) 
+                _currentVertices.Add(_currentPoint);
 
             VertexPositionNormalTexture vertex = new VertexPositionNormalTexture
             {
@@ -442,7 +450,9 @@ namespace Pulsar.Graphics
         /// <param name="normal">Normal</param>
         public void Normal(ref Vector3 normal)
         {
-            if (_currentSub == -1) throw new Exception("Begin or Update must be called first");
+            if (_currentSub == -1) 
+                throw new Exception("Begin or Update must be called first");
+
             _currentPoint.Normal = normal;
         }
 
@@ -472,7 +482,9 @@ namespace Pulsar.Graphics
         /// <param name="texture">Texture coordinate</param>
         public void Texture(ref Vector2 texture)
         {
-            if (_currentSub == -1) throw new Exception("Begin or Update must be called first");
+            if (_currentSub == -1) 
+                throw new Exception("Begin or Update must be called first");
+
             _currentPoint.TextureCoordinate = texture;
         }
 
@@ -482,7 +494,9 @@ namespace Pulsar.Graphics
         /// <param name="index">Index</param>
         public void Index(int index)
         {
-            if (_currentSub == -1) throw new Exception("Begin or Update must be called first");
+            if (_currentSub == -1) 
+                throw new Exception("Begin or Update must be called first");
+
             _currentIndices.Add(index);
         }
 
@@ -688,12 +702,14 @@ namespace Pulsar.Graphics
                         subBufferData.Buffer.GetData(offset, bufferData, 0, length);
                         Array.Copy(source, 0, bufferData, length, source.Length);
                         source = bufferData;
-                        if (spaceAvailable) length += freeLength; // Avoid memory fragmentation
+                        if (spaceAvailable) 
+                            length += freeLength; // Avoid memory fragmentation
                     }
                 }
                 else
                 {
-                    if (spaceAvailable) length += freeLength; // Avoid memory fragmentation
+                    if (spaceAvailable) 
+                        length += freeLength; // Avoid memory fragmentation
                 }
             }
 
@@ -769,10 +785,15 @@ namespace Pulsar.Graphics
             for (int i = 0; i < _subMeshes.Count; i++)
             {
                 SubMeshBufferData subBufferData = getData(_subMeshes[i]);
-                if (!subBufferData.Shared) continue;
+                if (!subBufferData.Shared) 
+                    continue;
+
                 int subOffset = subBufferData.Offset;
-                if (subOffset == -1) continue;
-                if(subOffset >= nextOffset) nextOffset = subOffset + subBufferData.Count;
+                if (subOffset == -1)
+                    continue;
+
+                if(subOffset >= nextOffset) 
+                    nextOffset = subOffset + subBufferData.Count;
             }
 
             return nextOffset;
@@ -795,16 +816,22 @@ namespace Pulsar.Graphics
             for (int i = 0; i < _subMeshes.Count; i++)
             {
                 SubMeshBufferData subBufferData = getBufferData(_subMeshes[i]);
-                if (!subBufferData.Shared) continue;
+                if (!subBufferData.Shared)
+                    continue;
 
                 int subOffset = subBufferData.Offset;
-                if(subOffset == -1) continue;
-                if ((subOffset <= offset) || (subOffset >= nearestOffset)) continue;
+                if(subOffset == -1) 
+                    continue;
+
+                if ((subOffset <= offset) || (subOffset >= nearestOffset)) 
+                    continue;
+
                 nearestOffset = subOffset;
             }
 
             int usedSpace = offset + length;
-            if (usedSpace == nearestOffset) return false;
+            if (usedSpace == nearestOffset) 
+                return false;
 
             startOffset = usedSpace;
             freeLength = nearestOffset - usedSpace;
@@ -819,16 +846,21 @@ namespace Pulsar.Graphics
         /// <param name="shiftLength">Size of the shift</param>
         private void ShiftSubMeshVertexOffset(int startOffset, int shiftLength)
         {
-            if(shiftLength == 0) return;
+            if(shiftLength == 0) 
+                return;
+
             for (int i = 0; i < _subMeshes.Count; i++)
             {
-                if(!_subMeshes[i].ShareVertexBuffer) continue;
+                if(!_subMeshes[i].ShareVertexBuffer) 
+                    continue;
 
                 VertexData v = _subMeshes[i].VertexData;
-                if(v.BufferCount == 0) continue;
+                if(v.BufferCount == 0) 
+                    continue;
 
                 int currentOffset = v.GetVertexOffset(0);
-                if(currentOffset > startOffset) v.SetVertexOffset((currentOffset - shiftLength), 0);
+                if(currentOffset > startOffset)
+                    v.SetVertexOffset((currentOffset - shiftLength), 0);
             }
         }
 
@@ -839,16 +871,21 @@ namespace Pulsar.Graphics
         /// <param name="shiftLength">Size of the shift</param>
         private void ShiftSubMeshIndexOffset(int startOffset, int shiftLength)
         {
-            if(shiftLength == 0) return;
+            if(shiftLength == 0) 
+                return;
+
             for (int i = 0; i < _subMeshes.Count; i++)
             {
-                if(!_subMeshes[i].ShareIndexBuffer) continue;
+                if(!_subMeshes[i].ShareIndexBuffer)
+                    continue;
 
                 IndexData idx = _subMeshes[i].IndexData;
-                if(idx.IndexBuffer == null) continue;
+                if(idx.IndexBuffer == null) 
+                    continue;
 
                 int currentOffset = idx.StartIndex;
-                if (currentOffset > startOffset) idx.StartIndex = (currentOffset - shiftLength);
+                if (currentOffset > startOffset) 
+                    idx.StartIndex = (currentOffset - shiftLength);
             }
         }
 
@@ -858,7 +895,8 @@ namespace Pulsar.Graphics
         /// <returns>Returns the shared vertex buffer</returns>
         private VertexBufferObject EnsureVertexBuffer()
         {
-            if (_vertexData.BufferCount > 0) return _vertexData.GetBuffer(0);
+            if (_vertexData.BufferCount > 0) 
+                return _vertexData.GetBuffer(0);
 
             VertexBufferObject vbo = _bufferManager.CreateVertexBuffer(_currentVertexBufferType,
                 typeof (VertexPositionNormalTexture), _estimatedVertexCount);
@@ -873,7 +911,8 @@ namespace Pulsar.Graphics
         /// <returns>Returns the shared index buffer</returns>
         private IndexBufferObject EnsureIndexBuffer()
         {
-            if (_indexData.IndexBuffer != null) return _indexData.IndexBuffer;
+            if (_indexData.IndexBuffer != null)
+                return _indexData.IndexBuffer;
 
             IndexBufferObject ibo = _bufferManager.CreateIndexBuffer(_currentIndexBufferType, 
                 IndexElementSize.ThirtyTwoBits, _estimatedIndexCount);
@@ -902,9 +941,8 @@ namespace Pulsar.Graphics
         public SubMesh CreateSubMesh(string name)
         {
             if (_subMeshNamesMap.ContainsKey(name))
-            {
                 throw new Exception(string.Format("A submesh with the name {0} already exists", name));
-            }
+
             SubMesh sub = CreateSubMesh();
             _subMeshNamesMap.Add(name, (ushort)(_subMeshes.Count - 1));
 
@@ -955,8 +993,10 @@ namespace Pulsar.Graphics
         {
             foreach (KeyValuePair<string, int> mapKvp in _subMeshNamesMap)
             {
-                if (mapKvp.Value == index) _subMeshNamesMap.Remove(mapKvp.Key);
-                else if (mapKvp.Value > index) _subMeshNamesMap[mapKvp.Key] = mapKvp.Value + 1;
+                if (mapKvp.Value == index) 
+                    _subMeshNamesMap.Remove(mapKvp.Key);
+                else if
+                    (mapKvp.Value > index) _subMeshNamesMap[mapKvp.Key] = mapKvp.Value + 1;
             }
         }
 
@@ -1043,6 +1083,9 @@ namespace Pulsar.Graphics
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name of the mesh
+        /// </summary>
         public string Name { get; private set; }
 
         /// <summary>

@@ -5,10 +5,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Pulsar.Graphics.Fx;
-using Pulsar.Graphics.SceneGraph;
+using Pulsar.Graphics.Graph;
 
 namespace Pulsar.Graphics.RenderingTechnique
 {
+    /// <summary>
+    /// Represents a basic rendering technique with no light no shadows
+    /// </summary>
     internal sealed partial class UnlitRendering : IRenderingTechnique
     {
         #region Fields
@@ -21,6 +24,10 @@ namespace Pulsar.Graphics.RenderingTechnique
 
         #region Constructors
 
+        /// <summary>
+        /// Constructors of UnlitRendering class
+        /// </summary>
+        /// <param name="renderer">Renderer</param>
         internal UnlitRendering(Renderer renderer)
         {
             Debug.Assert(renderer != null);
@@ -32,6 +39,9 @@ namespace Pulsar.Graphics.RenderingTechnique
 
         #region Methods
 
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
         public void Dispose()
         {
             if(_isDisposed)
@@ -50,6 +60,12 @@ namespace Pulsar.Graphics.RenderingTechnique
             }
         }
 
+        /// <summary>
+        /// Renders a scene from its own render queue
+        /// </summary>
+        /// <param name="viewport">Target viewport</param>
+        /// <param name="camera">Point of view</param>
+        /// <param name="context">Frame context</param>
         public void Render(Viewport viewport, Camera camera, FrameContext context)
         {
             _renderer.SetRenderTarget(viewport.Target);
@@ -72,6 +88,11 @@ namespace Pulsar.Graphics.RenderingTechnique
             _renderQueue.Reset();
         }
 
+        /// <summary>
+        /// Draws a renderable object
+        /// </summary>
+        /// <param name="renderable">Renderable object</param>
+        /// <param name="context">Frame context</param>
         private void Draw(IRenderable renderable, FrameContext context)
         {
             context.Renderable = renderable;
@@ -88,6 +109,11 @@ namespace Pulsar.Graphics.RenderingTechnique
             }
         }
 
+        /// <summary>
+        /// Changes the render state
+        /// </summary>
+        /// <param name="state">New render state</param>
+        /// <param name="context">Frame context</param>
         private void SwitchState(RenderState state, FrameContext context)
         {
             if(state == context.RenderState)
@@ -120,6 +146,11 @@ namespace Pulsar.Graphics.RenderingTechnique
             }
         }
 
+        /// <summary>
+        /// Changes the material
+        /// </summary>
+        /// <param name="material">New material</param>
+        /// <param name="context">Frame context</param>
         private void SetMaterial(Material material, FrameContext context)
         {
             Material previousMaterial = context.Material;
@@ -145,11 +176,17 @@ namespace Pulsar.Graphics.RenderingTechnique
 
         #region Properties
 
+        /// <summary>
+        /// Gets the number of pass for this rendering technique
+        /// </summary>
         public int PassCount
         {
             get { return 1; }
         }
 
+        /// <summary>
+        /// Gets the render queue used by this rendering technique
+        /// </summary>
         public IRenderQueue RenderQueue
         {
             get { return _renderQueue; }

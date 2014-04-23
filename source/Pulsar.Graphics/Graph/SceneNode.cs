@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Pulsar.Graphics.SceneGraph
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Represents a node in a scene graph
@@ -10,7 +10,7 @@ namespace Pulsar.Graphics.SceneGraph
     {
         #region Fields
 
-        protected readonly BaseScene Owner;
+        protected readonly SceneGraph Owner;
 
         private readonly AxisAlignedBox _aabb = new AxisAlignedBox();
         private readonly Dictionary<string, IMovable> _movablesByName = new Dictionary<string, IMovable>();
@@ -23,8 +23,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Constructor of SceneNode class
         /// </summary>
-        /// <param name="owner">Scene instance wich create this node</param>
-        internal SceneNode(BaseScene owner)
+        /// <param name="owner">Graph instance wich create this node</param>
+        internal SceneNode(SceneGraph owner)
         {
             Owner = owner;
         }
@@ -80,7 +80,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// <param name="name">Name of the movable object</param>
         public void DetachObject(string name)
         {
-            if (!_movablesByName.ContainsKey(name)) return;
+            if (!_movablesByName.ContainsKey(name)) 
+                return;
 
             IMovable movObj = _movablesByName[name];
             movObj.DetachParent();
@@ -154,7 +155,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <summary>
         /// Gets the scene tree which created this node
         /// </summary>
-        public BaseScene Scene
+        public SceneGraph Graph
         {
             get { return Owner; }
         }

@@ -6,29 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Pulsar.Graphics
 {
     /// <summary>
-    /// Enumerates type of buffer
-    /// </summary>
-    public enum BufferType
-    {
-        /// <summary>
-        /// A buffer used for static vertices
-        /// </summary>
-        Static,
-        /// <summary>
-        /// A buffer used for static vertices in write only mode
-        /// </summary>
-        StaticWriteOnly,
-        /// <summary>
-        /// A buffer used when vertices are often replaced
-        /// </summary>
-        Dynamic,
-        /// <summary>
-        /// A buffer used when vertices are often replaced and is used only in write mode
-        /// </summary>
-        DynamicWriteOnly
-    }
-
-    /// <summary>
     /// Creates buffer object on a graphics device
     /// </summary>
     public sealed class BufferManager
@@ -47,7 +24,9 @@ namespace Pulsar.Graphics
         /// <param name="deviceManager">GraphicsDeviceManager used to create buffers</param>
         internal BufferManager(GraphicsDeviceManager deviceManager)
         {
-            if (deviceManager == null) throw new ArgumentNullException("deviceManager");
+            if (deviceManager == null) 
+                throw new ArgumentNullException("deviceManager");
+
             _deviceManager = deviceManager;
         }
 

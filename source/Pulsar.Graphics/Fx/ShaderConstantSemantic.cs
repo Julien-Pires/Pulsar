@@ -1,7 +1,7 @@
 ﻿namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Enumerates semantics that can be used to automatically update a variable
+    /// Enumerates semantics that can be used to automatically update a constant
     /// </summary>
     public enum ShaderConstantSemantic
     {

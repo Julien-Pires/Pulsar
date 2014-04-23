@@ -1,7 +1,7 @@
 ﻿namespace Pulsar.Graphics.Fx
 {
     /// <summary>
-    /// Enumerates sources that can be used to update a variable
+    /// Enumerates sources that can be used to update a constant
     /// </summary>
     public enum ShaderConstantSource
     {

@@ -35,11 +35,12 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Disposes all resources
+        /// Releases all resources
         /// </summary>
         public void Dispose()
         {
-            if (_isDisposed) return;
+            if (_isDisposed) 
+                return;
 
             try
             {

@@ -85,7 +85,7 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Disposes resources
+        /// Releases all resources
         /// </summary>
         public void Dispose()
         {
@@ -93,12 +93,13 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Disposes resources
+        /// Releases all resources
         /// </summary>
         /// <param name="disposing">Indicate if the method is called from dispose</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (_isDisposed) return;
+            if (_isDisposed) 
+                return;
 
             try
             {
@@ -123,6 +124,7 @@ namespace Pulsar.Graphics
         /// Fills the render target by rendering each viewports
         /// </summary>
         /// <param name="time">Time since last render</param>
+        /// <param name="context">Frame context</param>
         internal void Render(GameTime time, FrameContext context)
         {
             _frameDetail.Reset();

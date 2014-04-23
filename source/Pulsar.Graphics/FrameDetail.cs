@@ -19,7 +19,7 @@
         #region Methods
 
         /// <summary>
-        /// Reset statistics
+        /// Resets statistics
         /// </summary>
         internal void Reset()
         {
@@ -30,7 +30,7 @@
         }
 
         /// <summary>
-        /// Merge statistics from another instance with this one
+        /// Merges statistics from another instance with this one
         /// </summary>
         /// <param name="frame">FrameDetail instance to merge with</param>
         internal void Merge(FrameDetail frame)
@@ -42,7 +42,7 @@
         }
 
         /// <summary>
-        /// Add a new draw call to statistics
+        /// Adds a new draw call to statistics
         /// </summary>
         /// <param name="vertices">Number of vertices used</param>
         /// <param name="primitives">Number of primitives drawn</param>

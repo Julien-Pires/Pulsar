@@ -2,6 +2,9 @@
 
 namespace Pulsar.Graphics
 {
+    /// <summary>
+    /// Represents a key for an element in a render queue
+    /// </summary>
     public sealed class RenderQueueKey
     {
         #region Fields
@@ -27,10 +30,17 @@ namespace Pulsar.Graphics
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of RenderQueueKey class
+        /// </summary>
         public RenderQueueKey() : this(0u)
         {
         }
 
+        /// <summary>
+        /// Constructor of RenderQueueKey class
+        /// </summary>
+        /// <param name="id">Id</param>
         public RenderQueueKey(ulong id)
         {
             _update = UpdateByMaterialPriority;
@@ -47,11 +57,21 @@ namespace Pulsar.Graphics
 
         #region Operators
 
+        /// <summary>
+        /// Converts the key to an unsigned long
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <returns>Returns a 64bit value</returns>
         public static implicit operator ulong(RenderQueueKey key)
         {
             return key.Id;
         }
 
+        /// <summary>
+        /// Converts an unsigned long to a key object
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Returns a new instance of RenderQueueKey</returns>
         public static implicit operator RenderQueueKey(ulong id)
         {
             return new RenderQueueKey(id);
@@ -61,6 +81,9 @@ namespace Pulsar.Graphics
 
         #region Methods
 
+        /// <summary>
+        /// Extracts data from an unsigned long with priority on depth
+        /// </summary>
         private void ExtractByDepthPriority()
         {
             _pass = (_id & PassLastMask);
@@ -69,6 +92,9 @@ namespace Pulsar.Graphics
             _group = (_id & GroupMask) >> 57;
         }
 
+        /// <summary>
+        /// Extracts data from an unsigned long with priority on material
+        /// </summary>
         private void ExtractByMaterialPriority()
         {
             _depth = (_id & DepthLastMask);
@@ -77,6 +103,9 @@ namespace Pulsar.Graphics
             _group = (_id & GroupMask) >> 57;
         }
 
+        /// <summary>
+        /// Updates the unsigned long value with priority on depth
+        /// </summary>
         private void UpdateByDepthPriority()
         {
             _id |= _pass;
@@ -86,6 +115,9 @@ namespace Pulsar.Graphics
             _id |= _group << 57;
         }
 
+        /// <summary>
+        /// Updates the unsigned long value with priority on material
+        /// </summary>
         private void UpdateByMaterialPriority()
         {
             _id |= _depth;
@@ -99,11 +131,17 @@ namespace Pulsar.Graphics
 
         #region Properties
 
+        /// <summary>
+        /// Gets the unsigned long value that represent this key
+        /// </summary>
         public ulong Id
         {
             get { return _id; }
         }
 
+        /// <summary>
+        /// Gets or sets the render queue group
+        /// </summary>
         public byte Group
         {
             get { return (byte)_group; }
@@ -114,6 +152,9 @@ namespace Pulsar.Graphics
             }
         }
         
+        /// <summary>
+        /// Gets or sets the transparency
+        /// </summary>
         public bool Transparency
         {
             get { return Convert.ToBoolean(_transparency); }
@@ -125,6 +166,10 @@ namespace Pulsar.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the depth on 24bit
+        /// </summary>
+        /// <remarks>Once the depth is set, precision are lost because of the 24bit conversion</remarks>
         public float Depth
         {
             get { return _depth; }
@@ -136,6 +181,9 @@ namespace Pulsar.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the material
+        /// </summary>
         public ushort Material
         {
             get { return (ushort) _material; }
@@ -146,6 +194,9 @@ namespace Pulsar.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the pass
+        /// </summary>
         public ushort Pass
         {
             get { return (ushort) _pass; }

@@ -101,7 +101,9 @@ namespace Pulsar.Graphics
                     buffer = new DynamicIndexBuffer(_device, _elementSize, elementCount, BufferUsage.WriteOnly);
                     break;
             }
-            if (buffer == null) throw new InvalidOperationException("Failed to create an index buffer");
+            if (buffer == null) 
+                throw new InvalidOperationException("Failed to create an index buffer");
+
             CreateWrapper(buffer);
 
             BufferAllocatedEventArgs e = new BufferAllocatedEventArgs(this, elementCount);
@@ -129,6 +131,7 @@ namespace Pulsar.Graphics
         public override IBufferWrapper Wrapper
         {
             get { return _wrapper; }
+            internal set { _wrapper = (IIndexBufferWrapper)value; }
         }
 
         /// <summary>

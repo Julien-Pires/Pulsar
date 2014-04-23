@@ -11,7 +11,7 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        private readonly GraphicsEngine _engine;
+        private bool _isDisposed;
 
         #endregion
 
@@ -30,17 +30,31 @@ namespace Pulsar.Graphics
                 throw new ArgumentException("GraphicsEngineService already present");
 
             game.Services.AddService(typeof(IGraphicsEngineService), this);
-            _engine = new GraphicsEngine(game.Services);
-            _engine.Initialize();
+            Engine = new GraphicsEngine(game.Services);
+            Engine.Initialize();
         }
 
         #endregion
 
         #region Methods
 
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
         public void Dispose()
         {
-            _engine.Dispose();
+            if(_isDisposed)
+                return;
+            try
+            {
+                Engine.Dispose();
+            }
+            finally
+            {
+                Engine = null;
+
+                _isDisposed = true;
+            }
         }
 
         #endregion
@@ -48,12 +62,9 @@ namespace Pulsar.Graphics
         #region Properties
 
         /// <summary>
-        /// Get the graphic engine
+        /// Gets the graphic engine
         /// </summary>
-        public GraphicsEngine Engine
-        {
-            get { return _engine; }
-        }
+        public GraphicsEngine Engine { get; private set; }
 
         #endregion
     }

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 using Pulsar.Mathematic;
 
-namespace Pulsar.Graphics.SceneGraph
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Represents a camera
@@ -14,7 +14,7 @@ namespace Pulsar.Graphics.SceneGraph
         #region Fields
 
         private readonly string _name = string.Empty;
-        private readonly BaseScene _owner;
+        private readonly SceneGraph _owner;
         private bool _isDirtyView = true;
         private bool _isDirtyFrustum = true;
         private bool _isDirtyBoundingFrustum = true;
@@ -39,8 +39,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// Constructor of the Camera class
         /// </summary>
         /// <param name="name">Name of the camera</param>
-        /// <param name="owner">Scene in which the camera was created</param>
-        internal Camera(string name, BaseScene owner)
+        /// <param name="owner">Graph in which the camera was created</param>
+        internal Camera(string name, SceneGraph owner)
         {
             _name = name;
             _owner = owner;
@@ -50,6 +50,9 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Methods
 
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
         public void Dispose()
         {
         }
@@ -58,6 +61,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// Renders the scene in a specific viewport
         /// </summary>
         /// <param name="vp">Viewport in which to render the scene</param>
+        /// <param name="context">Frame context</param>
         public void Render(Viewport vp, FrameContext context)
         {
             if (vp != _viewport) 
@@ -79,6 +83,7 @@ namespace Pulsar.Graphics.SceneGraph
         /// <remarks>Not supported for the Camera class </remarks>
         /// </summary>
         /// <param name="queue">Current render queue</param>
+        /// <param name="camera">Camera</param>
         void IMovable.UpdateRenderQueue(IRenderQueue queue, Camera camera)
         {
             throw new NotSupportedException();
@@ -197,7 +202,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void UpdateBoundingFrustum()
         {
-            if (!_isDirtyBoundingFrustum) return;
+            if (!_isDirtyBoundingFrustum) 
+                return;
+
             UpdateView();
             UpdateProjection();
 
@@ -213,7 +220,8 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void UpdateProjection()
         {
-            if(!_isDirtyFrustum) return;
+            if(!_isDirtyFrustum) 
+                return;
 
             switch (_projectionType)
             {
@@ -234,7 +242,9 @@ namespace Pulsar.Graphics.SceneGraph
         /// </summary>
         private void UpdateView()
         {
-            if(!_isDirtyView) return;
+            if(!_isDirtyView) 
+                return;
+
             UpdateTransform();
 
             Matrix.Invert(ref WorldTransform, out _viewMatrix);

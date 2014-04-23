@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsar.Graphics
 {
+    /// <summary>
+    /// Represents a set of render state
+    /// </summary>
     public sealed class RenderState
     {
         #region Fields
@@ -16,6 +19,10 @@ namespace Pulsar.Graphics
             new List<StateObject<DepthStencilState>>();
         private static readonly List<StateObject<BlendState>> BlendStates = new List<StateObject<BlendState>>();
         private static readonly Dictionary<ulong, RenderState> RenderStates = new Dictionary<ulong, RenderState>();
+
+        /// <summary>
+        /// Default render state
+        /// </summary>
         public static readonly RenderState Default;
 
         private readonly RenderStateId _id;
@@ -27,6 +34,9 @@ namespace Pulsar.Graphics
 
         #region Constructors
 
+        /// <summary>
+        /// Static constructor of RenderState class
+        /// </summary>
         static RenderState()
         {
             StateObject<RasterizerState> rasterizerState = RegisterState(RasterizerState.CullCounterClockwise,
@@ -37,6 +47,12 @@ namespace Pulsar.Graphics
             Default = GetRenderState(rasterizerState, depthstencilState, blendState);
         }
 
+        /// <summary>
+        /// Constructor of RenderState class
+        /// </summary>
+        /// <param name="rasterizerState">Rasterizer</param>
+        /// <param name="depthStencilState">DepthStencil</param>
+        /// <param name="blendState">BlendState</param>
         internal RenderState(StateObject<RasterizerState> rasterizerState,
             StateObject<DepthStencilState> depthStencilState, StateObject<BlendState> blendState)
         {
@@ -50,6 +66,13 @@ namespace Pulsar.Graphics
 
         #region Static methods
 
+        /// <summary>
+        /// Registers a new state object
+        /// </summary>
+        /// <typeparam name="T">State type</typeparam>
+        /// <param name="state">State object</param>
+        /// <param name="list">List that keep existing state object</param>
+        /// <returns>Returns a state object instance</returns>
         private static StateObject<T> RegisterState<T>(T state, List<StateObject<T>> list) where T :GraphicsResource
         {
             Debug.Assert(state != null);
@@ -60,6 +83,13 @@ namespace Pulsar.Graphics
             return result;
         }
 
+        /// <summary>
+        /// Gets a RenderState instance for a set of specified state object
+        /// </summary>
+        /// <param name="rasterizerState">Rasterizer</param>
+        /// <param name="depthStencilState">DepthStencil</param>
+        /// <param name="blendState">Blend</param>
+        /// <returns>Returns a RenderState instance</returns>
         public static RenderState GetRenderState(StateObject<RasterizerState> rasterizerState, 
             StateObject<DepthStencilState> depthStencilState, StateObject<BlendState> blendState)
         {
@@ -83,24 +113,43 @@ namespace Pulsar.Graphics
             return result;
         }
 
-        public static StateObject<RasterizerState> GetRasterizerState(CullMode cull, FillMode mode)
+        /// <summary>
+        /// Gets a rasterizer state object
+        /// </summary>
+        /// <param name="cull">Cull mode</param>
+        /// <param name="fill">Fill mode</param>
+        /// <returns>Returns a rasterizer state</returns>
+        public static StateObject<RasterizerState> GetRasterizerState(CullMode cull, FillMode fill)
         {
             for (int i = 0; i < RasterizerStates.Count; i++)
             {
                 RasterizerState current = RasterizerStates[i].State;
-                if ((current.CullMode == cull) && (current.FillMode == mode))
+                if ((current.CullMode == cull) && (current.FillMode == fill))
                     return RasterizerStates[i];
             }
 
             RasterizerState newState = new RasterizerState
             {
                 CullMode = cull,
-                FillMode = mode
+                FillMode = fill
             };
 
             return RegisterState(newState, RasterizerStates);
         }
 
+        /// <summary>
+        /// Gets a depthstencil state object
+        /// </summary>
+        /// <param name="zWrite">Enable write to z-buffer</param>
+        /// <param name="zCompare">Depth compare method</param>
+        /// <param name="stencilRef">Stencil reference value</param>
+        /// <param name="stencilMask">Stencil mask</param>
+        /// <param name="stencilWriteMask">Stencil write mask</param>
+        /// <param name="stencilCompare">Stencil compare method</param>
+        /// <param name="pass">Stencil pass method</param>
+        /// <param name="fail">Stencil fail method</param>
+        /// <param name="depthFail">Depth fail method</param>
+        /// <returns>Returns a depthstencil state</returns>
         public static StateObject<DepthStencilState> GetDepthStencilState(bool zWrite, CompareFunction zCompare,
             int stencilRef, int stencilMask, int stencilWriteMask, CompareFunction stencilCompare, StencilOperation pass,
             StencilOperation fail, StencilOperation depthFail)
@@ -135,6 +184,16 @@ namespace Pulsar.Graphics
             return RegisterState(newState, DepthStencilStates);
         }
 
+        /// <summary>
+        /// Gets a blend state object
+        /// </summary>
+        /// <param name="colorBlend">Color blend function</param>
+        /// <param name="alphaBlend">Alpha blend function</param>
+        /// <param name="colorSrc">Color source</param>
+        /// <param name="colorDst">Color destination</param>
+        /// <param name="alphaSrc">Alpha source</param>
+        /// <param name="alphaDst">Alpha destination</param>
+        /// <returns>Returns a blend state</returns>
         public static StateObject<BlendState> GetBlendState(BlendFunction colorBlend, BlendFunction alphaBlend, 
             Blend colorSrc, Blend colorDst, Blend alphaSrc, Blend alphaDst)
         {
@@ -167,21 +226,33 @@ namespace Pulsar.Graphics
 
         #region Properties
 
+        /// <summary>
+        /// Gets the render state id
+        /// </summary>
         public RenderStateId Id
         {
             get { return _id; }
         }
 
+        /// <summary>
+        /// Gets the rasterizer state
+        /// </summary>
         public RasterizerState Rasterizer
         {
             get { return _rasterizerState; }
         }
 
+        /// <summary>
+        /// Gets the depthstencil state
+        /// </summary>
         public DepthStencilState DepthStencil
         {
             get { return _depthStencilState; }
         }
 
+        /// <summary>
+        /// Gets the blend state
+        /// </summary>
         public BlendState Blend
         {
             get { return _blendState; }

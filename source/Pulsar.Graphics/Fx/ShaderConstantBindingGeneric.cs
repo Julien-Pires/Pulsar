@@ -67,6 +67,9 @@ namespace Pulsar.Graphics.Fx
             get { return InternalValue; }
         }
 
+        /// <summary>
+        /// Gets or sets the value of the constant
+        /// </summary>
         internal override object UntypedValue
         {
             get { return InternalValue; }

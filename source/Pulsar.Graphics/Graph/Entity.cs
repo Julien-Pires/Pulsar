@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 using Pulsar.Graphics.Debugger;
 
-namespace Pulsar.Graphics.SceneGraph
+namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Represents and manipulates a mesh in a 3D scene graph
@@ -19,7 +19,7 @@ namespace Pulsar.Graphics.SceneGraph
 
         private bool _isDisposed;
         private bool _renderAabb;
-        private BaseScene _sceneTree;
+        private SceneGraph _graph;
         private MeshBoundingBox _meshAabb;
         private Mesh _mesh;
         private readonly List<SubEntity> _subEntities = new List<SubEntity>();
@@ -28,9 +28,15 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Constructors
 
-        internal Entity(string name, Mesh mesh, BaseScene sceneTree)
+        /// <summary>
+        /// Constructor of Entity class
+        /// </summary>
+        /// <param name="name">Name of the entity</param>
+        /// <param name="mesh">Mesh used by the entity</param>
+        /// <param name="graph">Parent scene graph</param>
+        internal Entity(string name, Mesh mesh, SceneGraph graph)
         {
-            _sceneTree = sceneTree;
+            _graph = graph;
             _mesh = mesh;
             Name = name;
             Visible = true;
@@ -41,6 +47,10 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Methods
 
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
+        /// <param name="dispose">Indicates if the method is called from Dispose</param>
         protected override void Dispose(bool dispose)
         {
             if (!dispose || _isDisposed) 
@@ -55,7 +65,7 @@ namespace Pulsar.Graphics.SceneGraph
             {
                 _meshAabb = null;
                 _mesh = null;
-                _sceneTree = null;
+                _graph = null;
 
                 _isDisposed = true;
             }
@@ -158,6 +168,9 @@ namespace Pulsar.Graphics.SceneGraph
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets a value that indicate if the AABB should be rendered
+        /// </summary>
         public bool RenderAabb
         {
             get { return _renderAabb; }
@@ -165,8 +178,8 @@ namespace Pulsar.Graphics.SceneGraph
             {
                 if (value && (_meshAabb == null))
                 {
-                    string name = string.Format("{0}_{1}_Aabb", _sceneTree.Name, Name);
-                    _meshAabb = new MeshBoundingBox(name, _sceneTree.AssetEngine);
+                    string name = string.Format("{0}_{1}_Aabb", _graph.Name, Name);
+                    _meshAabb = new MeshBoundingBox(name, _graph.AssetEngine);
                 }
 
                 _renderAabb = value;

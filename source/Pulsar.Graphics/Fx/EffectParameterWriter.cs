@@ -40,7 +40,7 @@ namespace Pulsar.Graphics.Fx
         #region Static methods
 
         /// <summary>
-        /// Get a strongly typed method to write a specific value
+        /// Gets a strongly typed method to write a specific value
         /// </summary>
         /// <typeparam name="T">Type of the value to write</typeparam>
         /// <returns>Returns a delegate</returns>

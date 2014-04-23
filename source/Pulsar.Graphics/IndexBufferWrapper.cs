@@ -12,7 +12,7 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        protected readonly TBuffer Buffer;
+        protected TBuffer Buffer;
 
         private bool _disposed;
 
@@ -49,7 +49,7 @@ namespace Pulsar.Graphics
         #region Methods
 
         /// <summary>
-        /// Disposes resources
+        /// Releases all resources
         /// </summary>
         public void Dispose()
         {
@@ -62,10 +62,20 @@ namespace Pulsar.Graphics
         /// <param name="disposing">Indicates whether the methods is called from IDisposable.Dispose</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed) 
+                return;
 
-            if (disposing) Buffer.Dispose();
-            _disposed = true;
+            try
+            {
+                if (disposing)
+                    Buffer.Dispose();
+            }
+            finally
+            {
+                Buffer = null;
+
+                _disposed = true;
+            }
         }
 
         /// <summary>
