@@ -4,11 +4,17 @@ using Microsoft.Xna.Framework;
 
 namespace Pulsar.Pipeline.Serialization
 {
+    /// <summary>
+    /// Represents a serializer for Vector2
+    /// </summary>
     [ContentReader]
     public sealed class Vector2Serializer : ContentSerializer<Vector2>
     {
         #region Constructors
 
+        /// <summary>
+        /// Constructor of Vector2Serializer class
+        /// </summary>
         internal Vector2Serializer()
         {
         }
@@ -17,7 +23,13 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Methods
 
-        public override Vector2 Read(string value, SerializerContext context)
+        /// <summary>
+        /// Converts a string to a Vector2
+        /// </summary>
+        /// <param name="value">String value</param>
+        /// <param name="context">Current context</param>
+        /// <returns>Returns a Vector2</returns>
+        public override Vector2 Read(string value, SerializerContext context = null)
         {
             string[] splitVal = MathSerializerHelper.Split(value);
 
@@ -26,6 +38,16 @@ namespace Pulsar.Pipeline.Serialization
                 X = Single.Parse(splitVal[0]), 
                 Y = Single.Parse(splitVal[1])
             };
+        }
+
+        /// <summary>
+        /// Converts a Vector2 to a string representation
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <returns>Returns a string that represents the Vector2</returns>
+        public override string Write(Vector2 value)
+        {
+            return value.X + " " + value.Y;
         }
 
         #endregion

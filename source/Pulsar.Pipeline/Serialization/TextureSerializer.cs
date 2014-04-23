@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 
 namespace Pulsar.Pipeline.Serialization
 {
+    /// <summary>
+    /// Represents a serializer for Texture
+    /// </summary>
     [ContentReader]
     public sealed partial class TextureSerializer : ContentSerializer<ExternalReference<TextureContent>>
     {
@@ -21,6 +24,9 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of TextureSerializer class
+        /// </summary>
         internal TextureSerializer()
         {
         }
@@ -29,6 +35,11 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Static methods
 
+        /// <summary>
+        /// Converts a dictionary to an OpaqueDataDictionary
+        /// </summary>
+        /// <param name="input">Input map</param>
+        /// <returns>Returns an OpaqueDataDictionary instance</returns>
         private static OpaqueDataDictionary ProcessOpaqueData(Dictionary<string, object> input)
         {
             OpaqueDataDictionary result = new OpaqueDataDictionary();
@@ -45,7 +56,13 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Methods
 
-        public override ExternalReference<TextureContent> Read(string value, SerializerContext context)
+        /// <summary>
+        /// Converts a string to an external reference to a texture
+        /// </summary>
+        /// <param name="value">String value</param>
+        /// <param name="context">Current context</param>
+        /// <returns>Returns an external reference</returns>
+        public override ExternalReference<TextureContent> Read(string value, SerializerContext context = null)
         {
             if(context == null)
                 throw new ArgumentNullException("context");
@@ -60,6 +77,21 @@ namespace Pulsar.Pipeline.Serialization
                 processorInfos.OpaqueData, null, null);
         }
 
+        /// <summary>
+        /// Converts a texture to a string representation
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <returns>Returns a string that represents the texture</returns>
+        public override string Write(ExternalReference<TextureContent> value)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Extracts processor parameters
+        /// </summary>
+        /// <param name="parameters">Input parameters</param>
+        /// <returns>Returns informations about the processor to use</returns>
         private TextureProcessorParameters GetProcessorParameters(Dictionary<string, object> parameters)
         {
             TextureProcessorParameters result = new TextureProcessorParameters();

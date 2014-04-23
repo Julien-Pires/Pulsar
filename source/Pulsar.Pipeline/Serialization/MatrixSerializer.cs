@@ -1,14 +1,20 @@
 ﻿using System;
-
+using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace Pulsar.Pipeline.Serialization
 {
+    /// <summary>
+    /// Represents a serializer for Matrix
+    /// </summary>
     [ContentReader]
     public sealed class MatrixSerializer : ContentSerializer<Matrix>
     {
         #region Constructors
 
+        /// <summary>
+        /// Constructor of MatrixSerializer class
+        /// </summary>
         internal MatrixSerializer()
         {
         }
@@ -17,7 +23,13 @@ namespace Pulsar.Pipeline.Serialization
 
         #region Methods
 
-        public override Matrix Read(string value, SerializerContext context)
+        /// <summary>
+        /// Converts a string to a Matrix
+        /// </summary>
+        /// <param name="value">String value</param>
+        /// <param name="context">Current context</param>
+        /// <returns>Returns a Matrix</returns>
+        public override Matrix Read(string value, SerializerContext context = null)
         {
             string[] splitVal = MathSerializerHelper.Split(value);
 
@@ -43,6 +55,37 @@ namespace Pulsar.Pipeline.Serialization
                 M43 = Single.Parse(splitVal[14]),
                 M44 = Single.Parse(splitVal[15]),
             };
+        }
+
+        /// <summary>
+        /// Converts a Matrix to a string representation
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <returns>Returns a string that represents the Matrix</returns>
+        public override string Write(Matrix value)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(value.M11).Append(' ');
+            builder.Append(value.M12).Append(' ');
+            builder.Append(value.M13).Append(' ');
+            builder.Append(value.M14).Append(' ');
+
+            builder.Append(value.M21).Append(' ');
+            builder.Append(value.M22).Append(' ');
+            builder.Append(value.M23).Append(' ');
+            builder.Append(value.M24).Append(' ');
+
+            builder.Append(value.M31).Append(' ');
+            builder.Append(value.M32).Append(' ');
+            builder.Append(value.M33).Append(' ');
+            builder.Append(value.M34).Append(' ');
+
+            builder.Append(value.M41).Append(' ');
+            builder.Append(value.M42).Append(' ');
+            builder.Append(value.M43).Append(' ');
+            builder.Append(value.M44).Append(' ');
+
+            return builder.ToString();
         }
 
         #endregion
