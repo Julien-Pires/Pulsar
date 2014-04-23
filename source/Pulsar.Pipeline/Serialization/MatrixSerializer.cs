@@ -29,7 +29,7 @@ namespace Pulsar.Pipeline.Serialization
         /// <param name="value">String value</param>
         /// <param name="context">Current context</param>
         /// <returns>Returns a Matrix</returns>
-        public override Matrix Read(string value, SerializerContext context = null)
+        public override Matrix Deserialize(string value, SerializerContext context = null)
         {
             string[] splitVal = MathSerializerHelper.Split(value);
 
@@ -62,7 +62,7 @@ namespace Pulsar.Pipeline.Serialization
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Returns a string that represents the Matrix</returns>
-        public override string Write(Matrix value)
+        public override string Serialize(Matrix value)
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(value.M11).Append(' ');

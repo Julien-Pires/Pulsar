@@ -129,6 +129,9 @@ namespace Pulsar.Pipeline.Graphics
             get { return _techniques; }
         }
 
+        /// <summary>
+        /// Gets or sets the default technique
+        /// </summary>
         public string Default { get; set; }
 
         /// <summary>

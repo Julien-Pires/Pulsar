@@ -5,7 +5,7 @@ using Pulsar.Graphics.Asset;
 using Pulsar.Graphics.Fx;
 using Pulsar.Pipeline.Graphics;
 
-namespace Pulsar.Pipeline.Serialization.Compiler
+namespace Pulsar.Pipeline.Compiler
 {
     /// <summary>
     /// Provides methods to compile a shader content into binary format

@@ -25,7 +25,7 @@
         /// <param name="value">String value</param>
         /// <param name="context">Current context</param>
         /// <returns>Returns a bool</returns>
-        public override bool Read(string value, SerializerContext context = null)
+        public override bool Deserialize(string value, SerializerContext context = null)
         {
             string cleanValue = value.Trim();
 
@@ -37,7 +37,7 @@
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Returns a string that represents the bool value</returns>
-        public override string Write(bool value)
+        public override string Serialize(bool value)
         {
             return value.ToString();
         }

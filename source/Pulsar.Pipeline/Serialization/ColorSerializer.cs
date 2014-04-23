@@ -37,7 +37,7 @@ namespace Pulsar.Pipeline.Serialization
         /// <param name="value">String value</param>
         /// <param name="context">Current context</param>
         /// <returns>Returns a Color instance</returns>
-        public override Color Read(string value, SerializerContext context = null)
+        public override Color Deserialize(string value, SerializerContext context = null)
         {
             if (Regex.IsMatch(value, HexPattern))
             {
@@ -67,7 +67,7 @@ namespace Pulsar.Pipeline.Serialization
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Returns a string that represents the Color instance</returns>
-        public override string Write(Color value)
+        public override string Serialize(Color value)
         {
             return "#" + value.A.ToString("X2") + value.R.ToString("X2") + value.G.ToString("X2") + value.B.ToString("X2");
         }

@@ -28,7 +28,7 @@ namespace Pulsar.Pipeline.Serialization
         /// <param name="value">String value</param>
         /// <param name="context">Current context</param>
         /// <returns>Returns an int</returns>
-        public override int Read(string value, SerializerContext context = null)
+        public override int Deserialize(string value, SerializerContext context = null)
         {
             string cleanValue = value.Trim();
 
@@ -40,7 +40,7 @@ namespace Pulsar.Pipeline.Serialization
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Returns a string that represents the int value</returns>
-        public override string Write(int value)
+        public override string Serialize(int value)
         {
             return value.ToString(CultureInfo.InvariantCulture);
         }

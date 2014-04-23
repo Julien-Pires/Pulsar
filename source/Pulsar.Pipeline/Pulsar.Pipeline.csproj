@@ -30,6 +30,7 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
       <SpecificVersion>True</SpecificVersion>
@@ -55,8 +56,7 @@
     <Compile Include="Serialization\ArraySerializer.cs" />
     <Compile Include="Serialization\BoolSerializer.cs" />
     <Compile Include="Serialization\ColorSerializer.cs" />
-    <Compile Include="Serialization\Compiler\ContentWriterHelper.cs" />
-    <Compile Include="Serialization\Compiler\MaterialWriter.cs" />
+    <Compile Include="Compiler\MaterialWriter.cs" />
     <Compile Include="Serialization\ContentReaderAttribute.cs" />
     <Compile Include="Serialization\IContentSerializer.cs" />
     <Compile Include="Serialization\ContentSerializer.cs" />
@@ -78,9 +78,9 @@
     <Compile Include="Processors\MeshProcessor.cs" />
     <Compile Include="Processors\ShaderProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialization\Compiler\ShaderWriter.cs" />
+    <Compile Include="Compiler\ShaderWriter.cs" />
     <Compile Include="Serialization\SerializerContext.cs" />
-    <Compile Include="Serialization\ReaderManager.cs" />
+    <Compile Include="Serialization\SerializerManager.cs" />
     <Compile Include="Serialization\SingleSerializer.cs" />
     <Compile Include="Serialization\TextureProcessorParameters.cs" />
     <Compile Include="Serialization\TextureSerializer.cs" />

@@ -29,7 +29,7 @@ namespace Pulsar.Pipeline.Serialization
         /// <param name="value">String value</param>
         /// <param name="context">Current context</param>
         /// <returns>Returns a Vector4</returns>
-        public override Vector4 Read(string value, SerializerContext context = null)
+        public override Vector4 Deserialize(string value, SerializerContext context = null)
         {
             string[] splitVal = MathSerializerHelper.Split(value);
 
@@ -47,7 +47,7 @@ namespace Pulsar.Pipeline.Serialization
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Returns a string that represents the Vector4</returns>
-        public override string Write(Vector4 value)
+        public override string Serialize(Vector4 value)
         {
             return value.X + " " + value.Y + " " + value.Z + " " + value.W; 
         }

@@ -5,7 +5,7 @@ using Pulsar.Graphics;
 using Pulsar.Graphics.Asset;
 using Pulsar.Pipeline.Graphics;
 
-namespace Pulsar.Pipeline.Serialization.Compiler
+namespace Pulsar.Pipeline.Compiler
 {
     [ContentTypeWriter]
     public sealed class MaterialWriter : ContentTypeWriter<MaterialContent>

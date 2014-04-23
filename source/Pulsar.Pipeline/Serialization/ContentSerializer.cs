@@ -26,7 +26,7 @@ namespace Pulsar.Pipeline.Serialization
         /// Initialize the serializer
         /// </summary>
         /// <param name="manager">Reader manager that owns this serializer</param>
-        public virtual void Initialize(ReaderManager manager)
+        public virtual void Initialize(SerializerManager manager)
         {
         }
 
@@ -36,9 +36,9 @@ namespace Pulsar.Pipeline.Serialization
         /// <param name="value">String value</param>
         /// <param name="context">Current context</param>
         /// <returns>Returns an object</returns>
-        object IContentSerializer.Read(string value, SerializerContext context)
+        object IContentSerializer.Deserialize(string value, SerializerContext context)
         {
-            return Read(value, context);
+            return Deserialize(value, context);
         }
 
         /// <summary>
@@ -46,9 +46,9 @@ namespace Pulsar.Pipeline.Serialization
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Returns a string that represents the object</returns>
-        string IContentSerializer.Write(object value)
+        string IContentSerializer.Serialize(object value)
         {
-            return Write((T)value);
+            return Serialize((T)value);
         }
 
         /// <summary>
@@ -57,14 +57,14 @@ namespace Pulsar.Pipeline.Serialization
         /// <param name="value">String value</param>
         /// <param name="context">Current context</param>
         /// <returns>Returns a T instance</returns>
-        public abstract T Read(string value, SerializerContext context = null);
+        public abstract T Deserialize(string value, SerializerContext context = null);
 
         /// <summary>
         /// Converts an instance of T to a string representation
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Returns a string that represents the object</returns>
-        public abstract string Write(T value);
+        public abstract string Serialize(T value);
 
         #endregion
 

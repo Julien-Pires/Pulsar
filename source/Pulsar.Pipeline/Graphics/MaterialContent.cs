@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
-using Pulsar.Pipeline.Serialization.Compiler;
 
 namespace Pulsar.Pipeline.Graphics
 {
@@ -26,9 +26,15 @@ namespace Pulsar.Pipeline.Graphics
             output.Write(Datas.Count);
             for (int i = 0; i < Datas.Count; i++)
             {
+                string fullTypeName = Datas[i].RuntimeType.AssemblyQualifiedName;
+                if(fullTypeName == null)
+                    throw new Exception("Failed to write data, type cannot be null");
+
                 output.Write(Datas[i].Name);
-                output.Write(Datas[i].RuntimeType.AssemblyQualifiedName);
-                ContentWriterHelper.Write(output, Datas[i].Value, Datas[i].BuildType);
+                output.Write(fullTypeName);
+
+                dynamic typedValue = Datas[i].Value;
+                output.WriteRawObject(typedValue);
             }
 
             output.Write(Shader);

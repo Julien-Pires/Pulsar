@@ -28,7 +28,7 @@ namespace Pulsar.Pipeline.Serialization
         /// <param name="value">String value</param>
         /// <param name="context">Current context</param>
         /// <returns>Returns a float</returns>
-        public override float Read(string value, SerializerContext context = null)
+        public override float Deserialize(string value, SerializerContext context = null)
         {
             string cleanValue = value.Trim();
 
@@ -40,7 +40,7 @@ namespace Pulsar.Pipeline.Serialization
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Returns a string that represents the float value</returns>
-        public override string Write(float value)
+        public override string Serialize(float value)
         {
             return value.ToString(CultureInfo.InvariantCulture);
         }

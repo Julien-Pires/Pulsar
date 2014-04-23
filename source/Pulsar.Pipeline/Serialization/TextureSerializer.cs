@@ -62,7 +62,7 @@ namespace Pulsar.Pipeline.Serialization
         /// <param name="value">String value</param>
         /// <param name="context">Current context</param>
         /// <returns>Returns an external reference</returns>
-        public override ExternalReference<TextureContent> Read(string value, SerializerContext context = null)
+        public override ExternalReference<TextureContent> Deserialize(string value, SerializerContext context = null)
         {
             if(context == null)
                 throw new ArgumentNullException("context");
@@ -82,7 +82,7 @@ namespace Pulsar.Pipeline.Serialization
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Returns a string that represents the texture</returns>
-        public override string Write(ExternalReference<TextureContent> value)
+        public override string Serialize(ExternalReference<TextureContent> value)
         {
             throw new NotSupportedException();
         }

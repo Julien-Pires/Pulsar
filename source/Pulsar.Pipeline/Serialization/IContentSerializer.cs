@@ -13,7 +13,7 @@ namespace Pulsar.Pipeline.Serialization
         /// Initialize the serializer
         /// </summary>
         /// <param name="manager">Reader manager that owns this serializer</param>
-        void Initialize(ReaderManager manager);
+        void Initialize(SerializerManager manager);
 
         /// <summary>
         /// Converts a string to an object
@@ -21,14 +21,14 @@ namespace Pulsar.Pipeline.Serialization
         /// <param name="value">String value</param>
         /// <param name="context">Current context</param>
         /// <returns>Returns an object</returns>
-        object Read(string value, SerializerContext context = null);
+        object Deserialize(string value, SerializerContext context = null);
 
         /// <summary>
         /// Converts an object to a string representation
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Returns a string that represents the object</returns>
-        string Write(object value);
+        string Serialize(object value);
 
         #endregion
 

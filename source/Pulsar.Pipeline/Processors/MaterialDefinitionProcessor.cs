@@ -36,7 +36,7 @@ namespace Pulsar.Pipeline.Processors
         };
 
         private readonly List<MaterialDataContent> _datas = new List<MaterialDataContent>();
-        private readonly ReaderManager _readerManager = new ReaderManager();
+        private readonly SerializerManager _serializerManager = new SerializerManager();
         private string _shader;
         private string _technique;
 
@@ -115,8 +115,6 @@ namespace Pulsar.Pipeline.Processors
                     continue;
 
                 Tuple<Type, Type> type = GetType(rawData.Type.ToLower(), rawData.Value);
-                SerializerContext serializerCtx = new SerializerContext(context);
-                List<Dictionary<string, object>> parameters = rawData.Parameters;
                 MaterialDataContent data = new MaterialDataContent(rawData.Name)
                 {
                     BuildType = type.Item1,
@@ -124,23 +122,32 @@ namespace Pulsar.Pipeline.Processors
                 };
 
                 object value;
+                string[] values = rawData.Value;
+                List<Dictionary<string, object>> parameters = rawData.Parameters;
                 if (rawData.IsNativeArray)
                 {
-                    object[] values = new object[rawData.Value.Length];
-                    for (int j = 0; j < rawData.Value.Length; j++)
+                    SerializerContext[] contexts = new SerializerContext[values.Length];
+                    for (int j = 0; j < values.Length; j++)
                     {
-                        int parametersIdx = Math.Min(j, parameters.Count - 1);
-                        serializerCtx.Parameters = (parameters.Count > 0) ? parameters[parametersIdx] : null;
-                        values[j] = _readerManager.Read(type.Item1, rawData.Value[j], serializerCtx);
+                        int index = Math.Min(j, parameters.Count - 1);
+                        SerializerContext serializerCtx = new SerializerContext(context)
+                        {
+                            Parameters = (index > -1) ? parameters[index] : null
+                        };
+                        contexts[j] = serializerCtx;
                     }
-                    value = values;
+
+                    value = _serializerManager.Deserialize(type.Item1, values, contexts);
                     data.BuildType = data.BuildType.MakeArrayType();
                     data.RuntimeType = data.RuntimeType.MakeArrayType();
                 }
                 else
                 {
-                    serializerCtx.Parameters = (parameters.Count > 0) ? parameters[0] : null;
-                    value = _readerManager.Read(type.Item1, rawData.Value[0], serializerCtx);
+                    SerializerContext serializerCtx = new SerializerContext(context)
+                    {
+                        Parameters = (parameters.Count > 0) ? parameters[0] : null
+                    };
+                    value = _serializerManager.Deserialize(type.Item1, rawData.Value[0], serializerCtx);
                 }
                 data.Value = value;
 
