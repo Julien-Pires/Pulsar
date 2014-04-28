@@ -109,6 +109,8 @@
     <Compile Include="Graph\SubEntity.cs" />
     <Compile Include="IBufferWrapper.cs" />
     <Compile Include="IGraphicsEngineService.cs" />
+    <Compile Include="IMaterialDataCollection.cs" />
+    <Compile Include="IMaterialDataCollectionGeneric.cs" />
     <Compile Include="IndexBufferObject.cs" />
     <Compile Include="IndexBufferWrapper.cs" />
     <Compile Include="IndexData.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="IRenderQueue.cs" />
     <Compile Include="ITextureWrapper.cs" />
     <Compile Include="Material.cs" />
+    <Compile Include="MaterialDataCollection.cs" />
     <Compile Include="MaterialTechniqueChangedHandler.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="MeshData.cs" />

@@ -67,37 +67,36 @@ namespace Pulsar.Graphics.Fx
             _shader.SetCurrentTechnique(Definition);
         }
 
-        /// <summary>
-        /// Sets the value for a specified constant
-        /// </summary>
-        /// <param name="constant">Name of the constant</param>
-        /// <param name="value">Value</param>
-        internal void TrySetConstantValue(string constant, object value)
+        internal void SetConstantValue<T>(string constant, T value)
         {
             ShaderConstantDefinition definition = _shader.GetConstantDefinition(constant);
-            if(definition == null)
+            if (definition == null)
                 return;
 
-            ShaderConstantBinding binding = null;
+            ShaderConstantBindingCollection collection = null;
             switch (definition.UpdateFrequency)
             {
                 case UpdateFrequency.Material:
-                    binding = MaterialConstantsBinding.GetBinding(constant);
+                    collection = MaterialConstantsBinding;
                     break;
 
                 case UpdateFrequency.Instance:
-                    binding = InstanceConstantsBinding.GetBinding(constant);
+                    collection = InstanceConstantsBinding;
                     break;
 
                 case UpdateFrequency.Global:
-                    binding = GlobalConstantsBinding.GetBinding(constant);
+                    collection = GlobalConstantsBinding;
                     break;
             }
 
+            if(collection == null)
+                return;
+
+            ShaderConstantBinding<T> binding = collection.GetBinding<ShaderConstantBinding<T>>(constant);
             if(binding == null)
                 return;
 
-            binding.UntypedValue = value;
+            binding.Value = value;
         }
 
         #endregion

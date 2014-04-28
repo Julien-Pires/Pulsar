@@ -54,11 +54,6 @@ namespace Pulsar.Graphics.Fx
             get { return FxParameter.Name; }
         }
 
-        /// <summary>
-        /// Gets or sets the value of the constant
-        /// </summary>
-        internal abstract object UntypedValue { get; set; }
-
         #endregion
     }
 }

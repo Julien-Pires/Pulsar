@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Collections;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
@@ -40,7 +38,8 @@ namespace Pulsar.Graphics
         private Texture _specularMap;
         private float _specularPower;
         private Texture _normalMap;
-        private readonly Dictionary<Type, object> _dataMap = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, IMaterialDataCollection> _dataMap =
+            new Dictionary<Type, IMaterialDataCollection>();
         private TechniqueBinding _currentTechnique;
 
         #endregion
@@ -154,22 +153,10 @@ namespace Pulsar.Graphics
 
             _currentTechnique = new TechniqueBinding(shader, technique);
             IsTransparent = _currentTechnique.Definition.IsTransparent;
-            BindConstantValue();
+            foreach (IMaterialDataCollection collection in _dataMap.Values)
+                collection.BindToTechnique(_currentTechnique);
 
             OnTechniqueChanged(_currentTechnique.Definition);
-        }
-
-        /// <summary>
-        /// Binds the shader constant to this material
-        /// </summary>
-        private void BindConstantValue()
-        {
-            foreach (object value in _dataMap.Values)
-            {
-                IDictionary map = (IDictionary)value;
-                foreach (DictionaryEntry entry in map)
-                    _currentTechnique.TrySetConstantValue((string)entry.Key, entry.Value);
-            }
         }
 
         /// <summary>
@@ -188,9 +175,9 @@ namespace Pulsar.Graphics
         /// </summary>
         private void InitializeDataMap()
         {
-            _dataMap.Add(typeof(float), new Dictionary<string, float>());
-            _dataMap.Add(typeof(Texture), new Dictionary<string, Texture>());
-            _dataMap.Add(typeof(Color), new Dictionary<string, Color>());
+            _dataMap.Add(typeof(float), new MaterialDataCollection<float>());
+            _dataMap.Add(typeof(Texture), new MaterialDataCollection<Texture>());
+            _dataMap.Add(typeof(Color), new MaterialDataCollection<Color>());
         }
 
         /// <summary>
@@ -202,8 +189,8 @@ namespace Pulsar.Graphics
         /// <param name="value">Value</param>
         public void UnsafeSetValue<T>(string key, T value)
         {
-            Dictionary<string, T> map = (Dictionary<string, T>)_dataMap[typeof(T)];
-            map[key] = value;
+            IMaterialDataCollection<T> collection = (IMaterialDataCollection<T>)_dataMap[typeof(T)];
+            collection[key] = value;
         }
 
         /// <summary>
@@ -214,8 +201,8 @@ namespace Pulsar.Graphics
         /// <param name="value">Value</param>
         public void SetValue<T>(string key, T value)
         {
-            Dictionary<string, T> map = EnsureDictionary<T>();
-            map[key] = value;
+            IMaterialDataCollection<T> collection = EnsureDataCollection<T>();
+            collection[key] = value;
         }
 
         /// <summary>
@@ -227,9 +214,9 @@ namespace Pulsar.Graphics
         /// <returns>Returns the data</returns>
         public T UnsafeGetValue<T>(string key)
         {
-            Dictionary<string, T> map = (Dictionary<string, T>)_dataMap[typeof(T)];
+            IMaterialDataCollection<T> collection = (IMaterialDataCollection<T>)_dataMap[typeof(T)];
 
-            return map[key];
+            return collection[key];
         }
 
         /// <summary>
@@ -240,24 +227,10 @@ namespace Pulsar.Graphics
         /// <returns>Returns the data if found otherwise default value for T</returns>
         public T GetValue<T>(string key)
         {
-            Dictionary<string, T> map = EnsureDictionary<T>();
+            IMaterialDataCollection<T> collection = EnsureDataCollection<T>();
             T result;
 
-            return !map.TryGetValue(key, out result) ? default(T) : result;
-        }
-
-        /// <summary>
-        /// Gets a map for a specified type
-        /// </summary>
-        /// <param name="type">Data type</param>
-        /// <returns>Returns a map</returns>
-        private IDictionary EnsureDictionary(Type type)
-        {
-            MethodInfo methodInf = typeof (Material).GetMethod("EnsureDictionary", 
-                BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
-            MethodInfo ensureMethod = methodInf.MakeGenericMethod(new[] {type});
-            
-            return (IDictionary)ensureMethod.Invoke(this, null);
+            return !collection.TryGetValue(key, out result) ? default(T) : result;
         }
 
         /// <summary>
@@ -265,20 +238,17 @@ namespace Pulsar.Graphics
         /// </summary>
         /// <typeparam name="T">Data type</typeparam>
         /// <returns>Returns a map</returns>
-        private Dictionary<string, T> EnsureDictionary<T>()
+        private IMaterialDataCollection<T> EnsureDataCollection<T>()
         {
             Type type = typeof (T);
-            object value;
-            if (!_dataMap.TryGetValue(type, out value))
-            {
-                value = new Dictionary<string, T>();
-                _dataMap.Add(type, value);
-            }
+            IMaterialDataCollection value;
+            if (_dataMap.TryGetValue(type, out value))
+                return value as IMaterialDataCollection<T>;
 
-            Dictionary<string, T> typedDictionary = value as Dictionary<string, T>;
-            Debug.Assert(typedDictionary != null);
+            value = new MaterialDataCollection<T>();
+            _dataMap.Add(type, value);
 
-            return typedDictionary;
+            return value as IMaterialDataCollection<T>;
         }
 
         #endregion
