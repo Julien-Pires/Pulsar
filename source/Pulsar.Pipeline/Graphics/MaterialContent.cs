@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 
 namespace Pulsar.Pipeline.Graphics
@@ -17,23 +18,34 @@ namespace Pulsar.Pipeline.Graphics
 
         #endregion
 
+        #region Static methods
+
+        private static bool IsExternalReference(Type type)
+        {
+            return type.IsGenericType && (type.GetGenericTypeDefinition() == typeof (ExternalReference<>));
+        }
+
+        #endregion
+
         #region Methods
 
         internal void Write(ContentWriter output)
         {
             output.Write(Name);
-
+            
             output.Write(Datas.Count);
             for (int i = 0; i < Datas.Count; i++)
             {
-                string fullTypeName = Datas[i].RuntimeType.AssemblyQualifiedName;
+                MaterialDataContent data = Datas[i];
+                string fullTypeName = data.RuntimeType.AssemblyQualifiedName;
                 if(fullTypeName == null)
                     throw new Exception("Failed to write data, type cannot be null");
 
-                output.Write(Datas[i].Name);
+                output.Write(data.Name);
                 output.Write(fullTypeName);
+                output.Write(IsExternalReference(data.BuildType));
 
-                dynamic typedValue = Datas[i].Value;
+                dynamic typedValue = data.Value;
                 output.WriteRawObject(typedValue);
             }
 

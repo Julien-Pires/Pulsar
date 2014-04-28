@@ -5,8 +5,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 
-using Pulsar.Assets;
 using Pulsar.Graphics.Fx;
 
 namespace Pulsar.Graphics
@@ -27,6 +27,10 @@ namespace Pulsar.Graphics
         private const string OpacityKey = "Opacity";
 
         private static readonly IndexPool IndexPool = new IndexPool();
+        private static readonly Type[] ReadValueType = new Type[1];
+        private static readonly object[] ReadValueArgs = new object[3];
+        private static readonly MethodInfo ReadValueMethod = typeof (Material).GetMethod("ReadValue",
+            (BindingFlags.Static | BindingFlags.NonPublic));
 
         private readonly ushort _id;
         private float _opacity;
@@ -93,7 +97,7 @@ namespace Pulsar.Graphics
         /// </summary>
         /// <param name="input">Input</param>
         /// <returns>Returns a Material instance</returns>
-        internal static Material Read(Microsoft.Xna.Framework.Content.ContentReader input)
+        internal static Material Read(ContentReader input)
         {
             string name = input.ReadString();
             Material material = new Material(name);
@@ -103,11 +107,17 @@ namespace Pulsar.Graphics
             {
                 string key = input.ReadString();
                 Type type = Type.GetType(input.ReadString());
-                if(type == null)
-                    throw new Exception("");
+                if (type == null)
+                    throw new Exception(string.Format("Failed to load data {0} on material {1}, no type provided", key,
+                        name));
 
-                object value = ContentReaderHelper.Read(input, type);
-                material.SetValue(key, value);
+                ReadValueType[0] = type;
+                MethodInfo genericRead = ReadValueMethod.MakeGenericMethod(ReadValueType);
+
+                ReadValueArgs[0] = input;
+                ReadValueArgs[1] = material;
+                ReadValueArgs[2] = key;
+                genericRead.Invoke(null, ReadValueArgs);
             }
 
             string shaderName = input.ReadString();
@@ -116,6 +126,13 @@ namespace Pulsar.Graphics
             material.BindShader(shader, technique);
 
             return material;
+        }
+
+        private static void ReadValue<T>(ContentReader input, Material material, string key)
+        {
+            bool isExternalRef = input.ReadBoolean();
+            T value = isExternalRef ? input.ReadExternalReference<T>() : input.ReadRawObject<T>();
+            material.SetValue(key, value);
         }
 
         #endregion
@@ -186,17 +203,6 @@ namespace Pulsar.Graphics
         public void UnsafeSetValue<T>(string key, T value)
         {
             Dictionary<string, T> map = (Dictionary<string, T>)_dataMap[typeof(T)];
-            map[key] = value;
-        }
-
-        /// <summary>
-        /// Sets a value to this material
-        /// </summary>
-        /// <param name="key">Key</param>
-        /// <param name="value">Value</param>
-        private void SetValue(string key, object value)
-        {
-            IDictionary map = EnsureDictionary(value.GetType());
             map[key] = value;
         }
 

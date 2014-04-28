@@ -7,6 +7,8 @@ namespace Pulsar.Graphics.Asset
     /// </summary>
     public sealed class MaterialReader : ContentTypeReader<Material>
     {
+        #region Methods
+
         /// <summary>
         /// Converts a binary input to a material
         /// </summary>
@@ -17,5 +19,7 @@ namespace Pulsar.Graphics.Asset
         {
             return Material.Read(input);
         }
+
+        #endregion
     }
 }
