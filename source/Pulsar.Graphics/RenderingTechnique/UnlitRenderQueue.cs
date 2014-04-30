@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Pulsar.Graphics.Fx;
+
 namespace Pulsar.Graphics.RenderingTechnique
 {
     /// <summary>
@@ -19,8 +21,9 @@ namespace Pulsar.Graphics.RenderingTechnique
 
             private bool _isDisposed;
             private readonly RenderQueueElementComparer _comparer = new RenderQueueElementComparer();
+            private Dictionary<Shader, Shader> _usedShaders = new Dictionary<Shader, Shader>(16);
             private Pool<RenderQueueElement> _pool = new Pool<RenderQueueElement>(CreateElement, 64, ResetElement);
-            private List<RenderQueueElement> _renderables = new List<RenderQueueElement>();
+            private List<RenderQueueElement> _renderables = new List<RenderQueueElement>(64);
 
             #endregion
 
@@ -71,11 +74,13 @@ namespace Pulsar.Graphics.RenderingTechnique
                 try
                 {
                     _renderables.Clear();
+                    _usedShaders.Clear();
                     _pool.Dispose();
                 }
                 finally
                 {
                     _renderables = null;
+                    _usedShaders = null;
                     _pool = null;
 
                     _isDisposed = true;
@@ -89,6 +94,7 @@ namespace Pulsar.Graphics.RenderingTechnique
             {
                 _pool.Release(_renderables);
                 _renderables.Clear();
+                _usedShaders.Clear();
             }
 
             /// <summary>
@@ -102,6 +108,9 @@ namespace Pulsar.Graphics.RenderingTechnique
                 element.Key = key;
                 element.Renderable = renderable;
                 _renderables.Add(element);
+
+                Shader shader = renderable.Material.Technique.Shader;
+                _usedShaders[shader] = shader;
             }
 
             /// <summary>
@@ -122,6 +131,11 @@ namespace Pulsar.Graphics.RenderingTechnique
             internal List<RenderQueueElement> Renderables
             {
                 get { return _renderables; }
+            }
+
+            internal Dictionary<Shader, Shader> UsedShaders
+            {
+                get { return _usedShaders; }
             }
 
             #endregion

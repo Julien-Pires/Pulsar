@@ -72,41 +72,43 @@ namespace Pulsar.Graphics.RenderingTechnique
             if(viewport.AlwaysClear)
                 _renderer.Clear(Color.CornflowerBlue);
 
+            foreach (Shader shader in _renderQueue.UsedShaders.Values)
+                shader.GlobalConstantsBinding.UpdateAndWrite(context);
+
             _renderQueue.Sort();
             List<RenderQueueElement> queueElements = _renderQueue.Renderables;
             for (int i = 0; i < queueElements.Count; i++)
             {
                 IRenderable renderable = queueElements[i].Renderable;
-                if(renderable.Material == null)
+                Material material = renderable.Material;
+                if (material == null)
                     continue;
 
-                SetMaterial(renderable.Material, context);
-                Draw(renderable, context);
+                context.Renderable = renderable;
+
+                Material previousMaterial = context.Material;
+                TechniqueBinding technique = material.Technique;
+                if (material != previousMaterial)
+                {
+                    context.Material = material;
+                    technique.UseTechnique();
+                    technique.MaterialConstantsBinding.UpdateAndWrite(context);
+                }
+                technique.InstanceConstantsBinding.UpdateAndWrite(context);
+
+                PassBinding[] passes = technique.PassesBindings;
+                for (int j = 0; j < passes.Length; j++)
+                {
+                    PassBinding pass = passes[i];
+                    SwitchState(pass.RenderState, context);
+
+                    pass.Apply();
+                    _renderer.Draw(renderable);
+                }
             }
 
             _renderer.UnsetRenderTarget();
             _renderQueue.Reset();
-        }
-
-        /// <summary>
-        /// Draws a renderable object
-        /// </summary>
-        /// <param name="renderable">Renderable object</param>
-        /// <param name="context">Frame context</param>
-        private void Draw(IRenderable renderable, FrameContext context)
-        {
-            context.Renderable = renderable;
-            renderable.Material.Technique.InstanceConstantsBinding.UpdateAndWrite(context);
-
-            PassBinding[] passes = renderable.Material.Technique.PassesBindings;
-            for (int i = 0; i < passes.Length; i++)
-            {
-                PassBinding pass = passes[i];
-                SwitchState(pass.RenderState, context);
-
-                pass.Apply();
-                _renderer.Draw(renderable);
-            }
         }
 
         /// <summary>
@@ -144,32 +146,6 @@ namespace Pulsar.Graphics.RenderingTechnique
                 _renderer.SetBlendState(newBlendState);
                 context.BlendState = newBlendState;
             }
-        }
-
-        /// <summary>
-        /// Changes the material
-        /// </summary>
-        /// <param name="material">New material</param>
-        /// <param name="context">Frame context</param>
-        private void SetMaterial(Material material, FrameContext context)
-        {
-            Material previousMaterial = context.Material;
-            if (material == previousMaterial) 
-                return;
-
-            context.Material = material;
-
-            TechniqueBinding technique = material.Technique;
-            technique.UseTechnique();
-
-            ShaderConstantBindingCollection constantBindings = technique.GlobalConstantsBinding;
-            if (!constantBindings.AlreadyUpdated)
-            {
-                constantBindings.UpdateAndWrite(context);
-                constantBindings.AlreadyUpdated = true;
-            }
-
-            technique.MaterialConstantsBinding.UpdateAndWrite(context);
         }
 
         #endregion

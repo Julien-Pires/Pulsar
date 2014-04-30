@@ -182,11 +182,6 @@ namespace Pulsar.Graphics.Fx
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value that indicates if bindings have been updated
-        /// </summary>
-        internal bool AlreadyUpdated { get; set; }
-
-        /// <summary>
         /// Gets the number of binding in the collection
         /// </summary>
         public int Count

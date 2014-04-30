@@ -9,8 +9,6 @@ namespace Pulsar.Graphics.Fx
     {
         #region Fields
 
-        private Shader _shader;
-
         #endregion
 
         #region Constructors
@@ -27,7 +25,7 @@ namespace Pulsar.Graphics.Fx
         /// <param name="technique">Technique</param>
         internal TechniqueBinding(Shader shader, TechniqueDefinition technique)
         {
-            _shader = shader;
+            Shader = shader;
             Definition = technique;
 
             PassDefinition[] passes = technique.Passes;
@@ -54,7 +52,7 @@ namespace Pulsar.Graphics.Fx
             finally
             {
                 MaterialConstantsBinding = null;
-                _shader = null;
+                Shader = null;
                 Definition = null;
             }
         }
@@ -64,12 +62,12 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         internal void UseTechnique()
         {
-            _shader.SetCurrentTechnique(Definition);
+            Shader.SetCurrentTechnique(Definition);
         }
 
         internal void SetConstantValue<T>(string constant, T value)
         {
-            ShaderConstantDefinition definition = _shader.GetConstantDefinition(constant);
+            ShaderConstantDefinition definition = Shader.GetConstantDefinition(constant);
             if (definition == null)
                 return;
 
@@ -111,6 +109,8 @@ namespace Pulsar.Graphics.Fx
             get { return Definition.Name; }
         }
 
+        public Shader Shader { get; private set; }
+
         /// <summary>
         /// Gets the technique definition
         /// </summary>
@@ -126,7 +126,7 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         public ShaderConstantBindingCollection GlobalConstantsBinding
         {
-            get { return _shader.GlobalConstantsBinding; }
+            get { return Shader.GlobalConstantsBinding; }
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Pulsar.Graphics.Fx
         /// </summary>
         public ShaderConstantBindingCollection InstanceConstantsBinding
         {
-            get { return _shader.InstanceConstantsBinding; }
+            get { return Shader.InstanceConstantsBinding; }
         }
 
         #endregion
