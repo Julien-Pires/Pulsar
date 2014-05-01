@@ -26,13 +26,60 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.XImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.AudioImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\bin\x86\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Pulsar.Pipeline">
+      <HintPath>..\..\bin\x86\Debug\Pulsar.Pipeline.dll</HintPath>
+    </Reference>
+    <Reference Include="Pulsar.Pipeline.MaterialImporter">
+      <HintPath>..\..\bin\x86\Debug\Pulsar.Pipeline.MaterialImporter.dll</HintPath>
+    </Reference>
+    <Reference Include="Pulsar.Pipeline.ShaderImporter">
+      <HintPath>..\..\bin\x86\Debug\Pulsar.Pipeline.ShaderImporter.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Graphics\Shaders\SimpleShader.fx">
-      <Name>SimpleShader</Name>
+    <Compile Include="Graphics\Shaders\ShadersList.xml">
+      <Name>ShadersList</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <SubType>Designer</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Graphics\Shaders\Sources\Materials\UnlitAlpha.fx">
+      <Name>UnlitAlpha</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\Shaders\Definitions\UnlitAlpha.shd">
+      <Name>UnlitAlpha</Name>
+      <Importer>ShaderImporter</Importer>
+      <Processor>ShaderProcessor</Processor>
     </Compile>
+    <None Include="Graphics\Shaders\Sources\Materials\UnlitTexture.fx">
+      <Name>UnlitTexture</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graphics\Shaders\Definitions\UnlitTexture.shd">
+      <Name>UnlitTexture</Name>
+      <Importer>ShaderImporter</Importer>
+      <Processor>ShaderProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Graphics\Shaders\Sources\Common\Declarations.fxh">
+      <Name>Declarations</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

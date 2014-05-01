@@ -44,7 +44,7 @@ namespace Pulsar.Pipeline.ShaderImporter
         private const string PassRasterizerProperty = "Rasterizer";
         private const string PassDepthProperty = "Depth";
         private const string PassStencilProperty = "Stencil";
-        private const string PassBlendingProperty = "Blending";
+        private const string PassBlendingProperty = "Blend";
 
         private const string CullProperty = "Cull";
         private const string FillModeProperty = "FillMode";
@@ -88,7 +88,9 @@ namespace Pulsar.Pipeline.ShaderImporter
             else
                 file = (string) fileToken;
 
-            return Path.Combine(Path.GetDirectoryName(definitionPath), file);
+            file = Path.Combine(Path.GetDirectoryName(definitionPath), file);
+            
+            return Path.GetFullPath(file);
         }
 
         /// <summary>
@@ -254,7 +256,7 @@ namespace Pulsar.Pipeline.ShaderImporter
             JObject definition = JObject.Parse(text);
             string filePath = GetEffectFilePath(definition, filename);
             if(!File.Exists(filePath))
-                throw new Exception("Failed to load shader definition, effect file missing");
+                throw new Exception(string.Format("Failed to effect file, invalid path {0}", filePath));
 
             ShaderDefinitionContent content = new ShaderDefinitionContent {EffectFile = new ExternalReference<EffectContent>(filePath)};
             ImportShaderInfo(definition, content);

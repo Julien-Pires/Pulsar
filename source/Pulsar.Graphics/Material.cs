@@ -31,13 +31,6 @@ namespace Pulsar.Graphics
             (BindingFlags.Static | BindingFlags.NonPublic));
 
         private readonly ushort _id;
-        private float _opacity;
-        private Color _diffuse;
-        private Texture _diffuseMap;
-        private Color _specular;
-        private Texture _specularMap;
-        private float _specularPower;
-        private Texture _normalMap;
         private readonly Dictionary<Type, IMaterialDataCollection> _dataMap =
             new Dictionary<Type, IMaterialDataCollection>();
         private TechniqueBinding _currentTechnique;
@@ -59,7 +52,7 @@ namespace Pulsar.Graphics
         /// Constructor of Material class
         /// </summary>
         /// <param name="name">Name of the material</param>
-        public Material(string name)
+        internal Material(string name)
         {
             _id = GetId();
             Name = name;
@@ -72,6 +65,7 @@ namespace Pulsar.Graphics
             Specular = Color.White;
             SpecularMap = null;
             SpecularPower = 50.0f;
+            NormalMap = null;
         }
 
         #endregion
@@ -286,12 +280,8 @@ namespace Pulsar.Graphics
         /// </summary>
         public float Opacity
         {
-            get { return _opacity; }
-            set
-            {
-                _opacity = value;
-                UnsafeSetValue(OpacityKey, value);
-            }
+            get { return UnsafeGetValue<float>(OpacityKey); }
+            set { UnsafeSetValue(OpacityKey, value); }
         }
 
         /// <summary>
@@ -299,12 +289,8 @@ namespace Pulsar.Graphics
         /// </summary>
         public Color Diffuse
         {
-            get { return _diffuse; }
-            set
-            {
-                _diffuse = value;
-                UnsafeSetValue(DiffuseKey, value);
-            }
+            get { return UnsafeGetValue<Color>(DiffuseKey); }
+            set { UnsafeSetValue(DiffuseKey, value); }
         }
 
         /// <summary>
@@ -312,12 +298,8 @@ namespace Pulsar.Graphics
         /// </summary>
         public Texture DiffuseMap
         {
-            get { return _diffuseMap; }
-            set
-            {
-                _diffuseMap = value;
-                UnsafeSetValue(DiffuseMapKey, value);
-            }
+            get { return UnsafeGetValue<Texture>(DiffuseMapKey); }
+            set { UnsafeSetValue(DiffuseMapKey, value); }
         }
 
         /// <summary>
@@ -325,12 +307,8 @@ namespace Pulsar.Graphics
         /// </summary>
         public Color Specular
         {
-            get { return _specular; }
-            set
-            {
-                _specular = value;
-                UnsafeSetValue(SpecularKey, value);
-            }
+            get { return UnsafeGetValue<Color>(SpecularKey); }
+            set { UnsafeSetValue(SpecularKey, value); }
         }
 
         /// <summary>
@@ -338,12 +316,8 @@ namespace Pulsar.Graphics
         /// </summary>
         public Texture SpecularMap
         {
-            get { return _specularMap; }
-            set
-            {
-                _specularMap = value;
-                UnsafeSetValue(SpecularMapKey, value);
-            }
+            get { return UnsafeGetValue<Texture>(SpecularMapKey); }
+            set { UnsafeSetValue(SpecularMapKey, value); }
         }
 
         /// <summary>
@@ -351,12 +325,8 @@ namespace Pulsar.Graphics
         /// </summary>
         public float SpecularPower
         {
-            get { return _specularPower; }
-            set
-            {
-                _specularPower = value;
-                UnsafeSetValue(SpecularPowerKey, value);
-            }
+            get { return UnsafeGetValue<float>(SpecularPowerKey); }
+            set { UnsafeSetValue(SpecularPowerKey, value); }
         }
 
         /// <summary>
@@ -364,12 +334,8 @@ namespace Pulsar.Graphics
         /// </summary>
         public Texture NormalMap
         {
-            get { return _normalMap; }
-            set
-            {
-                _normalMap = value;
-                UnsafeSetValue(NormalMapKey, value);
-            }
+            get { return UnsafeGetValue<Texture>(NormalMapKey); }
+            set { UnsafeSetValue(NormalMapKey, value); }
         }
 
         #endregion

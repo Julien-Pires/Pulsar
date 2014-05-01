@@ -88,6 +88,7 @@
     <Compile Include="Frustum.cs" />
     <Compile Include="Fx\AutomaticBinding.cs" />
     <Compile Include="Fx\AutomaticDelegateMapper.cs" />
+    <Compile Include="Fx\BuiltInShader.cs" />
     <Compile Include="Fx\BuiltInShaderInfo.cs" />
     <Compile Include="Fx\BuiltInShaderManager.cs" />
     <Compile Include="IMaterialDataCollection.cs" />

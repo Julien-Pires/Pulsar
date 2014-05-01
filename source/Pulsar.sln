@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30324.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pulsar", "Pulsar\Pulsar.csproj", "{2323EEAF-3931-4685-B3AB-91FD67BAD3F0}"
 EndProject
@@ -79,12 +79,14 @@ Global
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Debug|Any CPU.Build.0 = Debug|Xbox 360
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Debug|Mixed Platforms.ActiveCfg = Debug|Xbox 360
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Debug|x86.ActiveCfg = Debug|Xbox 360
+		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Debug|x86.Build.0 = Debug|Xbox 360
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Release|Any CPU.ActiveCfg = Release|Xbox 360
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Release|Any CPU.Build.0 = Release|Xbox 360
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Release|Mixed Platforms.ActiveCfg = Release|Xbox 360
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Release|x86.ActiveCfg = Release|Xbox 360
+		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Release|x86.Build.0 = Release|Xbox 360
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{6E976DD2-40A8-44F2-A661-5E1604A8A6E7}.Release|Xbox 360.Build.0 = Release|Xbox 360
 		{DA4A1233-A1E5-4985-B326-3CA9737FD7A9}.Debug|Any CPU.ActiveCfg = Debug|x86
@@ -104,11 +106,13 @@ Global
 		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Debug|Any CPU.ActiveCfg = Debug|Xbox 360
 		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Debug|Mixed Platforms.ActiveCfg = Debug|Xbox 360
 		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Debug|x86.ActiveCfg = Debug|Xbox 360
+		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Debug|x86.Build.0 = Debug|Xbox 360
 		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
 		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
 		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Release|Any CPU.ActiveCfg = Release|Xbox 360
 		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Release|Mixed Platforms.ActiveCfg = Release|Xbox 360
 		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Release|x86.ActiveCfg = Release|Xbox 360
+		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Release|x86.Build.0 = Release|Xbox 360
 		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{FCA4EF85-2D50-4990-90C3-38C8E694BB34}.Release|Xbox 360.Build.0 = Release|Xbox 360
 		{5B8CF9AB-0C86-4BB3-BAF4-B052CF812C32}.Debug|Any CPU.ActiveCfg = Debug|x86

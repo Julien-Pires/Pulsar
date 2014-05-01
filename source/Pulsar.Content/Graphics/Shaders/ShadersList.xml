@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <Asset Type="Pulsar.Graphics.Fx.BuiltInShaderInfo">
+    <Shaders>
+      <Item>
+        <Name>UnlitTexture</Name>
+        <Path>Definitions/UnlitTexture</Path>
+      </Item>
+      <Item>
+        <Name>UnlitAlpha</Name>
+        <Path>Definitions/UnlitAlpha</Path>
+      </Item>
+    </Shaders>
+  </Asset>
+</XnaContent>

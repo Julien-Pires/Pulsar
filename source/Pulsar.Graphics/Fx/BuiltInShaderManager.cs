@@ -10,11 +10,11 @@ namespace Pulsar.Graphics.Fx
     {
         #region Static
 
-        private const string BuiltInFile = "";
+        private const string BuiltInFile = "ShadersList";
 
         private readonly GraphicsStorage _storage;
-        private readonly Dictionary<string, BuiltInShaderInfo> _shaderMap =
-            new Dictionary<string, BuiltInShaderInfo>();
+        private readonly Dictionary<string, BuiltInShader> _shaderMap =
+            new Dictionary<string, BuiltInShader>();
 
         #endregion
 
@@ -27,14 +27,15 @@ namespace Pulsar.Graphics.Fx
         internal BuiltInShaderManager(GraphicsStorage storage)
         {
             Debug.Assert(storage != null);
-
+            
             _storage = storage;
-            /*List<BuiltInShaderInfo> shadersList = _storage.ShaderFolder.Load<List<BuiltInShaderInfo>>(BuiltInFile);
-            for (int i = 0; i < shadersList.Count; i++)
+            BuiltInShaderInfo shadersInfo = _storage.ShaderFolder.Load<BuiltInShaderInfo>(BuiltInFile);
+            List<BuiltInShader> shadersData = shadersInfo.Shaders;
+            for (int i = 0; i < shadersData.Count; i++)
             {
-                BuiltInShaderInfo shaderInfo = shadersList[i];
-                _shaderMap.Add(shaderInfo.Name, shaderInfo);
-            }*/
+                BuiltInShader shader = shadersData[i];
+                _shaderMap.Add(shader.Name, shader);
+            }
         }
 
         #endregion
@@ -48,7 +49,7 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns a Shader instance if found otherwise null</returns>
         public Shader GetShader(string name)
         {
-            BuiltInShaderInfo shaderInfo;
+            BuiltInShader shaderInfo;
             if (!_shaderMap.TryGetValue(name, out shaderInfo))
                 return null;
 

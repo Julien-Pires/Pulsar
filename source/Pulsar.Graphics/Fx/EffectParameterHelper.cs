@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using XnaTexture = Microsoft.Xna.Framework.Graphics.Texture;
 
 namespace Pulsar.Graphics.Fx
 {
@@ -124,7 +125,7 @@ namespace Pulsar.Graphics.Fx
                 switch (parameter.ParameterType)
                 {
                     case EffectParameterType.Texture:
-                        result = typeof(Texture);
+                        result = typeof(XnaTexture);
                         break;
 
                     case EffectParameterType.Texture2D:
@@ -145,7 +146,7 @@ namespace Pulsar.Graphics.Fx
                 switch (parameter.ParameterType)
                 {
                     case EffectParameterType.Texture:
-                        result = typeof(Texture[]);
+                        result = typeof(XnaTexture[]);
                         break;
 
                     case EffectParameterType.Texture2D:

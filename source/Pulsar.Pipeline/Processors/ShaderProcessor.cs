@@ -64,7 +64,7 @@ namespace Pulsar.Pipeline.Processors
                 throw new ArgumentNullException("context");
 
             ValidateConstantsDefinition(input);
-
+            
             CompiledEffectContent compiledFx =
                 context.BuildAndLoadAsset<EffectContent, CompiledEffectContent>(input.EffectFile, "EffectProcessor");
             ShaderContent shader = new ShaderContent(compiledFx.GetEffectCode())

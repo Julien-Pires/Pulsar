@@ -37,8 +37,8 @@ namespace Pulsar.Pipeline.Processors
 
         private readonly List<MaterialDataContent> _datas = new List<MaterialDataContent>();
         private readonly SerializerManager _serializerManager = new SerializerManager();
-        private string _shader;
-        private string _technique;
+        private string _shader = string.Empty;
+        private string _technique = string.Empty;
 
         #endregion
 
@@ -99,11 +99,15 @@ namespace Pulsar.Pipeline.Processors
 
             rawShader = rawShader.Replace("/", @"\");
             string[] splitValues = rawShader.Split('\\');
-            if(splitValues.Length <= 1)
-                throw new Exception("");
-
-            _technique = splitValues[splitValues.Length - 1];
-            _shader = string.Join(@"\", splitValues.Take(splitValues.Length - 1));
+            if(splitValues.Length <= 0)
+                throw new Exception("No shader provided for material");
+            if (splitValues.Length > 1)
+            {
+                _technique = splitValues[splitValues.Length - 1];
+                _shader = string.Join(@"\", splitValues.Take(splitValues.Length - 1));
+            }
+            else
+                _shader = splitValues[0];
         }
 
         private void GenerateData(List<RawMaterialDataContent> rawCollection, ContentProcessorContext context)

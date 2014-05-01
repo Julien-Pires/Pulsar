@@ -1,0 +1,30 @@
+{
+    "File" : "../Sources/Materials/UnlitAlpha.fx",
+    "Default" : "UnlitAlpha",
+	"Techniques" : {
+		"UnlitAlpha" : {
+			"Transparent" : true,
+			"Pass" : {
+				"Pass0" : {
+					"Depth" : { "Write" : false },
+					"Blend" : {
+						"ColorSource" : "SourceAlpha",
+						"ColorDestination" : "InverseDestinationAlpha"
+					}
+				}
+			}
+		}
+	},
+    "Constants" : {
+        "worldViewProjection" : {
+            "Source" : "Auto",
+			"Semantic" : "WorldViewProjection",
+			"UpdateFrequency" : "Instance"
+        },
+		"mainTexture" : {
+			"Source" : "Auto",
+			"Semantic" : "DiffuseMap",
+			"UpdateFrequency" : "Material"
+		}
+    }
+}

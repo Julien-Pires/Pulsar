@@ -1,0 +1,16 @@
+{
+    "File" : "../Sources/Materials/UnlitTexture.fx",
+    "Default" : "UnlitTexture",
+    "Constants" : {
+        "worldViewProjection" : {
+            "Source" : "Auto",
+			"Semantic" : "WorldViewProjection",
+			"UpdateFrequency" : "Instance"
+        },
+		"mainTexture" : {
+			"Source" : "Auto",
+			"Semantic" : "DiffuseMap",
+			"UpdateFrequency" : "Material"
+		}
+    }
+}

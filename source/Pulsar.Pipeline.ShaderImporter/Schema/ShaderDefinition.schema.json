@@ -14,7 +14,7 @@
 			"title" : "Technique used as fallback"
 		},
 		"Default" : {
-			"type" : "boolean",
+			"type" : "string",
 			"title" : "Default technique for this shader"
 		},
 		"Techniques" : {
@@ -104,7 +104,7 @@
 										}
 									}
 								},
-								"Blending" : {
+								"Blend" : {
 									"type" : "object",
 									"properties" : {
 										"ColorBlend" : {
