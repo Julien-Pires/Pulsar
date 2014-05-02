@@ -8,8 +8,20 @@
 				"Pass0" : {
 					"Depth" : { "Write" : false },
 					"Blend" : {
+						"ColorSource" : "One",
+						"ColorDestination" : "InverseSourceAlpha"
+					}
+				}
+			}
+		},
+		"UnlitAlphaNonPremultiply" : {
+			"Transparent" : true,
+			"Pass" : {
+				"Pass0" : {
+					"Depth" : { "Write" : false },
+					"Blend" : {
 						"ColorSource" : "SourceAlpha",
-						"ColorDestination" : "InverseDestinationAlpha"
+						"ColorDestination" : "InverseSourceAlpha"
 					}
 				}
 			}
