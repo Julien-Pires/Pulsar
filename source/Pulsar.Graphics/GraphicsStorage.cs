@@ -24,6 +24,8 @@ namespace Pulsar.Graphics
         /// <param name="assetEngine">Asset engine</param>
         internal GraphicsStorage(AssetEngine assetEngine)
         {
+            _assetEngine = assetEngine;
+
             Storage storage = assetEngine.CreateStorage(GraphicsConstant.Storage);
             TextureFolder = storage.AddFolder(GraphicsConstant.TextureFolder, GraphicsConstant.TextureFolderName);
             ShaderFolder = storage.AddFolder(GraphicsConstant.ShaderFolder, GraphicsConstant.ShaderFolderName);
@@ -53,6 +55,7 @@ namespace Pulsar.Graphics
                 ShaderFolder = null;
                 MaterialFolder = null;
                 MeshFolder = null;
+
                 _assetEngine = null;
 
                 _isDisposed = true;
