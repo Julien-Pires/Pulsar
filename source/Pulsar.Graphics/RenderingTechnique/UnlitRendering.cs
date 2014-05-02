@@ -99,7 +99,7 @@ namespace Pulsar.Graphics.RenderingTechnique
                 PassBinding[] passes = technique.PassesBindings;
                 for (int j = 0; j < passes.Length; j++)
                 {
-                    PassBinding pass = passes[i];
+                    PassBinding pass = passes[j];
                     SwitchState(pass.RenderState, context);
 
                     pass.Apply();
