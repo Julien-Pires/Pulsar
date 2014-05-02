@@ -75,31 +75,32 @@ namespace Pulsar.Pipeline.Graphics
                 output.Write(_techniques[i].Name);
                 output.Write(_techniques[i].IsTransparent);
                 
-                List<ShaderPassContent> pass = _techniques[i].Passes;
-                output.Write(pass.Count);
-                for (int j = 0; j < pass.Count; j++)
+                List<ShaderPassContent> passCollection = _techniques[i].Passes;
+                output.Write(passCollection.Count);
+                for (int j = 0; j < passCollection.Count; j++)
                 {
-                    output.Write(pass[i].Name);
+                    ShaderPassContent pass = passCollection[j];
+                    output.Write(pass.Name);
 
-                    output.Write((int)pass[i].Cull);
-                    output.Write((int)pass[i].FillMode);
+                    output.Write((int)pass.Cull);
+                    output.Write((int)pass.FillMode);
 
-                    output.Write(pass[i].DepthWrite);
-                    output.Write((int)pass[i].DepthCompare);
-                    output.Write(pass[i].StencilRef);
-                    output.Write(pass[i].StencilMask);
-                    output.Write(pass[i].StencilWriteMask);
-                    output.Write((int)pass[i].StencilCompare);
-                    output.Write((int)pass[i].StencilPass);
-                    output.Write((int)pass[i].StencilFail);
-                    output.Write((int)pass[i].StencilDepthFail);
+                    output.Write(pass.DepthWrite);
+                    output.Write((int)pass.DepthCompare);
+                    output.Write(pass.StencilRef);
+                    output.Write(pass.StencilMask);
+                    output.Write(pass.StencilWriteMask);
+                    output.Write((int)pass.StencilCompare);
+                    output.Write((int)pass.StencilPass);
+                    output.Write((int)pass.StencilFail);
+                    output.Write((int)pass.StencilDepthFail);
 
-                    output.Write((int)pass[i].ColorBlend);
-                    output.Write((int)pass[i].AlphaBlend);
-                    output.Write((int)pass[i].ColorSource);
-                    output.Write((int)pass[i].ColorDestination);
-                    output.Write((int)pass[i].AlphaSource);
-                    output.Write((int)pass[i].AlphaDestination);
+                    output.Write((int)pass.ColorBlend);
+                    output.Write((int)pass.AlphaBlend);
+                    output.Write((int)pass.ColorSource);
+                    output.Write((int)pass.ColorDestination);
+                    output.Write((int)pass.AlphaSource);
+                    output.Write((int)pass.AlphaDestination);
                 }
             }
         }
