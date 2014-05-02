@@ -30,6 +30,8 @@ namespace Pulsar.Graphics.Graph
         private Vector3 _yawFixedAxis = Vector3.UnitY;
         private Viewport _viewport;
         private readonly Frustum _boundingFrustum = new Frustum();
+        private readonly AxisAlignedBox _localAabb = new AxisAlignedBox();
+        private readonly AxisAlignedBox _worldAabb = new AxisAlignedBox();
 
         #endregion
 
@@ -76,7 +78,6 @@ namespace Pulsar.Graphics.Graph
         /// <param name="camera">Camera</param>
         void IMovable.FrustumCulling(Camera camera)
         {
-            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -86,7 +87,6 @@ namespace Pulsar.Graphics.Graph
         /// <param name="camera">Camera</param>
         void IMovable.UpdateRenderQueue(IRenderQueue queue, Camera camera)
         {
-            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -94,7 +94,6 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         void IMovable.UpdateBounds()
         {
-            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -211,6 +210,24 @@ namespace Pulsar.Graphics.Graph
             Matrix viewProj;
             Matrix.Multiply(ref _viewMatrix, ref _projectionMatrix, out viewProj);
             _boundingFrustum.Update(ref viewProj);
+            
+            BoundingFrustum bounds = _boundingFrustum.BoundingFrustum;
+            Vector3 min = new Vector3(bounds.Left.D, bounds.Bottom.D, -_far);
+            Vector3 max = new Vector3(bounds.Right.D, bounds.Top.D, 0);
+            if (_projectionType == ProjectionType.Perspective)
+            {
+                float ratio = _far/_near;
+                Vector3 minRatio = new Vector3(bounds.Left.D * ratio, bounds.Bottom.D * ratio, -_far);
+                Vector3 maxRatio = new Vector3(bounds.Right.D * ratio, bounds.Top.D * ratio, 0);
+                Vector3.Min(ref min, ref minRatio, out min);
+                Vector3.Max(ref max, ref maxRatio, out max);
+            }
+            BoundingBox box = new BoundingBox(min, max);
+            _localAabb.SetFromAabb(ref box);
+            _worldAabb.SetFromAabb(_localAabb);
+
+            if(ParentTransform != null)
+                _worldAabb.Transform(ParentTransform.LocalToWorld);
 
             _isDirtyBoundingFrustum = false;
         }
@@ -244,7 +261,7 @@ namespace Pulsar.Graphics.Graph
         {
             if(!_isDirtyView) 
                 return;
-
+            
             UpdateTransform();
 
             Matrix.Invert(ref WorldTransform, out _viewMatrix);
@@ -293,8 +310,8 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         bool IMovable.Visible
         {
-            get { throw new NotSupportedException(); }
-            set { throw new NotSupportedException(); }
+            get { return false; }
+            set { }
         }
 
         /// <summary>
@@ -429,7 +446,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         AxisAlignedBox IMovable.WorldAabb
         {
-            get { throw new NotSupportedException(); }
+            get { return _worldAabb; }
         }
 
         /// <summary>
@@ -437,7 +454,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         AxisAlignedBox IMovable.LocalAabb
         {
-            get { throw new NotSupportedException(); }
+            get { return _localAabb; }
         }
 
         /// <summary>
@@ -461,7 +478,7 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         bool IMovable.IsRendered
         {
-            get { throw new NotSupportedException(); }
+            get { return false; }
         }
 
         /// <summary>

@@ -93,5 +93,14 @@ namespace Pulsar.Graphics
         }
 
         #endregion
+
+        #region Properties
+
+        internal BoundingFrustum BoundingFrustum
+        {
+            get { return _boundingFrustum; }
+        }
+
+        #endregion
     }
 }
