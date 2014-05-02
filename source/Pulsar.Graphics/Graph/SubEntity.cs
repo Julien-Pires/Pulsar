@@ -91,8 +91,16 @@ namespace Pulsar.Graphics.Graph
         /// </summary>
         private void UpdateKeysMaterialPart()
         {
-            _key.Material = _material.Id;
-            _key.Transparency = _material.IsTransparent;
+            if (_material == null)
+            {
+                _key.Material = 0;
+                _key.Transparency = false;
+            }
+            else
+            {
+                _key.Material = _material.Id;
+                _key.Transparency = _material.IsTransparent;
+            }
         }
 
         #endregion
@@ -156,13 +164,13 @@ namespace Pulsar.Graphics.Graph
                 if ((oldMtl == newMtl) && (oldMtl.Technique == newMtl.Technique))
                     return;
 
-                UpdateKeysMaterialPart();
-
                 if(oldMtl != null)
                     oldMtl.TechniqueChanged -= OnMaterialTechniqueChanged;
 
                 _material = newMtl;
                 _material.TechniqueChanged += OnMaterialTechniqueChanged;
+
+                UpdateKeysMaterialPart();
             }
         }
 
