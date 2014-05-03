@@ -108,6 +108,7 @@ namespace Pulsar.Graphics
         /// </summary>
         private void UpdateByDepthPriority()
         {
+            _id = 0;
             _id |= _pass;
             _id |= _material << 16;
             _id |= _depth << 32;
@@ -120,6 +121,7 @@ namespace Pulsar.Graphics
         /// </summary>
         private void UpdateByMaterialPriority()
         {
+            _id = 0;
             _id |= _depth;
             _id |= _pass << 24;
             _id |= _material << 40;
