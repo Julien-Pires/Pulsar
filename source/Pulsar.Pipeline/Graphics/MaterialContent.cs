@@ -10,10 +10,12 @@ namespace Pulsar.Pipeline.Graphics
     {
         #region Constructors
 
-        public MaterialContent(string name, List<MaterialDataContent> datas)
+        public MaterialContent(string name, List<MaterialDataContent> datas, string shader, string technique)
         {
             Name = name;
             Datas = datas;
+            Shader = shader;
+            Technique = technique;
         }
 
         #endregion
@@ -59,9 +61,9 @@ namespace Pulsar.Pipeline.Graphics
 
         public string Name { get; private set; }
 
-        public string Shader { get; set; }
+        public string Shader { get; private set; }
 
-        public string Technique { get; set; }
+        public string Technique { get; private set; }
 
         public List<MaterialDataContent> Datas { get; private set; }
 

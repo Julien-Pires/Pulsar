@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
@@ -37,8 +36,6 @@ namespace Pulsar.Pipeline.Processors
 
         private readonly List<MaterialDataContent> _datas = new List<MaterialDataContent>();
         private readonly SerializerManager _serializerManager = new SerializerManager();
-        private string _shader = string.Empty;
-        private string _technique = string.Empty;
 
         #endregion
 
@@ -82,32 +79,9 @@ namespace Pulsar.Pipeline.Processors
             if (context == null)
                 throw new ArgumentNullException("context");
 
-            ExtractTechnique(input.Shader);
             GenerateData(input.Data, context);
 
-            return new MaterialContent(input.Name, _datas)
-            {
-                Shader = _shader,
-                Technique = _technique
-            };
-        }
-
-        private void ExtractTechnique(string rawShader)
-        {
-            if(string.IsNullOrWhiteSpace(rawShader))
-                throw new ArgumentNullException("rawShader");
-
-            rawShader = rawShader.Replace("/", @"\");
-            string[] splitValues = rawShader.Split('\\');
-            if(splitValues.Length <= 0)
-                throw new Exception("No shader provided for material");
-            if (splitValues.Length > 1)
-            {
-                _technique = splitValues[splitValues.Length - 1];
-                _shader = string.Join(@"\", splitValues.Take(splitValues.Length - 1));
-            }
-            else
-                _shader = splitValues[0];
+            return new MaterialContent(input.Name, _datas, input.Shader, input.Technique);
         }
 
         private void GenerateData(List<RawMaterialDataContent> rawCollection, ContentProcessorContext context)

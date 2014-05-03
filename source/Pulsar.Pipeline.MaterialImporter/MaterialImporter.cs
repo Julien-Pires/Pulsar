@@ -20,6 +20,7 @@ namespace Pulsar.Pipeline.MaterialImporter
 
         private const string NameProperty = "Name";
         private const string ShaderProperty = "Shader";
+        private const string TechniqueProperty = "Technique";
         private const string DataProperty = "Data";
 
         private const string DataTypeProperty = "Type";
@@ -92,7 +93,8 @@ namespace Pulsar.Pipeline.MaterialImporter
             JObject jObject = JObject.Parse(text);
             string name = JsonHelper.GetString(jObject, NameProperty);
             string shader = JsonHelper.GetString(jObject, ShaderProperty);
-            RawMaterialContent material = new RawMaterialContent(name, shader);
+            string technique = JsonHelper.GetString(jObject, TechniqueProperty);
+            RawMaterialContent material = new RawMaterialContent(name, shader, technique);
             ImportData((JObject)jObject[DataProperty], material);
 
             return material;

@@ -13,7 +13,7 @@ namespace Pulsar.Pipeline.Graphics
 
         #region Constructors
 
-        public RawMaterialContent(string name, string shader)
+        public RawMaterialContent(string name, string shader, string technique)
         {
             if(string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("name");
@@ -23,6 +23,7 @@ namespace Pulsar.Pipeline.Graphics
 
             Name = name;
             Shader = shader;
+            Technique = technique;
         }
 
         #endregion
@@ -32,6 +33,8 @@ namespace Pulsar.Pipeline.Graphics
         public string Name { get; private set; }
 
         public string Shader { get; private set; }
+
+        public string Technique { get; private set; }
 
         public List<RawMaterialDataContent> Data
         {

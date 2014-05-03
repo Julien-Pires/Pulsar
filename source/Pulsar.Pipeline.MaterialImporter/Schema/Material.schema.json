@@ -8,8 +8,12 @@
 		},
 		"Shader" : {
 			"type" : "string",
-			"title" : "Shader and technique used by the material",
+			"title" : "Shader used by the material",
 			"required" : true
+		},
+		"Technique" : {
+			"type" : "string",
+			"title" : "Technique used by the material"
 		},
 		"Data" : {
 			"type" : "object",
