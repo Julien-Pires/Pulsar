@@ -1,76 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
-using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 
 using Pulsar.Pipeline.Graphics;
 using Pulsar.Pipeline.Serialization;
-using Texture = Pulsar.Graphics.Texture;
 using MaterialContent = Pulsar.Pipeline.Graphics.MaterialContent;
 
 namespace Pulsar.Pipeline.Processors
 {
+    /// <summary>
+    /// Processes a material asset to a Material for used at runtime
+    /// </summary>
     [ContentProcessor(DisplayName = "Material - Pulsar")]
     public sealed class MaterialDefinitionProcessor : ContentProcessor<RawMaterialContent, MaterialContent>
     {
         #region Fields
-
-        private static readonly Dictionary<string, Tuple<Type, Type>> TypeMap = new Dictionary<string, Tuple<Type, Type>>
-        {
-            { "integer", new Tuple<Type, Type>(typeof(int), typeof(int)) },
-            { "floating" , new Tuple<Type, Type>(typeof(float), typeof(float)) },
-            { "vector2" , new Tuple<Type, Type>(typeof(Vector2), typeof(Vector2)) },
-            { "vector3" , new Tuple<Type, Type>(typeof(Vector3), typeof(Vector3)) },
-            { "vector4" , new Tuple<Type, Type>(typeof(Vector4), typeof(Vector4)) },
-            { "matrix" , new Tuple<Type, Type>(typeof(Matrix), typeof(Matrix)) },
-            { "texture" , new Tuple<Type, Type>(typeof(ExternalReference<TextureContent>), typeof(Texture)) },
-            { "string", new Tuple<Type, Type>(typeof(string), typeof(string)) }
-        };
-
-        private static readonly DelegateMapper<string> FindRealTypeDelegateMap = new DelegateMapper<string>
-        {
-            { "vector", (Func<string[], string>)GetVectorType }
-        };
 
         private readonly List<MaterialDataContent> _datas = new List<MaterialDataContent>();
         private readonly SerializerManager _serializerManager = new SerializerManager();
 
         #endregion
 
-        #region Static methods
-
-        private static Tuple<Type, Type> GetType(string type, string[] value)
-        {
-            if (!FindRealTypeDelegateMap.ContainsKey(type))
-                return TypeMap[type];
-
-            Func<string[], string> findType = FindRealTypeDelegateMap.GetTypedDelegate<Func<string[], string>>(type);
-            type = findType(value);
-
-            return TypeMap[type];
-        }
-
-        private static string GetVectorType(string[] value)
-        {
-            if ((value == null) || (value.Length == 0))
-                return "vector4";
-
-            int length = 2;
-            for (int i = 0; i < value.Length; i++)
-                length = Math.Max(MathSerializerHelper.GetValueCount(value[i]), length);
-
-            if ((length < 2) || (length > 4))
-                throw new Exception("Invalid vector format, a vector must have 2 to 4 number");
-
-            return "vector" + length;
-        }
-
-        #endregion
-
         #region Methods
 
+        /// <summary>
+        /// Converts raw material data to material content
+        /// </summary>
+        /// <param name="input">Input content</param>
+        /// <param name="context">Context</param>
+        /// <returns>Returns material content</returns>
         public override MaterialContent Process(RawMaterialContent input, ContentProcessorContext context)
         {
             if (input == null)
@@ -84,6 +43,11 @@ namespace Pulsar.Pipeline.Processors
             return new MaterialContent(input.Name, _datas, input.Shader, input.Technique);
         }
 
+        /// <summary>
+        /// Converts raw string data to strongly typed data
+        /// </summary>
+        /// <param name="rawCollection">Raw datas</param>
+        /// <param name="context">Context</param>
         private void GenerateData(List<RawMaterialDataContent> rawCollection, ContentProcessorContext context)
         {
             for (int i = 0; i < rawCollection.Count; i++)
@@ -92,7 +56,7 @@ namespace Pulsar.Pipeline.Processors
                 if (rawData.Value.Length == 0)
                     continue;
 
-                Tuple<Type, Type> type = GetType(rawData.Type.ToLower(), rawData.Value);
+                Tuple<Type, Type> type = MaterialDataTypeParser.GetType(rawData.Type, rawData.Value);
                 MaterialDataContent data = new MaterialDataContent(rawData.Name)
                 {
                     BuildType = type.Item1,

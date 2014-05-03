@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graphics\ShaderPassContent.cs" />
+    <Compile Include="Processors\MaterialDataTypeParser.cs" />
     <Compile Include="Serialization\ArraySerializer.cs" />
     <Compile Include="Serialization\BoolSerializer.cs" />
     <Compile Include="Serialization\ColorSerializer.cs" />
