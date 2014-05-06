@@ -8,43 +8,14 @@ namespace Pulsar.Graphics
     /// <summary>
     /// Manages multiple vertex buffer object
     /// </summary>
-    public sealed class VertexData : IDisposable
+    public sealed partial class VertexData : IDisposable
     {
-        #region Nested
-
-        /// <summary>
-        /// Allows to associate binding data with a VertexBufferObject
-        /// </summary>
-        private class BindingInfo
-        {
-            #region Fields
-
-            /// <summary>
-            /// Vertex buffer object
-            /// </summary>
-            public VertexBufferObject BufferObject;
-
-            /// <summary>
-            /// Offset in the buffer
-            /// </summary>
-            public int VertexOffset;
-
-            /// <summary>
-            /// Instancing frequency
-            /// </summary>
-            public int Frequency;
-
-            #endregion
-        }
-
-        #endregion
-
         #region Fields
 
         internal VertexBufferBinding[] VertexBindings = new VertexBufferBinding[0];
 
         private bool _isDisposed;
-        private readonly List<BindingInfo> _bindings = new List<BindingInfo>();
+        private readonly List<VertexBufferBindingInfo> _bindings = new List<VertexBufferBindingInfo>();
 
         #endregion
 
@@ -89,7 +60,7 @@ namespace Pulsar.Graphics
         /// <returns>Returns an int that represents a vertex offset</returns>
         public int GetVertexOffset(int index)
         {
-            return _bindings[index].VertexOffset;
+            return _bindings[index].Offset;
         }
 
         /// <summary>
@@ -99,7 +70,7 @@ namespace Pulsar.Graphics
         /// <param name="index">Index of the offset to replace</param>
         public void SetVertexOffset(int offset, int index)
         {
-            _bindings[index].VertexOffset = offset;
+            _bindings[index].Offset = offset;
             UpdateBindingArray();
         }
 
@@ -139,10 +110,10 @@ namespace Pulsar.Graphics
             if (buffer == null) 
                 throw new ArgumentNullException("buffer");
 
-            BindingInfo inf = new BindingInfo
+            VertexBufferBindingInfo inf = new VertexBufferBindingInfo
             {
                 BufferObject = buffer,
-                VertexOffset = vertexOffset,
+                Offset = vertexOffset,
                 Frequency = frequency
             };
 
@@ -197,9 +168,9 @@ namespace Pulsar.Graphics
         {
             for (int i = 0; i < VertexBindings.Length; i++)
             {
-                BindingInfo inf = _bindings[i];
+                VertexBufferBindingInfo inf = _bindings[i];
                 VertexBufferBinding bufferBinding = new VertexBufferBinding(inf.BufferObject.Buffer,
-                    inf.VertexOffset, inf.Frequency);
+                    inf.Offset, inf.Frequency);
                 VertexBindings[i] = bufferBinding;
             }
         }

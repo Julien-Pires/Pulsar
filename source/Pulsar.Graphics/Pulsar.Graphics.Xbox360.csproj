@@ -142,9 +142,11 @@
     <Compile Include="StateObject.cs" />
     <Compile Include="SubMesh.cs" />
     <Compile Include="SubMeshData.cs" />
+    <Compile Include="SubMeshPart.cs" />
     <Compile Include="Texture.cs" />
     <Compile Include="TextureLevel.cs" />
     <Compile Include="TextureWrapper.cs" />
+    <Compile Include="VertexBufferBindingInfo.cs" />
     <Compile Include="VertexBufferObject.cs" />
     <Compile Include="VertexBufferWrapper.cs" />
     <Compile Include="VertexData.cs" />

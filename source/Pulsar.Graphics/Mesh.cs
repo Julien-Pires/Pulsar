@@ -188,7 +188,7 @@ namespace Pulsar.Graphics
             VertexData vertexData = sub.VertexData;
 
             return new SubMeshBufferData(vertexData.GetBuffer(0), vertexData.GetVertexOffset(0), 
-                sub.RenderInfo.VertexCount, sub.ShareVertexBuffer);
+                sub.VertexCount, sub.ShareVertexBuffer);
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace Pulsar.Graphics
         public void Begin(string name, PrimitiveType type, bool shareBuffer, bool staticVertex, bool staticIndex)
         {
             SubMesh sub = string.IsNullOrEmpty(name) ? CreateSubMesh() : CreateSubMesh(name);
-            sub.RenderInfo.PrimitiveType = type;
+            sub.PrimitiveType = type;
             sub.ShareVertexBuffer = shareBuffer;
             sub.ShareIndexBuffer = shareBuffer;
 
@@ -357,20 +357,16 @@ namespace Pulsar.Graphics
                 _estimatedVertexCount = Math.Max(_estimatedVertexCount, _currentVertices.Count);
                 _estimatedIndexCount = Math.Max(_estimatedIndexCount, _currentIndices.Count);
 
-                SubMesh sub = _subMeshes[_currentSub];
-                RenderingInfo renderingInfo = sub.RenderInfo;
+                SubMesh subMesh = _subMeshes[_currentSub];
                 VertexPositionNormalTexture[] vertexSource = _currentVertices.ToArray();
-                int[] indexSource = _currentIndices.ToArray();
-
                 CopyVertexToBuffer(vertexSource);
+
                 if (_currentIndices.Count > 0)
                 {
+                    int[] indexSource = _currentIndices.ToArray();
                     CopyIndexToBuffer(indexSource);
-                    renderingInfo.UseIndexes = true;
                 }
-                else 
-                    renderingInfo.UseIndexes = false;
-                renderingInfo.ComputePrimitiveCount();
+                subMesh.Update();
 
                 GenerateCurrentBoundingVolume(vertexSource);
                 UpdateBounds();
@@ -569,13 +565,12 @@ namespace Pulsar.Graphics
         /// <param name="source">Array of vertices</param>
         private void CopyVertexToBuffer(VertexPositionNormalTexture[] source)
         {
-            SubMesh sub = _subMeshes[_currentSub];
-            VertexData subVertexData = sub.VertexData;
-            SubMeshBufferData subBufferData = GetSubVertexData(sub);
+            SubMesh subMesh = _subMeshes[_currentSub];
+            SubMeshBufferData subBufferData = GetSubVertexData(subMesh);
             VertexBufferObject buffer;
 
             int newOffset = 0;
-            if (sub.ShareVertexBuffer)
+            if (subMesh.ShareVertexBuffer)
             {
                 buffer = EnsureVertexBuffer();
                 if (!_isUpdating)
@@ -590,18 +585,18 @@ namespace Pulsar.Graphics
             {
                 if (!_isUpdating)
                 {
-                    buffer = _bufferManager.CreateVertexBuffer(_currentVertexBufferType, typeof(VertexPositionNormalTexture),
-                        _estimatedVertexCount);
+                    buffer = _bufferManager.CreateVertexBuffer(_currentVertexBufferType,
+                        typeof (VertexPositionNormalTexture), _estimatedVertexCount);
                     subBufferData.Buffer = buffer;
                 }
-                else buffer = subVertexData.GetBuffer(0);
+                else
+                    buffer = subMesh.VertexBuffer;
 
                 UpdatePrivateBuffer(source, subBufferData);
             }
             
-            subVertexData.UnsetBinding(0);
-            subVertexData.SetBinding(buffer, newOffset, 0, 0);
-            sub.RenderInfo.VertexCount = _appendToBuffer ? (sub.RenderInfo.VertexCount + source.Length) : source.Length;
+            int vertexCount = _appendToBuffer ? (subMesh.VertexCount + source.Length) : source.Length;
+            subMesh.SetVertexBuffer(buffer, vertexCount, newOffset);
         }
 
         /// <summary>
@@ -610,13 +605,11 @@ namespace Pulsar.Graphics
         /// <param name="source">Array of indices</param>
         private void CopyIndexToBuffer(int[] source)
         {
-            SubMesh sub = _subMeshes[_currentSub];
-            IndexData subIndexData = sub.IndexData;
-            SubMeshBufferData subBufferData = GetSubIndexData(sub);
+            SubMesh subMesh = _subMeshes[_currentSub];
+            SubMeshBufferData subBufferData = GetSubIndexData(subMesh);
             IndexBufferObject buffer;
-
             int newOffset = 0;
-            if (sub.ShareIndexBuffer)
+            if (subMesh.ShareIndexBuffer)
             {
                 buffer = EnsureIndexBuffer();
                 if (!_isUpdating)
@@ -635,14 +628,14 @@ namespace Pulsar.Graphics
                         _estimatedIndexCount);
                     subBufferData.Buffer = buffer;
                 }
-                else buffer = subIndexData.IndexBuffer;
+                else
+                    buffer = subMesh.IndexBuffer;
 
                 UpdatePrivateBuffer(source, subBufferData);
             }
 
-            subIndexData.IndexBuffer = buffer;
-            subIndexData.StartIndex = newOffset;
-            subIndexData.IndexCount = _appendToBuffer ? (subIndexData.IndexCount + source.Length) : source.Length;
+            int indicesCount = _appendToBuffer ? (subMesh.IndexCount + source.Length) : source.Length;
+            subMesh.SetIndexBuffer(buffer, newOffset, indicesCount);
         }
 
         /// <summary>
@@ -663,7 +656,8 @@ namespace Pulsar.Graphics
                     length = source.Length;
                 }
             }
-            else length = source.Length;
+            else 
+                length = source.Length;
 
             AddToBuffer(subBufferData.Buffer, source, offset, length);
         }
@@ -1057,9 +1051,8 @@ namespace Pulsar.Graphics
             PrimitiveCount = 0;
             for (int i = 0; i < _subMeshes.Count; i++)
             {
-                RenderingInfo renderingInfo = _subMeshes[i].RenderInfo;
-                VerticesCount += renderingInfo.VertexCount;
-                PrimitiveCount += renderingInfo.PrimitiveCount;
+                VerticesCount += _subMeshes[i].VertexCount;
+                PrimitiveCount += _subMeshes[i].PrimitiveCount;
             }
         }
 

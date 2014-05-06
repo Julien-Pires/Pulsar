@@ -19,7 +19,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Vertex data
         /// </summary>
-        public  VertexData VertexData;
+        public VertexData VertexData;
 
         /// <summary>
         /// Index data
@@ -60,34 +60,44 @@ namespace Pulsar.Graphics
 
         #endregion
 
-        #region Methods
+        #region Static methods
 
         /// <summary>
         /// Computes number of primtives that composed the 3D shape
         /// </summary>
-        public void ComputePrimitiveCount()
+        public static int ComputePrimitiveCount(PrimitiveType primitive, int vertexCount, bool useIndices, int indexCount)
         {
-            if (VertexCount == 0)
-            {
-                PrimitiveCount = 0;
-                return;
-            }
+            if (vertexCount == 0)
+                return 0;
 
-            switch (PrimitiveType)
+            int result = 0;
+            switch (primitive)
             {
                 case PrimitiveType.LineList:
-                    PrimitiveCount = (UseIndexes ? IndexData.IndexCount : VertexCount) / 2;
+                    result = (useIndices ? indexCount : vertexCount) / 2;
                     break;
                 case PrimitiveType.LineStrip:
-                    PrimitiveCount = (UseIndexes ? IndexData.IndexCount : VertexCount) - 1;
+                    result = (useIndices ? indexCount : vertexCount) - 1;
                     break;
                 case PrimitiveType.TriangleList:
-                    PrimitiveCount = (UseIndexes ? IndexData.IndexCount : VertexCount) / 3;
+                    result = (useIndices ? indexCount : vertexCount) / 3;
                     break;
                 case PrimitiveType.TriangleStrip:
-                    PrimitiveCount = (UseIndexes ? IndexData.IndexCount : VertexCount) - 2;
+                    result = (useIndices ? indexCount : vertexCount) - 2;
                     break;
             }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Methods
+
+        public void UpdatePrimitiveCount()
+        {
+            int indicesCount = (IndexData == null) ? 0 : IndexData.IndexCount;
+            PrimitiveCount = ComputePrimitiveCount(PrimitiveType, VertexCount, UseIndexes, indicesCount);
         }
 
         /// <summary>
