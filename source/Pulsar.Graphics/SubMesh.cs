@@ -13,6 +13,7 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
+        private readonly string _name;
         private SubMeshMaterialCollection _materials;
         private VertexData _vertexData = new VertexData();
         private IndexData _indexData = new IndexData();
@@ -28,8 +29,9 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Constructor of SubMesh class
         /// </summary>
-        internal SubMesh()
+        internal SubMesh(string name)
         {
+            _name = name;
             _materials = new SubMeshMaterialCollection(this);
         }
 
@@ -100,6 +102,11 @@ namespace Pulsar.Graphics
         #endregion
 
         #region Properties
+
+        public string Name
+        {
+            get { return _name; }
+        }
 
         /// <summary>
         /// Gets the index used to find the bone attached to this sub mesh

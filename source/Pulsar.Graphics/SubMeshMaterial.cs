@@ -81,6 +81,11 @@ namespace Pulsar.Graphics
             }
         }
 
+        internal RenderingInfo RenderingInfo
+        {
+            get { return _renderingInfo; }
+        }
+
         internal IndexBufferObject IndexBuffer
         {
             get { return _indexData.IndexBuffer; }

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 
-using Pulsar.Graphics.Graph;
-
 namespace Pulsar.Graphics
 {
     /// <summary>
@@ -9,33 +7,12 @@ namespace Pulsar.Graphics
     /// </summary>
     public interface IRenderable
     {
-        #region Methods
-
-        /// <summary>
-        /// Computes the squared distance between the renderable and a camera
-        /// </summary>
-        /// <param name="camera">Camera</param>
-        /// <returns>Returns the squared distance</returns>
-        float GetViewDepth(Camera camera);
-
-        #endregion
-
         #region Properties
-
-        /// <summary>
-        /// Gets the ID of this renderable
-        /// </summary>
-        uint Id { get; }
 
         /// <summary>
         /// Gets the name of this instance
         /// </summary>
         string Name { get; }
-
-        /// <summary>
-        /// Gets or sets a boolean indicating if this instance use instancing
-        /// </summary>
-        bool UseInstancing { get; set; }
 
         /// <summary>
         /// Gets the render queue key

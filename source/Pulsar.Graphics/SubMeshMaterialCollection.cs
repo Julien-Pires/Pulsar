@@ -23,6 +23,11 @@ namespace Pulsar.Graphics
             get { return GetMaterial((material)); }
         }
 
+        public SubMeshMaterial this[int index]
+        {
+            get { return _materials[index]; }
+        }
+
         #endregion
 
         #region Constructors
@@ -59,17 +64,17 @@ namespace Pulsar.Graphics
             }
         }
 
-        public SubMeshMaterial AddMaterial(string name, Material material)
+        public SubMeshMaterial Add(string name, Material material)
         {
-            return AddMaterial(name, material, _parent.VertexUsed, 0);
+            return Add(name, material, _parent.VertexUsed, 0);
         }
 
-        public SubMeshMaterial AddMaterial(string name, Material material, int vertexCount)
+        public SubMeshMaterial Add(string name, Material material, int vertexCount)
         {
-            return AddMaterial(name, material, vertexCount, 0);
+            return Add(name, material, vertexCount, 0);
         }
 
-        public SubMeshMaterial AddMaterial(string name, Material material, int vertexCount, int indicesOffset)
+        public SubMeshMaterial Add(string name, Material material, int vertexCount, int indicesOffset)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("name");
@@ -84,7 +89,7 @@ namespace Pulsar.Graphics
             return subMaterial;
         }
 
-        public bool RemoveMaterial(string material)
+        public bool Remove(string material)
         {
             int index = IndexOf(material);
             if (index == -1)
@@ -95,6 +100,11 @@ namespace Pulsar.Graphics
             subMaterial.Dispose();
 
             return true;
+        }
+
+        public SubMeshMaterial GetMaterial(int index)
+        {
+            return _materials[index];
         }
 
         public SubMeshMaterial GetMaterial(string material)
@@ -124,6 +134,11 @@ namespace Pulsar.Graphics
         #endregion
 
         #region Properties
+
+        public int Count
+        {
+            get { return _materials.Count; }
+        }
 
         internal PrimitiveType PrimitiveType
         {

@@ -91,6 +91,7 @@
     <Compile Include="Fx\BuiltInShader.cs" />
     <Compile Include="Fx\BuiltInShaderInfo.cs" />
     <Compile Include="Fx\BuiltInShaderManager.cs" />
+    <Compile Include="Graph\SubEntityMaterial.cs" />
     <Compile Include="IMaterialDataCollection.cs" />
     <Compile Include="IMaterialDataCollectionGeneric.cs" />
     <Compile Include="IRenderQueue.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="RenderState.cs" />
     <Compile Include="RenderStateId.cs" />
     <Compile Include="StateObject.cs" />
+    <Compile Include="SubMeshBufferData.cs" />
     <Compile Include="SubMeshMaterial.cs" />
     <Compile Include="SubMeshMaterialCollection.cs" />
     <Compile Include="TextureLevel.cs" />

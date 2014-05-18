@@ -102,6 +102,7 @@ namespace Pulsar.Graphics.Graph
         /// Updates the render queue with renderable instances
         /// </summary>
         /// <param name="queue">Render queue</param>
+        /// <param name="camera">Camera</param>
         public abstract void UpdateRenderQueue(IRenderQueue queue, Camera camera);
 
         #endregion

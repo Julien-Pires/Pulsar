@@ -863,28 +863,17 @@ namespace Pulsar.Graphics
         }
 
         /// <summary>
-        /// Creates a submesh
-        /// </summary>
-        /// <returns>Returns a new submesh</returns>
-        public SubMesh CreateSubMesh()
-        {
-            SubMesh sub = new SubMesh();
-            _subMeshes.Add(sub);
-
-            return sub;
-        }
-
-        /// <summary>
         /// Creates a submesh with a name associated
         /// </summary>
         /// <param name="name">Name of the submesh</param>
         /// <returns>Returns a new submesh</returns>
-        public SubMesh CreateSubMesh(string name)
+        public SubMesh CreateSubMesh(string name = "")
         {
             if (_subMeshNamesMap.ContainsKey(name))
                 throw new Exception(string.Format("A submesh with the name {0} already exists", name));
 
-            SubMesh submesh = CreateSubMesh();
+            SubMesh submesh = new SubMesh(name);
+            _subMeshes.Add(submesh);
             _subMeshNamesMap.Add(name, _subMeshes.Count - 1);
 
             return submesh;

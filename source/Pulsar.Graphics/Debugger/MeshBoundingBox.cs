@@ -173,10 +173,10 @@ namespace Pulsar.Graphics.Debugger
             _vbo = _internalMesh.VertexData.GetBuffer(0);
             GenerateIndices(_internalMesh.IndexData.IndexBuffer);
 
-            SubMesh sub = _internalMesh.GetSubMesh(0);
-            sub.RenderInfo.VertexCount = VertexCount;
-            sub.IndexData.IndexCount = IndexCount;
-            sub.RenderInfo.ComputePrimitiveCount();
+            SubMesh subMesh = _internalMesh.GetSubMesh(0);
+            subMesh.RenderInfo.VertexCount = VertexCount;
+            subMesh.IndexData.IndexCount = IndexCount;
+            subMesh.RenderInfo.ComputePrimitiveCount();
 
             _internalMesh.UpdateMeshInfo();
         }

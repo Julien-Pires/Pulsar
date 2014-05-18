@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
@@ -22,7 +21,7 @@ namespace Pulsar.Graphics.Graph
         private SceneGraph _graph;
         private MeshBoundingBox _meshAabb;
         private Mesh _mesh;
-        private readonly List<SubEntity> _subEntities = new List<SubEntity>();
+        private List<SubEntity> _subEntities = new List<SubEntity>();
 
         #endregion
 
@@ -40,6 +39,7 @@ namespace Pulsar.Graphics.Graph
             _mesh = mesh;
             Name = name;
             Visible = true;
+
             ProcessMesh();
         }
 
@@ -58,6 +58,11 @@ namespace Pulsar.Graphics.Graph
 
             try
             {
+                for(int i = 0; i < _subEntities.Count; i++)
+                    _subEntities[i].Dispose();
+
+                _subEntities.Clear();
+
                 if (_meshAabb != null)
                     _meshAabb.Dispose();
             }
@@ -66,6 +71,7 @@ namespace Pulsar.Graphics.Graph
                 _meshAabb = null;
                 _mesh = null;
                 _graph = null;
+                _subEntities = null;
 
                 _isDisposed = true;
             }
@@ -89,6 +95,7 @@ namespace Pulsar.Graphics.Graph
         private void Reset()
         {
             _subEntities.Clear();
+
             BonesTransform = null;
             BonesCount = 0;
             ResetBounds();
@@ -110,10 +117,14 @@ namespace Pulsar.Graphics.Graph
         {
             for (int i = 0; i < _subEntities.Count; i++)
             {
-                SubEntity renderable = _subEntities[i];
-                RenderQueueKey key = renderable.Key;
-                key.Depth = renderable.GetViewDepth(camera);
-                queue.AddRenderable(key, renderable);
+                List<SubEntityMaterial> materials = _subEntities[i].Materials;
+                for (int j = 0; j < materials.Count; j++)
+                {
+                    SubEntityMaterial renderable = materials[j];
+                    RenderQueueKey key = renderable.Key;
+                    key.Depth = _subEntities[i].GetViewDepth(camera);
+                    queue.AddRenderable(key, renderable);
+                }
             }
 
             if (!RenderAabb) 
@@ -157,8 +168,8 @@ namespace Pulsar.Graphics.Graph
 
             for (int i = 0; i < subMeshes.Count; i++)
             {
-                SubMesh meshPart = subMeshes[i];
-                SubEntity subEnt = new SubEntity(meshPart.Id.ToString(CultureInfo.InvariantCulture), this, meshPart);
+                SubMesh subMesh = subMeshes[i];
+                SubEntity subEnt = new SubEntity(subMesh, this);
 
                 _subEntities.Add(subEnt);
             }
@@ -187,11 +198,6 @@ namespace Pulsar.Graphics.Graph
         }
 
         /// <summary>
-        /// Gets or sets a value indicating if this entity use instancing for draw calls
-        /// </summary>
-        public bool UseInstancing { get; set; }
-
-        /// <summary>
         /// Gets or sets the model attached to this Entity
         /// </summary>
         public Mesh Mesh
@@ -204,14 +210,6 @@ namespace Pulsar.Graphics.Graph
                 Reset();
                 ProcessMesh();
             }
-        }
-
-        /// <summary>
-        /// Gets the list of all sub entity
-        /// </summary>
-        internal List<SubEntity> SubEntities
-        {
-            get { return _subEntities; }
         }
 
         #endregion

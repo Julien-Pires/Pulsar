@@ -1,25 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
-
-using Pulsar.Graphics.Fx;
 
 namespace Pulsar.Graphics.Graph
 {
     /// <summary>
     /// Represents a part of an Entity
     /// </summary>
-    public sealed class SubEntity : IRenderable, IDisposable
+    public sealed class SubEntity : IDisposable
     {
         #region Fields
 
         private bool _isDisposed;
-        private readonly string _name = string.Empty;
         private Entity _parent;
-        private SubMesh _subMesh;
-        private Material _material;
+        private SubMesh _submeshMesh;
         private byte _group;
-        private readonly RenderQueueKey _key = new RenderQueueKey();
+        private List<SubEntityMaterial> _materials = new List<SubEntityMaterial>();
 
         #endregion
 
@@ -28,15 +25,33 @@ namespace Pulsar.Graphics.Graph
         /// <summary>
         /// Constructor of the SubEntity class
         /// </summary>
-        /// <param name="name">Name of the sub entity</param>
         /// <param name="parent">Parent Entity</param>
-        /// <param name="sub">ModelMeshPart associated to this SubEntity</param>
-        internal SubEntity(string name, Entity parent, SubMesh sub)
+        /// <param name="submesh">ModelMeshPart associated to this SubEntity</param>
+        internal SubEntity(SubMesh submesh, Entity parent)
         {
-            _name = name;
             _parent = parent;
-            _subMesh = sub;
-            Material = sub.Material;
+            _submeshMesh = submesh;
+
+            SubMeshMaterialCollection materials = submesh.Materials;
+            for (int i = 0; i < materials.Count; i++)
+            {
+                SubEntityMaterial material = new SubEntityMaterial(materials[i], this);
+                _materials.Add(material);
+            }
+        }
+
+        #endregion
+
+        #region Operators
+
+        public SubEntityMaterial this[string material]
+        {
+            get { return GetMaterial(material); }
+        }
+
+        public SubEntityMaterial this[int index]
+        {
+            get { return _materials[index]; }
         }
 
         #endregion
@@ -53,14 +68,16 @@ namespace Pulsar.Graphics.Graph
 
             try
             {
-                if (_material != null)
-                    _material.TechniqueChanged -= OnMaterialTechniqueChanged;
+                for(int i = 0; i < _materials.Count; i++)
+                    _materials[i].Dispose();
+
+                _materials.Clear();
             }
             finally
             {
                 _parent = null;
-                _subMesh = null;
-                _material = null;
+                _submeshMesh = null;
+                _materials = null;
 
                 _isDisposed = true;
             }
@@ -76,31 +93,22 @@ namespace Pulsar.Graphics.Graph
             return _parent.Parent.GetViewDepth(camera);
         }
 
-        /// <summary>
-        /// Called when the associated material change its technique
-        /// </summary>
-        /// <param name="material">Material</param>
-        /// <param name="definition">New technique used</param>
-        private void OnMaterialTechniqueChanged(Material material, TechniqueDefinition definition)
+        public SubEntityMaterial GetMaterial(string material)
         {
-            UpdateKeysMaterialPart();
+            int index = IndexOf(material);
+
+            return (index > -1) ? _materials[index] : null;
         }
 
-        /// <summary>
-        /// Updates the render queue key
-        /// </summary>
-        private void UpdateKeysMaterialPart()
+        private int IndexOf(string material)
         {
-            if (_material == null)
+            for (int i = 0; i < _materials.Count; i++)
             {
-                _key.Material = 0;
-                _key.Transparency = false;
+                if (string.Equals(material, _materials[i].Name, StringComparison.InvariantCulture))
+                    return i;
             }
-            else
-            {
-                _key.Material = _material.Id;
-                _key.Transparency = _material.IsTransparent;
-            }
+
+            return -1;
         }
 
         #endregion
@@ -108,70 +116,11 @@ namespace Pulsar.Graphics.Graph
         #region Properties
 
         /// <summary>
-        /// Gets the ID of this sub entity, the ID correspond to the ID of the submesh attached to this instance
-        /// </summary>
-        public uint Id
-        {
-            get { return _subMesh.RenderInfo.Id; }
-        }
-
-        /// <summary>
-        /// Gets the render queue key
-        /// </summary>
-        public RenderQueueKey Key
-        {
-            get { return _key; }
-        }
-
-        /// <summary>
         /// Gets the name of this SubEntity
         /// </summary>
         public string Name
         {
-            get { return _name; }
-        }
-
-        /// <summary>
-        /// Gets or sets a boolean indicating if this instance use instancing
-        /// </summary>
-        public bool UseInstancing
-        {
-            get { return _parent.UseInstancing; }
-            set { throw new NotSupportedException(); }
-        }
-
-        /// <summary>
-        /// Gets the rendering info
-        /// </summary>
-        public RenderingInfo RenderInfo
-        {
-            get { return _subMesh.RenderInfo; }
-        }
-
-        /// <summary>
-        /// Gets or sets the material used by this sub entity
-        /// </summary>
-        public Material Material
-        {
-            get { return _material; }
-            set
-            {
-                Material oldMtl = _material;
-                Material newMtl = value ?? _subMesh.Material;
-                if(newMtl == null)
-                    throw new ArgumentNullException("value");
-
-                if ((oldMtl == newMtl) && (oldMtl.Technique == newMtl.Technique))
-                    return;
-
-                if(oldMtl != null)
-                    oldMtl.TechniqueChanged -= OnMaterialTechniqueChanged;
-
-                _material = newMtl;
-                _material.TechniqueChanged += OnMaterialTechniqueChanged;
-
-                UpdateKeysMaterialPart();
-            }
+            get { return _submeshMesh.Name; }
         }
 
         /// <summary>
@@ -181,10 +130,16 @@ namespace Pulsar.Graphics.Graph
         {
             get
             {
-                if (_parent.BonesCount > 0) 
-                    return _parent.BonesTransform[_subMesh.BoneIndex] * _parent.Transform;
+                Matrix transform = _parent.Transform;
+                if (_parent.BonesCount > 0)
+                {
+                    Matrix bone = _parent.BonesTransform[_submeshMesh.BoneIndex];
+                    Matrix.Multiply(ref bone, ref transform, out transform);
 
-                return _parent.Transform;
+                    return transform;
+                }
+
+                return transform;
             }
         }
 
@@ -197,8 +152,19 @@ namespace Pulsar.Graphics.Graph
             set
             {
                 _group = value;
-                _key.Group = value;
+                for (int i = 0; i < _materials.Count; i++)
+                    _materials[i].RenderQueueGroup = value;
             }
+        }
+
+        public int Count
+        {
+            get { return _materials.Count; }
+        }
+
+        internal List<SubEntityMaterial> Materials
+        {
+            get { return _materials; }
         }
 
         #endregion
