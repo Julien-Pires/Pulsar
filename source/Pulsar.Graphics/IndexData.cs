@@ -7,7 +7,7 @@ namespace Pulsar.Graphics
     /// <summary>
     /// Manages informations about an index buffer and how to use it during rendering operation
     /// </summary>
-    public sealed class IndexData : IDisposable
+    public sealed class IndexData : IDisposable, ICloneable
     {
         #region Fields
 
@@ -37,6 +37,18 @@ namespace Pulsar.Graphics
 
                 _isDisposed = true;
             }
+        }
+
+        public object Clone()
+        {
+            IndexData clone = new IndexData
+            {
+                IndexBuffer = _indexBuffer,
+                StartIndex = StartIndex,
+                IndexCount = IndexCount
+            };
+
+            return clone;
         }
 
         #endregion

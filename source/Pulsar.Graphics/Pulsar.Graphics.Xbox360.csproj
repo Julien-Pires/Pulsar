@@ -142,7 +142,7 @@
     <Compile Include="StateObject.cs" />
     <Compile Include="SubMesh.cs" />
     <Compile Include="SubMeshData.cs" />
-    <Compile Include="SubMeshPart.cs" />
+    <Compile Include="SubMeshMaterial.cs" />
     <Compile Include="Texture.cs" />
     <Compile Include="TextureLevel.cs" />
     <Compile Include="TextureWrapper.cs" />

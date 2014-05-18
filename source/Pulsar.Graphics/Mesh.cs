@@ -15,61 +15,8 @@ namespace Pulsar.Graphics
     ///     - With helper function (Begin/Update/End) of the mesh class (Easy - Intermediate)
     ///     - From scratch, all buffer(Vertex/Index) must be created manually (Hard)
     /// </summary>
-    public sealed class Mesh : IDisposable
+    public sealed partial class Mesh : IDisposable
     {
-        #region Nested
-
-        /// <summary>
-        /// Contains informations about a submesh buffer
-        /// </summary>
-        private struct SubMeshBufferData
-        {
-            #region Fields
-
-            /// <summary>
-            /// A buffer used by a submesh
-            /// </summary>
-            public BufferObject Buffer;
-
-            /// <summary>
-            /// Starting offset in the buffer
-            /// </summary>
-            public int Offset;
-
-            /// <summary>
-            /// Number of element used in the buffer
-            /// </summary>
-            public int Count;
-
-            /// <summary>
-            /// Indicates that the buffer is shared with others submesh
-            /// </summary>
-            public readonly bool Shared;
-
-            #endregion
-
-            #region Constructors
-
-            /// <summary>
-            /// Constructor of SubMeshBufferData struct
-            /// </summary>
-            /// <param name="buffer">Buffer object</param>
-            /// <param name="offset">Starting offset</param>
-            /// <param name="count">Number of elements used</param>
-            /// <param name="shared">Indicates that buffer is shared</param>
-            public SubMeshBufferData(BufferObject buffer, int offset, int count, bool shared)
-            {
-                Buffer = buffer;
-                Offset = offset;
-                Count = count;
-                Shared = shared;
-            }
-
-            #endregion
-        }
-
-        #endregion
-
         #region Delegates
 
         /// <summary>
@@ -171,7 +118,9 @@ namespace Pulsar.Graphics
             ArrayExtension.SlicedCopy(bufferData, offset, length, bufferData);
 
             int freeOffset = bufferData.Length - length;
-            for (int i = freeOffset; i < bufferData.Length; i++) bufferData[i] = default (T);
+            for (int i = freeOffset; i < bufferData.Length; i++) 
+                bufferData[i] = default (T);
+
             buffer.SetData(bufferData);
         }
 
@@ -356,17 +305,15 @@ namespace Pulsar.Graphics
             {
                 _estimatedVertexCount = Math.Max(_estimatedVertexCount, _currentVertices.Count);
                 _estimatedIndexCount = Math.Max(_estimatedIndexCount, _currentIndices.Count);
-
-                SubMesh subMesh = _subMeshes[_currentSub];
+                
                 VertexPositionNormalTexture[] vertexSource = _currentVertices.ToArray();
-                CopyVertexToBuffer(vertexSource);
+                CopyVerticesToBuffer(vertexSource);
 
                 if (_currentIndices.Count > 0)
                 {
                     int[] indexSource = _currentIndices.ToArray();
-                    CopyIndexToBuffer(indexSource);
+                    CopyIndicesToBuffer(indexSource);
                 }
-                subMesh.Update();
 
                 GenerateCurrentBoundingVolume(vertexSource);
                 UpdateBounds();
@@ -563,7 +510,7 @@ namespace Pulsar.Graphics
         /// Adds vertices to the vertex buffer of the submesh that is being edited
         /// </summary>
         /// <param name="source">Array of vertices</param>
-        private void CopyVertexToBuffer(VertexPositionNormalTexture[] source)
+        private void CopyVerticesToBuffer(VertexPositionNormalTexture[] source)
         {
             SubMesh subMesh = _subMeshes[_currentSub];
             SubMeshBufferData subBufferData = GetSubVertexData(subMesh);
@@ -603,7 +550,7 @@ namespace Pulsar.Graphics
         /// Adds indices to the index buffer of the submesh that is being edited
         /// </summary>
         /// <param name="source">Array of indices</param>
-        private void CopyIndexToBuffer(int[] source)
+        private void CopyIndicesToBuffer(int[] source)
         {
             SubMesh subMesh = _subMeshes[_currentSub];
             SubMeshBufferData subBufferData = GetSubIndexData(subMesh);
@@ -937,10 +884,10 @@ namespace Pulsar.Graphics
             if (_subMeshNamesMap.ContainsKey(name))
                 throw new Exception(string.Format("A submesh with the name {0} already exists", name));
 
-            SubMesh sub = CreateSubMesh();
-            _subMeshNamesMap.Add(name, (ushort)(_subMeshes.Count - 1));
+            SubMesh submesh = CreateSubMesh();
+            _subMeshNamesMap.Add(name, _subMeshes.Count - 1);
 
-            return sub;
+            return submesh;
         }
 
         /// <summary>
@@ -949,21 +896,21 @@ namespace Pulsar.Graphics
         /// <param name="index">Index of the submesh to remove</param>
         public void RemoveSubMesh(int index)
         {
-            SubMesh sub = _subMeshes[index];
+            SubMesh submesh = _subMeshes[index];
             _subMeshes.RemoveAt(index);
             UpdateNameMap(index);
 
-            if (sub.ShareVertexBuffer)
+            if (submesh.ShareVertexBuffer)
             {
-                SubMeshBufferData subVertexData = GetSubVertexData(sub);
+                SubMeshBufferData subVertexData = GetSubVertexData(submesh);
                 RemoveSharedVertex(subVertexData.Offset, subVertexData.Count);
             }
-            if (sub.ShareIndexBuffer)
+            if (submesh.ShareIndexBuffer)
             {
-                SubMeshBufferData subIndexData = GetSubIndexData(sub);
+                SubMeshBufferData subIndexData = GetSubIndexData(submesh);
                 RemoveSharedIndex(subIndexData.Offset, subIndexData.Count);
             }
-            sub.Dispose();
+            submesh.Dispose();
 
             UpdateBounds();
             UpdateMeshInfo();

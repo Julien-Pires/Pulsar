@@ -4,14 +4,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Pulsar.Graphics
 {
-    public sealed class SubMeshPart : IDisposable
+    public sealed class SubMeshMaterial : IDisposable
     {
         #region Fields
 
         private bool _isDisposed;
         private SubMesh _parent;
         private RenderingInfo _renderingInfo = new RenderingInfo();
-        private IndexData _indexData = new IndexData();
+        private IndexData _indexData;
         private int _indicesOffset;
         private Material _material;
 
@@ -19,13 +19,14 @@ namespace Pulsar.Graphics
 
         #region Constructors
 
-        internal SubMeshPart(string name, SubMesh parent)
+        internal SubMeshMaterial(string name, Material material, SubMesh parent)
         {
             Name = name;
-
+            Material = material;
             _parent = parent;
+
             _renderingInfo.VertexData = parent.VertexData;
-            _renderingInfo.IndexData = _indexData;
+            _renderingInfo.IndexData = (IndexData)parent.IndexData.Clone();
         }
 
         #endregion
@@ -45,7 +46,7 @@ namespace Pulsar.Graphics
             _isDisposed = true;
         }
 
-        public void SetGeometryData(int vertexCount, int indicesOffset)
+        public void SetGeometryData(int vertexCount, int indicesOffset = 0)
         {
             _renderingInfo.VertexCount = vertexCount;
             _indexData.IndexCount = vertexCount;

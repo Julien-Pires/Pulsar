@@ -149,7 +149,8 @@
     <Compile Include="RenderState.cs" />
     <Compile Include="RenderStateId.cs" />
     <Compile Include="StateObject.cs" />
-    <Compile Include="SubMeshPart.cs" />
+    <Compile Include="SubMeshMaterial.cs" />
+    <Compile Include="SubMeshMaterialCollection.cs" />
     <Compile Include="TextureLevel.cs" />
     <Compile Include="VertexBufferBindingInfo.cs" />
     <Compile Include="VertexBufferObject.cs" />

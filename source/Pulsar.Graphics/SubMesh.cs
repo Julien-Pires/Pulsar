@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,7 +13,7 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
-        private Dictionary<string, SubMeshPart> _parts = new Dictionary<string, SubMeshPart>();
+        private SubMeshMaterialCollection _materials;
         private VertexData _vertexData = new VertexData();
         private IndexData _indexData = new IndexData();
         private PrimitiveType _primitiveType;
@@ -31,6 +30,7 @@ namespace Pulsar.Graphics
         /// </summary>
         internal SubMesh()
         {
+            _materials = new SubMeshMaterialCollection(this);
         }
 
         #endregion
@@ -47,9 +47,7 @@ namespace Pulsar.Graphics
 
             try
             {
-                foreach (SubMeshPart part in _parts.Values)
-                    part.Dispose();
-                _parts.Clear();
+                _materials.Dispose();
 
                 if (!ShareVertexBuffer && (_vertexData.BufferCount > 0))
                     _vertexData.Dispose();
@@ -58,7 +56,7 @@ namespace Pulsar.Graphics
             }
             finally
             {
-                _parts = null;
+                _materials = null;
                 _vertexData = null;
                 _indexData = null;
 
@@ -66,42 +64,7 @@ namespace Pulsar.Graphics
             }
         }
 
-        public SubMeshPart AddPart(string name, Material material)
-        {
-            return AddPart(name, material, VertexUsed, 0);
-        }
-
-        public SubMeshPart AddPart(string name, Material material, int vertexCount)
-        {
-            return AddPart(name, material, vertexCount, 0);
-        }
-
-        public SubMeshPart AddPart(string name, Material material, int vertexCount, int indicesOffset)
-        {
-            if(string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException("name");
-
-            if(_parts.ContainsKey(name))
-                throw new Exception(string.Format("SubMesh already have a material named {0}", name));
-
-            SubMeshPart part = new SubMeshPart(name, this);
-            part.SetGeometryData(vertexCount, indicesOffset);
-            _parts.Add(name, part);
-
-            return part;
-        }
-
-        public void RemovePart(string name)
-        {
-            SubMeshPart subMeshPart;
-            if(!_parts.TryGetValue(name, out subMeshPart))
-                return;
-
-            _parts.Remove(name);
-            subMeshPart.Dispose();
-        }
-
-        public void SetVertexBuffer(VertexBufferObject buffer, int count, int offset)
+        public void SetVertexBuffer(VertexBufferObject buffer, int vertexCount, int offset)
         {
             if(buffer == null)
                 throw new ArgumentNullException("buffer");
@@ -109,7 +72,7 @@ namespace Pulsar.Graphics
             if(_vertexData.BufferCount > 0)
                 _vertexData.UnsetBinding(0);
 
-            _vertexCount = count;
+            _vertexCount = vertexCount;
             _vertexData.SetBinding(buffer, offset, 0, 0);
 
             Update();
@@ -120,44 +83,47 @@ namespace Pulsar.Graphics
             _indexData.IndexBuffer = buffer;
             _indexData.StartIndex = start;
             _indexData.IndexCount = count;
-            foreach (SubMeshPart part in _parts.Values)
-                part.IndexBuffer = buffer;
+            _materials.IndexBuffer = buffer;
 
             Update();
         }
 
-        public void Update()
+        internal void Update()
         {
             bool useIndices = _indexData.IndexBuffer != null;
             _primitiveCount = RenderingInfo.ComputePrimitiveCount(_primitiveType, _vertexCount, useIndices,
                 _indexData.IndexCount);
 
-            foreach (SubMeshPart part in _parts.Values)
-                part.Update();
+            _materials.Update();
         }
 
         #endregion
 
-        #region Properties      
+        #region Properties
 
         /// <summary>
         /// Gets the index used to find the bone attached to this sub mesh
         /// </summary>
         public int BoneIndex { get; internal set; }
 
+        public SubMeshMaterialCollection Materials
+        {
+            get { return _materials; }
+        }
+
         public int VertexCount
         {
             get { return _vertexCount; }
         }
 
-        public int PrimitiveCount
-        {
-            get { return _primitiveCount; }
-        }
-
         public int IndexCount
         {
             get { return _indexData.IndexCount; }
+        }
+
+        public int PrimitiveCount
+        {
+            get { return _primitiveCount; }
         }
 
         public VertexBufferObject VertexBuffer
@@ -176,8 +142,9 @@ namespace Pulsar.Graphics
             set
             {
                 _primitiveType = value;
-                foreach (SubMeshPart subMeshMaterial in _parts.Values)
-                    subMeshMaterial.PrimitiveType = value;
+                _materials.PrimitiveType = value;
+
+                Update();
             }
         }
 
