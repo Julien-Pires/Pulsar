@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Pulsar.Assets;
 
 using Pulsar.Graphics.Asset;
+using Pulsar.Graphics.Fx;
 using Pulsar.Graphics.Graph;
 
 namespace Pulsar.Graphics.Debugger
@@ -147,8 +148,10 @@ namespace Pulsar.Graphics.Debugger
                 };
                 Texture texture = _storage[GraphicsConstant.TextureFolderName].Load<Texture>(AabbTexture, textureParameters);
                 texture.SetData(new[]{ new Color(255, 255, 255, 255) });
+                Shader shader = _storage[GraphicsConstant.ShaderFolderName].Load<Shader>("UnlitTexture");
                 Material = _storage[GraphicsConstant.MaterialFolderName].Load<Material>(AabbMaterial,
                     MaterialParameters.NewInstance);
+                Material.BindShader(shader);
                 Material.DiffuseMap = texture;
             }
             else
@@ -174,9 +177,11 @@ namespace Pulsar.Graphics.Debugger
             GenerateIndices(_internalMesh.IndexData.IndexBuffer);
 
             SubMesh subMesh = _internalMesh.GetSubMesh(0);
-            subMesh.RenderInfo.VertexCount = VertexCount;
+            SubMeshMaterial subMeshMaterial = subMesh.Materials.Add(Name + "_material", Material);
+            subMeshMaterial.RenderingInfo.VertexCount = VertexCount;
             subMesh.IndexData.IndexCount = IndexCount;
-            subMesh.RenderInfo.ComputePrimitiveCount();
+            subMeshMaterial.RenderingInfo.PrimitiveCount = RenderingInfo.ComputePrimitiveCount(PrimitiveType.LineList,
+                VertexCount, true, IndexCount);
 
             _internalMesh.UpdateMeshInfo();
         }
@@ -285,7 +290,7 @@ namespace Pulsar.Graphics.Debugger
         /// </summary>
         public RenderingInfo RenderInfo
         {
-            get { return _internalMesh.GetSubMesh(0).RenderInfo; }
+            get { return _internalMesh.GetSubMesh(0).Materials[0].RenderingInfo; }
         }
 
         /// <summary>
