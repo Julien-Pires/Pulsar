@@ -100,7 +100,7 @@ namespace Pulsar.Graphics.Graph
             get { return _parent.Transform; }
         }
 
-        public RenderingInfo RenderInfo
+        public IRenderingInfo RenderInfo
         {
             get { return _submeshMaterial.RenderingInfo; }
         }

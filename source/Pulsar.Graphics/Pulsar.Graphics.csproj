@@ -94,6 +94,7 @@
     <Compile Include="Graph\SubEntityMaterial.cs" />
     <Compile Include="IMaterialDataCollection.cs" />
     <Compile Include="IMaterialDataCollectionGeneric.cs" />
+    <Compile Include="IRenderingInfo.cs" />
     <Compile Include="IRenderQueue.cs" />
     <Compile Include="MaterialDataCollection.cs" />
     <Compile Include="MaterialTechniqueChangedHandler.cs" />

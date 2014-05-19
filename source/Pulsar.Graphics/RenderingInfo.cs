@@ -5,46 +5,13 @@ namespace Pulsar.Graphics
     /// <summary>
     /// Contains information used to draw a 3D shape
     /// </summary>
-    public sealed class RenderingInfo
+    public sealed class RenderingInfo : IRenderingInfo
     {
         #region Fields
 
-        private static uint _idCounter = uint.MinValue;
-
-        /// <summary>
-        /// Id
-        /// </summary>
-        public uint Id;
-
-        /// <summary>
-        /// Vertex data
-        /// </summary>
-        public VertexData VertexData;
-
-        /// <summary>
-        /// Index data
-        /// </summary>
-        public IndexData IndexData;
-
-        /// <summary>
-        /// Primitive type used for rendering
-        /// </summary>
-        public PrimitiveType PrimitiveType;
-
-        /// <summary>
-        /// Number of primitive
-        /// </summary>
-        public int PrimitiveCount;
-
-        /// <summary>
-        /// Number of vertex
-        /// </summary>
-        public int VertexCount;
-
-        /// <summary>
-        /// Indicates if an index buffer is used
-        /// </summary>
-        public bool UseIndexes;
+        private int _vertexCount;
+        private PrimitiveType _primitiveType;
+        private bool _useIndexes;
 
         #endregion
 
@@ -55,7 +22,6 @@ namespace Pulsar.Graphics
         /// </summary>
         internal RenderingInfo()
         {
-            Id = _idCounter++;
         }
 
         #endregion
@@ -94,24 +60,71 @@ namespace Pulsar.Graphics
 
         #region Methods
 
-        public void UpdatePrimitiveCount()
+        internal void UpdatePrimitiveCount()
         {
             int indicesCount = (IndexData == null) ? 0 : IndexData.IndexCount;
             PrimitiveCount = ComputePrimitiveCount(PrimitiveType, VertexCount, UseIndexes, indicesCount);
         }
 
+        #endregion
+
+        #region Properties
+
         /// <summary>
-        /// Copies this instance of rendering info to an another
+        /// Vertex data
         /// </summary>
-        /// <param name="other">Rendering info instance receiving all data of this instance</param>
-        public void CopyTo(RenderingInfo other)
+        public VertexData VertexData { get; internal set; }
+
+        /// <summary>
+        /// Index data
+        /// </summary>
+        public IndexData IndexData { get; internal set; }
+
+        /// <summary>
+        /// Primitive type used for rendering
+        /// </summary>
+        public PrimitiveType PrimitiveType
         {
-            other.VertexData = VertexData;
-            other.IndexData = IndexData;
-            other.PrimitiveType = PrimitiveType;
-            other.PrimitiveCount = PrimitiveCount;
-            other.VertexCount = VertexCount;
-            other.UseIndexes = UseIndexes;
+            get { return _primitiveType; }
+            internal set
+            {
+                _primitiveType = value;
+
+                UpdatePrimitiveCount();
+            }
+        }
+
+        /// <summary>
+        /// Number of primitive
+        /// </summary>
+        public int PrimitiveCount { get; internal set; }
+
+        /// <summary>
+        /// Number of vertex
+        /// </summary>
+        public int VertexCount
+        {
+            get { return _vertexCount; }
+            internal set
+            {
+                _vertexCount = value;
+
+                UpdatePrimitiveCount();
+            }
+        }
+
+        /// <summary>
+        /// Indicates if an index buffer is used
+        /// </summary>
+        public bool UseIndexes
+        {
+            get { return _useIndexes; }
+            internal set
+            {
+                _useIndexes = value;
+
+                UpdatePrimitiveCount();
+            }
         }
 
         #endregion

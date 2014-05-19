@@ -254,14 +254,6 @@ namespace Pulsar.Graphics.Debugger
         }
 
         /// <summary>
-        /// Gets the batch ID of this instance
-        /// </summary>
-        public uint Id 
-        {
-            get { return RenderInfo.Id; } 
-        }
-
-        /// <summary>
         /// Gets the key used by the render queue
         /// </summary>
         public RenderQueueKey Key
@@ -288,7 +280,7 @@ namespace Pulsar.Graphics.Debugger
         /// <summary>
         /// Gets the rendering info of this instance
         /// </summary>
-        public RenderingInfo RenderInfo
+        public IRenderingInfo RenderInfo
         {
             get { return _internalMesh.GetSubMesh(0).Materials[0].RenderingInfo; }
         }

@@ -32,7 +32,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Gets the rendering info
         /// </summary>
-        RenderingInfo RenderInfo { get; }
+        IRenderingInfo RenderInfo { get; }
 
         /// <summary>
         /// Gets the material associated to this renderable object

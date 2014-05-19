@@ -27,6 +27,7 @@ namespace Pulsar.Graphics
 
             _renderingInfo.VertexData = parent.VertexData;
             _renderingInfo.IndexData = (IndexData)parent.IndexData.Clone();
+            _renderingInfo.UpdatePrimitiveCount();
         }
 
         #endregion

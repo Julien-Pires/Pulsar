@@ -194,7 +194,7 @@ namespace Pulsar.Graphics
         /// <param name="geometry"></param>
         internal void Draw(IRenderable geometry)
         {
-            RenderingInfo renderingInfo = geometry.RenderInfo;
+            IRenderingInfo renderingInfo = geometry.RenderInfo;
 
             _graphicDevice.SetVertexBuffers(renderingInfo.VertexData.VertexBindings);
             if (renderingInfo.UseIndexes)
