@@ -89,6 +89,7 @@ namespace Pulsar.Graphics
             }
             finally
             {
+                _context = null;
                 _graphicsStorage = null;
                 _assetEngine = null;
                 _scenes = null;
@@ -104,7 +105,7 @@ namespace Pulsar.Graphics
         /// </summary>
         internal void Initialize()
         {
-            _assetEngine.InitializeLoaders(GraphicsConstant.LoadersCategory);
+            _assetEngine.InitializeLoaders(GraphicsStorage.LoadersCategory);
         }
 
         /// <summary>
@@ -136,7 +137,7 @@ namespace Pulsar.Graphics
         /// <returns>Returns an instance of SceneGraph class</returns>
         public SceneGraph CreateSceneGraph(string name)
         {
-            SceneGraph graph = new SceneGraph(name, _renderer, _assetEngine);
+            SceneGraph graph = new SceneGraph(name, _renderer, _assetEngine, _graphicsStorage);
             _scenes.Add(name, graph);
 
             return graph;
@@ -226,6 +227,11 @@ namespace Pulsar.Graphics
         internal BuiltInShaderManager ShaderManager
         {
             get { return _shaderManager; }
+        }
+
+        internal GraphicsStorage Storage
+        {
+            get { return _graphicsStorage; }
         }
 
         #endregion

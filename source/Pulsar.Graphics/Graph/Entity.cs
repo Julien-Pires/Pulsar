@@ -190,7 +190,7 @@ namespace Pulsar.Graphics.Graph
                 if (value && (_meshAabb == null))
                 {
                     string name = string.Format("{0}_{1}_Aabb", _graph.Name, Name);
-                    _meshAabb = new MeshBoundingBox(name, _graph.AssetEngine);
+                    _meshAabb = new MeshBoundingBox(name, _graph.Storage);
                 }
 
                 _renderAabb = value;

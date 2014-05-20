@@ -7,7 +7,7 @@ namespace Pulsar.Graphics.Asset
     /// <summary>
     /// Represents a loader for Material asset
     /// </summary>
-    [AssetLoader(AssetTypes = new[]{ typeof(Material) }, LazyInitCategory = GraphicsConstant.LoadersCategory)]
+    [AssetLoader(AssetTypes = new[] { typeof(Material) }, LazyInitCategory = GraphicsStorage.LoadersCategory)]
     public sealed class MaterialLoader : AssetLoader
     {
         #region Fields

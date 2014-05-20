@@ -4,8 +4,6 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using Pulsar.Assets;
-
 using Pulsar.Graphics.Asset;
 using Pulsar.Graphics.Fx;
 using Pulsar.Graphics.Graph;
@@ -34,7 +32,7 @@ namespace Pulsar.Graphics.Debugger
         private const int BackBottomRight = 7;
 
         private bool _isDisposed;
-        private Storage _storage;
+        private GraphicsStorage _storage;
         private Mesh _internalMesh;
         private VertexBufferObject _vbo;
         private Vector3 _min;
@@ -50,13 +48,13 @@ namespace Pulsar.Graphics.Debugger
         /// Constructor of MeshBoundingBox class
         /// </summary>
         /// <param name="name">Name of the mesh</param>
-        /// <param name="assetEngine">Asset engine</param>
-        internal MeshBoundingBox(string name, AssetEngine assetEngine)
+        /// <param name="storage">Graphics engine storage</param>
+        internal MeshBoundingBox(string name, GraphicsStorage storage)
         {
-            Debug.Assert(assetEngine != null);
+            Debug.Assert(storage != null);
 
             Name = name;
-            _storage = assetEngine[GraphicsConstant.Storage];
+            _storage = storage;
 
             LoadAsset();
             InitializeMesh();
@@ -121,7 +119,7 @@ namespace Pulsar.Graphics.Debugger
 
             try
             {
-                _storage[GraphicsConstant.MeshFolderName].Unload(Name);
+                _storage.MeshFolder.Unload(Name);
             }
             finally
             {
@@ -138,24 +136,24 @@ namespace Pulsar.Graphics.Debugger
         /// </summary>
         private void LoadAsset()
         {
-            _internalMesh = _storage[GraphicsConstant.MeshFolderName].Load<Mesh>(Name, MeshParameters.NewInstance);
-            if (!_storage[GraphicsConstant.MaterialFolderName].IsLoaded(AabbMaterial))
+            _internalMesh = _storage.MeshFolder.Load<Mesh>(Name, MeshParameters.NewInstance);
+            if (!_storage.MaterialFolder.IsLoaded(AabbMaterial))
             {
                 TextureParameters textureParameters = new TextureParameters
                 {
                     Height = 1,
                     Width = 1
                 };
-                Texture texture = _storage[GraphicsConstant.TextureFolderName].Load<Texture>(AabbTexture, textureParameters);
+                Texture texture = _storage.TextureFolder.Load<Texture>(AabbTexture, textureParameters);
                 texture.SetData(new[]{ new Color(255, 255, 255, 255) });
-                Shader shader = _storage[GraphicsConstant.ShaderFolderName].Load<Shader>("UnlitTexture");
-                Material = _storage[GraphicsConstant.MaterialFolderName].Load<Material>(AabbMaterial,
+                Shader shader = _storage.ShaderFolder.Load<Shader>("UnlitTexture");
+                Material = _storage.MaterialFolder.Load<Material>(AabbMaterial,
                     MaterialParameters.NewInstance);
                 Material.BindShader(shader);
                 Material.DiffuseMap = texture;
             }
             else
-                Material = _storage[GraphicsConstant.MaterialFolderName].Load<Material>(AabbMaterial);
+                Material = _storage.MaterialFolder.Load<Material>(AabbMaterial);
 
             _key.Transparency = Material.IsTransparent;
             _key.Material = Material.Id;

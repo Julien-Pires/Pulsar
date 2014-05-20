@@ -31,14 +31,17 @@ namespace Pulsar.Graphics.Graph
         /// <param name="name">Name of the scene tree</param>
         /// <param name="renderer">Renderer</param>
         /// <param name="assetEngine">AssetEngine</param>
-        internal SceneGraph(string name, Renderer renderer, AssetEngine assetEngine)
+        internal SceneGraph(string name, Renderer renderer, AssetEngine assetEngine, GraphicsStorage storage)
         {
             Debug.Assert(renderer != null);
             Debug.Assert(assetEngine != null);
+            Debug.Assert(storage != null);
 
             Name = name;
             _rendering = new UnlitRendering(renderer);
+
             AssetEngine = assetEngine;
+            Storage = storage;
 
             _camManager = new CameraManager(this);
             _root = CreateNode();
@@ -68,6 +71,9 @@ namespace Pulsar.Graphics.Graph
             {
                 _movablesMap = null;
                 _rendering = null;
+
+                AssetEngine = null;
+                Storage = null;
 
                 _isDisposed = true;
             }
@@ -217,6 +223,8 @@ namespace Pulsar.Graphics.Graph
         /// Gets an AssetEngine instance
         /// </summary>
         internal AssetEngine AssetEngine { get; private set; }
+
+        internal GraphicsStorage Storage { get; private set; }
 
         /// <summary>
         /// Gets the camera manager instance

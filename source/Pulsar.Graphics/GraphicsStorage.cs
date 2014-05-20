@@ -11,6 +11,18 @@ namespace Pulsar.Graphics
     {
         #region Fields
 
+        public const string Storage = "GraphicsEngine_Storage";
+        public const string LoadersCategory = "GraphicsLoaders";
+        public const string ShaderFolderName = "Shaders";
+        public const string TextureFolderName = "Textures";
+        public const string MaterialFolderName = "Materials";
+        public const string MeshFolderName = "Mesh";
+
+        private const string ShaderFolderPath = "Content/Graphics/Shaders";
+        private const string TextureFolderPath = "Content/Graphics/Texture";
+        private const string MaterialFolderPath = "Content/Graphics/Material";
+        private const string MeshFolderPath = "Content/Graphics/Mesh";
+
         private bool _isDisposed;
         private AssetEngine _assetEngine;
 
@@ -26,11 +38,11 @@ namespace Pulsar.Graphics
         {
             _assetEngine = assetEngine;
 
-            Storage storage = assetEngine.CreateStorage(GraphicsConstant.Storage);
-            TextureFolder = storage.AddFolder(GraphicsConstant.TextureFolder, GraphicsConstant.TextureFolderName);
-            ShaderFolder = storage.AddFolder(GraphicsConstant.ShaderFolder, GraphicsConstant.ShaderFolderName);
-            MaterialFolder = storage.AddFolder(GraphicsConstant.MaterialFolder, GraphicsConstant.MaterialFolderName);
-            MeshFolder = storage.AddFolder(GraphicsConstant.MeshFolder, GraphicsConstant.MeshFolderName);
+            Storage storage = assetEngine.CreateStorage(Storage);
+            TextureFolder = storage.AddFolder(TextureFolderPath, TextureFolderName);
+            ShaderFolder = storage.AddFolder(ShaderFolderPath, ShaderFolderName);
+            MaterialFolder = storage.AddFolder(MaterialFolderPath, MaterialFolderName);
+            MeshFolder = storage.AddFolder(MeshFolderPath, MeshFolderName);
         }
 
         #endregion
@@ -47,7 +59,7 @@ namespace Pulsar.Graphics
 
             try
             {
-                _assetEngine.DestroyStorage(GraphicsConstant.Storage);
+                _assetEngine.DestroyStorage(Storage);
             }
             finally
             {

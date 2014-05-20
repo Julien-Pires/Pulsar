@@ -116,7 +116,6 @@
     <Compile Include="Fx\ShaderConstantSource.cs" />
     <Compile Include="Fx\UpdateFrequency.cs" />
     <Compile Include="Fx\EffectParameterWriter.cs" />
-    <Compile Include="GraphicsConstant.cs" />
     <Compile Include="GraphicsEngine.cs" />
     <Compile Include="GraphicsEngineService.cs" />
     <Compile Include="GraphicsStorage.cs" />
