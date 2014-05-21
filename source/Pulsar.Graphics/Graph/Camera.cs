@@ -27,6 +27,7 @@ namespace Pulsar.Graphics.Graph
         private ProjectionType _projectionType = ProjectionType.Perspective;
         private Matrix _viewMatrix = Matrix.Identity;
         private Matrix _projectionMatrix = Matrix.Identity;
+        private Matrix _viewProjectionMatrix = Matrix.Identity;
         private Vector3 _yawFixedAxis = Vector3.UnitY;
         private Viewport _viewport;
         private readonly Frustum _boundingFrustum = new Frustum();
@@ -207,9 +208,7 @@ namespace Pulsar.Graphics.Graph
             UpdateView();
             UpdateProjection();
 
-            Matrix viewProj;
-            Matrix.Multiply(ref _viewMatrix, ref _projectionMatrix, out viewProj);
-            _boundingFrustum.Update(ref viewProj);
+            _boundingFrustum.Update(ref _viewProjectionMatrix);
             
             BoundingFrustum bounds = _boundingFrustum.BoundingFrustum;
             Vector3 min = new Vector3(bounds.Left.D, bounds.Bottom.D, -_far);
@@ -249,6 +248,7 @@ namespace Pulsar.Graphics.Graph
                     Matrix.CreateOrthographic(_viewport.Width, _viewport.Height, _near, _far, out _projectionMatrix);
                     break;
             }
+            Matrix.Multiply(ref _viewMatrix, ref _projectionMatrix, out _viewProjectionMatrix);
 
             _isDirtyFrustum = false;
             _isDirtyBoundingFrustum = true;
@@ -265,12 +265,14 @@ namespace Pulsar.Graphics.Graph
             UpdateTransform();
 
             Matrix.Invert(ref WorldTransform, out _viewMatrix);
+            Matrix.Multiply(ref _viewMatrix, ref _projectionMatrix, out _viewProjectionMatrix);
+
             _isDirtyView = false;
             _isDirtyBoundingFrustum = true;
         }
 
         /// <summary>
-        /// Attaches the camera to a scene node<br />
+        /// Attaches the camera to a scene node
         /// <remarks>(Used internally)</remarks>
         /// </summary>
         /// <param name="parent">Parent scene node</param>
@@ -284,7 +286,7 @@ namespace Pulsar.Graphics.Graph
         }
 
         /// <summary>
-        /// Detaches the camera of its parent<br />
+        /// Detaches the camera of its parent
         /// <remarks>(Used internally)</remarks>
         /// </summary>
         void IMovable.DetachParent()
@@ -438,6 +440,17 @@ namespace Pulsar.Graphics.Graph
                 UpdateView();
 
                 return _viewMatrix;
+            }
+        }
+
+        public Matrix ViewProjection
+        {
+            get
+            {
+                UpdateView();
+                UpdateProjection();
+
+                return _viewProjectionMatrix;
             }
         }
 

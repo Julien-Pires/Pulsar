@@ -131,9 +131,8 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the inverse projection matrix</returns>
         private static Matrix GetProjectionInverse(FrameContext context)
         {
-            Matrix projection = context.Camera.Projection;
-            Matrix inverse;
-            Matrix.Invert(ref projection, out inverse);
+            Matrix inverse = context.Camera.Projection;
+            Matrix.Invert(ref inverse, out inverse);
 
             return inverse;
         }
@@ -145,9 +144,8 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the inverse transpose of the projection matrix</returns>
         private static Matrix GetProjectionInverseTranspose(FrameContext context)
         {
-            Matrix projection = context.Camera.Projection;
-            Matrix result;
-            Matrix.Invert(ref projection, out result);
+            Matrix result = context.Camera.Projection;
+            Matrix.Invert(ref result, out result);
             Matrix.Transpose(ref result, out result);
 
             return result;
@@ -160,9 +158,8 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the transpose of the projection matrix</returns>
         private static Matrix GetProjectionTranspose(FrameContext context)
         {
-            Matrix projection = context.Camera.Projection;
-            Matrix transpose;
-            Matrix.Transpose(ref projection, out transpose);
+            Matrix transpose = context.Camera.Projection;
+            Matrix.Transpose(ref transpose, out transpose);
 
             return transpose;
         }
@@ -214,9 +211,8 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the inverse of the view matrix</returns>
         private static Matrix GetViewInverse(FrameContext context)
         {
-            Matrix view = context.Camera.View;
-            Matrix inverse;
-            Matrix.Invert(ref view, out inverse);
+            Matrix inverse = context.Camera.View;
+            Matrix.Invert(ref inverse, out inverse);
 
             return inverse;
         }
@@ -228,9 +224,8 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the inverse transpose of the view matrix</returns>
         private static Matrix GetViewInverseTranspose(FrameContext context)
         {
-            Matrix view = context.Camera.View;
-            Matrix result;
-            Matrix.Invert(ref view, out result);
+            Matrix result = context.Camera.View;
+            Matrix.Invert(ref result, out result);
             Matrix.Transpose(ref result, out result);
 
             return result;
@@ -243,12 +238,7 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the view-projection matrix</returns>
         private static Matrix GetViewProjection(FrameContext context)
         {
-            Matrix view = context.Camera.View;
-            Matrix projection = context.Camera.Projection;
-            Matrix viewProj;
-            Matrix.Multiply(ref view, ref projection, out viewProj);
-
-            return viewProj;
+            return context.Camera.ViewProjection;
         }
 
         /// <summary>
@@ -258,13 +248,10 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the inverse of the view-projection matrix</returns>
         private static Matrix GetViewProjectionInverse(FrameContext context)
         {
-            Matrix view = context.Camera.View;
-            Matrix projection = context.Camera.Projection;
-            Matrix result;
-            Matrix.Multiply(ref view, ref projection, out result);
-            Matrix.Invert(ref result, out result);
+            Matrix viewProj = context.Camera.ViewProjection;
+            Matrix.Invert(ref viewProj, out viewProj);
 
-            return result;
+            return viewProj;
         }
 
         /// <summary>
@@ -274,14 +261,11 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the inverse transpose of the view-projection matrix</returns>
         private static Matrix GetViewProjectionInverseTranspose(FrameContext context)
         {
-            Matrix view = context.Camera.View;
-            Matrix projection = context.Camera.Projection;
-            Matrix result;
-            Matrix.Multiply(ref view, ref projection, out result);
-            Matrix.Invert(ref result, out result);
-            Matrix.Transpose(ref result, out result);
+            Matrix viewProj = context.Camera.ViewProjection;
+            Matrix.Invert(ref viewProj, out viewProj);
+            Matrix.Transpose(ref viewProj, out viewProj);
 
-            return result;
+            return viewProj;
         }
 
         /// <summary>
@@ -291,13 +275,10 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the transpose of the view-projection</returns>
         private static Matrix GetViewProjectionTranspose(FrameContext context)
         {
-            Matrix view = context.Camera.View;
-            Matrix projection = context.Camera.Projection;
-            Matrix result;
-            Matrix.Multiply(ref view, ref projection, out result);
-            Matrix.Transpose(ref result, out result);
+            Matrix viewProj = context.Camera.ViewProjection;
+            Matrix.Transpose(ref viewProj, out viewProj);
 
-            return result;
+            return viewProj;
         }
 
         /// <summary>
@@ -307,9 +288,8 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the transpose of the view matrix</returns>
         private static Matrix GetViewTranspose(FrameContext context)
         {
-            Matrix view = context.Camera.View;
-            Matrix transpose;
-            Matrix.Transpose(ref view, out transpose);
+            Matrix transpose = context.Camera.View;
+            Matrix.Transpose(ref transpose, out transpose);
 
             return transpose;
         }
@@ -331,9 +311,8 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the inverse of the world matrix</returns>
         private static Matrix GetWorldInverse(FrameContext context)
         {
-            Matrix world = context.Renderable.Transform;
-            Matrix invert;
-            Matrix.Invert(ref world, out invert);
+            Matrix invert = context.Renderable.Transform;
+            Matrix.Invert(ref invert, out invert);
 
             return invert;
         }
@@ -345,9 +324,8 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the transpose inverse of the world matrix</returns>
         private static Matrix GetWorldInverseTranspose(FrameContext context)
         {
-            Matrix world = context.Renderable.Transform;
-            Matrix result;
-            Matrix.Invert(ref world, out result);
+            Matrix result = context.Renderable.Transform;
+            Matrix.Invert(ref result, out result);
             Matrix.Transpose(ref result, out result);
 
             return result;
@@ -360,9 +338,8 @@ namespace Pulsar.Graphics.Fx
         /// <returns>Returns the transpose of the world matrix</returns>
         private static Matrix GetWorldTranspose(FrameContext context)
         {
-            Matrix world = context.Renderable.Transform;
-            Matrix transpose;
-            Matrix.Transpose(ref world, out transpose);
+            Matrix transpose = context.Renderable.Transform;
+            Matrix.Transpose(ref transpose, out transpose);
 
             return transpose;
         }
@@ -439,11 +416,8 @@ namespace Pulsar.Graphics.Fx
         private static Matrix GetWorldViewProjection(FrameContext context)
         {
             Matrix world = context.Renderable.Transform;
-            Matrix view = context.Camera.View;
-            Matrix projection = context.Camera.Projection;
-            Matrix worldViewProj;
-            Matrix.Multiply(ref world, ref view, out worldViewProj);
-            Matrix.Multiply(ref worldViewProj, ref projection, out worldViewProj);
+            Matrix worldViewProj = context.Camera.ViewProjection;
+            Matrix.Multiply(ref world, ref worldViewProj, out worldViewProj);
 
             return worldViewProj;
         }
@@ -456,11 +430,8 @@ namespace Pulsar.Graphics.Fx
         private static Matrix GetWorldViewProjectionInverse(FrameContext context)
         {
             Matrix world = context.Renderable.Transform;
-            Matrix view = context.Camera.View;
-            Matrix projection = context.Camera.Projection;
-            Matrix result;
-            Matrix.Multiply(ref world, ref view, out result);
-            Matrix.Multiply(ref result, ref projection, out result);
+            Matrix result = context.Camera.ViewProjection;
+            Matrix.Multiply(ref world, ref result, out result);
             Matrix.Invert(ref result, out result);
 
             return result;
@@ -474,11 +445,8 @@ namespace Pulsar.Graphics.Fx
         private static Matrix GetWorldViewProjectionInverseTranspose(FrameContext context)
         {
             Matrix world = context.Renderable.Transform;
-            Matrix view = context.Camera.View;
-            Matrix projection = context.Camera.Projection;
-            Matrix result;
-            Matrix.Multiply(ref world, ref view, out result);
-            Matrix.Multiply(ref result, ref projection, out result);
+            Matrix result = context.Camera.ViewProjection;
+            Matrix.Multiply(ref world, ref result, out result);
             Matrix.Invert(ref result, out result);
             Matrix.Transpose(ref result, out result);
 
@@ -493,11 +461,8 @@ namespace Pulsar.Graphics.Fx
         private static Matrix GetWorldViewProjectionTranspose(FrameContext context)
         {
             Matrix world = context.Renderable.Transform;
-            Matrix view = context.Camera.View;
-            Matrix projection = context.Camera.Projection;
-            Matrix result;
-            Matrix.Multiply(ref world, ref view, out result);
-            Matrix.Multiply(ref result, ref projection, out result);
+            Matrix result = context.Camera.ViewProjection;
+            Matrix.Multiply(ref world, ref result, out result);
             Matrix.Transpose(ref result, out result);
 
             return result;

@@ -559,7 +559,6 @@ namespace Pulsar
             if (_transformChanged) 
                 UpdateWithParent();
 
-            //MatrixExtension.CreateWorld(ref LocalTransformPosition, ref LocalTransformRotation, ref LocalTransformScale, out WorldTransform);
             MatrixExtension.CreateWorld(ref WorldTransformPosition, ref WorldTransformRotation, ref WorldTransformScale, out WorldTransform);
             Matrix.Invert(ref WorldTransform, out InverseWorldTransform);
             _matrixDirty = false;
