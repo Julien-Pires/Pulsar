@@ -14,6 +14,7 @@ namespace Pulsar.Graphics
         #region Fields
 
         private readonly string _name;
+        private Mesh _parent;
         private SubMeshMaterialCollection _materials;
         private VertexData _vertexData = new VertexData();
         private IndexData _indexData = new IndexData();
@@ -21,6 +22,8 @@ namespace Pulsar.Graphics
         private int _vertexCount;
         private int _primitiveCount;
         private bool _isDisposed;
+        private BoundingBox _axisAlignedBoundingBox;
+        private BoundingSphere _boundingSphere;
 
         #endregion
 
@@ -29,9 +32,10 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Constructor of SubMesh class
         /// </summary>
-        internal SubMesh(string name)
+        internal SubMesh(string name, Mesh parent)
         {
             _name = name;
+            _parent = parent;
             _materials = new SubMeshMaterialCollection(this);
         }
 
@@ -61,12 +65,23 @@ namespace Pulsar.Graphics
                 _materials = null;
                 _vertexData = null;
                 _indexData = null;
+                _parent = null;
 
                 _isDisposed = true;
             }
         }
 
-        public void SetVertexBuffer(VertexBufferObject buffer, int vertexCount, int offset)
+        public void SetVertexBuffer(VertexBufferObject buffer)
+        {
+            SetVertexBuffer(buffer, 0, buffer.ElementCount);
+        }
+
+        public void SetVertexBuffer(VertexBufferObject buffer, int offset)
+        {
+            SetVertexBuffer(buffer, offset, buffer.ElementCount);
+        }
+
+        public void SetVertexBuffer(VertexBufferObject buffer, int offset, int vertexCount)
         {
             if(buffer == null)
                 throw new ArgumentNullException("buffer");
@@ -74,10 +89,22 @@ namespace Pulsar.Graphics
             if(_vertexData.BufferCount > 0)
                 _vertexData.UnsetBinding(0);
 
-            _vertexCount = vertexCount;
+            if(_indexData.IndexBuffer == null)
+                _vertexCount = vertexCount;
+
             _vertexData.SetBinding(buffer, offset, 0, 0);
 
             Update();
+        }
+
+        public void SetIndexBuffer(IndexBufferObject buffer)
+        {
+            SetIndexBuffer(buffer, 0, buffer.ElementCount);
+        }
+
+        public void SetIndexBuffer(IndexBufferObject buffer, int start)
+        {
+            SetIndexBuffer(buffer, start, buffer.ElementCount);
         }
 
         public void SetIndexBuffer(IndexBufferObject buffer, int start, int count)
@@ -86,6 +113,9 @@ namespace Pulsar.Graphics
             _indexData.StartIndex = start;
             _indexData.IndexCount = count;
             _materials.IndexBuffer = buffer;
+
+            if (buffer != null)
+                _vertexCount = count;
 
             Update();
         }
@@ -97,6 +127,7 @@ namespace Pulsar.Graphics
                 _indexData.IndexCount);
 
             _materials.Update();
+            _parent.UpdateMeshInfo();
         }
 
         #endregion
@@ -168,12 +199,30 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Gets the aabb of this sub mesh
         /// </summary>
-        public BoundingBox AxisAlignedBoundingBox { get; set; }
+        public BoundingBox AxisAlignedBoundingBox
+        {
+            get { return _axisAlignedBoundingBox; }
+            set
+            {
+                _axisAlignedBoundingBox = value;
+
+                _parent.UpdateBounds();
+            }
+        }
 
         /// <summary>
         /// Gets the bounding sphere of this sub mesh
         /// </summary>
-        public BoundingSphere BoundingSphere { get; set; }
+        public BoundingSphere BoundingSphere
+        {
+            get { return _boundingSphere; }
+            set
+            {
+                _boundingSphere = value;
+
+                _parent.UpdateBounds();
+            }
+        }
 
         internal int VertexUsed
         {

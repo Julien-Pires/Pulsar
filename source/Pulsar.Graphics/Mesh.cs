@@ -316,8 +316,6 @@ namespace Pulsar.Graphics
                 }
 
                 GenerateCurrentBoundingVolume(vertexSource);
-                UpdateBounds();
-                UpdateMeshInfo();
             }
             else 
                 RemoveSubMesh(_currentSub);
@@ -543,7 +541,7 @@ namespace Pulsar.Graphics
             }
             
             int vertexCount = _appendToBuffer ? (subMesh.VertexCount + source.Length) : source.Length;
-            subMesh.SetVertexBuffer(buffer, vertexCount, newOffset);
+            subMesh.SetVertexBuffer(buffer, newOffset, vertexCount);
         }
 
         /// <summary>
@@ -872,7 +870,7 @@ namespace Pulsar.Graphics
             if (_subMeshNamesMap.ContainsKey(name))
                 throw new Exception(string.Format("A submesh with the name {0} already exists", name));
 
-            SubMesh submesh = new SubMesh(name);
+            SubMesh submesh = new SubMesh(name, this);
             _subMeshes.Add(submesh);
             _subMeshNamesMap.Add(name, _subMeshes.Count - 1);
 
@@ -981,7 +979,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Updates mesh data, can be called by childs submesh to notify changes on them
         /// </summary>
-        public void UpdateMeshInfo()
+        internal void UpdateMeshInfo()
         {
             VerticesCount = 0;
             PrimitiveCount = 0;
@@ -995,7 +993,7 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Updates the mesh bounding volumes
         /// </summary>
-        public void UpdateBounds()
+        internal void UpdateBounds()
         {
             _aabb = new BoundingBox();
             _boundingSphere = new BoundingSphere();
@@ -1020,12 +1018,12 @@ namespace Pulsar.Graphics
         /// <summary>
         /// Gets the number of vertices
         /// </summary>
-        public int VerticesCount { get; internal set; }
+        public int VerticesCount { get; private set; }
 
         /// <summary>
         /// Gets the number of primitive
         /// </summary>
-        public int PrimitiveCount { get; internal set; }
+        public int PrimitiveCount { get; private set; }
 
         /// <summary>
         /// Gets the number of submesh
